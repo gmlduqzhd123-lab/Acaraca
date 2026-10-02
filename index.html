@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#194d46">
+  <meta name="description" content="곡을 찾고, 내 파트를 고르고, 함께 하모니를 만드는 아카펠라 연습실 AcaRoom.">
+  <title>AcaRoom · 우리의 아카펠라 연습실</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">본문으로 건너뛰기</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="주 내비게이션">
+      <a class="brand" href="./index.html">
+        <img class="brand-mark" src="./assets/icons/logo.svg" width="42" height="42" alt="">
+        <span><strong class="brand-name">AcaRoom<span class="brand-dot">.</span></strong><span class="brand-caption">우리의 아카펠라 연습실</span></span>
+      </a>
+      <p class="sidebar-label">MY PRACTICE ROOM</p>
+      <nav class="nav-list" id="desktop-nav"></nav>
+      <div class="sidebar-bottom" id="sidebar-bottom"></div>
+    </aside>
+    <div class="main-shell">
+      <header class="topbar">
+        <a class="mobile-brand" href="./index.html" aria-label="AcaRoom 홈"><img src="./assets/icons/logo.svg" width="32" height="32" alt=""><strong>AcaRoom<span class="brand-dot">.</span></strong></a>
+        <div class="topbar-copy"><p class="topbar-kicker">A LITTLE PRACTICE, A LITTLE HARMONY</p><p class="topbar-title">우리의 목소리가 모이는 곳</p></div>
+        <div class="topbar-actions" id="topbar-actions"></div>
+      </header>
+      <main id="app" class="page" tabindex="-1" aria-live="off">
+        <div class="loading-state" role="status">연습실을 준비하고 있어요…</div>
+      </main>
+      <footer class="app-footer">AcaRoom · 오늘의 연습이 내일의 하모니로.</footer>
+    </div>
+  </div>
+  <nav class="bottom-nav" id="mobile-nav" aria-label="모바일 내비게이션"></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-title">
+    <h2 id="share-title">연습 링크 공유</h2><p>아래 주소를 복사해서 팀원에게 보내 주세요.</p>
+    <label for="share-url">공유 주소</label><input class="share-input" id="share-url" readonly>
+    <form method="dialog"><button class="button primary" autofocus>닫기</button></form>
+  </dialog>
+  <noscript><p class="notice">AcaRoom을 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('app').textContent = '이 앱은 GitHub Pages 또는 HTTP 환경에서 실행해 주세요. 로컬 미리보기 방법은 README.md를 참고해 주세요.';
+    } else {
+      const script = document.createElement('script'); script.type = 'module'; script.src = './js/app.js'; document.body.append(script);
+    }
+  </script>
+</body>
+</html>

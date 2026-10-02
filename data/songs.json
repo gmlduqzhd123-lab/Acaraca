@@ -1,0 +1,1394 @@
+{
+  "version": 1,
+  "source_note": {
+    "extractedAt": "2026-10-01",
+    "source": "사용자 제공 Padlet PDF export (아카라카 연습실, 67쪽)",
+    "boardUrl": "https://padlet.com/gmlduqzhd12/padlet-qbvozon2f0zwvy8e",
+    "realSongCount": 29,
+    "demoSongCount": 1,
+    "extraction": "29개 곡/편성과 직접 YouTube URL 2개를 추출했습니다. Butterfly ALTO만 성부가 명확하여 연결했습니다. 보헤미안 랩소디 번호 파트 URL은 source.unknownPartUrls와 메모에 보존합니다. 다른 카드에는 Padlet 게시물 주소만 남아 있어 직접 YouTube URL은 빈 값입니다. 원 게시판은 추출 시 HTTP 403 응답이었습니다.",
+    "initialClassification": "장르, 난이도, 상태는 앱 사용을 위한 초기 관리값이며 팀의 실제 분류나 연습 상태가 아닙니다. 관리자가 수정해 주세요. 아티스트는 PDF에 표시된 공연자/원곡자/편곡 표기를 그대로 사용하고 확인되지 않은 값은 비워 두었습니다.",
+    "numberedParts": "번호만 있는 파트는 특정 성부로 추정 배정하지 않았습니다. source.numberedParts 및 메모를 확인해 성부를 배정해 주세요.",
+    "artwork": "앱과 함께 만든 추상 SVG 커버입니다. 원곡 앨범 아트나 아티스트 사진이 아닙니다.",
+    "runtime": "이 앱은 Padlet 링크에 의존하지 않고 이 JSON만 읽습니다."
+  },
+  "songs": [
+    {
+      "id": "bohemian-rhapsody-5",
+      "title": "보헤미안 랩소디 · 5인용",
+      "artist": "",
+      "category": "POP",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "5 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "Padlet PDF 1–2쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          1,
+          2
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "bohemian-rhapsody-6",
+      "title": "보헤미안 랩소디 · 6인용",
+      "artist": "Pentatonix",
+      "category": "POP",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "6 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "Padlet PDF 3–5쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요. 6인용 표기와 달리 PDF의 번호 파트 영상은 1~5번만 확인되어 여섯 번째 성부는 원본 확인이 필요합니다.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          3,
+          4,
+          5
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "mujogeon",
+      "title": "무조건",
+      "artist": "",
+      "category": "기타",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "Padlet PDF 5–7쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          5,
+          6,
+          7
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "short-hair",
+      "title": "단발머리",
+      "artist": "",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "Padlet PDF 7–8쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          7,
+          8
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "disney-medley-7",
+      "title": "디즈니 메들리 · 7부",
+      "artist": "",
+      "category": "OST",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "7 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-record.svg",
+      "memo": "Padlet PDF 8–11쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번, 7번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    },
+    {
+      "id": "disney-medley",
+      "title": "디즈니 메들리",
+      "artist": "EXIT · Heeju Lee",
+      "category": "OST",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "6 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "Padlet PDF 11–14쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          11,
+          12,
+          13,
+          14
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "first-impression",
+      "title": "첫인상",
+      "artist": "아카라카",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "Padlet PDF 14–16쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          14,
+          15,
+          16
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "tobacco-shop-girl",
+      "title": "담배가게 아가씨",
+      "artist": "EXIT + ISYS",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "Padlet PDF 16–18쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          16,
+          17,
+          18
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "aloha",
+      "title": "아로하",
+      "artist": "아카라카",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "Padlet PDF 18–20쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          18,
+          19,
+          20
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "tayo-pororo",
+      "title": "타요 뽀로로",
+      "artist": "EXIT",
+      "category": "동요",
+      "difficulty": 1,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-record.svg",
+      "memo": "Padlet PDF 20–22쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          20,
+          21,
+          22
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "run-the-sky",
+      "title": "하늘을 달리다",
+      "artist": "A-Five",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "Padlet PDF 22–25쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          22,
+          23,
+          24,
+          25
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "acaroom-opening",
+      "title": "아카라카 오프닝",
+      "artist": "아카라카",
+      "category": "기타",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "6 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "Padlet PDF 25–27쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          25,
+          26,
+          27
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "speechless",
+      "title": "Speechless",
+      "artist": "Narin",
+      "category": "OST",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "6 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "Padlet PDF 27–30쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          27,
+          28,
+          29,
+          30
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "in-your-arms",
+      "title": "그대 내 품에",
+      "artist": "EXIT",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "5 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "Padlet PDF 30–33쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          30,
+          31,
+          32,
+          33
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "happy-school",
+      "title": "행복한 학교 · 혼성",
+      "artist": "별의별",
+      "category": "동요",
+      "difficulty": 1,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-record.svg",
+      "memo": "Padlet PDF 33–35쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          33,
+          34,
+          35
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "go-to-school",
+      "title": "학교 가자",
+      "artist": "별의별",
+      "category": "동요",
+      "difficulty": 1,
+      "status": "archive",
+      "arrangement": "5 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "Padlet PDF 35–37쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          35,
+          36,
+          37
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "well-done-today",
+      "title": "수고했어 오늘도",
+      "artist": "옥상달빛 · 편곡 김승호",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "6 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "Padlet PDF 37–40쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          37,
+          38,
+          39,
+          40
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "bohemian-rhapsody",
+      "title": "보헤미안 랩소디",
+      "artist": "Pentatonix",
+      "category": "POP",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "5 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "Padlet PDF 40–42쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요. PDF 42쪽의 미확인 4번 파트 주소: https://youtu.be/EhAkeFrod60 (카드 제목은 3번 파트로 표시됩니다). 어떤 성부인지 먼저 확인해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          40,
+          41,
+          42
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "unknownPartUrls": [
+          {
+            "url": "https://youtu.be/EhAkeFrod60",
+            "page": 42,
+            "originalLabel": "4번 파트 위주",
+            "reason": "번호만 있고 성부 이름은 미확인. 같은 페이지 카드 제목은 3번 파트로 표시되어 원본 확인 필요."
+          }
+        ]
+      }
+    },
+    {
+      "id": "daft-punk",
+      "title": "Daft Punk",
+      "artist": "Pentatonix",
+      "category": "POP",
+      "difficulty": 3,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "Padlet PDF 42–44쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          42,
+          43,
+          44
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "dansori",
+      "title": "단소리",
+      "artist": "",
+      "category": "기타",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-record.svg",
+      "memo": "Padlet PDF 44–46쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          44,
+          45,
+          46
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "isnt-she-lovely",
+      "title": "Isn't She Lovely",
+      "artist": "EXIT",
+      "category": "POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "Padlet PDF 46–48쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          46,
+          47,
+          48
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "lets-travel",
+      "title": "여행을 떠나요",
+      "artist": "아카라카",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "Padlet PDF 48–50쪽에서 가져온 곡입니다. 성부 이름이 원본에 명시되어 있습니다. 아직 주소가 없는 파트는 원본 YouTube 링크를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": {
+          "type": "video",
+          "url": ""
+        },
+        "alto": {
+          "type": "video",
+          "url": ""
+        },
+        "tenor": {
+          "type": "video",
+          "url": ""
+        },
+        "baritone": null,
+        "bass": {
+          "type": "video",
+          "url": ""
+        },
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          48,
+          49,
+          50
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "verifiedPartNames": [
+          "soprano",
+          "alto",
+          "tenor",
+          "bass"
+        ]
+      }
+    },
+    {
+      "id": "love-song-medley",
+      "title": "러브송 메들리",
+      "artist": "EXIT",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "Padlet PDF 50–52쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          50,
+          51,
+          52
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "l-o-v-e",
+      "title": "L.O.V.E.",
+      "artist": "MayTree",
+      "category": "JAZZ",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "5 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "Padlet PDF 52–54쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          52,
+          53,
+          54
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "old-pop-medley",
+      "title": "올드팝 메들리",
+      "artist": "아카라카",
+      "category": "POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "4 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-record.svg",
+      "memo": "Padlet PDF 54–56쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          54,
+          55,
+          56
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "beautiful-world",
+      "title": "아름다운 세상",
+      "artist": "아카라카",
+      "category": "K-POP",
+      "difficulty": 1,
+      "status": "archive",
+      "arrangement": "5 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "Padlet PDF 56–59쪽에서 가져온 곡입니다. 성부 이름이 원본에 명시되어 있습니다. 아직 주소가 없는 파트는 원본 YouTube 링크를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": {
+          "type": "video",
+          "url": ""
+        },
+        "alto": {
+          "type": "video",
+          "url": ""
+        },
+        "tenor": {
+          "type": "video",
+          "url": ""
+        },
+        "baritone": {
+          "type": "video",
+          "url": ""
+        },
+        "bass": {
+          "type": "video",
+          "url": ""
+        },
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          56,
+          57,
+          58,
+          59
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "verifiedPartNames": [
+          "soprano",
+          "alto",
+          "tenor",
+          "baritone",
+          "bass"
+        ]
+      }
+    },
+    {
+      "id": "butterfly",
+      "title": "Butterfly",
+      "artist": "아카라카",
+      "category": "OST",
+      "difficulty": 2,
+      "status": "practice",
+      "arrangement": "5 Voices",
+      "tags": [
+        "Padlet 자료",
+        "ALTO",
+        "주소 일부 확인"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "Padlet PDF 60쪽에 직접 적힌 ALTO(2번 파트) 주소를 등록했습니다. 다른 성부와 FULL 영상은 원본 YouTube 주소 확인 후 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": {
+          "type": "video",
+          "url": ""
+        },
+        "alto": {
+          "type": "video",
+          "url": "https://youtu.be/eXE_wSsD330?si=Lot1XzCd9wyRO2Wm"
+        },
+        "tenor": {
+          "type": "video",
+          "url": ""
+        },
+        "baritone": {
+          "type": "video",
+          "url": ""
+        },
+        "bass": {
+          "type": "video",
+          "url": ""
+        },
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          59,
+          60,
+          61
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "verifiedPartNames": [
+          "soprano",
+          "alto",
+          "tenor",
+          "baritone",
+          "bass"
+        ],
+        "verifiedMedia": {
+          "alto": {
+            "page": 60,
+            "originalLabel": "Butterfly 알토(2번 파트) 위주[볼륨업]"
+          }
+        }
+      }
+    },
+    {
+      "id": "cherry-blossom-ending",
+      "title": "벚꽃 엔딩",
+      "artist": "두왑사운즈",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "archive",
+      "arrangement": "5 Parts",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "Padlet PDF 61–64쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요. 원본의 참고 공연 카드 제목이 Youth로 표시되어 곡명과 일치하는지도 확인해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          61,
+          62,
+          63,
+          64
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "love-love",
+      "title": "사랑해 사랑해",
+      "artist": "다이아",
+      "category": "K-POP",
+      "difficulty": 1,
+      "status": "archive",
+      "arrangement": "5 Voices",
+      "tags": [
+        "Padlet 자료",
+        "주소 확인 필요"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "Padlet PDF 64–66쪽에서 가져온 곡입니다. 성부 이름이 원본에 명시되어 있습니다. 아직 주소가 없는 파트는 원본 YouTube 링크를 확인한 뒤 등록해 주세요.",
+      "videos": {
+        "lead": null,
+        "soprano": {
+          "type": "video",
+          "url": ""
+        },
+        "alto": {
+          "type": "video",
+          "url": ""
+        },
+        "tenor": {
+          "type": "video",
+          "url": ""
+        },
+        "baritone": {
+          "type": "video",
+          "url": ""
+        },
+        "bass": {
+          "type": "video",
+          "url": ""
+        },
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": ""
+        }
+      },
+      "source": {
+        "kind": "padlet-pdf",
+        "pages": [
+          64,
+          65,
+          66
+        ],
+        "numberedParts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "verifiedPartNames": [
+          "soprano",
+          "alto",
+          "tenor",
+          "baritone",
+          "bass"
+        ]
+      }
+    },
+    {
+      "id": "youtube-player-demo",
+      "title": "YouTube 플레이어 테스트 · 데모",
+      "artist": "YouTube Developers",
+      "category": "기타",
+      "difficulty": 1,
+      "status": "archive",
+      "arrangement": "공식 플레이어 예제",
+      "tags": [
+        "데모",
+        "공식 테스트 영상"
+      ],
+      "thumbnail": "./assets/images/fallback.svg",
+      "memo": "YouTube IFrame Player API 공식 문서에서 제공하는 공개 예제 영상입니다. 아카펠라 연습 음원이 아닙니다. 재생과 공유 기능을 확인할 때 사용하세요.",
+      "videos": {
+        "lead": null,
+        "soprano": null,
+        "alto": null,
+        "tenor": null,
+        "baritone": null,
+        "bass": null,
+        "vp": null,
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=M7lc1UVf-VE"
+        }
+      },
+      "source": {
+        "kind": "official-developer-demo",
+        "url": "https://developers.google.com/youtube/iframe_api_reference",
+        "verifiedAt": "2026-10-01"
+      }
+    }
+  ]
+}

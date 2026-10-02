@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#146458">
+  <meta name="description" content="AcaRoom 곡과 파트별 YouTube 자료를 편집하고 songs.json 파일로 다운로드하세요.">
+  <title>데이터 편집기 · AcaRoom</title>
+  <link rel="icon" href="./assets/icons/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/admin.css">
+</head>
+<body class="admin-body">
+  <a class="admin-skip" href="#editor-main">본문으로 이동</a>
+  <header class="admin-header">
+    <a class="admin-brand" href="./index.html" aria-label="AcaRoom 연습실로 돌아가기"><span class="admin-brand-mark" aria-hidden="true">a.</span><span>AcaRoom<small>데이터 편집기</small></span></a>
+    <a class="admin-button admin-button-secondary" href="./index.html">연습실로 돌아가기 <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="editor-main" class="admin-main">
+    <section class="admin-intro" aria-labelledby="editor-title">
+      <div><p class="admin-eyebrow">LIBRARY STUDIO</p><h1 id="editor-title">우리의 연습곡을 정리해요.</h1><p>곡과 파트 자료를 편집한 뒤 <strong>songs.json</strong>을 다운로드하세요.</p></div>
+      <span id="document-state" class="admin-state">불러오는 중</span>
+    </section>
+    <div id="file-warning" class="admin-notice admin-notice-warning" role="alert" hidden>이 앱은 GitHub Pages 또는 HTTP 환경에서 실행해 주세요. 파일을 더블클릭하면 편집기 스크립트와 JSON 불러오기가 제한될 수 있습니다. README의 로컬 미리보기 방법을 확인해 주세요.</div>
+    <noscript><p class="admin-notice admin-notice-warning">데이터 편집기는 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 허용한 뒤 다시 열어 주세요.</p></noscript>
+    <div id="admin-message" class="admin-notice" role="status" aria-live="polite" hidden></div>
+    <section class="admin-toolbar" aria-label="데이터 파일 관리">
+      <div class="admin-toolbar-group">
+        <button id="load-current" class="admin-button admin-button-secondary" type="button">현재 songs.json 불러오기</button>
+        <label class="admin-button admin-button-secondary admin-file-button" for="import-file">JSON 파일 가져오기<input id="import-file" type="file" accept=".json,application/json"></label>
+      </div>
+      <div class="admin-toolbar-group">
+        <button id="validate-data" class="admin-button admin-button-secondary" type="button">데이터 검증</button>
+        <button id="preview-json" class="admin-button admin-button-secondary" type="button">JSON 미리보기</button>
+        <button id="download-json" class="admin-button admin-button-primary" type="button">songs.json 다운로드 <span aria-hidden="true">↓</span></button>
+      </div>
+    </section>
+    <p id="source-info" class="admin-source">data/songs.json을 불러오고 있습니다.</p>
+    <div class="admin-workspace">
+      <section class="admin-panel admin-library" aria-labelledby="library-title">
+        <div class="admin-panel-heading"><h2 id="library-title">곡 목록 <span id="song-count" class="admin-count">0</span></h2><button id="add-song" class="admin-button admin-button-primary" type="button">+ 새 곡</button></div>
+        <label class="admin-search-label" for="song-search">곡 찾기</label><input id="song-search" class="admin-input" type="search" placeholder="곡명, 아티스트, ID 검색" autocomplete="off">
+        <ol id="song-list" class="admin-song-list" aria-label="편집할 곡 목록"></ol>
+        <p id="list-empty" class="admin-empty">첫 번째 연습곡을 추가해 보세요.</p>
+      </section>
+      <section class="admin-panel admin-editor" aria-labelledby="form-title">
+        <div class="admin-panel-heading"><div><p class="admin-eyebrow">SONG DETAILS</p><h2 id="form-title">새 곡 추가</h2></div><span id="form-state" class="admin-form-state">새 곡</span></div>
+        <form id="song-form">
+          <div class="admin-field-grid">
+            <label class="admin-field" for="song-id">곡 ID <span class="admin-required">필수</span><input id="song-id" class="admin-input" name="id" required autocomplete="off" aria-describedby="id-help"><small id="id-help">공유 링크에 쓰이는 고유 ID입니다. 예: night-yokan</small></label>
+            <label class="admin-field" for="song-title">곡명 <span class="admin-required">필수</span><input id="song-title" class="admin-input" name="title" required autocomplete="off"></label>
+            <label class="admin-field" for="song-artist">아티스트<input id="song-artist" class="admin-input" name="artist" autocomplete="off"></label>
+            <label class="admin-field" for="song-category">장르<input id="song-category" class="admin-input" name="category" list="genre-options" placeholder="예: K-POP, JAZZ" autocomplete="off"><datalist id="genre-options"></datalist></label>
+            <label class="admin-field" for="song-difficulty">난이도<select id="song-difficulty" class="admin-input" name="difficulty" required><option value="1">초급</option><option value="2" selected>중급</option><option value="3">고급</option></select></label>
+            <label class="admin-field" for="song-status">상태<select id="song-status" class="admin-input" name="status" required><option value="practice">현재 연습</option><option value="complete">완료</option><option value="archive">보관</option></select></label>
+            <label class="admin-field" for="song-arrangement">편성<input id="song-arrangement" class="admin-input" name="arrangement" placeholder="예: 5 Voices" autocomplete="off"></label>
+            <label class="admin-field" for="song-tags">태그<input id="song-tags" class="admin-input" name="tags" placeholder="쉼표로 구분: KPOP, 5voices" autocomplete="off"></label>
+            <label class="admin-field admin-field-wide" for="song-thumbnail">썸네일 URL<input id="song-thumbnail" class="admin-input" name="thumbnail" placeholder="https://… 또는 ./assets/images/…" autocomplete="off"><small>비워두면 앱의 기본 썸네일을 사용합니다.</small></label>
+            <label class="admin-field admin-field-wide" for="song-memo">연습 메모<textarea id="song-memo" class="admin-input" name="memo" rows="3" placeholder="팀과 공유할 연습 포인트를 적어 주세요."></textarea></label>
+          </div>
+          <div class="admin-media-heading"><h3>파트별 연습 자료</h3><p>영상은 video, 재생목록은 playlist를 선택하세요. 없는 파트의 URL은 비워두세요.</p></div>
+          <div id="media-fields" class="admin-media-grid"></div>
+          <div class="admin-form-actions"><button id="save-song" class="admin-button admin-button-primary" type="submit">곡 추가</button><button id="reset-form" class="admin-button admin-button-secondary" type="button">입력 초기화</button></div>
+        </form>
+      </section>
+    </div>
+    <section id="validation-panel" class="admin-panel admin-validation" aria-labelledby="validation-title" hidden>
+      <div class="admin-panel-heading"><h2 id="validation-title">데이터 검증</h2><span id="validation-state" class="admin-state"></span></div>
+      <p id="validation-summary"></p><ul id="validation-messages" class="admin-validation-messages"></ul>
+    </section>
+    <section id="json-panel" class="admin-panel admin-json" aria-labelledby="json-title" hidden>
+      <div class="admin-panel-heading"><h2 id="json-title">JSON 미리보기</h2><button id="close-preview" class="admin-button admin-button-secondary" type="button">미리보기 닫기</button></div>
+      <p>다운로드되는 전체 데이터입니다. 가져온 추가 메타데이터도 보존합니다.</p><pre id="json-content" tabindex="0" aria-label="내보낼 songs.json 내용"></pre>
+    </section>
+    <footer class="admin-footer"><span>파일을 준비하면 연습실이 달라집니다.</span><p>다운로드한 파일로 GitHub 저장소의 <code>data/songs.json</code>을 교체하세요. 편집 내용은 다운로드하기 전까지 이 화면에만 유지됩니다.</p></footer>
+  </main>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('file-warning').hidden = false;
+      document.getElementById('source-info').textContent = 'HTTP 환경에서 편집기를 다시 열어 주세요.';
+      document.getElementById('document-state').textContent = 'HTTP 환경 필요';
+      document.querySelectorAll('button, input, select, textarea').forEach(control => { control.disabled = true; });
+    } else {
+      const script = document.createElement('script'); script.type = 'module'; script.src = './js/admin.js'; document.body.append(script);
+    }
+  </script>
+</body>
+</html>

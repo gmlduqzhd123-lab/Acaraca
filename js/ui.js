@@ -1,0 +1,73 @@
+export function el(tag, attributes = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attributes)) {
+    if (value == null || value === false) continue;
+    if (key === 'class') node.className = value;
+    else if (key === 'text') node.textContent = value;
+    else if (key.startsWith('on') && typeof value === 'function') node.addEventListener(key.slice(2), value);
+    else if (['checked', 'selected', 'disabled', 'hidden', 'value'].includes(key)) node[key] = value;
+    else node.setAttribute(key, value === true ? '' : String(value));
+  }
+  children.flat(Infinity).forEach(child => {
+    if (child != null && child !== false) node.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  });
+  return node;
+}
+
+const paths = {
+  home: ['M3 10 12 3l9 7', 'M5 9v12h5v-7h4v7h5V9'],
+  library: ['M4 4h4v16H4z', 'M11 4h4v16h-4z', 'm18 4 4 15'],
+  heart: ['M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z'],
+  clock: ['M12 8v5l3 2', 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0'],
+  settings: ['M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8', 'm9 3-1 3-3 1-2 3 2 2-1 3 2 3 3-1 3 2 3-2 3 1 2-3-1-3 2-2-2-3-3-1-1-3Z'],
+  search: ['M21 21l-5-5', 'M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0'],
+  play: ['m9 5 12 7-12 7Z'],
+  arrow: ['M5 12h14', 'm13 6 6 6-6 6'],
+  back: ['M19 12H5', 'm11 6-6 6 6 6'],
+  share: ['M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6', 'M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6', 'M18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6', 'm8.5 10.5 7-4', 'm8.5 13.5 7 4'],
+  mic: ['M9 4a3 3 0 0 1 6 0v8a3 3 0 0 1-6 0Z', 'M5 10v2a7 7 0 0 0 14 0v-2', 'M12 19v3', 'M8 22h8'],
+  shuffle: ['M3 6h3c5 0 7 12 12 12h3', 'm18 15 3 3-3 3', 'M3 18h3c2 0 3-2 4-4', 'M14 9c1-2 2-3 4-3h3', 'm18 3 3 3-3 3'],
+  sun: ['M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8', 'M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1'],
+  check: ['m5 12 4 4L19 6'],
+  external: ['M15 3h6v6', 'm21 3-9 9', 'M10 3H3v18h18v-7'],
+  close: ['m6 6 12 12', 'm18 6-12 12']
+};
+
+export function icon(name) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  for (const [key, value] of Object.entries({viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.7', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'icon', 'aria-hidden': 'true'})) svg.setAttribute(key, value);
+  for (const d of paths[name] || paths.play) {
+    const path = document.createElementNS(svg.namespaceURI, 'path'); path.setAttribute('d', d); svg.append(path);
+  }
+  return svg;
+}
+
+export function button(label, onClick, className = 'button secondary', iconName = null, attributes = {}) {
+  return el('button', {type: 'button', class: className, onclick: onClick, ...attributes}, iconName && icon(iconName), label);
+}
+
+let toastTimeout;
+export function toast(message) {
+  const node = document.getElementById('toast'); node.textContent = message; node.hidden = false;
+  clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { node.hidden = true; }, 4500);
+}
+
+export function safeImageUrl(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  try {
+    const url = new URL(value, new URL('../', import.meta.url));
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return null;
+    return url.href;
+  } catch { return null; }
+}
+
+export function cover(song, className = 'song-cover') {
+  const fallback = new URL('../assets/images/fallback.svg', import.meta.url).href;
+  const image = el('img', {class: className, src: safeImageUrl(song.thumbnail) || fallback, alt: `${song.title} 커버`, loading: 'lazy', decoding: 'async', width: '600', height: '600'});
+  image.addEventListener('error', () => { if (image.src !== fallback) image.src = fallback; }, {once: true});
+  return image;
+}
+
+export function emptyState(title, description, action = null) {
+  return el('div', {class: 'empty-state'}, icon('library'), el('h3', {text: title}), el('p', {text: description}), action);
+}

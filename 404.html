@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>페이지를 찾을 수 없어요 · AcaRoom</title>
+  <style>
+    :root { color-scheme: light; font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif; color: #203c34; background: #f7f8f2; }
+    * { box-sizing: border-box; }
+    body { min-height: 100svh; margin: 0; display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 480px); padding: 42px 28px; border: 1px solid #dce3d7; border-radius: 24px; background: #fffefa; }
+    .brand { font-size: 22px; font-weight: 800; letter-spacing: -1px; }
+    .code { margin: 44px 0 12px; color: #6e8572; font-size: 14px; letter-spacing: 3px; }
+    h1 { font-size: clamp(23px, 5vw, 30px); line-height: 1.4; letter-spacing: -1px; }
+    p { line-height: 1.8; color: #627268; }
+    a { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 24px; margin-top: 14px; background: #194d46; color: #fff; border-radius: 12px; font-weight: 700; text-decoration: none; }
+    a:focus-visible { outline: 3px solid #819970; outline-offset: 5px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">AcaRoom.</div>
+    <p class="code">404 · PAGE NOT FOUND</p>
+    <h1>이 페이지를 찾을 수 없어요.</h1>
+    <p>주소가 바뀌었거나 잘못 입력되었을 수 있어요.<br>연습실 홈에서 다시 곡을 찾아보세요.</p>
+    <a id="home-link" href="./index.html">연습실 홈으로 돌아가기</a>
+    <noscript><p>저장소의 기본 주소로 돌아가 주세요. GitHub Pages 프로젝트 사이트라면 <code>username.github.io/repo-name/</code> 주소입니다.</p></noscript>
+  </main>
+  <script>
+    // Locate this project's own mark in ancestor directories, then update only the home link.
+    // This also works when GitHub serves 404.html for a deeply nested unknown URL.
+    (async () => {
+      const link = document.getElementById('home-link');
+      let base = new URL('./', location.href);
+      while (base.origin === location.origin) {
+        try {
+          const response = await fetch(new URL('assets/icons/logo.svg', base), { cache: 'no-cache' });
+          if (response.ok && (await response.text()).includes('<title>AcaRoom</title>')) {
+            link.href = new URL('index.html', base).href;
+            return;
+          }
+        } catch { /* Keep the usable relative link if the network is unavailable. */ }
+        const parent = new URL('../', base);
+        if (parent.pathname === base.pathname) break;
+        base = parent;
+      }
+    })();
+  </script>
+</body>
+</html>
