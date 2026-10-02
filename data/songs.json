@@ -1647,9 +1647,7 @@
       "status": "practice",
       "arrangement": "5 Voices",
       "tags": [
-        "Padlet 자료",
-        "ALTO",
-        "주소 일부 확인"
+        "Padlet 자료"
       ],
       "thumbnail": "https://img.youtube.com/vi/18SkVp28X_A/hqdefault.jpg",
       "memo": "Padlet PDF 60쪽에 직접 적힌 ALTO(2번 파트) 주소를 등록했습니다. 다른 성부와 FULL 영상은 원본 YouTube 주소 확인 후 등록해 주세요.",
@@ -1659,10 +1657,7 @@
           "type": "video",
           "url": ""
         },
-        "alto": {
-          "type": "video",
-          "url": "https://youtu.be/eXE_wSsD330?si=Lot1XzCd9wyRO2Wm"
-        },
+        "alto": null,
         "tenor": {
           "type": "video",
           "url": ""
