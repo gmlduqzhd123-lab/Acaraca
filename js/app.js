@@ -55,6 +55,7 @@ function refreshChrome() {
     el('p', {class: 'sidebar-tip', text: '서로 다른 목소리, 하나의 하모니.'})
   );
   document.getElementById('topbar-actions').replaceChildren(
+    button('+ 곡 추가', () => { window.location.href = './admin.html?action=new'; }, 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
     button('', () => navigate({tab: 'settings'}), 'icon-button', 'settings', {'aria-label': '설정 열기'})
   );
@@ -182,7 +183,17 @@ function renderHome() {
 }
 
 function renderBrowse(favoritesOnly = false) {
-  app.append(el('div', {class: 'page-heading'}, el('p', {class: 'eyebrow', text: favoritesOnly ? 'YOUR FAVORITES' : 'THE PRACTICE LIBRARY'}), el('h1', {text: favoritesOnly ? '자꾸 부르고 싶은 곡' : '어떤 하모니를 만들어 볼까요?'}), el('p', {text: favoritesOnly ? '마음에 담아둔 곡을 한곳에서 만나보세요.' : '곡, 아티스트, 파트를 검색하고 나에게 맞는 연습을 찾아보세요.'})));
+  const pageHeading = el('div', {class: 'page-heading'},
+    el('div', {class: 'section-heading'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: favoritesOnly ? 'YOUR FAVORITES' : 'THE PRACTICE LIBRARY'}),
+        el('h1', {text: favoritesOnly ? '자꾸 부르고 싶은 곡' : '어떤 하모니를 만들어 볼까요?'}),
+        el('p', {text: favoritesOnly ? '마음에 담아둔 곡을 한곳에서 만나보세요.' : '곡, 아티스트, 파트를 검색하고 나에게 맞는 연습을 찾아보세요.'})
+      ),
+      !favoritesOnly && el('a', {class: 'button primary small', href: './admin.html?action=new', text: '+ 새 곡 / 영상 추가'})
+    )
+  );
+  app.append(pageHeading);
   const filterContainer = el('div', {class: 'filter-panel'});
   const results = el('div', {id: 'song-results', 'aria-live': 'polite'});
   const base = () => favoritesOnly ? state.songs.filter(song => state.favorites.has(song.id)) : state.songs;
@@ -217,7 +228,11 @@ function renderDetail(song) {
     el('div', {class: 'detail-content'}, el('p', {class: 'eyebrow', text: 'FIND YOUR VOICE'}), el('h1', {text: song.title}), el('p', {class: 'detail-artist', text: song.artist || '아티스트 미등록'}),
       el('div', {class: 'detail-meta'}, [song.category, levels[song.difficulty], song.arrangement, statuses[song.status]].filter(Boolean).map(text => el('span', {class: 'badge', text}))),
       el('div', {class: 'tag-list'}, array(song.tags).map(tag => el('span', {class: 'tag', text: `#${tag}`}))),
-      el('div', {class: 'detail-actions'}, favoriteButton(song), button('곡 공유', () => share(song), 'button secondary', 'share')),
+      el('div', {class: 'detail-actions'},
+        favoriteButton(song),
+        button('곡 공유', () => share(song), 'button secondary', 'share'),
+        button('영상 / 정보 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external')
+      ),
       preferred && progressBar(percentage(song.id, preferred), `${PARTS[preferred]} 연습 진행도`)
     )
   );
@@ -227,7 +242,8 @@ function renderDetail(song) {
     [el('strong', {text: PARTS[part]}), el('span', {class: 'part-subtitle', text: part === state.myPart ? 'MY PART · 바로 연습' : part === 'full' ? '모든 목소리를 함께' : '파트별 연습'}), icon('play')],
     () => startPractice(song, part), `part-button${part === state.myPart ? ' my-part' : ''}`,
     null, {'aria-label': `${PARTS[part]} ${part === state.myPart ? '내 파트 ' : ''}연습 시작`}
-  ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', el('a', {href: './admin.html', class: 'button secondary', text: '데이터 편집기 열기'})));
+  ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', el('a', {href: `./admin.html?song=${encodeURIComponent(song.id)}`, class: 'button secondary', text: '영상 등록하기'})),
+  button('+ 영상 추가 / 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'text-button', 'external'));
   app.append(partsSection);
   const invalid = Object.entries(object(song.videos)).filter(([, media]) => media?.url?.trim() && !parseYouTube(media).ok);
   if (invalid.length) app.append(el('p', {class: 'notice warning', text: `${invalid.map(([part]) => PARTS[part] || part).join(', ')} 영상 주소를 확인해 주세요. 올바른 YouTube 주소가 아니어서 연습 버튼을 표시하지 않았습니다.`}));
@@ -260,8 +276,12 @@ function renderPractice(song, part, record = true) {
   const playerHost = el('div', {class: 'player-panel'});
   const playerLayout = el('div', {class: 'practice-layout'}, playerHost);
   state.player = createPlayer(playerHost, song.videos[part], `${song.title} · ${PARTS[part]} 연습`);
-  const actions = el('div', {class: 'player-actions'}, button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
-    favoriteButton(song), button('파트 공유', () => share(song, part), 'button secondary', 'share'));
+  const actions = el('div', {class: 'player-actions'},
+    button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
+    favoriteButton(song),
+    button('파트 공유', () => share(song, part), 'button secondary', 'share'),
+    button('영상 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external')
+  );
   const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => startPractice(song, parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
     el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => startPractice(song, parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
   app.append(playerLayout, actions, switches);

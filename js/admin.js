@@ -244,6 +244,19 @@ function readFormSong() {
     const oldMedia = isRecord(oldVideos[part]) ? oldVideos[part] : null;
     song.videos[part] = url || oldMedia ? { ...(oldMedia || {}), type, url } : null;
   }
+  if (!song.thumbnail) {
+    for (const part of ['full', 'part1', ...Object.keys(PARTS)]) {
+      const v = song.videos[part];
+      if (v && v.url) {
+        const parsed = parseYouTube(v);
+        if (parsed.ok && parsed.videoId) {
+          song.thumbnail = `https://img.youtube.com/vi/${parsed.videoId}/hqdefault.jpg`;
+          $(`song-thumbnail`).value = song.thumbnail;
+          break;
+        }
+      }
+    }
+  }
   return song;
 }
 
@@ -327,7 +340,22 @@ function replaceDocument(raw, source) {
   state.formDirty = false;
   $('song-search').value = '';
   $('json-panel').hidden = true;
-  fillForm(state.document.songs.length ? 0 : null);
+  
+  const params = new URLSearchParams(location.search);
+  const targetSongId = params.get('song');
+  const action = params.get('action');
+  if (action === 'new') {
+    fillForm(null);
+  } else if (targetSongId) {
+    const foundIdx = state.document.songs.findIndex((s) => s && s.id === targetSongId);
+    fillForm(foundIdx !== -1 ? foundIdx : (state.document.songs.length ? 0 : null));
+    if (foundIdx !== -1 && window.matchMedia('(max-width: 900px)').matches) {
+      $('song-form').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+  } else {
+    fillForm(state.document.songs.length ? 0 : null);
+  }
+
   const result = getValidation();
   renderValidation(result);
   notice(result.errors.length ? `${state.document.songs.length}개 항목을 가져왔습니다. 검증 오류가 있는 항목도 보존했으니 수정 후 다운로드하세요.` : `${state.document.songs.length}곡을 불러왔습니다. 곡을 선택해 자료를 편집하세요.`, result.errors.length ? 'warning' : 'success');
