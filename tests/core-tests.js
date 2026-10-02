@@ -78,6 +78,14 @@ export function runCoreTests() {
   });
   check('내 파트 우선 선택', () => preferredPart(songs[0], 'alto') === 'alto');
   check('없는 내 파트는 FULL 선택', () => preferredPart(songs[0], 'bass') === 'full');
+  check('번호 파트와 성부 이름 상호 대응', () => {
+    const songWithNumbers = { videos: { part1: validVideo, part2: validVideo } };
+    return preferredPart(songWithNumbers, 'soprano') === 'part1' && preferredPart(songWithNumbers, 'alto') === 'part2';
+  });
+  check('번호 파트 검색 및 필터링', () => {
+    const testList = [{ id: 'test1', title: '테스트곡', videos: { part1: validVideo } }];
+    return filterSongs(testList, { part: 'part1' }).length === 1 && filterSongs(testList, { query: '1번 파트' }).length === 1;
+  });
   check('미디어 없는 곡은 null', () => preferredPart({ videos: {} }, 'alto') === null);
   check('한글 검색', () => filterSongs(songs, { query: ' 밤양 ' }).length === 1);
   check('영문 대소문자 검색', () => filterSongs(songs, { query: 'bibi' }).length === 1);

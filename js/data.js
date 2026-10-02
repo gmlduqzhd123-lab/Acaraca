@@ -2,7 +2,10 @@ import { parseYouTube } from './player.js';
 
 export const PARTS = Object.freeze({
   lead: 'LEAD', soprano: 'SOP', alto: 'ALTO', tenor: 'TENOR',
-  baritone: 'BARI', bass: 'BASS', vp: 'VP', full: 'FULL',
+  baritone: 'BARI', bass: 'BASS', vp: 'VP',
+  part1: '1번 파트', part2: '2번 파트', part3: '3번 파트',
+  part4: '4번 파트', part5: '5번 파트', part6: '6번 파트', part7: '7번 파트',
+  full: 'FULL',
 });
 
 export const CHECKLIST = Object.freeze([
@@ -155,7 +158,26 @@ export function availableParts(song) {
 
 export function preferredPart(song, myPart) {
   const parts = availableParts(song);
-  if (parts.includes(myPart)) return myPart;
+  if (!parts.length) return null;
+  if (myPart && parts.includes(myPart)) return myPart;
+  const partMap = {
+    part1: ['soprano', 'lead'],
+    part2: ['alto'],
+    part3: ['tenor'],
+    part4: ['baritone', 'bass'],
+    part5: ['bass'],
+    soprano: ['part1'],
+    lead: ['part1'],
+    alto: ['part2'],
+    tenor: ['part3'],
+    baritone: ['part4'],
+    bass: ['part5', 'part4'],
+  };
+  if (myPart && partMap[myPart]) {
+    for (const alt of partMap[myPart]) {
+      if (parts.includes(alt)) return alt;
+    }
+  }
   if (parts.includes('full')) return 'full';
   return parts[0] || null;
 }

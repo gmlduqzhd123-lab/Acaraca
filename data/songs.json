@@ -16,14 +16,13 @@
     {
       "id": "bohemian-rhapsody-5",
       "title": "보헤미안 랩소디 · 5인용",
-      "artist": "",
+      "artist": "Queen",
       "category": "POP",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-harmony.svg",
       "memo": "Padlet PDF 1–2쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -38,6 +37,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=DUwM7EAkJNs"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=nWxskIvuV8Q"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=7YFzJ3_ea_4"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=B7rvIVyQNns"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=WTJcp28c59A"
         }
       },
       "source": {
@@ -61,11 +80,10 @@
       "artist": "Pentatonix",
       "category": "POP",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "6 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-blue.svg",
       "memo": "Padlet PDF 3–5쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요. 6인용 표기와 달리 PDF의 번호 파트 영상은 1~5번만 확인되어 여섯 번째 성부는 원본 확인이 필요합니다.",
@@ -80,6 +98,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=eIv2MmQkjz4"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=iFYLTbFgfyY"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=vf3ddCRqhoA"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=zvUI2FAk5Ao"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=uFtd7BBqZxo"
         }
       },
       "source": {
@@ -101,14 +139,13 @@
     {
       "id": "mujogeon",
       "title": "무조건",
-      "artist": "",
+      "artist": "박상철",
       "category": "기타",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-sun.svg",
       "memo": "Padlet PDF 5–7쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -123,6 +160,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=iXUUkR4yCAk"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=QPd_xFJbnhw"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=vBQPfuF4hW0"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=V7IHzftzcTk"
         }
       },
       "source": {
@@ -143,14 +196,13 @@
     {
       "id": "short-hair",
       "title": "단발머리",
-      "artist": "",
+      "artist": "조용필",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-lilac.svg",
       "memo": "Padlet PDF 7–8쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -165,6 +217,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=X79V1WoVKug"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=m1bD-x0TU6w"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=vHJaQOVUSHA"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=ccJjwO7qkl0"
         }
       },
       "source": {
@@ -184,14 +252,13 @@
     {
       "id": "disney-medley-7",
       "title": "디즈니 메들리 · 7부",
-      "artist": "",
+      "artist": "Disney",
       "category": "OST",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "7 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-record.svg",
       "memo": "Padlet PDF 8–11쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번, 7번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -206,6 +273,34 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=0AYkJQ856LY"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=jsN01tN4-Bs"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=8Y6DSlceArg"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=LJLmI8jSAAQ"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=q1uLPsyGCvI"
+        },
+        "part6": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=b_TkhwVZVMw"
+        },
+        "part7": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=VSBXw1Vd5os"
         }
       },
       "source": {
@@ -233,11 +328,10 @@
       "artist": "EXIT · Heeju Lee",
       "category": "OST",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "6 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-harmony.svg",
       "memo": "Padlet PDF 11–14쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -252,6 +346,30 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=FgXJSCA7rtw"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=nAqEU6XyhS8"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=4Yvdf3LXMWk"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=dU4iqGo-jsU"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=XwTNPzbcYo0"
+        },
+        "part6": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=hqwemZ-s4oo"
         }
       },
       "source": {
@@ -278,11 +396,10 @@
       "artist": "아카라카",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-blue.svg",
       "memo": "Padlet PDF 14–16쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -297,6 +414,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Q3rqqyDtekM"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=pzLA3eyeEYc"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=KYBGA_gQIzI"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=4Bwj35G2dHk"
         }
       },
       "source": {
@@ -320,11 +453,10 @@
       "artist": "EXIT + ISYS",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-sun.svg",
       "memo": "Padlet PDF 16–18쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -339,6 +471,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Za_IbPQodg0"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=rguFciEXRWA"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=mSf99AHJb7A"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=6zjLWyF2Nm8"
         }
       },
       "source": {
@@ -362,11 +510,10 @@
       "artist": "아카라카",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-lilac.svg",
       "memo": "Padlet PDF 18–20쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -381,6 +528,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=TMjHJAfvhWE"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=l4qxH2eIHCA"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=fdn5efky-V0"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=zhBfEn8q9NI"
         }
       },
       "source": {
@@ -404,11 +567,10 @@
       "artist": "EXIT",
       "category": "동요",
       "difficulty": 1,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-record.svg",
       "memo": "Padlet PDF 20–22쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -423,6 +585,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=irlyUejHs9Q"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=q0_XD6VzPRI"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=JuxuyK9AvR4"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Cr2mOVMDs9Y"
         }
       },
       "source": {
@@ -446,11 +624,10 @@
       "artist": "A-Five",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-harmony.svg",
       "memo": "Padlet PDF 22–25쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -465,6 +642,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=fe9mozQJHyw"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=aNmg4BLXgjA"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Dz6S3FPGlN0"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=_LUXUg9eyfI"
         }
       },
       "source": {
@@ -489,11 +682,10 @@
       "artist": "아카라카",
       "category": "기타",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "6 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-blue.svg",
       "memo": "Padlet PDF 25–27쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -508,6 +700,30 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Yr0unaIdR2U"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=M7zszBstH_4"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=V8Bic15h04k"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=sjjMqgo5xJ8"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=N_7SDMuSM9A"
+        },
+        "part6": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Lqjux6KnVUA"
         }
       },
       "source": {
@@ -533,11 +749,10 @@
       "artist": "Narin",
       "category": "OST",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "6 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-sun.svg",
       "memo": "Padlet PDF 27–30쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -552,6 +767,30 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=9MCW-A90eQ0"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=zP157uPEXmA"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=PZdgDJkqGHY"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=jZRSXnWzHJs"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=75U782W1Kak"
+        },
+        "part6": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=c8sS4Pw49rs"
         }
       },
       "source": {
@@ -578,11 +817,10 @@
       "artist": "EXIT",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-lilac.svg",
       "memo": "Padlet PDF 30–33쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -596,7 +834,27 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=z71ZxrfRtEk"
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=AO42DGFct0A"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=63tL-mA0GXs"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=90S3IVoij6Q"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=SaoIOTOZdFQ"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=hP4ZBpgjJ0w"
         }
       },
       "source": {
@@ -622,11 +880,10 @@
       "artist": "별의별",
       "category": "동요",
       "difficulty": 1,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-record.svg",
       "memo": "Padlet PDF 33–35쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -641,6 +898,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=2NKaeUkol5M"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=ABsOt_AVt3k"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Ajh7Tv4Y6hQ"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=7S7sAA8yVLA"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=J5EOZMxNi-Y"
         }
       },
       "source": {
@@ -664,11 +941,10 @@
       "artist": "별의별",
       "category": "동요",
       "difficulty": 1,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-harmony.svg",
       "memo": "Padlet PDF 35–37쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -683,6 +959,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=ccN1D_heaIo"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Lcf6xSOtZcA"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=7yf3ZuAI7tg"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=08OLPXV29Wo"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=eId_lU6Wg9c"
         }
       },
       "source": {
@@ -707,11 +1003,10 @@
       "artist": "옥상달빛 · 편곡 김승호",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "6 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-blue.svg",
       "memo": "Padlet PDF 37–40쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번, 6번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -726,6 +1021,30 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=yOz90KwrJyw"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=SccyB9-Qi_s"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=7rkPQ6Rs9pQ"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=QhVBsC3S9_M"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=wt1-ehQmkbk"
+        },
+        "part6": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=9xzkzPUvdzU"
         }
       },
       "source": {
@@ -752,11 +1071,10 @@
       "artist": "Pentatonix",
       "category": "POP",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-sun.svg",
       "memo": "Padlet PDF 40–42쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요. PDF 42쪽의 미확인 4번 파트 주소: https://youtu.be/EhAkeFrod60 (카드 제목은 3번 파트로 표시됩니다). 어떤 성부인지 먼저 확인해 주세요.",
@@ -771,6 +1089,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=07CD8JUkVYM"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=S1bhT_qeM_o"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=VmTiKFqGk6c"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=EhAkeFrod60"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=zl_E7lXYG0g"
         }
       },
       "source": {
@@ -803,11 +1141,10 @@
       "artist": "Pentatonix",
       "category": "POP",
       "difficulty": 3,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-lilac.svg",
       "memo": "Padlet PDF 42–44쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -822,6 +1159,18 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=H5EoYJVOuGA"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=CZMUcmmB9Sc"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=1lXt8WwxN-o"
         }
       },
       "source": {
@@ -842,14 +1191,13 @@
     {
       "id": "dansori",
       "title": "단소리",
-      "artist": "",
+      "artist": "국악 / 아카펠라",
       "category": "기타",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-record.svg",
       "memo": "Padlet PDF 44–46쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -864,6 +1212,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=2gC8ZEePmig"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=vBgh75dUHxw"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=5rRYBVcU8Zg"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=SSjGRMq0tQE"
         }
       },
       "source": {
@@ -887,11 +1251,10 @@
       "artist": "EXIT",
       "category": "POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-harmony.svg",
       "memo": "Padlet PDF 46–48쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -906,6 +1269,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=wrcHlWt2RrY"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=PZAhucOiXZM"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=XtI80UigDuk"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=uAl_OeoqLEs"
         }
       },
       "source": {
@@ -929,11 +1308,10 @@
       "artist": "아카라카",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-blue.svg",
       "memo": "Padlet PDF 48–50쪽에서 가져온 곡입니다. 성부 이름이 원본에 명시되어 있습니다. 아직 주소가 없는 파트는 원본 YouTube 링크를 확인한 뒤 등록해 주세요.",
@@ -960,6 +1338,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=YijjNTax7pU"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=V73gGjQsVg8"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=o-NWUXUpfbY"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=cIsV4nQWF7Q"
         }
       },
       "source": {
@@ -989,11 +1383,10 @@
       "artist": "EXIT",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-sun.svg",
       "memo": "Padlet PDF 50–52쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -1008,6 +1401,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=ounOqESwC9I"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=duSVqFXenIw"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=unI2g_sAQ2E"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=_ECjTg5PNzM"
         }
       },
       "source": {
@@ -1031,11 +1440,10 @@
       "artist": "MayTree",
       "category": "JAZZ",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-lilac.svg",
       "memo": "Padlet PDF 52–54쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -1050,6 +1458,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=3hiE-gOWebs"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=HTqU1-CMB_k"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=O-3M51pGBcQ"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=KMO1dcnVMaM"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Ha-RQ_Kh8XU"
         }
       },
       "source": {
@@ -1074,11 +1502,10 @@
       "artist": "아카라카",
       "category": "POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "4 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-record.svg",
       "memo": "Padlet PDF 54–56쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요.",
@@ -1093,6 +1520,22 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=74UIBXpcRKo"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=jMrDdHr5Y_c"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=l5rhcyVfQEo"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=1ozHWPi4JTY"
         }
       },
       "source": {
@@ -1116,11 +1559,10 @@
       "artist": "아카라카",
       "category": "K-POP",
       "difficulty": 1,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-harmony.svg",
       "memo": "Padlet PDF 56–59쪽에서 가져온 곡입니다. 성부 이름이 원본에 명시되어 있습니다. 아직 주소가 없는 파트는 원본 YouTube 링크를 확인한 뒤 등록해 주세요.",
@@ -1150,6 +1592,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=QXuWYR7Ai1Q"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=-xtNkkmsAoA"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=MVrjX_cG-Sk"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=w6m7Klgam-4"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=75i3ocyvEDs"
         }
       },
       "source": {
@@ -1216,7 +1678,27 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=18SkVp28X_A"
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=T1V-VWuhPB8"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=eXE_wSsD330"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=cbJgPIjn20U"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=e_9HOUTQu14"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=u5_rAdwBT08"
         }
       },
       "source": {
@@ -1254,11 +1736,10 @@
       "artist": "두왑사운즈",
       "category": "K-POP",
       "difficulty": 2,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Parts",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-sun.svg",
       "memo": "Padlet PDF 61–64쪽에서 가져온 곡입니다. 원본에는 1번, 2번, 3번, 4번, 5번 파트가 있습니다. 성부 이름과 원본 영상 주소를 확인한 뒤 등록해 주세요. 원본의 참고 공연 카드 제목이 Youth로 표시되어 곡명과 일치하는지도 확인해 주세요.",
@@ -1272,7 +1753,27 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=DI6uNzfXckA"
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=WM0TZ5gTEuY"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Xozz711PvAw"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=6rAWYQRqGPE"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=EoJ7W6CsFks"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=xpxWbhTPjog"
         }
       },
       "source": {
@@ -1298,11 +1799,10 @@
       "artist": "다이아",
       "category": "K-POP",
       "difficulty": 1,
-      "status": "archive",
+      "status": "practice",
       "arrangement": "5 Voices",
       "tags": [
-        "Padlet 자료",
-        "주소 확인 필요"
+        "Padlet 자료"
       ],
       "thumbnail": "./assets/images/cover-lilac.svg",
       "memo": "Padlet PDF 64–66쪽에서 가져온 곡입니다. 성부 이름이 원본에 명시되어 있습니다. 아직 주소가 없는 파트는 원본 YouTube 링크를 확인한 뒤 등록해 주세요.",
@@ -1332,6 +1832,26 @@
         "full": {
           "type": "video",
           "url": ""
+        },
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=w9DvkGqTVTk"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=U7IvG_2wHUY"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=vnlIbGMurCE"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=ph4fQ6PMVJ0"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=tZD4u0p9p_4"
         }
       },
       "source": {
@@ -1388,6 +1908,147 @@
         "kind": "official-developer-demo",
         "url": "https://developers.google.com/youtube/iframe_api_reference",
         "verifiedAt": "2026-10-01"
+      }
+    },
+    {
+      "id": "carol-medley",
+      "title": "캐롤 메들리",
+      "artist": "아카펠라 메들리",
+      "category": "시즌",
+      "difficulty": 2,
+      "status": "practice",
+      "arrangement": "4 Voices",
+      "tags": [
+        "크리스마스",
+        "캐롤"
+      ],
+      "thumbnail": "./assets/images/cover-blue.svg",
+      "memo": "크리스마스 시즌 아카펠라 캐롤 메들리입니다.",
+      "videos": {
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Hmnao7nmW3I"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=iHsDm_VwCkQ"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=MK4B3xXjbqE"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=DS0GM1xFATY"
+        },
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=BVKbpZdlsk8"
+        }
+      }
+    },
+    {
+      "id": "same-place",
+      "title": "같은 곳에서",
+      "artist": "프로듀스 101",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "practice",
+      "arrangement": "4 Voices",
+      "tags": [
+        "걸그룹",
+        "감성"
+      ],
+      "thumbnail": "./assets/images/cover-lilac.svg",
+      "memo": "같은 곳에서 아카펠라 4부 버전입니다.",
+      "videos": {
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=97iAlBzaZWA"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=y7iInO99D60"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=JzNaQ0Q7YhQ"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=DCg7DmfdXJw"
+        }
+      }
+    },
+    {
+      "id": "would-be-good",
+      "title": "좋겠다",
+      "artist": "성시경",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "practice",
+      "arrangement": "4 Voices",
+      "tags": [
+        "발라드",
+        "화음"
+      ],
+      "thumbnail": "./assets/images/cover-harmony.svg",
+      "memo": "성시경 좋겠다 4부 아카펠라 연습 음원입니다.",
+      "videos": {
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=WclH-l1sIF4"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=PeslDhEkcLw"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=NKgybuWgeEQ"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=IZsYxYLCJ0c"
+        },
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=meXusduu2RM"
+        }
+      }
+    },
+    {
+      "id": "ditto",
+      "title": "Ditto · EXIT ver",
+      "artist": "NewJeans",
+      "category": "K-POP",
+      "difficulty": 3,
+      "status": "practice",
+      "arrangement": "5 Voices",
+      "tags": [
+        "뉴진스",
+        "EXIT",
+        "5부"
+      ],
+      "thumbnail": "./assets/images/cover-sun.svg",
+      "memo": "뉴진스 Ditto 아카펠라 그룹 엑시트(EXIT) 편곡 버전입니다.",
+      "videos": {
+        "part1": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=hbE6nGHim3E"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=Q8Jki_91yLg"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=ABox2jWkeXw"
+        },
+        "part5": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=PZoIP4DvpbA"
+        }
       }
     }
   ]

@@ -1,0 +1,20 @@
+{
+  "name": "acaroom",
+  "version": "1.1.0",
+  "description": "아카펠라 연습실 웹 애플리케이션 (AcaRoom)",
+  "type": "module",
+  "scripts": {
+    "test": "node -e \"import('./tests/core-tests.js').then(m => { const r = m.runCoreTests(); console.log(`Tests: ${r.passed} passed, ${r.failed} failed`); if (r.failed) process.exit(1); })\"",
+    "validate": "node -e \"import('./js/data.js').then(m => { const fs = require('fs'); const res = m.validateData(JSON.parse(fs.readFileSync('data/songs.json'))); if (res.errors.length) { console.error(res.errors); process.exit(1); } console.log(`Validation OK: ${res.songs.length} songs`); })\"",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "acappella",
+    "practice",
+    "choir",
+    "youtube",
+    "vanilla-js"
+  ],
+  "author": "",
+  "license": "MIT"
+}
