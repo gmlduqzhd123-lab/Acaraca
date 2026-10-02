@@ -88,7 +88,7 @@ function songCard(song) {
       el('div', {class: 'card-meta'}, el('span', {class: 'badge', text: song.category || '기타'}), el('span', {text: levels[song.difficulty]}), song.arrangement && el('span', {text: song.arrangement})),
       el('div', {class: 'card-footer'},
         el('div', {class: 'part-preview'}, parts.length ? parts.slice(0, 3).map(part => el('span', {class: `part-pill${part === state.myPart ? ' mine' : ''}`, text: PARTS[part]})) : el('span', {class: 'part-empty', text: '영상 등록 예정'}), parts.length > 3 && el('span', {class: 'part-more', text: `+${parts.length - 3}`})),
-        button('연습 시작', () => startPractice(song), 'button primary small', 'play')
+        button('연습 시작', () => openSong(song), 'button primary small', 'play')
       )
     )
   );
@@ -153,7 +153,7 @@ function renderHome() {
   const featured = practicing[0] || state.songs[0];
   const hero = el('div', {class: 'hero-panel'},
     el('div', {class: 'hero-copy'}, el('span', {class: 'hero-tag', text: 'TODAY’S SPOTLIGHT'}), el('h3', {class: 'hero-title', text: featured.title}), el('p', {class: 'hero-text', text: `${featured.artist || '아티스트 미등록'} · ${featured.arrangement || '함께 부르는 즐거움'}`}),
-      el('div', {class: 'hero-actions'}, button('지금 연습하기', () => startPractice(featured), 'button primary', 'play'), button('곡과 파트 보기', () => openSong(featured), 'button ghost', 'arrow')),
+      el('div', {class: 'hero-actions'}, button('연습 시작 (파트 선택)', () => openSong(featured), 'button primary', 'play'), button('곡과 파트 보기', () => openSong(featured), 'button ghost', 'arrow')),
       el('div', {class: 'hero-bottom'}, icon('mic'), el('span', {text: availableParts(featured).length ? `${availableParts(featured).length}개 파트 · ${levels[featured.difficulty]}` : '팀의 연습 영상을 기다리고 있어요'}))
     ), el('div', {class: 'hero-art'}, cover(featured, 'hero-cover'), el('span', {class: 'hero-art-label', text: 'MAKE ROOM FOR HARMONY'}))
   );
@@ -170,7 +170,7 @@ function renderHome() {
   function updateRandom() {
     randomPanel.replaceChildren(el('div', {class: 'quick-panel-title'}, icon('shuffle'), el('h3', {text: '오늘은 어떤 곡을 불러볼까요?'})));
     if (state.random) {
-      randomPanel.append(el('div', {class: 'random-result'}, cover(state.random, 'recent-art'), el('div', {}, el('strong', {text: state.random.title}), el('p', {text: state.random.artist}))), button('바로 연습', () => startPractice(state.random), 'button primary', 'play'));
+      randomPanel.append(el('div', {class: 'random-result'}, cover(state.random, 'recent-art'), el('div', {}, el('strong', {text: state.random.title}), el('p', {text: state.random.artist}))), button('파트 선택 및 연습', () => openSong(state.random), 'button primary', 'play'));
     } else randomPanel.append(el('p', {text: '익숙한 곡도, 새로운 곡도. 가볍게 한 곡 골라보세요.'}));
     randomPanel.append(button(state.random ? '다른 곡 뽑기' : '랜덤 곡 선택', () => {
       const candidates = state.songs.filter(song => state.myPart ? availableParts(song).includes(state.myPart) : availableParts(song).length);
