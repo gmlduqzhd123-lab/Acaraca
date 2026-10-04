@@ -37,7 +37,7 @@ let audioCtx = null;
 let currentOscillators = [];
 let currentGainNode = null;
 let currentPlaying = null;
-let onStateChangeCallback = null;
+const stateListeners = new Set();
 
 function getAudioContext() {
   if (typeof window === 'undefined') return null;
@@ -54,7 +54,9 @@ function getAudioContext() {
 }
 
 export function subscribePitchState(callback) {
-  onStateChangeCallback = callback;
+  if (typeof callback !== 'function') return () => {};
+  stateListeners.add(callback);
+  return () => stateListeners.delete(callback);
 }
 
 export function unlockAudioContext() {
@@ -74,13 +76,17 @@ if (typeof window !== 'undefined') {
 }
 
 function notifyStateChange() {
-  if (typeof onStateChangeCallback === 'function') {
-    onStateChangeCallback(currentPlaying);
+  for (const listener of stateListeners) {
+    try {
+      listener(currentPlaying);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
 /**
- * Stop any currently sounding pitch.
+ * Stop any currently sounding pitch or chord.
  */
 export function stopPitch() {
   if (currentGainNode && audioCtx) {
@@ -101,6 +107,9 @@ export function stopPitch() {
       currentGainNode = null;
     }
   } else {
+    for (const osc of currentOscillators) {
+      try { osc.stop(); osc.disconnect(); } catch {}
+    }
     currentOscillators = [];
     currentGainNode = null;
   }
@@ -109,7 +118,7 @@ export function stopPitch() {
 }
 
 /**
- * Play a specific pitch (semitone: 0~11, octave: 3~5).
+ * Play a specific pitch (semitone: 0~11, octave: 2~6).
  * If the exact same pitch is already playing, it will stop it (toggle behavior).
  */
 export function playPitch(semitone, octave = 4, volume = 0.5) {
@@ -117,7 +126,7 @@ export function playPitch(semitone, octave = 4, volume = 0.5) {
   if (!ctx) return null;
 
   // Toggle off if clicking the currently playing note
-  if (currentPlaying && currentPlaying.semitone === semitone && currentPlaying.octave === octave) {
+  if (currentPlaying && !currentPlaying.isChord && currentPlaying.semitone === semitone && currentPlaying.octave === octave) {
     stopPitch();
     return null;
   }
@@ -171,9 +180,12 @@ export function playPitch(semitone, octave = 4, volume = 0.5) {
   currentGainNode = masterGain;
 
   currentPlaying = {
+    isChord: false,
     semitone,
     octave,
     note: `${noteInfo.note}${octave}`,
+    displayNote: `${noteInfo.note}${noteInfo.alt ? `/${noteInfo.alt}` : ''}${octave}`,
+    koreanNote: `${noteInfo.korean}${octave}`,
     label: `${noteInfo.note}${noteInfo.alt ? `/${noteInfo.alt}` : ''} (${noteInfo.korean})`,
     freq,
     noteInfo,
@@ -183,6 +195,167 @@ export function playPitch(semitone, octave = 4, volume = 0.5) {
   return currentPlaying;
 }
 
+const NOTE_LOOKUP = {
+  'C': 0, 'B#': 0, 'B♯': 0,
+  'C#': 1, 'C♯': 1, 'DB': 1, 'D♭': 1,
+  'D': 2,
+  'D#': 3, 'D♯': 3, 'EB': 3, 'E♭': 3,
+  'E': 4, 'FB': 4, 'F♭': 4,
+  'F': 5, 'E#': 5, 'E♯': 5,
+  'F#': 6, 'F♯': 6, 'GB': 6, 'G♭': 6,
+  'G': 7,
+  'G#': 8, 'G♯': 8, 'AB': 8, 'A♭': 8,
+  'A': 9,
+  'A#': 10, 'A♯': 10, 'BB': 10, 'B♭': 10,
+  'B': 11, 'CB': 11, 'C♭': 11,
+};
+
+const SOLFEGE_MAP = {
+  'C': '도', 'D': '레', 'E': '미', 'F': '파', 'G': '솔', 'A': '라', 'B': '시',
+};
+
+/**
+ * Parse standard note string into musical note descriptor.
+ * Supports "Ab4", "A♭4", "F#3", "F♯3", "C4", "Bb2", etc.
+ */
+export function parseNoteString(noteStr) {
+  if (!noteStr || typeof noteStr !== 'string') return null;
+  const clean = noteStr.trim();
+  const match = clean.match(/^([A-Ga-g])([#♯b♭]?)(-?\d+)?$/);
+  if (!match) return null;
+
+  const root = match[1].toUpperCase();
+  const rawAcc = match[2] || '';
+  const acc = rawAcc.replace('♯', '#').replace('♭', 'b').toLowerCase();
+  const octave = match[3] !== undefined ? parseInt(match[3], 10) : 4;
+  const lookupKey = `${root}${rawAcc.toUpperCase().replace('♯', '#').replace('♭', 'B')}`;
+  const semitone = NOTE_LOOKUP[lookupKey];
+  if (semitone === undefined) return null;
+
+  const noteInfo = NOTES.find((n) => n.semitone === semitone) || NOTES[0];
+  const freq = getNoteFrequency(semitone, octave);
+
+  const displayAcc = acc === 'b' ? '♭' : (acc === '#' ? '♯' : '');
+  const displayNote = `${root}${displayAcc}${octave}`;
+  const koreanNote = `${SOLFEGE_MAP[root] || ''}${displayAcc}${octave}`;
+
+  return {
+    raw: clean,
+    root,
+    acc,
+    octave,
+    semitone,
+    freq,
+    displayNote,
+    koreanNote,
+    label: `${displayNote} (${koreanNote})`,
+    noteInfo,
+  };
+}
+
+/**
+ * Play note from string (e.g. "Ab4", "Eb5", "F#3").
+ * Toggles off if this note is already playing.
+ */
+export function playNoteString(noteStr, volume = 0.5) {
+  const parsed = parseNoteString(noteStr);
+  if (!parsed) return null;
+
+  if (currentPlaying && !currentPlaying.isChord && currentPlaying.semitone === parsed.semitone && currentPlaying.octave === parsed.octave) {
+    stopPitch();
+    return null;
+  }
+
+  const played = playPitch(parsed.semitone, parsed.octave, volume);
+  if (played) {
+    played.raw = noteStr;
+    played.displayNote = parsed.displayNote;
+    played.koreanNote = parsed.koreanNote;
+    played.label = parsed.label;
+    notifyStateChange();
+  }
+  return played;
+}
+
+/**
+ * Play all starting notes in harmony simultaneously (A cappella starting chord).
+ * Toggles off if chord is already playing.
+ */
+export function playChordStrings(notesList, volume = 0.38) {
+  const ctx = getAudioContext();
+  if (!ctx) return null;
+
+  if (currentPlaying && currentPlaying.isChord) {
+    stopPitch();
+    return null;
+  }
+
+  stopPitch();
+
+  const parsedList = (Array.isArray(notesList) ? notesList : [])
+    .map((s) => parseNoteString(s))
+    .filter(Boolean);
+
+  if (!parsedList.length) return null;
+
+  // De-duplicate by semitone + octave
+  const seen = new Set();
+  const uniqueNotes = [];
+  for (const item of parsedList) {
+    const key = `${item.semitone}-${item.octave}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueNotes.push(item);
+    }
+  }
+
+  const now = ctx.currentTime;
+  const masterGain = ctx.createGain();
+  masterGain.gain.setValueAtTime(0.0001, now);
+  const scaledVol = Math.min(0.55, volume / Math.sqrt(uniqueNotes.length));
+  masterGain.gain.exponentialRampToValueAtTime(scaledVol, now + 0.08);
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(3000, now);
+  filter.connect(masterGain);
+  masterGain.connect(ctx.destination);
+
+  const oscillators = [];
+
+  uniqueNotes.forEach((parsed) => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(parsed.freq, now);
+
+    const oscHarm = ctx.createOscillator();
+    oscHarm.type = 'sine';
+    oscHarm.frequency.setValueAtTime(parsed.freq * 2, now);
+    const harmGain = ctx.createGain();
+    harmGain.gain.setValueAtTime(0.2, now);
+    oscHarm.connect(harmGain);
+    harmGain.connect(filter);
+
+    osc.connect(filter);
+    osc.start(now);
+    oscHarm.start(now);
+    oscillators.push(osc, oscHarm);
+  });
+
+  currentOscillators = oscillators;
+  currentGainNode = masterGain;
+
+  currentPlaying = {
+    isChord: true,
+    notes: uniqueNotes.map((p) => p.displayNote),
+    label: `화음 (${uniqueNotes.map((p) => p.displayNote).join(' · ')})`,
+  };
+
+  notifyStateChange();
+  return currentPlaying;
+}
+
 export function getCurrentPlaying() {
   return currentPlaying;
 }
+

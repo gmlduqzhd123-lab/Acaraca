@@ -4,7 +4,7 @@ import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
 import {el, icon, button, toast, cover, emptyState} from './ui.js';
-import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, subscribePitchState} from './pitch.js';
+import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, subscribePitchState, parseNoteString, playNoteString, playChordStrings} from './pitch.js';
 import {
   loadPerformances,
   loadRehearsals,
@@ -107,6 +107,7 @@ applyTheme();
 colorPreference.addEventListener('change', applyTheme);
 
 function navigate(route, {replace = false, focus = true} = {}) {
+  stopPitch();
   state.route = route; writeRoute(route, {replace}); render(); window.scrollTo({top: 0, behavior: 'instant'});
   if (focus) app.focus({preventScroll: true});
 }
@@ -3029,6 +3030,178 @@ function openPitchPipe() {
   dialog.showModal();
 }
 
+function renderStartingPitchPanel(song, currentPart = null) {
+  if (!song || !song.startingPitches || typeof song.startingPitches !== 'object') {
+    return el('div');
+  }
+
+  // Determine parts to display
+  const availParts = availableParts(song).filter(p => p !== 'full' && p !== 'vp');
+  let partKeys = [];
+
+  if (availParts.length) {
+    partKeys = availParts;
+  } else {
+    // If no individual video is uploaded yet, display parts from startingPitches
+    const allStartingKeys = Object.keys(song.startingPitches).filter(k => k !== 'full' && k !== 'vp');
+    const numbered = allStartingKeys.filter(k => k.startsWith('part'));
+    if (numbered.length) {
+      partKeys = numbered.sort((a, b) => (parseInt(a.replace('part', ''), 10) || 0) - (parseInt(b.replace('part', ''), 10) || 0));
+    } else {
+      partKeys = allStartingKeys;
+    }
+  }
+
+  const partItems = [];
+  partKeys.forEach(p => {
+    let noteStr = song.startingPitches[p];
+    if (!noteStr) {
+      const voiceToPart = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
+      const partToVoice = { part1: 'soprano', part2: 'alto', part3: 'tenor', part4: 'baritone', part5: 'bass' };
+      if (voiceToPart[p]) noteStr = song.startingPitches[voiceToPart[p]];
+      else if (partToVoice[p]) noteStr = song.startingPitches[partToVoice[p]];
+    }
+
+    if (noteStr) {
+      const parsed = parseNoteString(noteStr);
+      if (parsed) {
+        let label = PARTS[p] || p.toUpperCase();
+        const voiceHint = { part1: 'SOP', part2: 'ALTO', part3: 'TENOR', part4: 'BARI', part5: 'BASS' };
+        if (voiceHint[p] && label === PARTS[p]) {
+          label = `${label} (${voiceHint[p]})`;
+        }
+        partItems.push({
+          partKey: p,
+          label,
+          noteStr,
+          parsed
+        });
+      }
+    }
+  });
+
+  if (!partItems.length) return el('div');
+
+  const container = el('section', {class: 'starting-pitch-panel', 'aria-label': '파트별 첫 음 잡기'});
+
+  // Header
+  const titleWrap = el('div', {class: 'starting-pitch-title-wrap'},
+    el('span', {class: 'starting-pitch-icon'}, '🎵'),
+    el('div', {},
+      el('h3', {class: 'starting-pitch-title', text: '파트별 첫 음'}),
+      el('p', {class: 'starting-pitch-desc', text: '원곡 및 편곡 악보·영상 분석 기반 첫 음정입니다. 시작 전 내 파트 음을 잡아보세요.'})
+    )
+  );
+
+  const metaWrap = el('div', {class: 'starting-pitch-meta'},
+    song.musicalKey ? el('span', {class: 'pitch-key-badge', text: `원곡/편곡 조성: ${song.musicalKey}`}) : null
+  );
+
+  const header = el('div', {class: 'starting-pitch-header'}, titleWrap, metaWrap);
+  const grid = el('div', {class: 'part-pitch-grid'});
+
+  const allNotes = partItems.map(item => item.noteStr);
+
+  const chordBtn = el('button', {
+    type: 'button',
+    class: 'button secondary small chord-play-btn',
+    text: '🎶 첫음 화음 전체 듣기',
+    onclick: () => {
+      const playing = playChordStrings(allNotes);
+      if (playing) {
+        toast('🎶 전체 파트 첫 음 화음을 재생합니다.');
+      }
+    }
+  });
+
+  const stopBtn = el('button', {
+    type: 'button',
+    class: 'button ghost small stop-pitch-btn',
+    text: '⏹️ 소리 끄기',
+    onclick: () => {
+      stopPitch();
+    }
+  });
+
+  const pipeBtn = el('button', {
+    type: 'button',
+    class: 'button ghost small',
+    text: '🎛️ 전체 피치파이프 열기',
+    onclick: () => {
+      openPitchPipe();
+    }
+  });
+
+  const actions = el('div', {class: 'starting-pitch-actions'},
+    el('div', {class: 'pitch-action-left'}, chordBtn, stopBtn),
+    el('div', {class: 'pitch-action-right'}, pipeBtn)
+  );
+
+  function updateActiveStates() {
+    const cur = getCurrentPlaying();
+    const isChord = Boolean(cur?.isChord);
+
+    chordBtn.classList.toggle('playing', isChord);
+
+    partItems.forEach(({ parsed }, idx) => {
+      const chip = grid.children[idx];
+      if (!chip) return;
+      const isPitchActive = !isChord && cur && cur.semitone === parsed.semitone && cur.octave === parsed.octave;
+      const isChordActive = isChord && cur.notes?.includes(parsed.displayNote);
+      chip.classList.toggle('playing', Boolean(isPitchActive || isChordActive));
+    });
+  }
+
+  partItems.forEach(({ partKey, label, noteStr, parsed }) => {
+    const isCur = currentPart && (
+      currentPart === partKey ||
+      (currentPart === 'soprano' && partKey === 'part1') ||
+      (currentPart === 'part1' && partKey === 'soprano') ||
+      (currentPart === 'alto' && partKey === 'part2') ||
+      (currentPart === 'part2' && partKey === 'alto') ||
+      (currentPart === 'tenor' && partKey === 'part3') ||
+      (currentPart === 'part3' && partKey === 'tenor') ||
+      (currentPart === 'baritone' && partKey === 'part4') ||
+      (currentPart === 'part4' && partKey === 'baritone') ||
+      (currentPart === 'bass' && partKey === 'part5') ||
+      (currentPart === 'part5' && partKey === 'bass')
+    );
+
+    const chip = el('button', {
+      type: 'button',
+      class: `part-pitch-chip${isCur ? ' current-part' : ''}`,
+      'aria-label': `${label} 첫 음 ${parsed.displayNote} (${parsed.koreanNote}) ${Math.round(parsed.freq)}Hz`,
+      onclick: () => {
+        const played = playNoteString(noteStr);
+        if (played) {
+          toast(`🎵 ${label} 첫 음 ${parsed.displayNote} (${parsed.koreanNote})`);
+        }
+      }
+    },
+      isCur ? el('span', {class: 'current-part-pill', text: '내 파트'}) : null,
+      el('span', {class: 'part-pitch-role', text: label}),
+      el('span', {class: 'part-pitch-note', text: parsed.displayNote}),
+      el('span', {class: 'part-pitch-solfege', text: parsed.koreanNote}),
+      el('span', {class: 'part-pitch-freq', text: `${Math.round(parsed.freq)}Hz`})
+    );
+
+    grid.append(chip);
+  });
+
+  const unsubscribe = subscribePitchState(() => {
+    if (!container.isConnected) {
+      unsubscribe();
+      return;
+    }
+    updateActiveStates();
+  });
+
+  updateActiveStates();
+
+  container.append(header, grid, actions);
+  return container;
+}
+
 function renderPlayerController(player, song, part) {
   let currentRate = 1.0;
   let isPlaying = false;
@@ -3130,6 +3303,8 @@ function renderDetail(song) {
   );
   app.append(detail);
   if (state.myPart && parts.includes(state.myPart)) app.append(el('section', {class: 'my-part-callout'}, el('p', {class: 'eyebrow', text: 'MY PART'}), button(`${PARTS[state.myPart]} 바로 연습`, () => startPractice(song, state.myPart), 'button primary', 'play')));
+  const pitchPanel = renderStartingPitchPanel(song, state.myPart || preferredPart(song, state.myPart));
+  app.append(pitchPanel);
   const partsSection = section('파트를 선택해 주세요', '내 목소리를 하나씩 쌓아가요', parts.length ? el('div', {class: 'part-grid'}, parts.map(part => button(
     [el('strong', {text: PARTS[part]}), el('span', {class: 'part-subtitle', text: part === state.myPart ? 'MY PART · 바로 연습' : part === 'full' ? '모든 목소리를 함께' : '파트별 연습'}), icon('play')],
     () => startPractice(song, part), `part-button${part === state.myPart ? ' my-part' : ''}`,
@@ -3196,6 +3371,7 @@ function renderPractice(song, part, record = true) {
   app.append(button('파트 선택으로', () => openSong(song), 'text-button back-button', 'back'),
     el('div', {class: 'practice-heading'}, el('div', {}, el('p', {class: 'eyebrow', text: 'MAKE THIS MOMENT COUNT'}), el('h1', {text: song.title}), el('p', {text: song.artist})), el('span', {class: 'part-indicator', text: PARTS[part]})));
   
+  const startingPitchPanel = renderStartingPitchPanel(song, part);
   const playerHost = el('div', {class: 'player-panel'});
   const playerLayout = el('div', {class: 'practice-layout'}, playerHost);
   state.player = createPlayer(playerHost, song.videos[part], `${song.title} · ${PARTS[part]} 연습`);
@@ -3254,7 +3430,7 @@ function renderPractice(song, part, record = true) {
     el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => startPractice(song, parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
   
   if (abSwitcher) app.append(abSwitcher);
-  app.append(playerLayout, controller, actions, switches);
+  app.append(startingPitchPanel, playerLayout, controller, actions, switches);
   const progressHost = el('div'); const updateProgress = () => progressHost.replaceChildren(progressBar(percentage(song.id, part)));
   updateProgress();
   const checklist = el('section', {class: 'checklist-panel'}, el('p', {class: 'eyebrow', text: 'ONE STEP AT A TIME'}), el('h2', {text: '오늘의 연습 체크'}), el('p', {text: '작은 반복이 우리의 소리를 완성해요.'}), progressHost);

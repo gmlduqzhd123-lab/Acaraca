@@ -825,7 +825,196 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 .practice-rate-chip:hover { border-color: var(--border-strong); color: var(--primary); }
 .practice-rate-chip.active { background: var(--primary-soft); color: var(--primary); border-color: #9eb796; font-weight: 700; }
 .practice-pitch-btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
-.practice-pitch-btn .icon { width: 14px; height: 14px; }
+/* Starting Pitch Panel (파트별 첫 음) */
+.starting-pitch-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin: 14px 0 18px;
+  box-shadow: var(--shadow);
+  transition: border-color .2s, box-shadow .2s;
+}
+.starting-pitch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.starting-pitch-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.starting-pitch-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.starting-pitch-title {
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.4px;
+  margin: 0;
+  color: var(--ink);
+}
+.starting-pitch-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 2px 0 0;
+}
+.starting-pitch-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pitch-key-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.part-pitch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.part-pitch-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 6px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+  transition: all .15s ease-in-out;
+  text-align: center;
+}
+.part-pitch-chip:hover {
+  background: var(--surface-soft);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+.part-pitch-chip:active {
+  transform: scale(0.97);
+}
+.part-pitch-chip.current-part {
+  border-color: var(--primary);
+  background: var(--surface-soft);
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+.part-pitch-chip.playing {
+  background: #111814 !important;
+  color: #ffffff !important;
+  border-color: #050806 !important;
+  box-shadow: 0 0 0 3px rgba(17,24,20,.35) !important;
+  transform: scale(1.02);
+  animation: pulse-pitch 1.5s infinite;
+}
+html[data-theme="dark"] .part-pitch-chip.playing {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #4a6858 !important;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.35) !important;
+}
+@keyframes pulse-pitch {
+  0% { box-shadow: 0 0 0 2px rgba(45,133,94,.4); }
+  50% { box-shadow: 0 0 0 6px rgba(45,133,94,.7); }
+  100% { box-shadow: 0 0 0 2px rgba(45,133,94,.4); }
+}
+.part-pitch-role {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  opacity: .8;
+  margin-bottom: 3px;
+}
+.part-pitch-note {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.part-pitch-solfege {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: .88;
+  margin-top: 2px;
+}
+.part-pitch-freq {
+  font-size: 10px;
+  opacity: .6;
+  margin-top: 1px;
+}
+.part-pitch-chip.playing .part-pitch-role,
+.part-pitch-chip.playing .part-pitch-note,
+.part-pitch-chip.playing .part-pitch-solfege,
+.part-pitch-chip.playing .part-pitch-freq {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+.current-part-pill {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  letter-spacing: -.2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+}
+.starting-pitch-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.pitch-action-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pitch-action-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chord-play-btn.playing {
+  background: #111814 !important;
+  color: #ffffff !important;
+  border-color: #050806 !important;
+}
+html[data-theme="dark"] .chord-play-btn.playing {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
 
 /* Stage Performances Tab & List View */
 .stage-controls-panel { margin-bottom: 24px; }

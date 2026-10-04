@@ -2,7 +2,7 @@ import { parseYouTube, createPlayer } from '../js/player.js';
 import { validateData, availableParts, preferredPart } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString } from '../js/pitch.js';
 import {
   getAllFeedbacks,
   addFeedback,
@@ -127,6 +127,33 @@ export function runCoreTests() {
   check('C3 저음 옥타브 주파수 절반', () => Math.abs(getNoteFrequency(0, 3) - 130.81) < 0.1);
   check('C5 고음 옥타브 주파수 2배', () => Math.abs(getNoteFrequency(0, 5) - 523.25) < 0.1);
   check('피치파이프 반음 12개 음계', () => NOTES.length === 12);
+  check('음정 문자열 파싱 Ab4', () => {
+    const p = parseNoteString('Ab4');
+    return p && p.semitone === 8 && p.octave === 4 && p.displayNote === 'A♭4' && p.koreanNote === '라♭4';
+  });
+  check('음정 문자열 파싱 F#3', () => {
+    const p = parseNoteString('F#3');
+    return p && p.semitone === 6 && p.octave === 3 && p.displayNote === 'F♯3' && p.koreanNote === '파♯3';
+  });
+  check('음정 문자열 파싱 Eb5', () => {
+    const p = parseNoteString('Eb5');
+    return p && p.semitone === 3 && p.octave === 5 && p.displayNote === 'E♭5';
+  });
+  check('음정 문자열 파싱 유니코드 플랫/샵 호환', () => {
+    const p1 = parseNoteString('B♭2');
+    const p2 = parseNoteString('C♯5');
+    return p1?.semitone === 10 && p1?.octave === 2 && p2?.semitone === 1 && p2?.octave === 5;
+  });
+  check('곡 데이터 startingPitches 및 musicalKey 보존', () => {
+    const result = validateData({
+      songs: [{
+        ...songs[0],
+        startingPitches: { part1: 'Ab4', soprano: 'Ab4', alto: 'F4' },
+        musicalKey: 'Bb Major'
+      }]
+    }, { warn: false });
+    return result.songs[0].startingPitches?.part1 === 'Ab4' && result.songs[0].musicalKey === 'Bb Major';
+  });
 
   const samplePerfs = [
     { id: 'p1', setlist: [{ songId: 'night' }] },

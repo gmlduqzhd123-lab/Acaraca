@@ -72,7 +72,21 @@
           4,
           5
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "Ab4",
+        "part2": "F4",
+        "part3": "Eb5",
+        "part4": "C4",
+        "part5": "F3",
+        "soprano": "Ab4",
+        "alto": "F4",
+        "tenor": "Eb5",
+        "baritone": "C4",
+        "bass": "F3",
+        "full": "Bb3"
+      },
+      "musicalKey": "Bb Major"
     },
     {
       "id": "bohemian-rhapsody-6",
@@ -134,7 +148,23 @@
           4,
           5
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "Ab4",
+        "part2": "F4",
+        "part3": "Eb5",
+        "part4": "C4",
+        "part5": "F3",
+        "part6": "Bb2",
+        "soprano": "Ab4",
+        "alto": "F4",
+        "tenor": "Eb5",
+        "baritone": "C4",
+        "bass": "F3",
+        "vp": "Bb2",
+        "full": "Bb3"
+      },
+      "musicalKey": "Bb Major"
     },
     {
       "id": "mujogeon",
@@ -191,7 +221,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "G4",
+        "part2": "Eb4",
+        "part3": "Bb3",
+        "part4": "Eb3",
+        "soprano": "G4",
+        "alto": "Eb4",
+        "tenor": "Bb3",
+        "bass": "Eb3",
+        "full": "Eb4"
+      },
+      "musicalKey": "Eb Major"
     },
     {
       "id": "short-hair",
@@ -247,7 +289,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "E4",
+        "part2": "C4",
+        "part3": "A3",
+        "part4": "A2",
+        "soprano": "E4",
+        "alto": "C4",
+        "tenor": "A3",
+        "bass": "A2",
+        "full": "A3"
+      },
+      "musicalKey": "A Minor"
     },
     {
       "id": "disney-medley-7",
@@ -320,7 +374,24 @@
           6,
           7
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "C4",
+        "part2": "A3",
+        "part3": "F4",
+        "part4": "C4",
+        "part5": "G4",
+        "part6": "F2",
+        "part7": "C3",
+        "soprano": "F4",
+        "alto": "C4",
+        "tenor": "A3",
+        "baritone": "G4",
+        "bass": "F2",
+        "vp": "C3",
+        "full": "F3"
+      },
+      "musicalKey": "F Major"
     },
     {
       "id": "disney-medley",
@@ -388,7 +459,22 @@
           5,
           6
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "C4",
+        "part2": "A3",
+        "part3": "F4",
+        "part4": "C4",
+        "part5": "G4",
+        "part6": "F2",
+        "soprano": "F4",
+        "alto": "C4",
+        "tenor": "A3",
+        "baritone": "G4",
+        "bass": "F2",
+        "full": "F3"
+      },
+      "musicalKey": "F Major"
     },
     {
       "id": "first-impression",
@@ -445,7 +531,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "C#5",
+        "part2": "A4",
+        "part3": "F#4",
+        "part4": "F#2",
+        "soprano": "C#5",
+        "alto": "A4",
+        "tenor": "F#4",
+        "bass": "F#2",
+        "full": "F#3"
+      },
+      "musicalKey": "F# Minor"
     },
     {
       "id": "tobacco-shop-girl",
@@ -502,7 +600,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "D4",
+        "part2": "F4",
+        "part3": "A3",
+        "part4": "D3",
+        "soprano": "F4",
+        "alto": "D4",
+        "tenor": "A3",
+        "bass": "D3",
+        "full": "D3"
+      },
+      "musicalKey": "D Minor"
     },
     {
       "id": "aloha",
@@ -559,7 +669,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "F#4",
+        "part2": "A4",
+        "part3": "A4",
+        "part4": "D3",
+        "soprano": "F#4",
+        "alto": "A4",
+        "tenor": "A4",
+        "bass": "D3",
+        "full": "D4"
+      },
+      "musicalKey": "D Major"
     },
     {
       "id": "tayo-pororo",
@@ -616,7 +738,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "Eb4",
+        "part2": "C5",
+        "part3": "G4",
+        "part4": "Db2",
+        "soprano": "C5",
+        "alto": "G4",
+        "tenor": "Eb4",
+        "bass": "Db2",
+        "full": "Db3"
+      },
+      "musicalKey": "Db Major"
     },
     {
       "id": "run-the-sky",
@@ -674,7 +808,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "B4",
+        "part2": "G#4",
+        "part3": "E4",
+        "part4": "E3",
+        "soprano": "B4",
+        "alto": "G#4",
+        "tenor": "E4",
+        "bass": "E3",
+        "full": "E4"
+      },
+      "musicalKey": "E Major"
     },
     {
       "id": "acaroom-opening",
@@ -741,7 +887,22 @@
           5,
           6
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "G#4",
+        "part2": "G#4",
+        "part3": "E4",
+        "part4": "C#5",
+        "part5": "A4",
+        "part6": "A2",
+        "soprano": "C#5",
+        "alto": "G#4",
+        "tenor": "E4",
+        "baritone": "A4",
+        "bass": "A2",
+        "full": "E4"
+      },
+      "musicalKey": "E Major / C# Minor"
     },
     {
       "id": "speechless",
@@ -809,7 +970,22 @@
           5,
           6
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "A3",
+        "part2": "F#3",
+        "part3": "F#3",
+        "part4": "C#5",
+        "part5": "A4",
+        "part6": "D2",
+        "soprano": "C#5",
+        "alto": "A4",
+        "tenor": "A3",
+        "baritone": "F#3",
+        "bass": "D2",
+        "full": "D3"
+      },
+      "musicalKey": "D Major"
     },
     {
       "id": "in-your-arms",
@@ -872,7 +1048,21 @@
           4,
           5
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "E#5",
+        "part2": "G#5",
+        "part3": "D#5",
+        "part4": "C#3",
+        "part5": "C#5",
+        "soprano": "G#5",
+        "alto": "E#5",
+        "tenor": "D#5",
+        "baritone": "C#5",
+        "bass": "C#3",
+        "full": "C#4"
+      },
+      "musicalKey": "C# Minor"
     },
     {
       "id": "happy-school",
@@ -933,7 +1123,21 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "A4",
+        "part2": "F4",
+        "part3": "C4",
+        "part4": "A3",
+        "part5": "F3",
+        "soprano": "A4",
+        "alto": "F4",
+        "tenor": "C4",
+        "baritone": "A3",
+        "bass": "F3",
+        "full": "F4"
+      },
+      "musicalKey": "F Major"
     },
     {
       "id": "go-to-school",
@@ -995,7 +1199,21 @@
           4,
           5
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "B4",
+        "part2": "G4",
+        "part3": "D4",
+        "part4": "B3",
+        "part5": "G3",
+        "soprano": "B4",
+        "alto": "G4",
+        "tenor": "D4",
+        "baritone": "B3",
+        "bass": "G3",
+        "full": "G4"
+      },
+      "musicalKey": "G Major"
     },
     {
       "id": "well-done-today",
@@ -1063,7 +1281,22 @@
           5,
           6
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "D5",
+        "part2": "Bb4",
+        "part3": "F4",
+        "part4": "D4",
+        "part5": "Bb3",
+        "part6": "Bb2",
+        "soprano": "D5",
+        "alto": "F4",
+        "tenor": "D4",
+        "baritone": "Bb3",
+        "bass": "Bb2",
+        "full": "Bb3"
+      },
+      "musicalKey": "Bb Major"
     },
     {
       "id": "bohemian-rhapsody",
@@ -1133,7 +1366,21 @@
             "reason": "번호만 있고 성부 이름은 미확인. 같은 페이지 카드 제목은 3번 파트로 표시되어 원본 확인 필요."
           }
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "Ab4",
+        "part2": "F4",
+        "part3": "Eb5",
+        "part4": "C4",
+        "part5": "F3",
+        "soprano": "Ab4",
+        "alto": "F4",
+        "tenor": "Eb5",
+        "baritone": "C4",
+        "bass": "F3",
+        "full": "Bb3"
+      },
+      "musicalKey": "Bb Major"
     },
     {
       "id": "daft-punk",
@@ -1186,7 +1433,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "C#4",
+        "part2": "A4",
+        "part3": "F#3",
+        "part4": "F#2",
+        "soprano": "A4",
+        "alto": "C#4",
+        "tenor": "F#3",
+        "bass": "F#2",
+        "full": "F#3"
+      },
+      "musicalKey": "F# Minor"
     },
     {
       "id": "dansori",
@@ -1243,7 +1502,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "D5",
+        "part2": "B4",
+        "part3": "G4",
+        "part4": "G3",
+        "soprano": "D5",
+        "alto": "B4",
+        "tenor": "G4",
+        "bass": "G3",
+        "full": "G4"
+      },
+      "musicalKey": "G Major"
     },
     {
       "id": "isnt-she-lovely",
@@ -1300,7 +1571,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "B4",
+        "part2": "G#4",
+        "part3": "E4",
+        "part4": "E3",
+        "soprano": "B4",
+        "alto": "G#4",
+        "tenor": "E4",
+        "bass": "E3",
+        "full": "E4"
+      },
+      "musicalKey": "E Major"
     },
     {
       "id": "lets-travel",
@@ -1375,7 +1658,19 @@
           "tenor",
           "bass"
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "G4",
+        "part2": "Eb4",
+        "part3": "Eb5",
+        "part4": "Eb3",
+        "soprano": "G4",
+        "alto": "Eb4",
+        "tenor": "Eb5",
+        "bass": "Eb3",
+        "full": "Eb4"
+      },
+      "musicalKey": "Eb Major"
     },
     {
       "id": "love-song-medley",
@@ -1432,7 +1727,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "A#4",
+        "part2": "C#4",
+        "part3": "F#5",
+        "part4": "F#2",
+        "soprano": "F#5",
+        "alto": "A#4",
+        "tenor": "C#4",
+        "bass": "F#2",
+        "full": "F#3"
+      },
+      "musicalKey": "F# Major"
     },
     {
       "id": "l-o-v-e",
@@ -1494,7 +1801,21 @@
           4,
           5
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "B4",
+        "part2": "D4",
+        "part3": "B4",
+        "part4": "G4",
+        "part5": "G2",
+        "soprano": "B4",
+        "alto": "D4",
+        "tenor": "B4",
+        "baritone": "G4",
+        "bass": "G2",
+        "full": "G3"
+      },
+      "musicalKey": "G Major"
     },
     {
       "id": "old-pop-medley",
@@ -1551,7 +1872,19 @@
           3,
           4
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "B5",
+        "part2": "G#5",
+        "part3": "B4",
+        "part4": "E3",
+        "soprano": "B5",
+        "alto": "G#5",
+        "tenor": "B4",
+        "bass": "E3",
+        "full": "E4"
+      },
+      "musicalKey": "E Major / C# Minor"
     },
     {
       "id": "beautiful-world",
@@ -1636,7 +1969,21 @@
           "baritone",
           "bass"
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "Ab4",
+        "part2": "Eb4",
+        "part3": "C5",
+        "part4": "Bb4",
+        "part5": "Ab2",
+        "soprano": "Ab4",
+        "alto": "Eb4",
+        "tenor": "C5",
+        "baritone": "Bb4",
+        "bass": "Ab2",
+        "full": "Ab3"
+      },
+      "musicalKey": "Ab Major"
     },
     {
       "id": "butterfly",
@@ -1723,7 +2070,21 @@
             "originalLabel": "Butterfly 알토(2번 파트) 위주[볼륨업]"
           }
         }
-      }
+      },
+      "startingPitches": {
+        "part1": "Ab4",
+        "part2": "Ab4",
+        "part3": "Ab4",
+        "part4": "Ab4",
+        "part5": "Ab3",
+        "soprano": "Ab4",
+        "alto": "Ab4",
+        "tenor": "Ab4",
+        "baritone": "Ab4",
+        "bass": "Ab3",
+        "full": "Ab3"
+      },
+      "musicalKey": "Eb Major"
     },
     {
       "id": "cherry-blossom-ending",
@@ -1786,7 +2147,21 @@
           4,
           5
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "A4",
+        "part2": "F#4",
+        "part3": "D5",
+        "part4": "B4",
+        "part5": "A2",
+        "soprano": "A4",
+        "alto": "F#4",
+        "tenor": "D5",
+        "baritone": "B4",
+        "bass": "A2",
+        "full": "D3"
+      },
+      "musicalKey": "D Major"
     },
     {
       "id": "love-love",
@@ -1870,7 +2245,21 @@
           "baritone",
           "bass"
         ]
-      }
+      },
+      "startingPitches": {
+        "part1": "G#4",
+        "part2": "F#4",
+        "part3": "C#5",
+        "part4": "A#4",
+        "part5": "F#2",
+        "soprano": "G#4",
+        "alto": "F#4",
+        "tenor": "C#5",
+        "baritone": "A#4",
+        "bass": "F#2",
+        "full": "F#3"
+      },
+      "musicalKey": "F# Major"
     },
     {
       "id": "carol-medley",
@@ -1907,7 +2296,19 @@
           "type": "video",
           "url": "https://www.youtube.com/watch?v=BVKbpZdlsk8"
         }
-      }
+      },
+      "startingPitches": {
+        "part1": "E4",
+        "part2": "E5",
+        "part3": "E5",
+        "part4": "E3",
+        "soprano": "E5",
+        "alto": "E4",
+        "tenor": "E5",
+        "bass": "E3",
+        "full": "E4"
+      },
+      "musicalKey": "B Major"
     },
     {
       "id": "same-place",
@@ -1940,7 +2341,19 @@
           "type": "video",
           "url": "https://www.youtube.com/watch?v=DCg7DmfdXJw"
         }
-      }
+      },
+      "startingPitches": {
+        "part1": "B4",
+        "part2": "G4",
+        "part3": "E4",
+        "part4": "E3",
+        "soprano": "B4",
+        "alto": "G4",
+        "tenor": "E4",
+        "bass": "E3",
+        "full": "G4"
+      },
+      "musicalKey": "G Major"
     },
     {
       "id": "would-be-good",
@@ -1977,7 +2390,19 @@
           "type": "video",
           "url": "https://www.youtube.com/watch?v=meXusduu2RM"
         }
-      }
+      },
+      "startingPitches": {
+        "part1": "C5",
+        "part2": "Eb5",
+        "part3": "Ab4",
+        "part4": "Ab3",
+        "soprano": "Eb5",
+        "alto": "C5",
+        "tenor": "Ab4",
+        "bass": "Ab3",
+        "full": "Ab3"
+      },
+      "musicalKey": "Ab Major"
     },
     {
       "id": "ditto",
@@ -2011,7 +2436,19 @@
           "type": "video",
           "url": "https://www.youtube.com/watch?v=PZoIP4DvpbA"
         }
-      }
+      },
+      "startingPitches": {
+        "part1": "C#5",
+        "part2": "A4",
+        "part3": "F#4",
+        "part5": "F#2",
+        "soprano": "C#5",
+        "alto": "A4",
+        "tenor": "F#4",
+        "bass": "F#2",
+        "full": "F#3"
+      },
+      "musicalKey": "F# Minor"
     }
   ]
 }

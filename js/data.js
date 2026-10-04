@@ -100,6 +100,9 @@ export function validateData(raw, { warn = true } = {}) {
       }
       song.thumbnail = safeThumbnail(item.thumbnail);
       if (item.thumbnail && !song.thumbnail) report('warnings', `${label}: 안전하지 않거나 잘못된 썸네일 주소를 무시합니다.`);
+      song.startingPitches = isObject(item.startingPitches) ? { ...item.startingPitches } : {};
+      song.musicalKey = text(item.musicalKey);
+      if (isObject(item.source)) song.source = item.source;
       result.songs.push(song);
     });
   }
