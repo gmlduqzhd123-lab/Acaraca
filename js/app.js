@@ -291,7 +291,7 @@ function renderStage() {
         return el('div', {class: 'setlist-item'},
           el('div', {},
             el('span', {class: 'setlist-song-name', text: item.title}),
-            item.artist && el('span', {class: 'setlist-time', text: `· ${item.artist}`)
+            item.artist && el('span', {class: 'setlist-time', text: `· ${item.artist}`})
           ),
           song ? button('파트 연습실 이동', () => openSong(song), 'button primary small', 'play') : null
         );
@@ -305,7 +305,7 @@ function renderStage() {
           el('h2', {style: 'margin-top: 6px; font-size: 20px;', text: perf.title}),
           el('div', {class: 'stage-meta'},
             el('span', {text: `📅 ${perf.date}`}),
-            perf.venue && el('span', {text: `📍 ${perf.venue}`)
+            perf.venue && el('span', {text: `📍 ${perf.venue}`})
           )
         )
       ),
