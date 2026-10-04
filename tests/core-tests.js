@@ -12,7 +12,11 @@ import {
   getScoresForSong,
   toggleMemoryLike,
   addCustomEducation,
-  deleteCustomEducation
+  deleteCustomEducation,
+  addCustomPracticeVideo,
+  deleteCustomPracticeVideo,
+  addCustomAppreciation,
+  deleteCustomAppreciation
 } from '../js/archive.js';
 
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
@@ -156,6 +160,16 @@ export function runCoreTests() {
   check('교육 자료 추가 기능', () => eduItem.id === 'test-edu-1' && eduItem.format === 'ppt');
   deleteCustomEducation('test-edu-1');
   check('교육 자료 삭제 기능', () => !storage.read('custom_education', []).some(e => e.id === 'test-edu-1'));
+
+  const pVid = addCustomPracticeVideo({ id: 'test-pvid-1', title: '단발머리 파트 연습', part: '소프라노', sourceType: 'youtube' });
+  check('연습 영상 추가 기능', () => pVid.id === 'test-pvid-1' && pVid.part === '소프라노' && pVid.sourceType === 'youtube');
+  deleteCustomPracticeVideo('test-pvid-1');
+  check('연습 영상 삭제 기능', () => !storage.read('custom_practice_videos', []).some(v => v.id === 'test-pvid-1'));
+
+  const apprecItem = addCustomAppreciation({ id: 'test-apprec-1', title: 'Daft Punk Medley', artist: 'Pentatonix' });
+  check('아카펠라 감상 영상 추가 기능', () => apprecItem.id === 'test-apprec-1' && apprecItem.artist === 'Pentatonix');
+  deleteCustomAppreciation('test-apprec-1');
+  check('아카펠라 감상 영상 삭제 기능', () => !storage.read('custom_appreciation', []).some(a => a.id === 'test-apprec-1'));
 
   const fbFallback = addFeedback({
     rehearsalId: 'test-reh',

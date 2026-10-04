@@ -539,8 +539,9 @@ html[data-theme="dark"] .card-footer > .button:hover { background: var(--primary
   .recent-art { width: 40px; height: 40px; }
   .recent-part { margin-right: 3px; font-size: 9px; }
   .recent-play { width: 36px; height: 36px; }
-  .bottom-nav { display: flex; justify-content: space-around; position: fixed; inset: auto 0 0; z-index: 40; background: var(--surface); border-top: 1px solid var(--border); padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -3px 20px rgba(22,43,24,.025); }
-  .bottom-nav .nav-link { min-height: 48px; min-width: 0; width: auto; padding: 5px 3px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; font-size: 10px; line-height: 1.25; border-radius: 9px; white-space: nowrap; flex: 1; }
+  .bottom-nav { display: flex; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: fixed; inset: auto 0 0; z-index: 40; background: var(--surface); border-top: 1px solid var(--border); padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -3px 20px rgba(22,43,24,.025); }
+  .bottom-nav::-webkit-scrollbar { display: none; }
+  .bottom-nav .nav-link { min-height: 48px; min-width: 58px; flex: 0 0 auto; width: auto; padding: 5px 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; font-size: 10px; line-height: 1.25; border-radius: 9px; white-space: nowrap; }
   .bottom-nav .nav-link .icon { width: 19px; height: 19px; }
   .bottom-nav .nav-link.active { background: var(--primary-soft); color: var(--primary); box-shadow: none; }
   .toast { left: 50%; bottom: calc(85px + env(safe-area-inset-bottom, 0px)); font-size: 11px; padding: 11px 16px; width: max-content; }
@@ -979,6 +980,25 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 .edu-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--muted); margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
 .edu-actions { display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
 
+/* Practice Videos & Acapella Appreciation (연습 영상 & 아카펠라 감상) */
+.video-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 22px; }
+.custom-video-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease; }
+.custom-video-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(18, 38, 26, 0.1); }
+.custom-video-thumb-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #121815; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.custom-video-thumb { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
+.custom-video-thumb-wrap:hover .custom-video-thumb { transform: scale(1.04); }
+.custom-video-play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.28); transition: background .15s ease; z-index: 2; }
+.custom-video-thumb-wrap:hover .custom-video-play-overlay { background: rgba(0, 0, 0, 0.45); }
+.custom-video-play-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4); transition: transform .15s ease; }
+.custom-video-thumb-wrap:hover .custom-video-play-btn { transform: scale(1.12); }
+.custom-video-badge { position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.72); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; backdrop-filter: blur(4px); z-index: 2; }
+.custom-video-source-pill { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.72); color: #8ae6c7; padding: 3px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 600; backdrop-filter: blur(4px); z-index: 2; }
+.custom-video-body { padding: 16px 18px; display: flex; flex-direction: column; flex: 1; }
+.custom-video-title { font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.45; margin-bottom: 8px; cursor: pointer; word-break: keep-all; }
+.custom-video-title:hover { color: var(--primary); }
+.custom-video-desc { font-size: 12.5px; color: var(--muted-strong); line-height: 1.55; margin-bottom: 12px; word-break: keep-all; background: var(--bg); padding: 10px 12px; border-radius: 8px; }
+.custom-video-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+
 /* Dark Theme Overrides */
 html[data-theme="dark"] .qr-preview-box { background: #fff; }
 html[data-theme="dark"] dialog.pitch-dialog { background: var(--surface); color: var(--ink); border-color: var(--border); }
@@ -996,6 +1016,7 @@ html[data-theme="dark"] .stage-modal-dialog,
 html[data-theme="dark"] .rehearsal-card,
 html[data-theme="dark"] .score-card,
 html[data-theme="dark"] .memory-card,
+html[data-theme="dark"] .custom-video-card,
 html[data-theme="dark"] .edu-card { background: var(--surface); border-color: var(--border); }
 html[data-theme="dark"] .stage-setlist-box,
 html[data-theme="dark"] .audio-player-card,
@@ -1003,7 +1024,9 @@ html[data-theme="dark"] .feedback-form-box,
 html[data-theme="dark"] .ab-switcher-box { background: var(--surface-soft); border-color: var(--border); }
 html[data-theme="dark"] .rehearsal-notes,
 html[data-theme="dark"] .score-memo,
+html[data-theme="dark"] .custom-video-desc,
 html[data-theme="dark"] .edu-desc { background: #1c2b23; color: var(--ink); }
+
 html[data-theme="dark"] .edu-icon-badge.ppt { background: #3d2315; color: #ff9858; }
 html[data-theme="dark"] .edu-icon-badge.pdf { background: #3d1717; color: #ff7878; }
 html[data-theme="dark"] .edu-icon-badge.video { background: #162c3d; color: #5bc4ff; }

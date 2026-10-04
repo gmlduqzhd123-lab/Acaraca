@@ -11,6 +11,12 @@ import {
   loadScores,
   loadMemories,
   loadEducation,
+  loadPracticeVideos,
+  addCustomPracticeVideo,
+  deleteCustomPracticeVideo,
+  loadAppreciation,
+  addCustomAppreciation,
+  deleteCustomAppreciation,
   getAllFeedbacks,
   addFeedback,
   getPerformancesForSong,
@@ -26,12 +32,14 @@ import {
   addCustomEducation,
   deleteCustomEducation
 } from './archive.js';
-import { saveMediaFile } from './mediaStorage.js';
+import { saveMediaFile, getMediaBlobUrl } from './mediaStorage.js';
 
 const app = document.getElementById('app');
 const labels = {
   home: '홈',
   songs: '전체 곡',
+  practiceVideos: '연습 영상',
+  appreciation: '아카펠라 감상',
   scores: '악보 창고',
   education: '교육 자료',
   stage: '공연 영상',
@@ -44,6 +52,8 @@ const labels = {
 const navIcons = {
   home: 'home',
   songs: 'library',
+  practiceVideos: 'video',
+  appreciation: 'sparkles',
   scores: 'document',
   education: 'academic',
   stage: 'stage',
@@ -65,6 +75,8 @@ const state = {
   scores: [],
   memories: [],
   education: [],
+  practiceVideos: [],
+  appreciation: [],
   loading: true,
   loadError: '',
   favorites: new Set(favoriteIds),
@@ -76,6 +88,8 @@ const state = {
   stageFilters: {query: '', category: ''},
   scoreFilters: {query: '', category: '', songId: ''},
   educationFilters: {query: '', category: '', target: ''},
+  practiceVideoFilters: {query: '', part: '', songId: '', sourceType: ''},
+  appreciationFilters: {query: '', category: ''},
   memoryFilters: {category: ''},
   route: readRoute(),
   random: null,
@@ -83,7 +97,7 @@ const state = {
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = ['home', 'songs', 'scores', 'education', 'stage', 'rehearsal', 'memories'];
+const mobileTabs = ['home', 'songs', 'practiceVideos', 'appreciation', 'scores', 'education', 'stage', 'rehearsal', 'memories'];
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -392,9 +406,11 @@ function renderHome() {
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
     el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
-    el('p', {text: `공연 영상 ${state.performances.length}편, 악보 ${state.scores.length}건, 교육 자료 ${state.education.length}건, 팀의 추억 ${state.memories.length}건이 보관되어 있습니다.`}),
+    el('p', {text: `공연 영상 ${state.performances.length}편, 연습 영상 ${state.practiceVideos.length}건, 감상 영상 ${state.appreciation.length}건, 악보 ${state.scores.length}건, 교육 자료 ${state.education.length}건이 보관되어 있습니다.`}),
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
       button('🎬 공연 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
+      button('🎥 연습 영상', () => navigate({tab: 'practiceVideos'}), 'button secondary small', 'video'),
+      button('✨ 아카펠라 감상', () => navigate({tab: 'appreciation'}), 'button secondary small', 'sparkles'),
       button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
       button('🎓 교육 자료', () => navigate({tab: 'education'}), 'button secondary small', 'academic'),
       button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
@@ -1909,6 +1925,596 @@ function renderEducation() {
 
 
 /* -------------------------------------------------------------
+ *  PRACTICE VIDEOS (연습 영상)
+ * ------------------------------------------------------------- */
+
+function openUploadPracticeVideoModal() {
+  const dialog = document.getElementById('upload-practice-video-dialog');
+  if (!dialog) return;
+
+  const form = document.getElementById('upload-practice-vid-form');
+  const titleInput = document.getElementById('practice-vid-title-input');
+  const songSelect = document.getElementById('practice-vid-song-select');
+  const partSelect = document.getElementById('practice-vid-part-select');
+  const dateInput = document.getElementById('practice-vid-date-input');
+  const authorInput = document.getElementById('practice-vid-author-input');
+  const descInput = document.getElementById('practice-vid-desc-input');
+  const ytGroup = document.getElementById('practice-yt-group');
+  const fileGroup = document.getElementById('practice-file-group');
+  const ytBtn = document.getElementById('practice-source-yt-btn');
+  const fileBtn = document.getElementById('practice-source-file-btn');
+  const urlInput = document.getElementById('practice-vid-url-input');
+  const fileInput = document.getElementById('practice-vid-file-input');
+  const cancelBtn = document.getElementById('upload-practice-vid-cancel');
+  const submitBtn = document.getElementById('upload-practice-vid-submit');
+  const closeBtn = document.getElementById('upload-practice-vid-close');
+
+  let currentSource = 'youtube';
+
+  titleInput.value = '';
+  dateInput.value = new Date().toISOString().slice(0, 10);
+  authorInput.value = read('last_practice_author', '아카라카 단원');
+  descInput.value = '';
+  urlInput.value = '';
+  fileInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '연습 영상 등록하기';
+
+  songSelect.replaceChildren(
+    el('option', { value: '' }, '일반 / 곡 미선택'),
+    ...state.songs.map(s => el('option', { value: s.id }, s.title))
+  );
+
+  function setSource(source) {
+    currentSource = source;
+    if (source === 'youtube') {
+      ytBtn.classList.add('active');
+      fileBtn.classList.remove('active');
+      ytGroup.style.display = 'block';
+      fileGroup.style.display = 'none';
+      urlInput.required = true;
+      fileInput.required = false;
+    } else {
+      ytBtn.classList.remove('active');
+      fileBtn.classList.add('active');
+      ytGroup.style.display = 'none';
+      fileGroup.style.display = 'block';
+      urlInput.required = false;
+      fileInput.required = true;
+    }
+  }
+
+  ytBtn.onclick = () => setSource('youtube');
+  fileBtn.onclick = () => setSource('file');
+  setSource('youtube');
+
+  cancelBtn.onclick = () => dialog.close();
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => { if (e.target === dialog) dialog.close(); };
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    if (!title) {
+      toast('영상 제목을 입력해 주세요.');
+      return;
+    }
+
+    const songId = songSelect.value || '';
+    const part = partSelect.value;
+    const date = dateInput.value || new Date().toISOString().slice(0, 10);
+    const author = authorInput.value.trim() || '아카라카 단원';
+    const description = descInput.value.trim();
+
+    write('last_practice_author', author);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '저장 중...';
+
+    try {
+      const vidId = `practice-vid-${Date.now()}`;
+      let videoUrl = '';
+      let fileName = '';
+      let fileSize = '';
+      let mediaId = null;
+      let blobUrl = null;
+      let thumbnail = '';
+
+      if (currentSource === 'youtube') {
+        videoUrl = urlInput.value.trim();
+        if (!videoUrl) {
+          toast('YouTube 영상 주소를 입력해 주세요.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = '연습 영상 등록하기';
+          return;
+        }
+        const parsed = parseYouTube({ type: 'video', url: videoUrl });
+        if (parsed.ok && parsed.videoId) {
+          thumbnail = `https://img.youtube.com/vi/${parsed.videoId}/hqdefault.jpg`;
+        }
+      } else {
+        const file = fileInput.files?.[0];
+        if (!file) {
+          toast('업로드할 영상 파일을 선택해 주세요.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = '연습 영상 등록하기';
+          return;
+        }
+        fileName = file.name;
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+        fileSize = sizeMb >= 1 ? `${sizeMb} MB` : `${Math.round(file.size / 1024)} KB`;
+        mediaId = `media-practice-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+
+        const record = await saveMediaFile(mediaId, file, { title, songId, part });
+        if (!record) throw new Error('영상 파일 브라우저 저장에 실패했습니다.');
+        blobUrl = await getMediaBlobUrl(mediaId);
+      }
+
+      const newVideo = {
+        id: vidId,
+        title,
+        songId,
+        part,
+        date,
+        author,
+        sourceType: currentSource,
+        videoUrl,
+        fileName,
+        fileSize,
+        mediaId,
+        blobUrl,
+        thumbnail,
+        description,
+        isCustom: true
+      };
+
+      addCustomPracticeVideo(newVideo);
+      state.practiceVideos = await loadPracticeVideos(true);
+      dialog.close();
+      render();
+      toast('🎬 연습 영상이 성공적으로 등록되었습니다.');
+    } catch (err) {
+      console.error(err);
+      toast('영상 등록 중 오류가 발생했습니다: ' + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '연습 영상 등록하기';
+    }
+  };
+
+  dialog.showModal();
+}
+
+function renderPracticeVideos() {
+  const partOptions = ['전체 파트', '전체 합주', '소프라노', '메조', '알토', '테너', '바리톤', '베이스', '보컬퍼커션', '개인 연습'];
+  const sourceOptions = ['전체 방식', '유튜브 링크', '파일 업로드'];
+
+  const heading = el('div', {class: 'page-heading'},
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: 'ACAPELLA PRACTICE CLIPS & ARCHIVE'}),
+        el('h1', {text: '연습 영상'}),
+        el('p', {text: '단원들의 파트별 연습 영상, 전체 합주 녹화본, 유튜브 링크 및 로컬 영상 보관소입니다.'})
+      ),
+      button('+ 새 연습 영상 올리기', () => openUploadPracticeVideoModal(), 'button primary small', 'plus')
+    )
+  );
+
+  const searchInput = el('input', {
+    type: 'search',
+    class: 'search-input',
+    placeholder: '영상 제목, 연관 곡명, 파트, 기록자 검색...',
+    value: state.practiceVideoFilters.query || '',
+    oninput: (e) => {
+      state.practiceVideoFilters.query = e.target.value;
+      updateVideoList();
+    }
+  });
+
+  const partChips = el('div', {class: 'chip-group', style: 'margin-bottom: 12px;'},
+    partOptions.map(p => button(p, () => {
+      state.practiceVideoFilters.part = p === '전체 파트' ? '' : p;
+      for (const btn of partChips.querySelectorAll('button')) {
+        btn.classList.toggle('active', btn.textContent.trim() === p);
+      }
+      updateVideoList();
+    }, `chip${(state.practiceVideoFilters.part === p || (!state.practiceVideoFilters.part && p === '전체 파트')) ? ' active' : ''}`))
+  );
+
+  const songOptions = [
+    { id: '', title: '전체 곡' },
+    ...state.songs
+  ];
+  const songSelect = el('select', {
+    class: 'search-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
+    onchange: (e) => {
+      state.practiceVideoFilters.songId = e.target.value;
+      updateVideoList();
+    }
+  }, songOptions.map(s => el('option', { value: s.id, selected: state.practiceVideoFilters.songId === s.id }, s.title)));
+
+  const sourceSelect = el('select', {
+    class: 'search-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
+    onchange: (e) => {
+      state.practiceVideoFilters.sourceType = e.target.value === '전체 방식' ? '' : e.target.value;
+      updateVideoList();
+    }
+  }, sourceOptions.map(s => el('option', { value: s, selected: (!state.practiceVideoFilters.sourceType && s === '전체 방식') || state.practiceVideoFilters.sourceType === s }, s)));
+
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;'},
+    partChips,
+    el('div', {style: 'display: flex; align-items: center; gap: 10px; flex-wrap: wrap;'},
+      el('div', {style: 'display: flex; align-items: center; gap: 6px;'},
+        el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '곡:'),
+        songSelect
+      ),
+      el('div', {style: 'display: flex; align-items: center; gap: 6px;'},
+        el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '구분:'),
+        sourceSelect
+      )
+    )
+  );
+
+  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+    el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
+    filterRow
+  );
+
+  const gridContainer = el('div', {class: 'video-card-grid'});
+
+  function getFilteredVideos() {
+    const q = (state.practiceVideoFilters.query || '').trim().toLowerCase();
+    const part = state.practiceVideoFilters.part || '';
+    const songId = state.practiceVideoFilters.songId || '';
+    const srcType = state.practiceVideoFilters.sourceType || '';
+
+    return state.practiceVideos.filter(vid => {
+      if (part && vid.part !== part) return false;
+      if (songId && vid.songId !== songId) return false;
+      if (srcType === '유튜브 링크' && vid.sourceType !== 'youtube') return false;
+      if (srcType === '파일 업로드' && vid.sourceType !== 'file') return false;
+      if (q) {
+        const songObj = state.songs.find(s => s.id === vid.songId);
+        const matchTitle = vid.title?.toLowerCase().includes(q);
+        const matchAuthor = vid.author?.toLowerCase().includes(q);
+        const matchDesc = vid.description?.toLowerCase().includes(q);
+        const matchPart = vid.part?.toLowerCase().includes(q);
+        const matchSong = songObj?.title?.toLowerCase().includes(q);
+        if (!matchTitle && !matchAuthor && !matchDesc && !matchPart && !matchSong) return false;
+      }
+      return true;
+    });
+  }
+
+  function updateVideoList() {
+    const filtered = getFilteredVideos();
+    if (!filtered.length) {
+      gridContainer.replaceChildren(
+        emptyState('등록된 연습 영상이 없습니다', '단원들과 함께 촬영한 합주 영상 파일이나 YouTube 링크를 올려 보세요.', button('+ 연습 영상 올리기', () => openUploadPracticeVideoModal(), 'button primary small', 'plus'))
+      );
+      return;
+    }
+
+    gridContainer.replaceChildren(...filtered.map(vid => {
+      const isFile = vid.sourceType === 'file';
+      const isYt = !isFile;
+      const songObj = state.songs.find(s => s.id === vid.songId);
+
+      const thumbWrap = el('div', {
+        class: 'custom-video-thumb-wrap',
+        onclick: () => openMemoryLightboxModal({
+          id: vid.id,
+          title: vid.title,
+          type: 'video',
+          category: vid.part ? `연습 영상 · ${vid.part}` : '연습 영상',
+          videoUrl: vid.videoUrl,
+          mediaUrl: vid.blobUrl,
+          blobUrl: vid.blobUrl,
+          sourceType: vid.sourceType,
+          date: vid.date,
+          venue: songObj?.title ? `관련 곡: ${songObj.title}` : 'AcaRaca 연습실',
+          author: vid.author,
+          description: vid.description
+        })
+      });
+
+      if (isYt && vid.thumbnail) {
+        thumbWrap.append(el('img', {
+          src: vid.thumbnail,
+          alt: vid.title,
+          class: 'custom-video-thumb',
+          loading: 'lazy'
+        }));
+      } else {
+        thumbWrap.append(
+          el('div', {style: 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted);'},
+            icon('video'),
+            el('span', {style: 'font-size: 11px;'}, vid.fileName || '업로드된 연습 영상 파일')
+          )
+        );
+      }
+
+      thumbWrap.append(
+        el('div', {class: 'custom-video-badge'}, vid.part || '합주 연습'),
+        el('div', {class: 'custom-video-source-pill'}, isFile ? '📁 파일' : '🔗 YouTube'),
+        el('div', {class: 'custom-video-play-overlay'},
+          el('div', {class: 'custom-video-play-btn'}, icon('play'))
+        )
+      );
+
+      const body = el('div', {class: 'custom-video-body'},
+        songObj ? el('div', {style: 'margin-bottom: 6px;'},
+          el('span', {class: 'memory-tag', style: 'cursor: pointer;', onclick: () => openSong(songObj)}, `🎶 ${songObj.title}`)
+        ) : null,
+        el('h3', {
+          class: 'custom-video-title',
+          text: vid.title,
+          onclick: () => openMemoryLightboxModal({
+            id: vid.id,
+            title: vid.title,
+            type: 'video',
+            category: vid.part ? `연습 영상 · ${vid.part}` : '연습 영상',
+            videoUrl: vid.videoUrl,
+            mediaUrl: vid.blobUrl,
+            blobUrl: vid.blobUrl,
+            sourceType: vid.sourceType,
+            date: vid.date,
+            venue: songObj?.title ? `관련 곡: ${songObj.title}` : 'AcaRaca 연습실',
+            author: vid.author,
+            description: vid.description
+          })
+        }),
+        vid.description ? el('p', {class: 'custom-video-desc', text: vid.description}) : null,
+        el('div', {class: 'custom-video-footer'},
+          el('span', {}, `📅 ${vid.date || ''} · 👤 ${vid.author || '단원'}`),
+          vid.isCustom ? button('', async (e) => {
+            e.stopPropagation();
+            if (confirm(`'${vid.title}' 연습 영상을 삭제하시겠습니까?`)) {
+              await deleteCustomPracticeVideo(vid.id);
+              state.practiceVideos = await loadPracticeVideos(true);
+              render();
+              toast('연습 영상이 삭제되었습니다.');
+            }
+          }, 'icon-button', 'trash', {'aria-label': '영상 삭제', title: '영상 삭제'}) : null
+        )
+      );
+
+      return el('article', {class: 'custom-video-card'}, thumbWrap, body);
+    }));
+  }
+
+  updateVideoList();
+  app.append(heading, filterPanel, gridContainer);
+}
+
+
+/* -------------------------------------------------------------
+ *  ACAPELLA APPRECIATION (아카펠라 감상)
+ * ------------------------------------------------------------- */
+
+function openUploadAppreciationModal() {
+  const dialog = document.getElementById('upload-appreciation-dialog');
+  if (!dialog) return;
+
+  const form = document.getElementById('upload-apprec-form');
+  const urlInput = document.getElementById('apprec-url-input');
+  const titleInput = document.getElementById('apprec-title-input');
+  const artistInput = document.getElementById('apprec-artist-input');
+  const categorySelect = document.getElementById('apprec-category-select');
+  const uploaderInput = document.getElementById('apprec-uploader-input');
+  const descInput = document.getElementById('apprec-desc-input');
+  const cancelBtn = document.getElementById('upload-apprec-cancel');
+  const submitBtn = document.getElementById('upload-apprec-submit');
+  const closeBtn = document.getElementById('upload-apprec-close');
+
+  urlInput.value = '';
+  titleInput.value = '';
+  artistInput.value = '';
+  categorySelect.value = '국내 아카펠라';
+  uploaderInput.value = read('last_apprec_uploader', '아카라카 단원');
+  descInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '감상 영상 등록하기';
+
+  cancelBtn.onclick = () => dialog.close();
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => { if (e.target === dialog) dialog.close(); };
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const url = urlInput.value.trim();
+    const title = titleInput.value.trim();
+
+    if (!url) {
+      toast('유튜브 영상 링크를 입력해 주세요.');
+      return;
+    }
+    if (!title) {
+      toast('영상 제목을 입력해 주세요.');
+      return;
+    }
+
+    const parsed = parseYouTube({ type: 'video', url });
+    let thumbnail = '';
+    if (parsed.ok && parsed.videoId) {
+      thumbnail = `https://img.youtube.com/vi/${parsed.videoId}/hqdefault.jpg`;
+    }
+
+    const artist = artistInput.value.trim() || '아카펠라 아티스트';
+    const category = categorySelect.value;
+    const uploader = uploaderInput.value.trim() || '아카라카';
+    const description = descInput.value.trim();
+
+    write('last_apprec_uploader', uploader);
+
+    const newApprec = {
+      id: `apprec-${Date.now()}`,
+      title,
+      videoUrl: url,
+      thumbnail,
+      artist,
+      category,
+      uploader,
+      date: new Date().toISOString().slice(0, 10),
+      description,
+      isCustom: true
+    };
+
+    addCustomAppreciation(newApprec);
+    state.appreciation = await loadAppreciation(true);
+    dialog.close();
+    render();
+    toast('🎧 아카펠라 감상 영상이 등록되었습니다.');
+  };
+
+  dialog.showModal();
+}
+
+function renderAppreciation() {
+  const categoryOptions = ['전체', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상'];
+
+  const heading = el('div', {class: 'page-heading'},
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: 'ACAPELLA INSPIRATION & MASTERPIECES'}),
+        el('h1', {text: '아카펠라 감상'}),
+        el('p', {text: '전 세계 아카펠라 그룹의 환상적인 하모니, 명곡 커버, 라이브 무대를 감상하고 영감을 얻어 보세요.'})
+      ),
+      button('+ 감상 영상 등록', () => openUploadAppreciationModal(), 'button primary small', 'plus')
+    )
+  );
+
+  const searchInput = el('input', {
+    type: 'search',
+    class: 'search-input',
+    placeholder: '영상 제목, 아티스트 / 그룹명, 추천인 검색...',
+    value: state.appreciationFilters.query || '',
+    oninput: (e) => {
+      state.appreciationFilters.query = e.target.value;
+      updateApprecList();
+    }
+  });
+
+  const categoryChips = el('div', {class: 'chip-group', style: 'margin-bottom: 12px;'},
+    categoryOptions.map(cat => button(cat, () => {
+      state.appreciationFilters.category = cat === '전체' ? '' : cat;
+      for (const btn of categoryChips.querySelectorAll('button')) {
+        btn.classList.toggle('active', btn.textContent.trim() === cat);
+      }
+      updateApprecList();
+    }, `chip${(state.appreciationFilters.category === cat || (!state.appreciationFilters.category && cat === '전체')) ? ' active' : ''}`))
+  );
+
+  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+    el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
+    categoryChips
+  );
+
+  const gridContainer = el('div', {class: 'video-card-grid'});
+
+  function getFilteredAppreciation() {
+    const q = (state.appreciationFilters.query || '').trim().toLowerCase();
+    const cat = state.appreciationFilters.category || '';
+
+    return state.appreciation.filter(item => {
+      if (cat && item.category !== cat) return false;
+      if (q) {
+        const matchTitle = item.title?.toLowerCase().includes(q);
+        const matchArtist = item.artist?.toLowerCase().includes(q);
+        const matchDesc = item.description?.toLowerCase().includes(q);
+        const matchUploader = item.uploader?.toLowerCase().includes(q);
+        if (!matchTitle && !matchArtist && !matchDesc && !matchUploader) return false;
+      }
+      return true;
+    });
+  }
+
+  function updateApprecList() {
+    const filtered = getFilteredAppreciation();
+    if (!filtered.length) {
+      gridContainer.replaceChildren(
+        emptyState('등록된 아카펠라 감상 영상이 없습니다', '팀원들과 함께 듣고 영감을 얻을 수 있는 YouTube 아카펠라 영상을 등록해 보세요.', button('+ 감상 영상 등록', () => openUploadAppreciationModal(), 'button primary small', 'plus'))
+      );
+      return;
+    }
+
+    gridContainer.replaceChildren(...filtered.map(item => {
+      const thumbWrap = el('div', {
+        class: 'custom-video-thumb-wrap',
+        onclick: () => openMemoryLightboxModal({
+          id: item.id,
+          title: item.title,
+          type: 'video',
+          category: `아카펠라 감상 · ${item.category || '명작'}`,
+          videoUrl: item.videoUrl,
+          date: item.date,
+          venue: item.artist ? `아티스트: ${item.artist}` : 'YouTube',
+          author: item.uploader ? `추천: ${item.uploader}` : '',
+          description: item.description
+        })
+      });
+
+      if (item.thumbnail) {
+        thumbWrap.append(el('img', {
+          src: item.thumbnail,
+          alt: item.title,
+          class: 'custom-video-thumb',
+          loading: 'lazy'
+        }));
+      }
+
+      thumbWrap.append(
+        el('div', {class: 'custom-video-badge'}, item.category || '감상'),
+        el('div', {class: 'custom-video-play-overlay'},
+          el('div', {class: 'custom-video-play-btn'}, icon('play'))
+        )
+      );
+
+      const body = el('div', {class: 'custom-video-body'},
+        item.artist ? el('div', {style: 'margin-bottom: 6px;'},
+          el('span', {class: 'memory-tag'}, `🎙️ ${item.artist}`)
+        ) : null,
+        el('h3', {
+          class: 'custom-video-title',
+          text: item.title,
+          onclick: () => openMemoryLightboxModal({
+            id: item.id,
+            title: item.title,
+            type: 'video',
+            category: `아카펠라 감상 · ${item.category || '명작'}`,
+            videoUrl: item.videoUrl,
+            date: item.date,
+            venue: item.artist ? `아티스트: ${item.artist}` : 'YouTube',
+            author: item.uploader ? `추천: ${item.uploader}` : '',
+            description: item.description
+          })
+        }),
+        item.description ? el('p', {class: 'custom-video-desc', text: item.description}) : null,
+        el('div', {class: 'custom-video-footer'},
+          el('span', {}, `추천: ${item.uploader || '단원'} · 📅 ${item.date || ''}`),
+          item.isCustom ? button('', async (e) => {
+            e.stopPropagation();
+            if (confirm(`'${item.title}' 감상 영상을 목록에서 삭제하시겠습니까?`)) {
+              deleteCustomAppreciation(item.id);
+              state.appreciation = await loadAppreciation(true);
+              render();
+              toast('감상 영상이 삭제되었습니다.');
+            }
+          }, 'icon-button', 'trash', {'aria-label': '영상 삭제', title: '영상 삭제'}) : null
+        )
+      );
+
+      return el('article', {class: 'custom-video-card'}, thumbWrap, body);
+    }));
+  }
+
+  updateApprecList();
+  app.append(heading, filterPanel, gridContainer);
+}
+
+
+/* -------------------------------------------------------------
  *  MEMORIES & MOMENTS (우리들의 기록)
  * ------------------------------------------------------------- */
 
@@ -2051,26 +2657,39 @@ function openMemoryLightboxModal(memory) {
   dialog.onclose = () => cleanupLightbox();
 
   titleEl.textContent = memory.title;
-  badgeEl.textContent = memory.category || (memory.type === 'shorts' ? '숏츠' : '사진');
+  badgeEl.textContent = memory.category || (memory.type === 'shorts' ? '숏츠' : '영상');
   descEl.textContent = memory.description || '';
-  metaEl.textContent = `📅 ${memory.date || ''} ${memory.venue ? `· 📍 ${memory.venue}` : ''} ${memory.author ? `· ✍️ ${memory.author}` : ''}`;
+  const authorDisplay = memory.author || memory.artist || memory.uploader;
+  metaEl.textContent = `📅 ${memory.date || ''} ${memory.venue ? `· 📍 ${memory.venue}` : ''} ${authorDisplay ? `· 👤 ${authorDisplay}` : ''}`;
 
   containerEl.replaceChildren();
 
-  if (memory.type === 'shorts' || (memory.videoUrl && memory.videoUrl.includes('youtube')) || (memory.mediaUrl && memory.mediaUrl.includes('youtube'))) {
-    const videoUrl = memory.videoUrl || memory.mediaUrl;
-    const playerHost = el('div', {style: 'width: 100%; max-width: 380px; aspect-ratio: 9/16; max-height: 60vh;'});
+  const isYouTube = Boolean((memory.videoUrl && (memory.videoUrl.includes('youtube') || memory.videoUrl.includes('youtu.be'))) ||
+                            (memory.mediaUrl && (memory.mediaUrl.includes('youtube') || memory.mediaUrl.includes('youtu.be'))));
+  const videoUrl = memory.videoUrl || memory.mediaUrl;
+
+  if (memory.type === 'shorts' || (isYouTube && videoUrl && videoUrl.includes('/shorts/'))) {
+    const playerHost = el('div', {style: 'width: 100%; max-width: 380px; aspect-ratio: 9/16; max-height: 60vh; margin: 0 auto;'});
     const p = createPlayer(playerHost, { type: 'video', url: videoUrl }, memory.title);
     if (p && typeof p.mount === 'function') {
       p.mount();
     }
     activePlayers.push(p);
     containerEl.append(playerHost);
-  } else if (memory.type === 'video' || (memory.mediaUrl && /\.(mp4|webm|mov)$/i.test(memory.mediaUrl))) {
+  } else if (isYouTube) {
+    const playerHost = el('div', {style: 'width: 100%; max-width: 720px; aspect-ratio: 16/9; max-height: 60vh; margin: 0 auto;'});
+    const p = createPlayer(playerHost, { type: 'video', url: videoUrl }, memory.title);
+    if (p && typeof p.mount === 'function') {
+      p.mount();
+    }
+    activePlayers.push(p);
+    containerEl.append(playerHost);
+  } else if (memory.type === 'video' || memory.sourceType === 'file' || memory.blobUrl || (memory.mediaUrl && /\.(mp4|webm|mov)$/i.test(memory.mediaUrl))) {
+    const videoSrc = memory.blobUrl || memory.mediaUrl;
     const videoEl = el('video', {
       controls: true,
       autoplay: true,
-      src: memory.mediaUrl,
+      src: videoSrc,
       style: 'max-width: 100%; max-height: 60vh; border-radius: 8px;'
     });
     activePlayers.push({
@@ -2625,6 +3244,8 @@ function render() {
     lastPractice = '';
     if (song) renderDetail(song);
     else if (state.route.tab === 'songs') renderBrowse();
+    else if (state.route.tab === 'practiceVideos') renderPracticeVideos();
+    else if (state.route.tab === 'appreciation') renderAppreciation();
     else if (state.route.tab === 'scores') renderScores();
     else if (state.route.tab === 'education') renderEducation();
     else if (state.route.tab === 'stage') renderStage();
@@ -2639,13 +3260,15 @@ function render() {
 async function initialize() {
   state.loading = true; state.loadError = ''; render();
   try {
-    const [songRes, perfRes, rehRes, scoresRes, memoriesRes, eduRes] = await Promise.all([
+    const [songRes, perfRes, rehRes, scoresRes, memoriesRes, eduRes, practiceVidRes, apprecRes] = await Promise.all([
       loadSongs(),
       loadPerformances(),
       loadRehearsals(),
       loadScores(),
       loadMemories(),
-      loadEducation()
+      loadEducation(),
+      loadPracticeVideos(),
+      loadAppreciation()
     ]);
     state.songs = songRes.songs;
     const savedOverrides = read('statusOverrides', {});
@@ -2661,6 +3284,8 @@ async function initialize() {
     state.scores = scoresRes;
     state.memories = memoriesRes;
     state.education = eduRes;
+    state.practiceVideos = practiceVidRes;
+    state.appreciation = apprecRes;
     if (songRes.errors?.length && !songRes.songs.length) state.loadError = songRes.errors.join(' ');
     if (songRes.errors?.length && songRes.songs.length) toast(`${songRes.errors.length}개의 잘못된 데이터 항목을 제외하고 불러왔어요.`);
   } catch (error) { state.loadError = `${error.message || '자료를 확인할 수 없습니다.'} data/songs.json 파일과 HTTP 연결을 확인해 주세요.`; }

@@ -52,6 +52,7 @@ const paths = {
   chat: ['M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'],
   academic: ['M22 10v6M2 10l10-5 10 5-10 5z', 'M6 12v5c3 3 9 3 12 0v-5'],
   presentation: ['M2 3h20v14H2z', 'M8 21h8', 'M12 17v4', 'M7 8h5', 'M7 12h8'],
+  video: ['m23 7-7 5 7 5V7z', 'M1 5h15v14H1z'],
   book: ['M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z', 'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z']
 };
 

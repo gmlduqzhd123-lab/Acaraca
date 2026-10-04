@@ -369,6 +369,137 @@
     </form>
   </dialog>
 
+  <!-- Upload Practice Video Modal -->
+  <dialog class="share-dialog" id="upload-practice-video-dialog" style="width: min(560px, calc(100vw - 32px)); max-width: 560px;" aria-labelledby="upload-practice-vid-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="upload-practice-vid-title" style="margin: 0; font-size: 19px;">🎬 + 새 연습 영상 올리기</h2>
+      <button type="button" class="dialog-close-x" id="upload-practice-vid-close" onclick="document.getElementById('upload-practice-video-dialog').close()" aria-label="닫기">✕</button>
+    </div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">유튜브 영상 링크 또는 내 컴퓨터의 연습 영상 파일(.mp4, .webm, .mov)을 등록할 수 있습니다.</p>
+    <form id="upload-practice-vid-form">
+      <div style="margin-bottom: 12px;">
+        <label for="practice-vid-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">영상 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="text" id="practice-vid-title-input" required placeholder="예: 단발머리 3성부 화음 맞추기 & 안무 연습" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="practice-vid-song-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연관 곡</label>
+          <select id="practice-vid-song-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="">일반 / 곡 미선택</option>
+          </select>
+        </div>
+        <div>
+          <label for="practice-vid-part-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습 파트</label>
+          <select id="practice-vid-part-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="전체 합주">전체 합주</option>
+            <option value="소프라노">소프라노</option>
+            <option value="메조">메조</option>
+            <option value="알토">알토</option>
+            <option value="테너">테너</option>
+            <option value="바리톤">바리톤</option>
+            <option value="베이스">베이스</option>
+            <option value="보컬퍼커션">보컬퍼커션 / 비트박스</option>
+            <option value="개인 연습">개인 연습</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="practice-vid-date-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">촬영 / 연습 일자</label>
+          <input type="date" id="practice-vid-date-input" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label for="practice-vid-author-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">기록자 / 촬영자</label>
+          <input type="text" id="practice-vid-author-input" placeholder="이름 또는 역할 (예: 합주조장)" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <!-- Source Selection: YouTube Link vs Local Video File -->
+      <div style="margin-bottom: 14px; padding: 14px; background: var(--surface-soft); border-radius: 10px; border: 1px solid var(--border);">
+        <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px;">영상 등록 방식 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button type="button" class="chip active" id="practice-source-yt-btn" style="flex: 1; text-align: center;">🔗 유튜브 영상 링크</button>
+          <button type="button" class="chip" id="practice-source-file-btn" style="flex: 1; text-align: center;">📁 내 컴퓨터 영상 파일</button>
+        </div>
+
+        <div id="practice-yt-group">
+          <label for="practice-vid-url-input" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px;">YouTube 영상 URL (일반 영상 또는 숏츠)</label>
+          <input type="url" id="practice-vid-url-input" placeholder="https://www.youtube.com/watch?v=... 또는 https://youtu.be/..." style="width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: 12px; box-sizing: border-box;">
+        </div>
+
+        <div id="practice-file-group" style="display: none;">
+          <label for="practice-vid-file-input" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px;">영상 파일 선택 (브라우저 로컬 안전 저장: MP4, WebM, MOV)</label>
+          <input type="file" id="practice-vid-file-input" accept="video/*,.mp4,.webm,.mov" style="display: block; width: 100%; padding: 6px 0; font-size: 12px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label for="practice-vid-desc-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습 메모 / 피드백 포인트 (선택)</label>
+        <textarea id="practice-vid-desc-input" rows="2" placeholder="주요 연습 구간, 화음 밸런스 점검 내용, 템포 유지 사항 등을 적어 주세요." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box; resize: vertical;"></textarea>
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="upload-practice-vid-cancel">취소</button>
+        <button type="submit" class="button primary" id="upload-practice-vid-submit">연습 영상 등록하기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Upload Acapella Appreciation Modal -->
+  <dialog class="share-dialog" id="upload-appreciation-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-apprec-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="upload-apprec-title" style="margin: 0; font-size: 19px;">🎧 + 아카펠라 감상 영상 등록</h2>
+      <button type="button" class="dialog-close-x" id="upload-apprec-close" onclick="document.getElementById('upload-appreciation-dialog').close()" aria-label="닫기">✕</button>
+    </div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">팀원들과 함께 나누고 싶은 멋진 아카펠라 유튜브 영상 링크를 등록해 보세요.</p>
+    <form id="upload-apprec-form">
+      <div style="margin-bottom: 12px;">
+        <label for="apprec-url-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">유튜브 영상 링크 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="url" id="apprec-url-input" required placeholder="https://www.youtube.com/watch?v=... 또는 https://youtu.be/..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="apprec-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">영상 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="text" id="apprec-title-input" required placeholder="예: Pentatonix - Daft Punk Medley" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="apprec-artist-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">아티스트 / 그룹명</label>
+          <input type="text" id="apprec-artist-input" placeholder="예: 메이트리, Pentatonix, 리얼그룹" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label for="apprec-category-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">감상 분류</label>
+          <select id="apprec-category-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="국내 아카펠라">🇰🇷 국내 아카펠라</option>
+            <option value="해외 명작">🌎 해외 명작 아카펠라</option>
+            <option value="보컬 커버">🎙️ 보컬 커버 / 편곡</option>
+            <option value="라이브 콘서트">🎪 라이브 무대 & 버스킹</option>
+            <option value="영화 / OST">🎬 영화 / 애니메이션 OST</option>
+            <option value="자유 감상">✨ 자유 감상</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="apprec-uploader-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">추천인</label>
+        <input type="text" id="apprec-uploader-input" placeholder="이름 또는 닉네임" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label for="apprec-desc-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">감상평 / 추천하는 이유 (선택)</label>
+        <textarea id="apprec-desc-input" rows="2" placeholder="이 영상의 화음 포인트, 리듬감, 팀원들과 함께 보고 싶었던 이유를 적어 주세요." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box; resize: vertical;"></textarea>
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="upload-apprec-cancel">취소</button>
+        <button type="submit" class="button primary" id="upload-apprec-submit">감상 영상 등록하기</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- Memory Lightbox Modal -->
   <dialog class="share-dialog memory-lightbox-dialog" id="memory-lightbox-dialog" style="width: min(720px, calc(100vw - 24px)); max-width: 720px; padding: 0; overflow: hidden; border-radius: 16px; background: var(--surface);" aria-labelledby="lightbox-title">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border);">
@@ -486,7 +617,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=17';
+      script.src = './js/app.js?v=18';
       script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
       document.body.append(script);
 

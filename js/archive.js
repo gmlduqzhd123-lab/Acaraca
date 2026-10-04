@@ -386,3 +386,91 @@ export async function deleteCustomEducation(eduId) {
   cachedEducation = null;
 }
 
+let cachedPracticeVideos = null;
+
+export async function loadPracticeVideos(forceReload = false) {
+  if (cachedPracticeVideos && !forceReload) return cachedPracticeVideos;
+  let serverVideos = [];
+  try {
+    const res = await fetch('./data/practice_videos.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('연습 영상 데이터를 불러올 수 없습니다.');
+    const json = await res.json();
+    serverVideos = Array.isArray(json.videos) ? json.videos : [];
+  } catch (error) {
+    console.warn('loadPracticeVideos error:', error);
+    serverVideos = [];
+  }
+
+  const customVideos = read('custom_practice_videos', []);
+  const allVideos = [...(Array.isArray(customVideos) ? customVideos : []), ...serverVideos];
+
+  // Resolve blob URLs for video files stored in IndexedDB
+  for (const item of allVideos) {
+    if (item.mediaId) {
+      const blobUrl = await getMediaBlobUrl(item.mediaId);
+      if (blobUrl) {
+        item.blobUrl = blobUrl;
+      }
+    }
+  }
+
+  cachedPracticeVideos = allVideos;
+  return cachedPracticeVideos;
+}
+
+export function addCustomPracticeVideo(newVideo) {
+  const customList = read('custom_practice_videos', []);
+  const updated = [newVideo, ...customList];
+  write('custom_practice_videos', updated);
+  cachedPracticeVideos = null;
+  return newVideo;
+}
+
+export async function deleteCustomPracticeVideo(videoId) {
+  const customList = read('custom_practice_videos', []);
+  const target = customList.find(v => v.id === videoId);
+  const updated = customList.filter(v => v.id !== videoId);
+  write('custom_practice_videos', updated);
+  if (target?.mediaId) {
+    await deleteMediaFile(target.mediaId);
+  }
+  cachedPracticeVideos = null;
+}
+
+let cachedAppreciation = null;
+
+export async function loadAppreciation(forceReload = false) {
+  if (cachedAppreciation && !forceReload) return cachedAppreciation;
+  let serverVideos = [];
+  try {
+    const res = await fetch('./data/appreciation.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('아카펠라 감상 데이터를 불러올 수 없습니다.');
+    const json = await res.json();
+    serverVideos = Array.isArray(json.videos) ? json.videos : [];
+  } catch (error) {
+    console.warn('loadAppreciation error:', error);
+    serverVideos = [];
+  }
+
+  const customVideos = read('custom_appreciation', []);
+  const allVideos = [...(Array.isArray(customVideos) ? customVideos : []), ...serverVideos];
+
+  cachedAppreciation = allVideos;
+  return cachedAppreciation;
+}
+
+export function addCustomAppreciation(newVideo) {
+  const customList = read('custom_appreciation', []);
+  const updated = [newVideo, ...customList];
+  write('custom_appreciation', updated);
+  cachedAppreciation = null;
+  return newVideo;
+}
+
+export function deleteCustomAppreciation(videoId) {
+  const customList = read('custom_appreciation', []);
+  const updated = customList.filter(v => v.id !== videoId);
+  write('custom_appreciation', updated);
+  cachedAppreciation = null;
+}
+

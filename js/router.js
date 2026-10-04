@@ -1,4 +1,4 @@
-const tabs = new Set(['home', 'songs', 'scores', 'education', 'stage', 'rehearsal', 'memories', 'favorites', 'recent', 'settings']);
+const tabs = new Set(['home', 'songs', 'practiceVideos', 'appreciation', 'scores', 'education', 'stage', 'rehearsal', 'memories', 'favorites', 'recent', 'settings']);
 
 export function readRoute() {
   const query = new URL(location.href).searchParams;
