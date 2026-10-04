@@ -54,6 +54,9 @@ const state = {
   random: null,
   player: null
 };
+const activeAudios = new Set();
+const activePlayers = [];
+const mobileTabs = ['home', 'songs', 'stage', 'rehearsal', 'favorites'];
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -74,13 +77,21 @@ function startPractice(song, part = preferredPart(song, state.myPart)) {
 
 function refreshChrome() {
   const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
-  for (const id of ['desktop-nav', 'mobile-nav']) {
-    const nav = document.getElementById(id);
-    nav.replaceChildren(...Object.entries(labels).map(([tab, label]) => el('a', {
+  const desktopNav = document.getElementById('desktop-nav');
+  if (desktopNav) {
+    desktopNav.replaceChildren(...Object.entries(labels).map(([tab, label]) => el('a', {
       class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
       'aria-current': tab === activeTab ? 'page' : null,
       onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
     }, icon(navIcons[tab]), el('span', {text: label}))));
+  }
+  const mobileNav = document.getElementById('mobile-nav');
+  if (mobileNav) {
+    mobileNav.replaceChildren(...mobileTabs.map(tab => el('a', {
+      class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
+      'aria-current': tab === activeTab ? 'page' : null,
+      onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
+    }, icon(navIcons[tab]), el('span', {text: labels[tab]}))));
   }
   document.getElementById('sidebar-bottom').replaceChildren(
     button('첫 음 조율 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
@@ -270,7 +281,8 @@ function renderStage() {
 
   const list = el('div', {class: 'stage-grid'}, state.performances.map(perf => {
     const playerHost = el('div', {class: 'stage-player-host'});
-    createPlayer(playerHost, perf.video, perf.title);
+    const p = createPlayer(playerHost, perf.video, perf.title);
+    activePlayers.push(p);
 
     const setlistNode = perf.setlist?.length ? el('div', {class: 'stage-setlist-box'},
       el('div', {class: 'stage-setlist-title', text: '무대 셋리스트 (파트 연습 바로가기)'}),
@@ -309,8 +321,10 @@ function renderStage() {
 function renderAudioPlayer(audioData, title = '현장 녹음본') {
   const card = el('div', {class: 'audio-player-card', role: 'region', 'aria-label': `${title} 오디오 플레이어`});
   const audio = new Audio(audioData.url);
+  activeAudios.add(audio);
   let isPlaying = false;
   let speed = 1.0;
+  let isScrubbing = false;
 
   const rateBtn = el('button', {
     type: 'button',
@@ -334,19 +348,23 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
       isPlaying = false;
       playBtn.replaceChildren(icon('play'), document.createTextNode('재생'));
     } else {
-      audio.play().catch(() => {});
-      isPlaying = true;
-      playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+      audio.play().then(() => {
+        isPlaying = true;
+        playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+      }).catch((e) => {
+        console.warn('Audio play failed:', e);
+      });
     }
   }, 'button primary small', 'play');
 
   const rewindBtn = button('5초', () => {
-    audio.currentTime = Math.max(0, audio.currentTime - 5);
+    audio.currentTime = Math.max(0, (audio.currentTime || 0) - 5);
     toast('⏪ 녹음본 5초 뒤로');
   }, 'button secondary small', 'rewind');
 
   const forwardBtn = button('5초', () => {
-    audio.currentTime = audio.currentTime + 5;
+    const max = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : Infinity;
+    audio.currentTime = Math.min(max, (audio.currentTime || 0) + 5);
     toast('⏩ 녹음본 5초 앞으로');
   }, 'button secondary small', 'fastforward');
 
@@ -357,10 +375,29 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     max: audioData.duration || 100,
     value: 0,
     step: 0.5,
-    oninput: () => {
+  });
+
+  const updateSliderTime = (val) => {
+    const sec = Math.floor(val);
+    const m = String(Math.floor(sec / 60)).padStart(2, '0');
+    const s = String(sec % 60).padStart(2, '0');
+    timeLabel.textContent = `${m}:${s}`;
+  };
+
+  rangeInput.addEventListener('mousedown', () => { isScrubbing = true; });
+  rangeInput.addEventListener('touchstart', () => { isScrubbing = true; }, {passive: true});
+  rangeInput.addEventListener('input', () => {
+    updateSliderTime(Number(rangeInput.value));
+  });
+  const commitSeek = () => {
+    if (isScrubbing) {
+      isScrubbing = false;
       audio.currentTime = Number(rangeInput.value);
     }
-  });
+  };
+  rangeInput.addEventListener('mouseup', commitSeek);
+  rangeInput.addEventListener('touchend', commitSeek);
+  rangeInput.addEventListener('change', commitSeek);
 
   audio.addEventListener('loadedmetadata', () => {
     if (audio.duration && !isNaN(audio.duration)) {
@@ -369,16 +406,22 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   });
 
   audio.addEventListener('timeupdate', () => {
-    rangeInput.value = audio.currentTime;
-    const sec = Math.floor(audio.currentTime);
-    const m = String(Math.floor(sec / 60)).padStart(2, '0');
-    const s = String(sec % 60).padStart(2, '0');
-    timeLabel.textContent = `${m}:${s}`;
+    if (!isScrubbing) {
+      rangeInput.value = audio.currentTime;
+      updateSliderTime(audio.currentTime);
+    }
   });
 
   audio.addEventListener('ended', () => {
     isPlaying = false;
     playBtn.replaceChildren(icon('play'), document.createTextNode('재생'));
+  });
+
+  audio.addEventListener('error', (err) => {
+    isPlaying = false;
+    playBtn.replaceChildren(icon('play'), document.createTextNode('재생'));
+    console.warn('Audio error:', err);
+    toast('오디오 음원을 불러오지 못했습니다.');
   });
 
   const row = el('div', {class: 'audio-controls-row'},
@@ -387,10 +430,37 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   );
 
   card.append(header, row);
-  return card;
+
+  return {
+    element: card,
+    audio,
+    play() {
+      audio.play().then(() => {
+        isPlaying = true;
+        playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+      }).catch(() => {});
+    },
+    pause() {
+      audio.pause();
+      isPlaying = false;
+      playBtn.replaceChildren(icon('play'), document.createTextNode('재생'));
+    },
+    getCurrentTime() {
+      return audio.currentTime || 0;
+    },
+    seekTo(sec) {
+      const max = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : Infinity;
+      audio.currentTime = Math.max(0, Math.min(sec, max));
+      rangeInput.value = audio.currentTime;
+      updateSliderTime(audio.currentTime);
+    },
+    isPlaying() {
+      return isPlaying && !audio.paused;
+    }
+  };
 }
 
-function renderFeedbackSection(reh, playerInstance) {
+function renderFeedbackSection(reh, playerInstance, audioCtrl) {
   const section = el('div', {class: 'feedback-section'});
   const title = el('div', {class: 'feedback-section-title'}, icon('chat'), el('span', {text: '팀원 피드백 (누구나 작성 가능)'}));
 
@@ -413,7 +483,14 @@ function renderFeedbackSection(reh, playerInstance) {
 
   let selectedTime = 0;
   const timeBtn = button('⏱️ 재생시간 가져오기', () => {
-    const cur = playerInstance?.getCurrentTime ? Math.floor(playerInstance.getCurrentTime()) : 0;
+    let cur = 0;
+    if (audioCtrl?.isPlaying && audioCtrl.isPlaying()) {
+      cur = Math.floor(audioCtrl.getCurrentTime());
+    } else if (playerInstance?.getCurrentTime) {
+      cur = Math.floor(playerInstance.getCurrentTime());
+    } else if (audioCtrl?.getCurrentTime) {
+      cur = Math.floor(audioCtrl.getCurrentTime());
+    }
     selectedTime = cur;
     const m = String(Math.floor(cur / 60)).padStart(2, '0');
     const s = String(cur % 60).padStart(2, '0');
@@ -467,11 +544,20 @@ function renderFeedbackSection(reh, playerInstance) {
         class: 'feedback-time-chip',
         title: `${m}:${s} 위치로 이동`,
         onclick: () => {
-          if (playerInstance?.seekTo) {
+          let jumped = false;
+          if (audioCtrl?.isPlaying && audioCtrl.isPlaying()) {
+            audioCtrl.seekTo(fb.time);
+            jumped = true;
+          } else if (playerInstance?.seekTo) {
             playerInstance.seekTo(fb.time);
             playerInstance.play();
-            toast(`▶ ${m}:${s} 마디로 이동합니다.`);
+            jumped = true;
+          } else if (audioCtrl?.seekTo) {
+            audioCtrl.seekTo(fb.time);
+            audioCtrl.play();
+            jumped = true;
           }
+          if (jumped) toast(`▶ ${m}:${s} 구간으로 이동합니다.`);
         }
       }, `⏱️ ${m}:${s}`) : null;
 
@@ -518,20 +604,22 @@ function renderRehearsal() {
   const list = el('div', {class: 'rehearsal-grid'}, state.rehearsals.map(reh => {
     const song = state.songs.find(s => s.id === reh.songId);
     let activePlayerInstance = null;
+    let audioCtrl = null;
 
     const mediaBox = el('div', {class: 'rehearsal-media-box'});
     if (reh.video?.url) {
       const videoHost = el('div');
       activePlayerInstance = createPlayer(videoHost, reh.video, reh.title);
+      activePlayers.push(activePlayerInstance);
       mediaBox.append(videoHost);
     }
 
     if (reh.audio?.url) {
-      const audioCard = renderAudioPlayer(reh.audio, reh.title);
-      mediaBox.append(audioCard);
+      audioCtrl = renderAudioPlayer(reh.audio, reh.title);
+      mediaBox.append(audioCtrl.element);
     }
 
-    const feedbackSection = renderFeedbackSection(reh, activePlayerInstance);
+    const feedbackSection = renderFeedbackSection(reh, activePlayerInstance, audioCtrl);
 
     return el('article', {class: 'rehearsal-card'},
       el('div', {class: 'rehearsal-top'},
@@ -792,7 +880,7 @@ function renderPractice(song, part, record = true) {
   state.player = createPlayer(playerHost, song.videos[part], `${song.title} · ${PARTS[part]} 연습`);
   const controller = renderPlayerController(state.player, song, part);
 
-  let audioPlayer = null;
+  let audioPlayerCtrl = null;
   let abSwitcher = null;
 
   if (rehearsalAudio) {
@@ -806,7 +894,10 @@ function renderPractice(song, part, record = true) {
           for (const b of abSwitcher.querySelectorAll('.ab-chip')) b.classList.toggle('active', b === e.target);
           playerLayout.hidden = false;
           controller.hidden = false;
-          if (audioPlayer) audioPlayer.hidden = true;
+          if (audioPlayerCtrl) {
+            audioPlayerCtrl.element.hidden = true;
+            audioPlayerCtrl.pause();
+          }
         }
       }),
       el('button', {
@@ -817,11 +908,12 @@ function renderPractice(song, part, record = true) {
           for (const b of abSwitcher.querySelectorAll('.ab-chip')) b.classList.toggle('active', b === e.target);
           playerLayout.hidden = true;
           controller.hidden = true;
-          if (!audioPlayer) {
-            audioPlayer = renderAudioPlayer(rehearsalAudio, `${song.title} 현장 녹음본`);
-            playerLayout.parentNode.insertBefore(audioPlayer, controller);
+          state.player?.pause();
+          if (!audioPlayerCtrl) {
+            audioPlayerCtrl = renderAudioPlayer(rehearsalAudio, `${song.title} 현장 녹음본`);
+            playerLayout.parentNode.insertBefore(audioPlayerCtrl.element, controller);
           }
-          audioPlayer.hidden = false;
+          audioPlayerCtrl.element.hidden = false;
           toast('🎙️ 가이드 음정과 우리 팀의 실제 소리를 비교해 보세요.');
         }
       })
@@ -938,6 +1030,12 @@ function normalizeRoute() {
 let lastPractice = '';
 function render() {
   stopPitch();
+  for (const p of activePlayers) { try { p.destroy(); } catch {} }
+  activePlayers.length = 0;
+  for (const a of activeAudios) {
+    try { a.pause(); a.src = ''; } catch {}
+  }
+  activeAudios.clear();
   state.player?.destroy(); state.player = null; timerNodes = null;
   app.replaceChildren(); refreshChrome();
   if (state.loading) { app.append(el('div', {class: 'loading-state', role: 'status', text: '연습실을 준비하고 있어요…'})); return; }

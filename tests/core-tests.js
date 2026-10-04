@@ -136,6 +136,15 @@ export function runCoreTests() {
   const liked = toggleFeedbackLike(fb.id);
   check('피드백 공감 토글', () => liked === true && getAllFeedbacks('test-reh').find(item => item.id === fb.id)?.likes === 1);
 
+  const fbFallback = addFeedback({
+    rehearsalId: 'test-reh',
+    author: '   ',
+    time: -10,
+    content: '피드백 내용'
+  });
+  check('피드백 작성자 공백 시 익명의 단원 fallback 및 음수 시간 보정', () => fbFallback.author === '익명의 단원' && fbFallback.time === 0);
+  check('빈 피드백 내용은 등록 거부', () => addFeedback({ rehearsalId: 'test-reh', content: '   ' }) === null);
+
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   try {
     const fakeValues = new Map();
