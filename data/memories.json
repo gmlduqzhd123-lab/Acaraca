@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "memories": [
+    {
+      "id": "mem-shorts-suncheon-sp",
+      "title": "순천만국가정원 남문 스페이스허브광장 아고라순천 버스킹 숏츠 🌿",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2024-09-28",
+      "venue": "순천만국가정원 남문 스페이스허브광장",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/watch?v=kJ0nfArx9GI",
+      "thumbnail": "https://img.youtube.com/vi/kJ0nfArx9GI/hqdefault.jpg",
+      "description": "푸른 잔디밭에서 울려 퍼지는 올드팝 메들리! 관객분들의 뜨거운 박수와 함께한 힐링 순간입니다. 💚",
+      "tags": ["순천만국가정원", "아고라순천", "올드팝메들리", "숏츠"],
+      "songId": "old-pop-medley",
+      "likes": 24
+    },
+    {
+      "id": "mem-shorts-disney",
+      "title": "디즈니 메들리 신나는 순간 하이라이트 클립 🏰✨",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2024-09-28",
+      "venue": "순천만국가정원 남문",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/watch?v=JBbIWl0P8TQ",
+      "thumbnail": "https://img.youtube.com/vi/JBbIWl0P8TQ/hqdefault.jpg",
+      "description": "아이들과 관객분들이 다 함께 박수를 치며 즐겨주신 디즈니 메들리 하이라이트 영상!",
+      "tags": ["디즈니메들리", "숏츠", "아카라카", "스페이스허브"],
+      "songId": "disney-medley",
+      "likes": 31
+    },
+    {
+      "id": "mem-photo-garden-stage",
+      "title": "순천만국가정원 무대 마치고 단체 기념사진 📷",
+      "type": "photo",
+      "category": "사진 앨범",
+      "date": "2024-09-28",
+      "venue": "순천만국가정원 스페이스허브광장",
+      "author": "아카라카",
+      "mediaUrl": "https://img.youtube.com/vi/kJ0nfArx9GI/maxresdefault.jpg",
+      "thumbnail": "https://img.youtube.com/vi/kJ0nfArx9GI/hqdefault.jpg",
+      "description": "공연을 성공적으로 마치고 다 같이 찰칵! 맑은 가을 하늘과 아름다운 정원에서 잊지 못할 추억을 남겼습니다.",
+      "tags": ["단체사진", "순천만", "무대기록", "청명한가을"],
+      "likes": 45
+    },
+    {
+      "id": "mem-shorts-bohemian-run",
+      "title": "보헤미안 랩소디 오페라 파트 런스루 현장 🎤",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2024-10-04",
+      "venue": "아카라카 연습실",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/watch?v=DUwM7EAkJNs",
+      "thumbnail": "https://img.youtube.com/vi/DUwM7EAkJNs/hqdefault.jpg",
+      "description": "갈릴레오 피가로 마그니피코! 단원들의 숨소리까지 맞추며 연습했던 긴장감 넘치는 런스루 클립입니다.",
+      "tags": ["보헤미안랩소디", "연습실비하인드", "숏츠", "오페라파트"],
+      "songId": "bohemian-rhapsody-5",
+      "likes": 19
+    },
+    {
+      "id": "mem-photo-ocheon-green",
+      "title": "오천그린광장 노을 아래 버스킹 감성 🌅",
+      "type": "photo",
+      "category": "사진 앨범",
+      "date": "2024-08-30",
+      "venue": "순천 오천그린광장",
+      "author": "아카라카",
+      "mediaUrl": "https://img.youtube.com/vi/jNiMADupffU/maxresdefault.jpg",
+      "thumbnail": "https://img.youtube.com/vi/jNiMADupffU/hqdefault.jpg",
+      "description": "붉게 물든 노을이 지는 오천그린광장에서 부른 L.O.V.E.와 그대 내 품에. 낭만 가득했던 여름밤의 하모니.",
+      "tags": ["오천그린광장", "노을버스킹", "LOVE", "그대내품에"],
+      "likes": 38
+    },
+    {
+      "id": "mem-behind-rehearsal",
+      "title": "정기 합주 쉬는 시간 폭풍 수다 & 간식 타임 ☕🥐",
+      "type": "photo",
+      "category": "비하인드",
+      "date": "2024-09-20",
+      "venue": "연습실 라운지",
+      "author": "재우",
+      "mediaUrl": "https://img.youtube.com/vi/Bw3dqV--NCM/maxresdefault.jpg",
+      "thumbnail": "https://img.youtube.com/vi/Bw3dqV--NCM/hqdefault.jpg",
+      "description": "격렬한 화음 맞추기 후 당 충전은 필수! 웃음과 파이팅이 끊이지 않는 아카라카 연습실 비하인드 스토리입니다.",
+      "tags": ["연습실일상", "비하인드", "간식타임", "파이팅"],
+      "likes": 27
+    }
+  ]
+}

@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://gmlduqzhd123-lab.github.io/Acaraca/og-image.jpg">
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/style.css?v=7">
 </head>
 <body>
   <a class="skip-link" href="#app">본문으로 건너뛰기</a>
@@ -168,6 +168,187 @@
     </form>
   </dialog>
 
+  <!-- Upload Sheet Music Modal -->
+  <dialog class="share-dialog" id="upload-score-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-score-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="upload-score-title" style="margin: 0; font-size: 19px;">🎼 + 새 악보 등록하기</h2>
+      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+    </div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">합주 총보, 파트보, 가사지 PDF나 악보 이미지 파일을 올려두고 언제든 열람하세요.</p>
+    <form id="upload-score-form">
+      <div style="margin-bottom: 12px;">
+        <label for="score-song-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">관련 곡 선택</label>
+        <select id="score-song-select" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;"></select>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="score-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">악보 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="text" id="score-title-input" required placeholder="예: 보헤미안 랩소디 5성부 합주 총보" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="score-category-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">악보 종류</label>
+          <select id="score-category-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="총보">총보 (Full Score)</option>
+            <option value="파트보">파트보 (Part Score)</option>
+            <option value="가사/리드시트">가사/리드시트</option>
+            <option value="기타">기타 악보</option>
+          </select>
+        </div>
+        <div>
+          <label for="score-part-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">해당 파트</label>
+          <select id="score-part-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="all">전체 (총보/공통)</option>
+            <option value="soprano">소프라노</option>
+            <option value="alto">알토</option>
+            <option value="tenor">테너</option>
+            <option value="baritone">바리톤</option>
+            <option value="bass">베이스</option>
+            <option value="vp">보컬 퍼커션</option>
+            <option value="lead">리드</option>
+            <option value="part1">1번 파트</option>
+            <option value="part2">2번 파트</option>
+            <option value="part3">3번 파트</option>
+            <option value="part4">4번 파트</option>
+            <option value="part5">5번 파트</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="score-arranger-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">편곡자 / 사보자 (선택)</label>
+        <input type="text" id="score-arranger-input" placeholder="예: 아카라카 편곡, EXIT 편곡 등" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="score-memo-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">악보 메모 / 연주 팁</label>
+        <textarea id="score-memo-input" rows="2" placeholder="조표 변경, 솔로 구간, 템포 유의사항 등을 적어 주세요." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 16px; padding: 14px; background: var(--surface-soft); border-radius: 10px; border: 1px solid var(--border);">
+        <label for="score-file-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">📄 내 컴퓨터에서 악보 파일 선택 (PDF 또는 이미지)</label>
+        <input type="file" id="score-file-input" accept="application/pdf,image/*,.pdf,.png,.jpg,.jpeg,.webp" style="display: block; width: 100%; padding: 8px 0; font-size: 12px; box-sizing: border-box;">
+        <div style="margin-top: 8px;">
+          <label for="score-url-input" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px;">또는 온라인 링크 (구글 드라이브, 클라우드 악보 링크)</label>
+          <input type="url" id="score-url-input" placeholder="https://drive.google.com/... 또는 https://..." style="width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: 12px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="upload-score-cancel">취소</button>
+        <button type="submit" class="button primary" id="upload-score-submit">악보 등록하기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Score Viewer Modal -->
+  <dialog class="share-dialog score-viewer-dialog" id="score-viewer-dialog" style="width: min(920px, calc(100vw - 24px)); max-width: 920px; height: 88vh; max-height: 88vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;" aria-labelledby="score-viewer-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+        <span style="font-size: 20px;">🎼</span>
+        <div style="min-width: 0;">
+          <h2 id="score-viewer-title" style="margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">악보 뷰어</h2>
+          <p id="score-viewer-meta" style="margin: 0; font-size: 11px; color: var(--muted);"></p>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+        <button type="button" class="button secondary small" id="score-viewer-download" title="다운로드">📥 다운로드</button>
+        <form method="dialog"><button class="icon-button" style="width: 32px; height: 32px;" aria-label="닫기">✕</button></form>
+      </div>
+    </div>
+    <div id="score-viewer-body" style="flex: 1; overflow: auto; background: var(--surface-soft); display: flex; justify-content: center; align-items: center; padding: 12px; position: relative;">
+      <!-- PDF iframe or Image injected here -->
+    </div>
+  </dialog>
+
+  <!-- Upload Team Memory / Moment Modal -->
+  <dialog class="share-dialog" id="upload-memory-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-memory-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="upload-memory-title" style="margin: 0; font-size: 19px;">📷 + 우리들의 기록 올리기</h2>
+      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+    </div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">연습실 숏츠 영상, 무대 사진, 비하인드 순간을 팀원들과 함께 공유해 보세요.</p>
+    <form id="upload-memory-form">
+      <div style="margin-bottom: 12px;">
+        <label for="mem-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">기록 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="text" id="mem-title-input" required placeholder="예: 순천만국가정원 남문 버스킹 숏츠 🌿" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="mem-category-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">기록 분류</label>
+          <select id="mem-category-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="숏츠 영상">📱 숏츠 영상</option>
+            <option value="사진 앨범">📷 사진 앨범</option>
+            <option value="비하인드">🎬 비하인드 / 연습</option>
+            <option value="공연 추억">🎪 공연 추억</option>
+          </select>
+        </div>
+        <div>
+          <label for="mem-date-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">날짜</label>
+          <input type="date" id="mem-date-input" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="mem-venue-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">장소 (선택)</label>
+          <input type="text" id="mem-venue-input" placeholder="예: 순천만국가정원, 연습실" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label for="mem-author-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">작성자/기록자</label>
+          <input type="text" id="mem-author-input" placeholder="이름 또는 팀명 (예: 아카라카)" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="mem-desc-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">추억 한 줄 / 이야기</label>
+        <textarea id="mem-desc-input" rows="2" placeholder="그날의 분위기, 재미있었던 에피소드를 적어 주세요." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="mem-tags-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">태그 (쉼표로 구분)</label>
+        <input type="text" id="mem-tags-input" placeholder="예: 순천만, 버스킹, 숏츠, 보헤미안랩소디" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 16px; padding: 14px; background: var(--surface-soft); border-radius: 10px; border: 1px solid var(--border);">
+        <label for="mem-file-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">📷 내 컴퓨터에서 사진 / 영상 파일 올리기</label>
+        <input type="file" id="mem-file-input" accept="image/*,video/*,.mp4,.mov,.webm,.jpg,.png,.jpeg,.gif,.webp" style="display: block; width: 100%; padding: 8px 0; font-size: 12px; box-sizing: border-box;">
+        <div style="margin-top: 8px;">
+          <label for="mem-url-input" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px;">또는 YouTube 숏츠 / 영상 URL</label>
+          <input type="url" id="mem-url-input" placeholder="https://www.youtube.com/shorts/... 또는 https://www.youtube.com/watch?v=..." style="width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: 12px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="upload-mem-cancel">취소</button>
+        <button type="submit" class="button primary" id="upload-mem-submit">기록 올리기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Memory Lightbox Modal -->
+  <dialog class="share-dialog memory-lightbox-dialog" id="memory-lightbox-dialog" style="width: min(720px, calc(100vw - 24px)); max-width: 720px; padding: 0; overflow: hidden; border-radius: 16px; background: var(--surface);" aria-labelledby="lightbox-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border);">
+      <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+        <span id="lightbox-badge" class="badge">기록</span>
+        <h2 id="lightbox-title" style="margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">기록 보기</h2>
+      </div>
+      <form method="dialog"><button class="icon-button" style="width: 32px; height: 32px;" aria-label="닫기">✕</button></form>
+    </div>
+    <div id="lightbox-media-container" style="background: #000; display: flex; justify-content: center; align-items: center; min-height: 280px; max-height: 65vh; overflow: hidden;">
+      <!-- Image or Video/Shorts Player injected here -->
+    </div>
+    <div style="padding: 16px 20px;">
+      <p id="lightbox-desc" style="font-size: 14px; margin-bottom: 10px; line-height: 1.5; color: var(--ink);"></p>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px;">
+        <div id="lightbox-meta"></div>
+        <button type="button" class="button secondary small" id="lightbox-like-btn">❤️ 공감</button>
+      </div>
+    </div>
+  </dialog>
+
   <!-- Vocal Pitch Pipe Modal -->
   <dialog class="pitch-dialog" id="pitch-dialog" aria-labelledby="pitch-title">
     <div class="pitch-dialog-header">
@@ -265,7 +446,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=5';
+      script.src = './js/app.js?v=7';
       script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
       document.body.append(script);
 

@@ -182,3 +182,155 @@ export async function deleteCustomRehearsal(rehearsalId) {
   }
   cachedRehearsals = null;
 }
+
+let cachedScores = null;
+let cachedMemories = null;
+
+export async function loadScores(forceReload = false) {
+  if (cachedScores && !forceReload) return cachedScores;
+  let serverScores = [];
+  try {
+    const res = await fetch('./data/scores.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('악보 데이터를 불러올 수 없습니다.');
+    const json = await res.json();
+    serverScores = Array.isArray(json.scores) ? json.scores : [];
+  } catch (error) {
+    console.warn('loadScores error:', error);
+    serverScores = [];
+  }
+
+  const customScores = read('custom_scores', []);
+  const allScores = [...(Array.isArray(customScores) ? customScores : []), ...serverScores];
+
+  // Resolve blob URLs for scores stored in IndexedDB
+  for (const sc of allScores) {
+    if (sc.mediaId) {
+      const blobUrl = await getMediaBlobUrl(sc.mediaId);
+      if (blobUrl) {
+        sc.blobUrl = blobUrl;
+      }
+    }
+  }
+
+  cachedScores = allScores;
+  return cachedScores;
+}
+
+export function addCustomScore(newScore) {
+  const customList = read('custom_scores', []);
+  const updated = [newScore, ...customList];
+  write('custom_scores', updated);
+  cachedScores = null;
+  return newScore;
+}
+
+export async function deleteCustomScore(scoreId) {
+  const customList = read('custom_scores', []);
+  const target = customList.find(s => s.id === scoreId);
+  const updated = customList.filter(s => s.id !== scoreId);
+  write('custom_scores', updated);
+  if (target?.mediaId) {
+    await deleteMediaFile(target.mediaId);
+  }
+  cachedScores = null;
+}
+
+export function getScoresForSong(scores, songId) {
+  if (!Array.isArray(scores) || !songId) return [];
+  return scores.filter(s => s.songId === songId);
+}
+
+export async function loadMemories(forceReload = false) {
+  if (cachedMemories && !forceReload) return cachedMemories;
+  let serverMemories = [];
+  try {
+    const res = await fetch('./data/memories.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('기록 데이터를 불러올 수 없습니다.');
+    const json = await res.json();
+    serverMemories = Array.isArray(json.memories) ? json.memories : [];
+  } catch (error) {
+    console.warn('loadMemories error:', error);
+    serverMemories = [];
+  }
+
+  const customMemories = read('custom_memories', []);
+  const allMemories = [...(Array.isArray(customMemories) ? customMemories : []), ...serverMemories];
+
+  // Resolve blob URLs for memories stored in IndexedDB
+  for (const m of allMemories) {
+    if (m.mediaId) {
+      const blobUrl = await getMediaBlobUrl(m.mediaId);
+      if (blobUrl) {
+        m.mediaUrl = blobUrl;
+        if (m.type === 'photo' || !m.thumbnail) {
+          m.thumbnail = blobUrl;
+        }
+      }
+    }
+  }
+
+  // Sync likes with liked_memories
+  const customLikeCounts = read('memory_like_counts', {});
+  for (const m of allMemories) {
+    if (typeof customLikeCounts[m.id] === 'number') {
+      m.likes = customLikeCounts[m.id];
+    }
+  }
+
+  cachedMemories = allMemories;
+  return cachedMemories;
+}
+
+export function addCustomMemory(newMemory) {
+  const customList = read('custom_memories', []);
+  const updated = [newMemory, ...customList];
+  write('custom_memories', updated);
+  cachedMemories = null;
+  return newMemory;
+}
+
+export async function deleteCustomMemory(memoryId) {
+  const customList = read('custom_memories', []);
+  const target = customList.find(m => m.id === memoryId);
+  const updated = customList.filter(m => m.id !== memoryId);
+  write('custom_memories', updated);
+  if (target?.mediaId) {
+    await deleteMediaFile(target.mediaId);
+  }
+  cachedMemories = null;
+}
+
+export function toggleMemoryLike(memoryId) {
+  const likedKeys = new Set(read('liked_memories', []));
+  const customLikeCounts = read('memory_like_counts', {});
+  const isLiked = likedKeys.has(memoryId);
+
+  let currentLikes = 0;
+  if (cachedMemories) {
+    const mem = cachedMemories.find(m => m.id === memoryId);
+    if (mem) {
+      currentLikes = mem.likes || 0;
+    }
+  }
+  if (typeof customLikeCounts[memoryId] === 'number') {
+    currentLikes = customLikeCounts[memoryId];
+  }
+
+  const nextLikes = Math.max(0, currentLikes + (isLiked ? -1 : 1));
+  customLikeCounts[memoryId] = nextLikes;
+  write('memory_like_counts', customLikeCounts);
+
+  if (isLiked) {
+    likedKeys.delete(memoryId);
+  } else {
+    likedKeys.add(memoryId);
+  }
+  write('liked_memories', [...likedKeys]);
+
+  if (cachedMemories) {
+    const mem = cachedMemories.find(m => m.id === memoryId);
+    if (mem) mem.likes = nextLikes;
+  }
+
+  return { isLiked: !isLiked, count: nextLikes };
+}

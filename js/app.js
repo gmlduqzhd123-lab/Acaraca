@@ -8,14 +8,22 @@ import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlayin
 import {
   loadPerformances,
   loadRehearsals,
+  loadScores,
+  loadMemories,
   getAllFeedbacks,
   addFeedback,
   toggleFeedbackLike,
   getPerformancesForSong,
   getRehearsalsForSong,
+  getScoresForSong,
   addCustomRehearsal,
   attachMediaToRehearsal,
-  deleteCustomRehearsal
+  deleteCustomRehearsal,
+  addCustomScore,
+  deleteCustomScore,
+  addCustomMemory,
+  deleteCustomMemory,
+  toggleMemoryLike
 } from './archive.js';
 import { saveMediaFile } from './mediaStorage.js';
 
@@ -23,8 +31,10 @@ const app = document.getElementById('app');
 const labels = {
   home: '홈',
   songs: '전체 곡',
+  scores: '악보 창고',
   stage: '공연 영상',
   rehearsal: '연습 일지',
+  memories: '우리들의 기록',
   favorites: '즐겨찾기',
   recent: '최근 연습',
   settings: '설정'
@@ -32,8 +42,10 @@ const labels = {
 const navIcons = {
   home: 'home',
   songs: 'library',
+  scores: 'document',
   stage: 'stage',
   rehearsal: 'notes',
+  memories: 'camera',
   favorites: 'heart',
   recent: 'clock',
   settings: 'settings'
@@ -47,6 +59,8 @@ const state = {
   songs: [],
   performances: [],
   rehearsals: [],
+  scores: [],
+  memories: [],
   loading: true,
   loadError: '',
   favorites: new Set(favoriteIds),
@@ -54,13 +68,15 @@ const state = {
   myPart: Object.keys(PARTS).filter(part => part !== 'full').includes(read('myPart', '')) ? read('myPart', '') : '',
   progress: object(read('progress', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
+  scoreFilters: {query: '', category: '', songId: ''},
+  memoryFilters: {category: ''},
   route: readRoute(),
   random: null,
   player: null
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = ['home', 'songs', 'stage', 'rehearsal', 'favorites'];
+const mobileTabs = ['home', 'songs', 'scores', 'stage', 'rehearsal', 'memories'];
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -280,6 +296,17 @@ function renderHome() {
   }
   updateRandom(); app.append(section('오늘의 랜덤 연습', '새로운 하모니와 만나는 작은 계기', randomPanel));
   app.append(section('연습 라이브러리', `${state.songs.length}곡, 하나의 연습실`, songGrid(state.songs.slice(0, 4)), button('전체 곡 보기', () => navigate({tab: 'songs'}), 'text-button', 'arrow')));
+
+  const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
+    el('div', {class: 'quick-panel-title'}, icon('document'), el('h3', {text: '악보 창고 & 우리들의 기록'})),
+    el('p', {text: `총보/파트보 악보 ${state.scores.length}건, 팀의 추억과 숏츠 영상 ${state.memories.length}건이 보관되어 있습니다.`}),
+    el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
+      button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
+      button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
+      button('🎙️ 연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary small', 'notes')
+    )
+  );
+  app.append(section('아카라카 아카이브', '함께 부르고 함께 나눈 모든 기록', archivePanel));
 }
 
 function renderBrowse(favoritesOnly = false) {
@@ -913,6 +940,617 @@ function renderRehearsal() {
   app.append(list);
 }
 
+/* -------------------------------------------------------------
+ *  SCORES ARCHIVE (악보 창고)
+ * ------------------------------------------------------------- */
+
+function openUploadScoreModal(defaultSongId = '') {
+  const dialog = document.getElementById('upload-score-dialog');
+  if (!dialog) return;
+
+  const form = document.getElementById('upload-score-form');
+  const songSelect = document.getElementById('score-song-select');
+  const titleInput = document.getElementById('score-title-input');
+  const categorySelect = document.getElementById('score-category-select');
+  const partSelect = document.getElementById('score-part-select');
+  const arrangerInput = document.getElementById('score-arranger-input');
+  const memoInput = document.getElementById('score-memo-input');
+  const fileInput = document.getElementById('score-file-input');
+  const urlInput = document.getElementById('score-url-input');
+  const cancelBtn = document.getElementById('upload-score-cancel');
+  const submitBtn = document.getElementById('upload-score-submit');
+
+  songSelect.replaceChildren(
+    el('option', { value: '', text: '기타 / 특정 곡 없음' }),
+    ...state.songs.map(s => el('option', {
+      value: s.id,
+      text: `${s.title} (${s.artist || '아티스트 미등록'})`,
+      selected: s.id === defaultSongId
+    }))
+  );
+
+  titleInput.value = '';
+  categorySelect.value = '총보';
+  partSelect.value = 'all';
+  arrangerInput.value = '';
+  memoInput.value = '';
+  fileInput.value = '';
+  urlInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '악보 등록하기';
+
+  cancelBtn.onclick = () => dialog.close();
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    if (!title) {
+      toast('악보 제목을 입력해 주세요.');
+      return;
+    }
+
+    const file = fileInput.files?.[0];
+    const url = urlInput.value.trim();
+
+    if (!file && !url) {
+      toast('악보 파일(PDF 또는 이미지)을 선택하거나 온라인 주소를 입력해 주세요.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '저장 중...';
+
+    try {
+      const scoreId = `score-custom-${Date.now()}`;
+      let mediaId = null;
+      let fileName = file?.name || '온라인 악보';
+      let fileType = file?.type === 'application/pdf' || /\.pdf$/i.test(file?.name || '') ? 'pdf' : (file?.type?.startsWith('image') || /\.(jpg|png|jpeg|webp)$/i.test(file?.name || '')) ? 'image' : 'link';
+      let fileSize = file ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` : '';
+
+      if (file) {
+        mediaId = `media-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const record = await saveMediaFile(mediaId, file, { title });
+        if (!record) throw new Error('파일 저장에 실패했습니다.');
+      }
+
+      const newScore = {
+        id: scoreId,
+        songId: songSelect.value || '',
+        title,
+        category: categorySelect.value || '총보',
+        part: partSelect.value || 'all',
+        arranger: arrangerInput.value.trim() || '단원 등록',
+        memo: memoInput.value.trim(),
+        fileType,
+        fileName,
+        fileSize,
+        fileUrl: url || '',
+        mediaId,
+        isCustom: true,
+        uploadedAt: new Date().toISOString().slice(0, 10)
+      };
+
+      addCustomScore(newScore);
+      state.scores = await loadScores(true);
+      dialog.close();
+      render();
+      toast('🎼 새 악보가 악보 창고에 등록되었습니다.');
+    } catch (err) {
+      console.error(err);
+      toast('악보 등록 중 오류가 발생했습니다: ' + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '악보 등록하기';
+    }
+  };
+
+  dialog.showModal();
+}
+
+function openScoreViewerModal(score) {
+  const dialog = document.getElementById('score-viewer-dialog');
+  if (!dialog) return;
+
+  const titleEl = document.getElementById('score-viewer-title');
+  const metaEl = document.getElementById('score-viewer-meta');
+  const bodyEl = document.getElementById('score-viewer-body');
+  const downloadBtn = document.getElementById('score-viewer-download');
+
+  titleEl.textContent = score.title;
+  metaEl.textContent = `${score.category || '악보'} · ${score.pages || ''} ${score.arranger ? `· ${score.arranger}` : ''} ${score.fileSize ? `(${score.fileSize})` : ''}`;
+
+  bodyEl.replaceChildren();
+
+  const fileUrl = score.blobUrl || score.fileUrl;
+
+  if (fileUrl) {
+    if (score.fileType === 'pdf' || /\.pdf$/i.test(score.fileName || '')) {
+      const iframe = el('iframe', {
+        src: fileUrl,
+        style: 'width: 100%; height: 100%; min-height: 70vh; border: none; border-radius: 8px;'
+      });
+      bodyEl.append(iframe);
+    } else if (score.fileType === 'image' || /\.(jpg|jpeg|png|webp|gif)$/i.test(score.fileName || '')) {
+      const img = el('img', {
+        src: fileUrl,
+        alt: score.title,
+        style: 'max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);'
+      });
+      bodyEl.append(img);
+    } else {
+      bodyEl.append(
+        el('div', {style: 'text-align: center; padding: 40px;'},
+          el('p', {style: 'font-size: 15px; margin-bottom: 12px; font-weight: 600;', text: '온라인 악보 링크입니다.'}),
+          button('새 창에서 악보 링크 열기 ↗', () => window.open(fileUrl, '_blank'), 'button primary', 'external')
+        )
+      );
+    }
+  } else {
+    const previewBox = el('div', {style: 'width: 100%; max-width: 560px; background: #fff; color: #1a1a1a; padding: 36px 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); text-align: center;'},
+      el('div', {style: 'font-size: 38px; margin-bottom: 8px;'}, '🎼'),
+      el('h3', {style: 'font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #194d46;'}, score.title),
+      el('p', {style: 'font-size: 13px; color: #555; margin-bottom: 20px;'}, `${score.category} · ${score.part === 'all' ? '전체 파트' : (PARTS[score.part] || score.part)} ${score.key ? `· Key: ${score.key}` : ''}`),
+      el('div', {style: 'border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; padding: 18px 0; margin-bottom: 24px; font-size: 13px; color: #444; line-height: 1.6; text-align: left;'},
+        el('p', {style: 'margin-bottom: 8px; font-weight: 600; color: #194d46;'}, '📌 악보 정보 및 큐 포인트:'),
+        el('p', {text: score.memo || '편곡 악보 정보가 등록되어 있습니다.'})
+      ),
+      el('p', {style: 'font-size: 12px; color: #777; margin-bottom: 16px;'}, '실제 PDF나 악보 이미지 파일을 직접 올려두시면 언제든 브라우저에서 바로 열어볼 수 있습니다.'),
+      button('📄 내 악보 파일 직접 올리기', () => {
+        dialog.close();
+        openUploadScoreModal(score.songId);
+      }, 'button primary small', 'upload')
+    );
+    bodyEl.append(previewBox);
+  }
+
+  downloadBtn.onclick = () => {
+    if (fileUrl) {
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = score.fileName || `${score.title}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast('📥 악보 파일을 다운로드합니다.');
+    } else {
+      toast('등록된 악보 파일이 없습니다. 상단에서 파일을 직접 올려보세요.');
+    }
+  };
+
+  dialog.showModal();
+}
+
+function renderScores() {
+  const songOptions = [{ value: '', label: '전체 곡 악보 보기' }];
+  for (const s of state.songs) {
+    if (state.scores.some(sc => sc.songId === s.id)) {
+      songOptions.push({ value: s.id, label: s.title });
+    }
+  }
+
+  const categoryOptions = ['전체', '총보', '파트보', '가사/리드시트'];
+
+  const heading = el('div', {class: 'page-heading'},
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: 'OUR SCORE ARCHIVE'}),
+        el('h1', {text: '악보 창고'}),
+        el('p', {text: '우리 팀의 총보, 파트보, 가사지 모음. 언제 어디서나 바로 열람하고 다운로드하세요.'})
+      ),
+      button('+ 새 악보 올리기', () => openUploadScoreModal(), 'button primary small', 'plus')
+    )
+  );
+
+  const searchInput = el('input', {
+    type: 'search',
+    class: 'search-input',
+    placeholder: '악보 제목, 곡명, 편곡자 검색...',
+    value: state.scoreFilters.query || '',
+    oninput: (e) => {
+      state.scoreFilters.query = e.target.value;
+      updateScoreList();
+    }
+  });
+
+  const categoryChips = el('div', {class: 'chip-group'},
+    categoryOptions.map(cat => button(cat, () => {
+      state.scoreFilters.category = cat === '전체' ? '' : cat;
+      for (const btn of categoryChips.querySelectorAll('button')) {
+        btn.classList.toggle('active', btn.textContent.trim() === cat);
+      }
+      updateScoreList();
+    }, `chip${(state.scoreFilters.category === cat || (!state.scoreFilters.category && cat === '전체')) ? ' active' : ''}`))
+  );
+
+  const songSelect = el('select', {
+    class: 'filter-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12px;',
+    onchange: (e) => {
+      state.scoreFilters.songId = e.target.value;
+      updateScoreList();
+    }
+  }, songOptions.map(opt => el('option', {
+    value: opt.value,
+    text: opt.label,
+    selected: state.scoreFilters.songId === opt.value
+  })));
+
+  const filterPanel = el('section', {class: 'filter-panel', style: 'margin-bottom: 24px;'},
+    el('div', {style: 'margin-bottom: 12px;'}, searchInput),
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;'},
+      categoryChips,
+      songSelect
+    )
+  );
+
+  const gridContainer = el('div', {class: 'score-grid'});
+
+  function getFilteredScores() {
+    const q = (state.scoreFilters.query || '').trim().toLowerCase();
+    const cat = state.scoreFilters.category || '';
+    const sId = state.scoreFilters.songId || '';
+
+    return state.scores.filter(sc => {
+      if (cat && sc.category !== cat) return false;
+      if (sId && sc.songId !== sId) return false;
+      if (q) {
+        const song = state.songs.find(s => s.id === sc.songId);
+        const matchTitle = sc.title.toLowerCase().includes(q);
+        const matchSong = song?.title?.toLowerCase().includes(q);
+        const matchArranger = sc.arranger?.toLowerCase().includes(q);
+        const matchMemo = sc.memo?.toLowerCase().includes(q);
+        if (!matchTitle && !matchSong && !matchArranger && !matchMemo) return false;
+      }
+      return true;
+    });
+  }
+
+  function updateScoreList() {
+    const filtered = getFilteredScores();
+    if (!filtered.length) {
+      gridContainer.replaceChildren(
+        emptyState('조건에 맞는 악보가 없습니다', '검색어를 바꾸거나 새 악보를 직접 등록해 보세요.', button('+ 악보 등록하기', () => openUploadScoreModal(), 'button primary small'))
+      );
+      return;
+    }
+
+    gridContainer.replaceChildren(...filtered.map(sc => {
+      const song = state.songs.find(s => s.id === sc.songId);
+
+      const badges = el('div', {class: 'score-badges'},
+        el('span', {class: 'badge', text: sc.category || '총보'}),
+        sc.part && sc.part !== 'all' && el('span', {class: 'status-badge', text: PARTS[sc.part] || sc.part}),
+        song && el('span', {class: 'part-pill', text: song.title})
+      );
+
+      const iconBadge = el('div', {class: 'score-icon-badge'}, icon('document'));
+
+      const top = el('div', {class: 'score-top'},
+        iconBadge,
+        el('div', {class: 'score-info'},
+          badges,
+          el('h2', {class: 'score-title', text: sc.title}),
+          el('p', {class: 'score-arranger', text: `${sc.arranger || '아카라카'} ${sc.uploadedAt ? `· ${sc.uploadedAt}` : ''}`})
+        )
+      );
+
+      const memo = sc.memo ? el('p', {class: 'score-memo', text: sc.memo}) : null;
+
+      const metaRow = el('div', {class: 'score-meta-row'},
+        el('span', {text: `${sc.pages || ''} ${sc.fileSize ? `· ${sc.fileSize}` : ''}`.trim() || '악보 자료'}),
+        el('span', {class: 'badge', style: 'font-size: 10px;', text: sc.fileType === 'pdf' ? 'PDF 악보' : sc.fileType === 'image' ? '악보 이미지' : '클라우드'})
+      );
+
+      const actions = el('div', {class: 'score-actions'},
+        button('📖 악보 보기', () => openScoreViewerModal(sc), 'button primary small'),
+        button('📥 다운로드', () => {
+          if (sc.blobUrl || sc.fileUrl) {
+            const a = document.createElement('a');
+            a.href = sc.blobUrl || sc.fileUrl;
+            a.download = sc.fileName || `${sc.title}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            toast('📥 악보 파일을 다운로드합니다.');
+          } else {
+            openScoreViewerModal(sc);
+          }
+        }, 'button secondary small', 'download'),
+        song ? button('연습실 ↗', () => openSong(song), 'button ghost small') : null,
+        sc.isCustom ? button('삭제', async () => {
+          if (confirm(`'${sc.title}' 악보를 삭제할까요?`)) {
+            await deleteCustomScore(sc.id);
+            state.scores = await loadScores(true);
+            render();
+            toast('악보를 삭제했습니다.');
+          }
+        }, 'button secondary small danger', 'trash') : null
+      );
+
+      return el('article', {class: 'score-card'}, top, memo, metaRow, actions);
+    }));
+  }
+
+  updateScoreList();
+  app.append(heading, filterPanel, gridContainer);
+}
+
+
+/* -------------------------------------------------------------
+ *  MEMORIES & MOMENTS (우리들의 기록)
+ * ------------------------------------------------------------- */
+
+function openUploadMemoryModal(defaultSongId = '') {
+  const dialog = document.getElementById('upload-memory-dialog');
+  if (!dialog) return;
+
+  const form = document.getElementById('upload-memory-form');
+  const titleInput = document.getElementById('mem-title-input');
+  const categorySelect = document.getElementById('mem-category-select');
+  const dateInput = document.getElementById('mem-date-input');
+  const venueInput = document.getElementById('mem-venue-input');
+  const authorInput = document.getElementById('mem-author-input');
+  const descInput = document.getElementById('mem-desc-input');
+  const tagsInput = document.getElementById('mem-tags-input');
+  const fileInput = document.getElementById('mem-file-input');
+  const urlInput = document.getElementById('mem-url-input');
+  const cancelBtn = document.getElementById('upload-mem-cancel');
+  const submitBtn = document.getElementById('upload-mem-submit');
+
+  titleInput.value = '';
+  categorySelect.value = '숏츠 영상';
+  dateInput.value = new Date().toISOString().slice(0, 10);
+  venueInput.value = '';
+  authorInput.value = read('last_feedback_author', '아카라카');
+  descInput.value = '';
+  tagsInput.value = '';
+  fileInput.value = '';
+  urlInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '기록 올리기';
+
+  cancelBtn.onclick = () => dialog.close();
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    if (!title) {
+      toast('기록 제목을 입력해 주세요.');
+      return;
+    }
+
+    const file = fileInput.files?.[0];
+    const url = urlInput.value.trim();
+
+    if (!file && !url) {
+      toast('사진/영상 파일을 선택하거나 YouTube 숏츠 주소를 입력해 주세요.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '저장 중...';
+
+    try {
+      const memId = `mem-custom-${Date.now()}`;
+      let mediaId = null;
+      let mediaUrl = url || '';
+      let thumbnail = '';
+      let type = 'photo';
+
+      if (file) {
+        mediaId = `media-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const record = await saveMediaFile(mediaId, file, { title });
+        if (!record) throw new Error('파일 저장에 실패했습니다.');
+        type = file.type.startsWith('video') ? 'video' : 'photo';
+      } else if (url) {
+        type = url.includes('/shorts/') ? 'shorts' : (url.includes('youtube.com') || url.includes('youtu.be')) ? 'video' : 'photo';
+        const ytInfo = parseYouTube({ type: 'video', url });
+        if (ytInfo.ok && ytInfo.videoId) {
+          thumbnail = `https://img.youtube.com/vi/${ytInfo.videoId}/hqdefault.jpg`;
+        }
+      }
+
+      const tags = tagsInput.value
+        .split(',')
+        .map(t => t.trim().replace(/^#/, ''))
+        .filter(Boolean);
+
+      const newMemory = {
+        id: memId,
+        title,
+        category: categorySelect.value || '기록',
+        type,
+        date: dateInput.value || new Date().toISOString().slice(0, 10),
+        venue: venueInput.value.trim(),
+        author: authorInput.value.trim() || '아카라카',
+        description: descInput.value.trim(),
+        tags,
+        mediaUrl,
+        thumbnail,
+        mediaId,
+        likes: 0,
+        isCustom: true
+      };
+
+      addCustomMemory(newMemory);
+      state.memories = await loadMemories(true);
+      dialog.close();
+      render();
+      toast('✨ 우리들의 기록에 새 이야기가 등록되었습니다.');
+    } catch (err) {
+      console.error(err);
+      toast('기록 등록 중 오류가 발생했습니다: ' + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '기록 올리기';
+    }
+  };
+
+  dialog.showModal();
+}
+
+function openMemoryLightboxModal(memory) {
+  const dialog = document.getElementById('memory-lightbox-dialog');
+  if (!dialog) return;
+
+  const titleEl = document.getElementById('lightbox-title');
+  const badgeEl = document.getElementById('lightbox-badge');
+  const containerEl = document.getElementById('lightbox-media-container');
+  const descEl = document.getElementById('lightbox-desc');
+  const metaEl = document.getElementById('lightbox-meta');
+  const likeBtn = document.getElementById('lightbox-like-btn');
+
+  titleEl.textContent = memory.title;
+  badgeEl.textContent = memory.category || (memory.type === 'shorts' ? '숏츠' : '사진');
+  descEl.textContent = memory.description || '';
+  metaEl.textContent = `📅 ${memory.date || ''} ${memory.venue ? `· 📍 ${memory.venue}` : ''} ${memory.author ? `· ✍️ ${memory.author}` : ''}`;
+
+  containerEl.replaceChildren();
+
+  if (memory.type === 'shorts' || (memory.videoUrl && memory.videoUrl.includes('youtube')) || (memory.mediaUrl && memory.mediaUrl.includes('youtube'))) {
+    const videoUrl = memory.videoUrl || memory.mediaUrl;
+    const playerHost = el('div', {style: 'width: 100%; max-width: 400px; aspect-ratio: 9/16; max-height: 60vh;'});
+    const p = createPlayer(playerHost, { type: 'video', url: videoUrl }, memory.title);
+    activePlayers.push(p);
+    containerEl.append(playerHost);
+  } else if (memory.type === 'video' || (memory.mediaUrl && /\.(mp4|webm|mov)$/i.test(memory.mediaUrl))) {
+    const videoEl = el('video', {
+      controls: true,
+      autoplay: true,
+      src: memory.mediaUrl,
+      style: 'max-width: 100%; max-height: 60vh; border-radius: 8px;'
+    });
+    activePlayers.push({
+      destroy: () => { videoEl.pause(); videoEl.src = ''; }
+    });
+    containerEl.append(videoEl);
+  } else {
+    const imgUrl = memory.mediaUrl || memory.thumbnail;
+    const imgEl = el('img', {
+      src: imgUrl,
+      alt: memory.title,
+      style: 'max-width: 100%; max-height: 60vh; object-fit: contain;'
+    });
+    containerEl.append(imgEl);
+  }
+
+  const likedKeys = new Set(read('liked_memories', []));
+  const isLiked = likedKeys.has(memory.id);
+  likeBtn.className = `button secondary small${isLiked ? ' primary' : ''}`;
+  likeBtn.textContent = `❤️ ${memory.likes || 0}`;
+
+  likeBtn.onclick = () => {
+    const res = toggleMemoryLike(memory.id);
+    likeBtn.className = `button secondary small${res.isLiked ? ' primary' : ''}`;
+    likeBtn.textContent = `❤️ ${res.count}`;
+    render();
+  };
+
+  dialog.showModal();
+}
+
+function renderMemories() {
+  const categoryOptions = ['전체', '숏츠 영상', '사진 앨범', '비하인드', '공연 추억'];
+
+  const heading = el('div', {class: 'page-heading'},
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: 'OUR MOMENTS & STORIES'}),
+        el('h1', {text: '우리들의 기록'}),
+        el('p', {text: '아카라카의 무대 뒤 이야기, 숏츠 영상, 사진 앨범. 함께 만들어가는 소중한 순간들을 기록합니다.'})
+      ),
+      button('+ 우리들의 기록 올리기', () => openUploadMemoryModal(), 'button primary small', 'camera')
+    )
+  );
+
+  const categoryChips = el('div', {class: 'chip-group', style: 'margin-bottom: 24px;'},
+    categoryOptions.map(cat => button(cat, () => {
+      state.memoryFilters.category = cat === '전체' ? '' : cat;
+      for (const btn of categoryChips.querySelectorAll('button')) {
+        btn.classList.toggle('active', btn.textContent.trim() === cat);
+      }
+      updateMemoryList();
+    }, `chip${(state.memoryFilters.category === cat || (!state.memoryFilters.category && cat === '전체')) ? ' active' : ''}`))
+  );
+
+  const gridContainer = el('div', {class: 'memory-grid'});
+
+  function getFilteredMemories() {
+    const cat = state.memoryFilters.category || '';
+    if (!cat) return state.memories;
+    return state.memories.filter(m => m.category === cat || (cat === '숏츠 영상' && m.type === 'shorts') || (cat === '사진 앨범' && m.type === 'photo'));
+  }
+
+  function updateMemoryList() {
+    const filtered = getFilteredMemories();
+    if (!filtered.length) {
+      gridContainer.replaceChildren(
+        emptyState('등록된 기록이 아직 없어요', '연습실 숏츠 영상이나 무대 사진을 첫 번째로 올려보세요!', button('+ 기록 올리기', () => openUploadMemoryModal(), 'button primary small'))
+      );
+      return;
+    }
+
+    gridContainer.replaceChildren(...filtered.map(mem => {
+      const isShorts = mem.type === 'shorts';
+      const thumbUrl = mem.thumbnail || mem.mediaUrl || 'https://img.youtube.com/vi/kJ0nfArx9GI/hqdefault.jpg';
+
+      const mediaWrap = el('div', {
+        class: `memory-media-wrap${isShorts ? ' is-shorts' : ''}`,
+        onclick: () => openMemoryLightboxModal(mem)
+      },
+        el('img', {class: 'memory-thumb', src: thumbUrl, alt: mem.title, loading: 'lazy'}),
+        el('span', {class: 'memory-type-pill', text: isShorts ? '📱 숏츠' : mem.type === 'video' ? '🎬 영상' : '📷 사진'}),
+        el('div', {class: 'memory-play-btn'},
+          el('div', {class: 'memory-play-circle'}, icon(isShorts || mem.type === 'video' ? 'play' : 'eye'))
+        )
+      );
+
+      const titleNode = el('h2', {
+        class: 'memory-card-title',
+        text: mem.title,
+        onclick: () => openMemoryLightboxModal(mem)
+      });
+
+      const descNode = mem.description ? el('p', {class: 'memory-card-desc', text: mem.description}) : null;
+
+      const tagsNode = mem.tags?.length ? el('div', {class: 'memory-tags-row'},
+        mem.tags.map(t => el('span', {class: 'memory-tag', text: `#${t}`}))
+      ) : null;
+
+      const likedKeys = new Set(read('liked_memories', []));
+      const isLiked = likedKeys.has(mem.id);
+
+      const likeBtn = button(`❤️ ${mem.likes || 0}`, (e) => {
+        e.stopPropagation();
+        const res = toggleMemoryLike(mem.id);
+        likeBtn.className = `memory-like-button${res.isLiked ? ' liked' : ''}`;
+        likeBtn.textContent = `❤️ ${res.count}`;
+      }, `memory-like-button${isLiked ? ' liked' : ''}`);
+
+      const footer = el('div', {class: 'memory-footer'},
+        el('span', {text: `📅 ${mem.date || ''} ${mem.venue ? `· ${mem.venue}` : ''}`}),
+        el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
+          likeBtn,
+          mem.isCustom ? button('삭제', async (e) => {
+            e.stopPropagation();
+            if (confirm(`'${mem.title}' 기록을 삭제할까요?`)) {
+              await deleteCustomMemory(mem.id);
+              state.memories = await loadMemories(true);
+              render();
+              toast('기록을 삭제했습니다.');
+            }
+          }, 'button secondary small danger', 'trash') : null
+        )
+      );
+
+      const body = el('div', {class: 'memory-body'}, titleNode, descNode, tagsNode, footer);
+
+      return el('article', {class: 'memory-card'}, mediaWrap, body);
+    }));
+  }
+
+  updateMemoryList();
+  app.append(heading, categoryChips, gridContainer);
+}
+
 function showQR(song, part = null) {
   const dialog = document.getElementById('qr-dialog');
   if (!dialog) return;
@@ -1089,6 +1727,7 @@ function renderDetail(song) {
   const preferred = preferredPart(song, state.myPart);
   const songPerformances = getPerformancesForSong(state.performances, song.id);
   const songRehearsals = getRehearsalsForSong(state.rehearsals, song.id);
+  const songScores = getScoresForSong(state.scores, song.id);
 
   app.append(button('목록으로', () => navigate({tab: 'songs'}), 'text-button back-button', 'back'));
   const detail = el('div', {class: 'detail-layout'},
@@ -1101,6 +1740,10 @@ function renderDetail(song) {
         button('QR 코드', () => showQR(song), 'button secondary', 'qr'),
         button('곡 공유', () => share(song), 'button secondary', 'share'),
         button('영상 / 정보 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
+        songScores.length ? button(`악보 창고 (${songScores.length})`, () => {
+          state.scoreFilters.songId = song.id;
+          navigate({tab: 'scores'});
+        }, 'button secondary', 'document') : null,
         songPerformances.length ? button(`무대 영상 (${songPerformances.length})`, () => navigate({tab: 'stage'}), 'button secondary', 'stage') : null,
         songRehearsals.length ? button(`연습 일지 & 피드백 (${songRehearsals.length})`, () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes') : null
       ),
@@ -1116,6 +1759,41 @@ function renderDetail(song) {
   ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', button('영상 등록하기', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary')),
   button('+ 영상 추가 / 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'text-button', 'external'));
   app.append(partsSection);
+
+  if (songScores.length) {
+    app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
+      el('div', {class: 'score-grid'}, songScores.map(sc => {
+        return el('article', {class: 'score-card', style: 'padding: 16px;'},
+          el('div', {class: 'score-top'},
+            el('div', {class: 'score-icon-badge'}, icon('document')),
+            el('div', {class: 'score-info'},
+              el('span', {class: 'badge', text: sc.category || '총보'}),
+              sc.part && sc.part !== 'all' && el('span', {class: 'status-badge', style: 'margin-left: 4px;', text: PARTS[sc.part] || sc.part}),
+              el('h3', {style: 'font-size: 15px; font-weight: 700; margin: 4px 0;', text: sc.title}),
+              el('p', {style: 'font-size: 11px; color: var(--muted);', text: `${sc.pages || ''} ${sc.fileSize ? `· ${sc.fileSize}` : ''}`})
+            )
+          ),
+          el('div', {class: 'score-actions', style: 'margin-top: 8px;'},
+            button('📖 악보 보기', () => openScoreViewerModal(sc), 'button primary small'),
+            button('📥 다운로드', () => {
+              if (sc.blobUrl || sc.fileUrl) {
+                const a = document.createElement('a');
+                a.href = sc.blobUrl || sc.fileUrl;
+                a.download = sc.fileName || `${sc.title}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                toast('📥 악보 파일을 다운로드합니다.');
+              } else {
+                openScoreViewerModal(sc);
+              }
+            }, 'button secondary small', 'download')
+          )
+        );
+      }))
+    ));
+  }
+
   const invalid = Object.entries(object(song.videos)).filter(([, media]) => media?.url?.trim() && !parseYouTube(media).ok);
   if (invalid.length) app.append(el('p', {class: 'notice warning', text: `${invalid.map(([part]) => PARTS[part] || part).join(', ')} 영상 주소를 확인해 주세요. 올바른 YouTube 주소가 아니어서 연습 버튼을 표시하지 않았습니다.`}));
   app.append(section('연습 메모', '우리 팀이 기억해 두면 좋은 것들', el('div', {class: 'memo-panel', text: song.memo || '아직 등록된 메모가 없어요.'})));
@@ -1326,8 +2004,10 @@ function render() {
     lastPractice = '';
     if (song) renderDetail(song);
     else if (state.route.tab === 'songs') renderBrowse();
+    else if (state.route.tab === 'scores') renderScores();
     else if (state.route.tab === 'stage') renderStage();
     else if (state.route.tab === 'rehearsal') renderRehearsal();
+    else if (state.route.tab === 'memories') renderMemories();
     else if (state.route.tab === 'favorites') renderBrowse(true);
     else if (state.route.tab === 'recent') app.append(el('div', {class: 'page-heading'}, el('p', {class: 'eyebrow', text: 'PICK UP WHERE YOU LEFT OFF'}), el('h1', {text: '다시, 그 하모니부터'}), el('p', {text: '최근 10개의 곡과 파트를 바로 이어서 연습하세요.'})), el('h2', {class: 'sr-only', text: '최근 연습곡 목록'}), recentList(10));
     else if (state.route.tab === 'settings') renderSettings();
@@ -1337,14 +2017,18 @@ function render() {
 async function initialize() {
   state.loading = true; state.loadError = ''; render();
   try {
-    const [songRes, perfRes, rehRes] = await Promise.all([
+    const [songRes, perfRes, rehRes, scoresRes, memoriesRes] = await Promise.all([
       loadSongs(),
       loadPerformances(),
-      loadRehearsals()
+      loadRehearsals(),
+      loadScores(),
+      loadMemories()
     ]);
     state.songs = songRes.songs;
     state.performances = perfRes;
     state.rehearsals = rehRes;
+    state.scores = scoresRes;
+    state.memories = memoriesRes;
     if (songRes.errors?.length && !songRes.songs.length) state.loadError = songRes.errors.join(' ');
     if (songRes.errors?.length && songRes.songs.length) toast(`${songRes.errors.length}개의 잘못된 데이터 항목을 제외하고 불러왔어요.`);
   } catch (error) { state.loadError = `${error.message || '자료를 확인할 수 없습니다.'} data/songs.json 파일과 HTTP 연결을 확인해 주세요.`; }

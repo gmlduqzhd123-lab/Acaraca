@@ -8,7 +8,9 @@ import {
   addFeedback,
   toggleFeedbackLike,
   getPerformancesForSong,
-  getRehearsalsForSong
+  getRehearsalsForSong,
+  getScoresForSong,
+  toggleMemoryLike
 } from '../js/archive.js';
 
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
@@ -135,6 +137,18 @@ export function runCoreTests() {
   check('등록된 피드백 전체 조회', () => getAllFeedbacks('test-reh').some(item => item.id === fb.id));
   const liked = toggleFeedbackLike(fb.id);
   check('피드백 공감 토글', () => liked === true && getAllFeedbacks('test-reh').find(item => item.id === fb.id)?.likes === 1);
+
+  const sampleScores = [
+    { id: 'sc-1', songId: 'bohemian-rhapsody-5', title: '보헤미안 총보' },
+    { id: 'sc-2', songId: 'butterfly', title: '버터플라이 총보' }
+  ];
+  check('곡별 악보 목록 필터링', () => getScoresForSong(sampleScores, 'bohemian-rhapsody-5').length === 1 && getScoresForSong(sampleScores, 'butterfly')[0].title === '버터플라이 총보');
+  check('없는 곡 악보 조회 시 빈 배열 반환', () => getScoresForSong(sampleScores, 'unknown').length === 0);
+
+  const memLikeRes = toggleMemoryLike('test-mem-1');
+  check('기록 공감 토글 및 카운트 증가', () => memLikeRes.isLiked === true && memLikeRes.count === 1);
+  const memUnlikeRes = toggleMemoryLike('test-mem-1');
+  check('기록 공감 취소 및 카운트 복원', () => memUnlikeRes.isLiked === false && memUnlikeRes.count === 0);
 
   const fbFallback = addFeedback({
     rehearsalId: 'test-reh',
