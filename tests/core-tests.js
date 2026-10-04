@@ -194,7 +194,8 @@ export function runCoreTests() {
     check('아카라카 공식 직인 이미지 파일 존재 검증', () => nodeFs.existsSync('./assets/images/acaraca-seal.png'));
 
     const apprecRaw = JSON.parse(nodeFs.readFileSync('./data/appreciation.json', 'utf8'));
-    check('appreciation.json 100개 감상 영상 로드 검증', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length === 100);
+    check('appreciation.json 133개 감상 영상 로드 검증', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length === 133);
+    check('연습실 33곡 원곡 아카펠라 감상 영상 및 연습곡 카테고리 검증', () => apprecRaw.videos.filter(v => v.category === '연습곡').length === 33);
     check('모든 감상 영상 YouTube 파싱 유효성 검증', () => apprecRaw.videos.every(v => parseYouTube({ type: 'video', url: v.videoUrl }).ok && Boolean(v.thumbnail)));
     check('요청된 핵심 그룹(메이트리, 엑시트, 펜타토닉스, 나린, 비트펠라 하우스) 전체 포함 검증', () => {
       const artists = apprecRaw.videos.map(v => v.artist);
@@ -202,8 +203,10 @@ export function runCoreTests() {
     });
 
     const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
-    check('education.json 10개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 10);
+    check('education.json 11개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 11);
     check('모든 교육 자료 PDF 파일 실제 존재 검증', () => eduRaw.resources.every(r => r.fileUrl && nodeFs.existsSync(r.fileUrl)));
+    check('네비게이션 12개 탭 아이콘 이미지 파일 실제 존재 검증', () => ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'].every(t => nodeFs.existsSync(`./assets/icons/nav/${t}.png`)));
+    check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
   }
 
   const memLikeRes = toggleMemoryLike('test-mem-1');

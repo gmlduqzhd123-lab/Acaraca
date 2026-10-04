@@ -1,6 +1,632 @@
 {
-  "version": 2,
+  "version": 3,
   "videos": [
+    {
+      "id": "apprec-song-bohemian-rhapsody-5",
+      "songId": "bohemian-rhapsody-5",
+      "title": "보헤미안 랩소디 · 5인용 (Bohemian Rhapsody) - Queen",
+      "artist": "Queen / 아카펠라",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5SiE",
+      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5SiE/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "퀸(Queen)의 불후의 명작 보헤미안 랩소디 5성부 아카펠라 원곡 연주 영상입니다. 아카라카 연습실에서 각 파트별(1~5파트) 첫 음과 영상을 확인하고 연습해 보세요.",
+      "tags": [
+        "연습곡",
+        "보헤미안 랩소디",
+        "Queen",
+        "아카라카",
+        "5부"
+      ]
+    },
+    {
+      "id": "apprec-song-bohemian-rhapsody-6",
+      "songId": "bohemian-rhapsody-6",
+      "title": "보헤미안 랩소디 · 6인용 (Bohemian Rhapsody) - Pentatonix",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5SiE",
+      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5SiE/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "펜타토닉스(Pentatonix)의 전설적인 6인용 보헤미안 랩소디 아카펠라 공식 연주 영상입니다.",
+      "tags": [
+        "연습곡",
+        "보헤미안 랩소디",
+        "펜타토닉스",
+        "Pentatonix",
+        "6부"
+      ]
+    },
+    {
+      "id": "apprec-song-mujogeon",
+      "songId": "mujogeon",
+      "title": "무조건 (박상철) - 아카라카 / 신나는 트로트 아카펠라",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=iXUUkR4yCAk",
+      "thumbnail": "https://img.youtube.com/vi/iXUUkR4yCAk/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "국민 애창곡 박상철의 무조건을 경쾌하고 신나는 4성부 아카펠라로 편곡한 원곡 연습 영상입니다.",
+      "tags": [
+        "연습곡",
+        "무조건",
+        "박상철",
+        "아카라카",
+        "트로트"
+      ]
+    },
+    {
+      "id": "apprec-song-short-hair",
+      "songId": "short-hair",
+      "title": "단발머리 (조용필) - 아카펠라 하모니 커버",
+      "artist": "조용필 / 아카펠라",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=X79V1WoVKug",
+      "thumbnail": "https://img.youtube.com/vi/X79V1WoVKug/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "가왕 조용필의 히트곡 단발머리를 그루브 넘치는 4성부 아카펠라로 재해석한 원곡 연주 영상입니다.",
+      "tags": [
+        "연습곡",
+        "단발머리",
+        "조용필",
+        "아카펠라",
+        "4부"
+      ]
+    },
+    {
+      "id": "apprec-song-disney-medley-7",
+      "songId": "disney-medley-7",
+      "title": "디즈니 메들리 · 7부 (Disney Medley 7-Voice Acappella)",
+      "artist": "Disney / Peter Hollens",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=0AYkJQ856LY",
+      "thumbnail": "https://img.youtube.com/vi/0AYkJQ856LY/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "인어공주, 알라딘, 라이온킹 등 디즈니 애니메이션의 명곡들을 웅장한 7성부 다성부 아카펠라로 엮은 영상입니다.",
+      "tags": [
+        "연습곡",
+        "디즈니 메들리",
+        "Disney",
+        "7부",
+        "Peter Hollens"
+      ]
+    },
+    {
+      "id": "apprec-song-disney-medley",
+      "songId": "disney-medley",
+      "title": "디즈니 메들리 (Disney Medley) - 엑시트 (EXIT · 이희주 편곡)",
+      "artist": "엑시트 (EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=JBbIWl0P8TQ",
+      "thumbnail": "https://img.youtube.com/vi/JBbIWl0P8TQ/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "국내 최정상 아카펠라 그룹 EXIT의 디즈니 메들리 편곡을 바탕으로 한 아카라카의 순천만국가정원 무대 실황 영상입니다.",
+      "tags": [
+        "연습곡",
+        "디즈니 메들리",
+        "EXIT",
+        "이희주",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-first-impression",
+      "songId": "first-impression",
+      "title": "첫인상 (김건모) - 그루브 아카펠라 하모니",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=Q3rqqyDtekM",
+      "thumbnail": "https://img.youtube.com/vi/Q3rqqyDtekM/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "김건모의 첫인상을 라틴 리듬과 세련된 보컬 하모니로 구성한 아카펠라 원곡 연습 영상입니다.",
+      "tags": [
+        "연습곡",
+        "첫인상",
+        "김건모",
+        "아카라카",
+        "4부"
+      ]
+    },
+    {
+      "id": "apprec-song-tobacco-shop-girl",
+      "songId": "tobacco-shop-girl",
+      "title": "담배가게 아가씨 (송창식) - 엑시트 (EXIT + ISYS)",
+      "artist": "엑시트 (EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=Za_IbPQodg0",
+      "thumbnail": "https://img.youtube.com/vi/Za_IbPQodg0/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "송창식 원곡의 통쾌한 록앤롤 사운드를 폭발적인 보컬 퍼커션과 베이스로 구현한 EXIT의 명작 아카펠라입니다.",
+      "tags": [
+        "연습곡",
+        "담배가게 아가씨",
+        "EXIT",
+        "송창식",
+        "보컬퍼커션"
+      ]
+    },
+    {
+      "id": "apprec-song-aloha",
+      "songId": "aloha",
+      "title": "아로하 (쿨 / 조정석) - 아카라카 (Acaraca) 라이브",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=-0IurHSEIsE",
+      "thumbnail": "https://img.youtube.com/vi/-0IurHSEIsE/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "따뜻하고 감미로운 사랑의 멜로디 아로하를 아카펠라 그룹 아카라카의 아름다운 4성부 블렌딩으로 감상할 수 있는 무대 영상입니다.",
+      "tags": [
+        "연습곡",
+        "아로하",
+        "쿨",
+        "조정석",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-tayo-pororo",
+      "songId": "tayo-pororo",
+      "title": "타요 뽀로로 애니메이션 메들리 - 엑시트 (EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=irlyUejHs9Q",
+      "thumbnail": "https://img.youtube.com/vi/irlyUejHs9Q/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "꼬마버스 타요와 뽀로로 오프닝을 유쾌하고 기발한 보컬 효과음으로 재치있게 엮은 EXIT의 대표 키즈 메들리 영상입니다.",
+      "tags": [
+        "연습곡",
+        "타요",
+        "뽀로로",
+        "EXIT",
+        "키즈메들리"
+      ]
+    },
+    {
+      "id": "apprec-song-run-the-sky",
+      "songId": "run-the-sky",
+      "title": "하늘을 달리다 (이적) - 에이파이브 (A-Five)",
+      "artist": "에이파이브 (A-Five)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=fe9mozQJHyw",
+      "thumbnail": "https://img.youtube.com/vi/fe9mozQJHyw/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "파워풀한 가창력과 벅차오르는 에너지가 돋보이는 이적 원곡 하늘을 달리다 에이파이브 아카펠라 커버 영상입니다.",
+      "tags": [
+        "연습곡",
+        "하늘을 달리다",
+        "이적",
+        "A-Five",
+        "에이파이브"
+      ]
+    },
+    {
+      "id": "apprec-song-acaroom-opening",
+      "songId": "acaroom-opening",
+      "title": "아카라카 오프닝 시그널 & 화음 하모니",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=Yr0unaIdR2U",
+      "thumbnail": "https://img.youtube.com/vi/Yr0unaIdR2U/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "아카라카의 시그니처 오프닝 보컬 인트로 시그널 하모니 영상입니다.",
+      "tags": [
+        "연습곡",
+        "아카라카 오프닝",
+        "시그널",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-speechless",
+      "songId": "speechless",
+      "title": "Speechless (알라딘 OST) - 나린 (NARIN) / 아카라카 커버",
+      "artist": "나린 (NARIN) · 아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=nJZVmIcACQc",
+      "thumbnail": "https://img.youtube.com/vi/nJZVmIcACQc/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "영화 알라딘의 대표 삽입곡 Speechless의 나린 편곡을 아카라카가 순천 오천그린광장에서 선보인 감동적인 실황 무대입니다.",
+      "tags": [
+        "연습곡",
+        "Speechless",
+        "알라딘",
+        "나린",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-in-your-arms",
+      "songId": "in-your-arms",
+      "title": "그대 내 품에 (유재하) - 엑시트 (EXIT) / 아카라카 라이브",
+      "artist": "엑시트 (EXIT) · 아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=z71ZxrfRtEk",
+      "thumbnail": "https://img.youtube.com/vi/z71ZxrfRtEk/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "한국 대중음악의 전설 유재하의 그대 내 품에를 서정적인 5성부 아카펠라 하모니로 노래한 원곡 풀버전 영상입니다.",
+      "tags": [
+        "연습곡",
+        "그대 내 품에",
+        "유재하",
+        "EXIT",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-happy-school",
+      "songId": "happy-school",
+      "title": "행복한 학교 (혼성 아카펠라) - 별의별",
+      "artist": "별의별",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=2NKaeUkol5M",
+      "thumbnail": "https://img.youtube.com/vi/2NKaeUkol5M/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "학교와 학급에서 부르기 좋은 따뜻하고 밝은 멜로디의 아카펠라 동요 행복한 학교 별의별 원곡 연주 영상입니다.",
+      "tags": [
+        "연습곡",
+        "행복한 학교",
+        "별의별",
+        "교육",
+        "학급노래"
+      ]
+    },
+    {
+      "id": "apprec-song-go-to-school",
+      "songId": "go-to-school",
+      "title": "학교 가자 (혼성 5부) - 별의별",
+      "artist": "별의별",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ccN1D_heaIo",
+      "thumbnail": "https://img.youtube.com/vi/ccN1D_heaIo/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "등굣길의 설렘과 친구들과의 우정을 담아낸 경쾌한 아카펠라 학교 가자 원곡 영상입니다.",
+      "tags": [
+        "연습곡",
+        "학교 가자",
+        "별의별",
+        "동요",
+        "5부"
+      ]
+    },
+    {
+      "id": "apprec-song-well-done-today",
+      "songId": "well-done-today",
+      "title": "수고했어 오늘도 (옥상달빛 · 김승호 편곡) - 힐링 아카펠라",
+      "artist": "옥상달빛 · 편곡 김승호",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=yOz90KwrJyw",
+      "thumbnail": "https://img.youtube.com/vi/yOz90KwrJyw/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "지친 하루 끝에 따뜻한 위로를 전하는 옥상달빛의 수고했어 오늘도 아카펠라 편곡 힐링 영상입니다.",
+      "tags": [
+        "연습곡",
+        "수고했어 오늘도",
+        "옥상달빛",
+        "김승호",
+        "힐링"
+      ]
+    },
+    {
+      "id": "apprec-song-bohemian-rhapsody",
+      "songId": "bohemian-rhapsody",
+      "title": "Bohemian Rhapsody - 펜타토닉스 (Pentatonix Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5SiE",
+      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5SiE/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "그래미 수상 아카펠라 그룹 펜타토닉스의 Bohemian Rhapsody 공식 뮤직비디오 원곡 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Bohemian Rhapsody",
+        "Pentatonix",
+        "펜타토닉스",
+        "Queen"
+      ]
+    },
+    {
+      "id": "apprec-song-daft-punk",
+      "songId": "daft-punk",
+      "title": "Daft Punk Medley - 펜타토닉스 (Pentatonix Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=3MteSlpxCpo",
+      "thumbnail": "https://img.youtube.com/vi/3MteSlpxCpo/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "펜타토닉스를 세계적 스타덤에 올린 그래미 어워드 수상작 Daft Punk 공식 아카펠라 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Daft Punk",
+        "Pentatonix",
+        "펜타토닉스",
+        "그래미"
+      ]
+    },
+    {
+      "id": "apprec-song-dansori",
+      "songId": "dansori",
+      "title": "단소리 (국악 아카펠라) - 토리스 (Toris)",
+      "artist": "국악 / 아카펠라",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=2gC8ZEePmig",
+      "thumbnail": "https://img.youtube.com/vi/2gC8ZEePmig/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "판소리와 민요를 아카펠라 화성으로 결합하여 한국 전통음악의 새 지평을 연 토리스의 단소리 원곡 영상입니다.",
+      "tags": [
+        "연습곡",
+        "단소리",
+        "토리스",
+        "국악",
+        "퓨전아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-song-isnt-she-lovely",
+      "songId": "isnt-she-lovely",
+      "title": "Isn't She Lovely (스티비 원더) - 엑시트 (EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=wrcHlWt2RrY",
+      "thumbnail": "https://img.youtube.com/vi/wrcHlWt2RrY/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "스티비 원더의 명곡 Isn't She Lovely를 세련된 재즈 화성과 스윙 리듬으로 소화한 EXIT의 대표 레퍼토리 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Isn't She Lovely",
+        "스티비원더",
+        "EXIT",
+        "재즈"
+      ]
+    },
+    {
+      "id": "apprec-song-lets-travel",
+      "songId": "lets-travel",
+      "title": "여행을 떠나요 (조용필 / 이승기) - 아카라카 (Acaraca) 라이브",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=X320PTGj_b0",
+      "thumbnail": "https://img.youtube.com/vi/X320PTGj_b0/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "관객과 함께 호흡하는 신나는 에너지! 조용필의 여행을 떠나요 아카라카의 순천 강청수변공원 야외공연 라이브 영상입니다.",
+      "tags": [
+        "연습곡",
+        "여행을 떠나요",
+        "조용필",
+        "이승기",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-love-song-medley",
+      "songId": "love-song-medley",
+      "title": "러브송 메들리 (Love Song Medley) - 엑시트 (EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ounOqESwC9I",
+      "thumbnail": "https://img.youtube.com/vi/ounOqESwC9I/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "사랑을 노래하는 달콤한 가요 명곡들을 한 편의 로맨틱 영화처럼 유려하게 엮어낸 EXIT의 러브송 메들리 원곡 영상입니다.",
+      "tags": [
+        "연습곡",
+        "러브송 메들리",
+        "EXIT",
+        "사랑노래",
+        "결혼식축가"
+      ]
+    },
+    {
+      "id": "apprec-song-l-o-v-e",
+      "songId": "l-o-v-e",
+      "title": "L.O.V.E. (Nat King Cole) - 메이트리 (MayTree) / 아카라카 라이브",
+      "artist": "메이트리 (MayTree) · 아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=jNiMADupffU",
+      "thumbnail": "https://img.youtube.com/vi/jNiMADupffU/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "냇 킹 콜의 불멸의 재즈 스탠다드 L-O-V-E를 메이트리의 환상적인 편곡으로 노래한 아카라카 오천그린광장 공연 실황입니다.",
+      "tags": [
+        "연습곡",
+        "L.O.V.E.",
+        "MayTree",
+        "메이트리",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-old-pop-medley",
+      "songId": "old-pop-medley",
+      "title": "올드팝 메들리 (Old Pop Medley) - 아카라카 (Acaraca) 라이브",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=kJ0nfArx9GI",
+      "thumbnail": "https://img.youtube.com/vi/kJ0nfArx9GI/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "비틀즈, 아바 등 시대를 초월한 올드팝 명곡들을 모은 아카라카의 순천만국가정원 스페이스허브광장 무대 실황 영상입니다.",
+      "tags": [
+        "연습곡",
+        "올드팝 메들리",
+        "Old Pop",
+        "아카라카",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-song-beautiful-world",
+      "songId": "beautiful-world",
+      "title": "아름다운 세상 (박학기 / 유리상자) - 아카라카 (Acaraca) 라이브",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=kLsSwSumdcw",
+      "thumbnail": "https://img.youtube.com/vi/kLsSwSumdcw/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "마음이 따스해지는 명곡 아름다운 세상을 맑고 깨끗한 아카펠라 하모니로 노래한 아카라카 무대 공연 영상입니다.",
+      "tags": [
+        "연습곡",
+        "아름다운 세상",
+        "박학기",
+        "유리상자",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-butterfly",
+      "songId": "butterfly",
+      "title": "Butterfly (영화 '국가대표' OST) - 아카라카 (Acaraca) 풀버전",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=18SkVp28X_A",
+      "thumbnail": "https://img.youtube.com/vi/18SkVp28X_A/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "빛나는 날개를 펴고 날아오르는 감동의 멜로디! 영화 국가대표 주제곡 Butterfly 아카라카 공식 풀버전 하모니 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Butterfly",
+        "국가대표",
+        "러브홀릭스",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-cherry-blossom-ending",
+      "songId": "cherry-blossom-ending",
+      "title": "벚꽃 엔딩 (버스커 버스커) - 두왑사운즈 (Doowop Sounds)",
+      "artist": "두왑사운즈",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=DI6uNzfXckA",
+      "thumbnail": "https://img.youtube.com/vi/DI6uNzfXckA/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "봄바람 휘날리며 흩날리는 벚꽃 잎처럼 설레는 버스커 버스커 원곡 벚꽃 엔딩 두왑사운즈 5성부 아카펠라 풀버전 영상입니다.",
+      "tags": [
+        "연습곡",
+        "벚꽃 엔딩",
+        "두왑사운즈",
+        "버스커버스커",
+        "봄노래"
+      ]
+    },
+    {
+      "id": "apprec-song-love-love",
+      "songId": "love-love",
+      "title": "사랑해 사랑해 (다이아 D.I.A) - 아카라카 (Acaraca) 축가 라이브",
+      "artist": "다이아 · 아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=DAkkrDMo06M",
+      "thumbnail": "https://img.youtube.com/vi/DAkkrDMo06M/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "결혼식 축가 1순위로 손꼽히는 아카펠라 그룹 다이아의 스테디셀러 사랑해 사랑해 아카라카 무대 공연 실황 영상입니다.",
+      "tags": [
+        "연습곡",
+        "사랑해 사랑해",
+        "다이아",
+        "결혼식축가",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-carol-medley",
+      "songId": "carol-medley",
+      "title": "크리스마스 캐롤 메들리 (Christmas Carol Medley) - 아카라카",
+      "artist": "아카라카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=RlX5ErspczU",
+      "thumbnail": "https://img.youtube.com/vi/RlX5ErspczU/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "울면 안 돼, 루돌프 사슴코, 징글벨 등 크리스마스의 설렘을 가득 담은 캐롤 메들리 아카라카 공연 실황 영상입니다.",
+      "tags": [
+        "연습곡",
+        "캐롤 메들리",
+        "Christmas",
+        "캐롤",
+        "아카라카"
+      ]
+    },
+    {
+      "id": "apprec-song-same-place",
+      "songId": "same-place",
+      "title": "같은 곳에서 (프로듀스 101) - 메이트리 (MayTree) X I.O.I",
+      "artist": "메이트리 (MayTree)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=kY1TMDiNSq0",
+      "thumbnail": "https://img.youtube.com/vi/kY1TMDiNSq0/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "프로듀스 101 명곡 같은 곳에서를 세계합창올림픽 금메달리스트 메이트리가 완벽한 5부 아카펠라로 선보인 화제의 무대입니다.",
+      "tags": [
+        "연습곡",
+        "같은 곳에서",
+        "메이트리",
+        "IOI",
+        "프로듀스101"
+      ]
+    },
+    {
+      "id": "apprec-song-would-be-good",
+      "songId": "would-be-good",
+      "title": "좋겠다 (성시경) - 달콤한 혼성 아카펠라 하모니",
+      "artist": "성시경 / 아카펠라",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=meXusduu2RM",
+      "thumbnail": "https://img.youtube.com/vi/meXusduu2RM/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "감미로운 성시경의 축가 명곡 좋겠다를 따뜻하고 감미로운 화음으로 편곡한 아카펠라 원곡 풀버전 영상입니다.",
+      "tags": [
+        "연습곡",
+        "좋겠다",
+        "성시경",
+        "축가",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-song-ditto",
+      "songId": "ditto",
+      "title": "Ditto (디토 - NewJeans) - 엑시트 (EXIT Acappella Cover)",
+      "artist": "엑시트 (EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=hbE6nGHim3E",
+      "thumbnail": "https://img.youtube.com/vi/hbE6nGHim3E/hqdefault.jpg",
+      "uploader": "아카라카 연습실",
+      "date": "연습곡 추천",
+      "description": "뉴진스(NewJeans)의 메가 히트곡 Ditto를 몽환적인 화음과 그루브 있는 보컬 비트박스로 재탄생시킨 EXIT의 공식 커버 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Ditto",
+        "디토",
+        "NewJeans",
+        "EXIT"
+      ]
+    },
     {
       "id": "apprec-001",
       "title": "오징어게임 & K팝 데몬 헌터스 메들리 - 메이트리 | [KBS제주] 20251225 방송",

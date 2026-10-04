@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v29';
+const CACHE_NAME = 'acaroom-cache-v30';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -23,6 +23,7 @@ const CORE_ASSETS = [
   './data/practice_videos.json',
   './data/appreciation.json',
   './assets/icons/logo.svg',
+  './assets/icons/logo.png',
   './assets/images/fallback.svg',
   './assets/images/acaraca-seal.png'
 ];

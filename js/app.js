@@ -167,6 +167,23 @@ function openAdmin(targetUrl = './admin.html') {
   setTimeout(() => input.focus(), 60);
 }
 
+function renderNavIcon(tab) {
+  return el('img', {
+    class: 'nav-icon-img',
+    src: `./assets/icons/nav/${tab}.png`,
+    alt: '',
+    width: '22',
+    height: '22',
+    loading: 'lazy',
+    onerror: (e) => {
+      const fallback = icon(navIcons[tab] || 'sparkles');
+      if (e.target && e.target.parentNode) {
+        e.target.parentNode.replaceChild(fallback, e.target);
+      }
+    }
+  });
+}
+
 function refreshChrome() {
   const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
   const desktopNav = document.getElementById('desktop-nav');
@@ -175,7 +192,7 @@ function refreshChrome() {
       class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
       'aria-current': tab === activeTab ? 'page' : null,
       onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
-    }, icon(navIcons[tab]), el('span', {text: label}))));
+    }, renderNavIcon(tab), el('span', {text: label}))));
   }
   const mobileNav = document.getElementById('mobile-nav');
   if (mobileNav) {
@@ -183,7 +200,7 @@ function refreshChrome() {
       class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
       'aria-current': tab === activeTab ? 'page' : null,
       onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
-    }, icon(navIcons[tab]), el('span', {text: labels[tab]}))));
+    }, renderNavIcon(tab), el('span', {text: labels[tab]}))));
   }
   document.getElementById('sidebar-bottom').replaceChildren(
     button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
@@ -2409,15 +2426,15 @@ function openUploadAppreciationModal() {
 }
 
 function renderAppreciation() {
-  const categoryOptions = ['전체', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상'];
-  const artistOptions = ['전체 아티스트', '메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스', '제니스', '더 리얼 그룹', '기타 그룹'];
+  const categoryOptions = ['전체', '연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상'];
+  const artistOptions = ['전체 아티스트', '아카라카', '메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스', '제니스', '더 리얼 그룹', '기타 그룹'];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
       el('div', {},
         el('p', {class: 'eyebrow', text: 'ACAPELLA INSPIRATION & MASTERPIECES'}),
         el('h1', {text: '아카펠라 감상'}),
-        el('p', {text: '메이트리, 엑시트, 펜타토닉스, 나린, 비트펠라 하우스 등 국내외 최정상 프로 아카펠라 그룹들의 100선 명작 아카이브입니다.'})
+        el('p', {text: '아카라카 연습실 연습곡의 원곡 아카펠라 영상부터 메이트리, 엑시트, 펜타토닉스, 나린 등 국내외 프로 그룹들의 명작 아카이브입니다.'})
       ),
       button('+ 감상 영상 등록', () => openUploadAppreciationModal(), 'button primary small', 'plus')
     )
@@ -2534,6 +2551,7 @@ function renderAppreciation() {
         class: 'custom-video-thumb-wrap',
         onclick: () => openMemoryLightboxModal({
           id: item.id,
+          songId: item.songId,
           title: item.title,
           type: 'video',
           category: `아카펠라 감상 · ${item.category || '명작'}`,
@@ -2589,6 +2607,7 @@ function renderAppreciation() {
           text: item.title,
           onclick: () => openMemoryLightboxModal({
             id: item.id,
+            songId: item.songId,
             title: item.title,
             type: 'video',
             category: `아카펠라 감상 · ${item.category || '명작'}`,
@@ -2615,6 +2634,10 @@ function renderAppreciation() {
         el('div', {class: 'custom-video-footer'},
           el('span', {}, `추천: ${item.uploader || '단원'} · 📅 ${item.date || ''}`),
           el('div', {style: 'display: flex; gap: 6px; align-items: center;'},
+            item.songId ? button('연습실 ↗', (e) => {
+              e.stopPropagation();
+              navigate({song: item.songId});
+            }, 'button secondary small', 'music', {title: '아카라카 연습실에서 이 곡 파트 연습하기'}) : null,
             item.videoUrl ? button('YouTube ↗', (e) => {
               e.stopPropagation();
               window.open(item.videoUrl, '_blank');
@@ -2775,6 +2798,8 @@ function openMemoryLightboxModal(memory) {
       if (ap && typeof ap.destroy === 'function') ap.destroy();
     }
     containerEl.replaceChildren();
+    const actionWrap = document.getElementById('lightbox-action-wrap');
+    if (actionWrap) actionWrap.replaceChildren();
   };
 
   if (closeBtn) closeBtn.onclick = () => { cleanupLightbox(); dialog.close(); };
@@ -2788,6 +2813,16 @@ function openMemoryLightboxModal(memory) {
   descEl.textContent = memory.description || '';
   const authorDisplay = memory.author || memory.artist || memory.uploader;
   metaEl.textContent = `📅 ${memory.date || ''} ${memory.venue ? `· 📍 ${memory.venue}` : ''} ${authorDisplay ? `· 👤 ${authorDisplay}` : ''}`;
+  const actionWrap = document.getElementById('lightbox-action-wrap');
+  if (actionWrap) {
+    actionWrap.replaceChildren(
+      memory.songId ? button('🎵 연습실 바로가기 ↗', () => {
+        cleanupLightbox();
+        dialog.close();
+        navigate({song: memory.songId});
+      }, 'button primary small', 'music', {title: '이 곡 파트별 연습실로 바로 이동'}) : null
+    );
+  }
 
   containerEl.replaceChildren();
 
