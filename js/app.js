@@ -1051,84 +1051,25 @@ function openUploadScoreModal(defaultSongId = '') {
   dialog.showModal();
 }
 
-function openScoreViewerModal(score) {
-  const dialog = document.getElementById('score-viewer-dialog');
-  if (!dialog) return;
-
-  const titleEl = document.getElementById('score-viewer-title');
-  const metaEl = document.getElementById('score-viewer-meta');
-  const bodyEl = document.getElementById('score-viewer-body');
-  const downloadBtn = document.getElementById('score-viewer-download');
-  const closeBtn = document.getElementById('score-viewer-close');
-
-  if (closeBtn) closeBtn.onclick = () => dialog.close();
-  dialog.onclick = (e) => {
-    if (e.target === dialog) dialog.close();
-  };
-
-  titleEl.textContent = score.title;
-  metaEl.textContent = `${score.category || '악보'} · ${score.pages || ''} ${score.arranger ? `· ${score.arranger}` : ''} ${score.fileSize ? `(${score.fileSize})` : ''}`;
-
-  bodyEl.replaceChildren();
-
+function openOrDownloadScore(score, isDownload = false) {
   const fileUrl = score.blobUrl || score.fileUrl;
-
-  if (fileUrl) {
-    if (score.fileType === 'pdf' || /\.pdf$/i.test(score.fileName || '')) {
-      const iframe = el('iframe', {
-        src: fileUrl,
-        style: 'width: 100%; height: 100%; min-height: 70vh; border: none; border-radius: 8px;'
-      });
-      bodyEl.append(iframe);
-    } else if (score.fileType === 'image' || /\.(jpg|jpeg|png|webp|gif)$/i.test(score.fileName || '')) {
-      const img = el('img', {
-        src: fileUrl,
-        alt: score.title,
-        style: 'max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);'
-      });
-      bodyEl.append(img);
-    } else {
-      bodyEl.append(
-        el('div', {style: 'text-align: center; padding: 40px;'},
-          el('p', {style: 'font-size: 15px; margin-bottom: 12px; font-weight: 600;', text: '온라인 악보 링크입니다.'}),
-          button('새 창에서 악보 링크 열기 ↗', () => window.open(fileUrl, '_blank'), 'button primary', 'external')
-        )
-      );
-    }
-  } else {
-    const previewBox = el('div', {style: 'width: 100%; max-width: 560px; background: #fff; color: #1a1a1a; padding: 36px 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); text-align: center;'},
-      el('div', {style: 'font-size: 38px; margin-bottom: 8px;'}, '🎼'),
-      el('h3', {style: 'font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #194d46;'}, score.title),
-      el('p', {style: 'font-size: 13px; color: #555; margin-bottom: 20px;'}, `${score.category} · ${score.part === 'all' ? '전체 파트' : (PARTS[score.part] || score.part)} ${score.key ? `· Key: ${score.key}` : ''}`),
-      el('div', {style: 'border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; padding: 18px 0; margin-bottom: 24px; font-size: 13px; color: #444; line-height: 1.6; text-align: left;'},
-        el('p', {style: 'margin-bottom: 8px; font-weight: 600; color: #194d46;'}, '📌 악보 정보 및 큐 포인트:'),
-        el('p', {text: score.memo || '편곡 악보 정보가 등록되어 있습니다.'})
-      ),
-      el('p', {style: 'font-size: 12px; color: #777; margin-bottom: 16px;'}, '실제 PDF나 악보 이미지 파일을 직접 올려두시면 언제든 브라우저에서 바로 열어볼 수 있습니다.'),
-      button('📄 내 악보 파일 직접 올리기', () => {
-        dialog.close();
-        openUploadScoreModal(score.songId);
-      }, 'button primary small', 'upload')
-    );
-    bodyEl.append(previewBox);
+  if (!fileUrl) {
+    toast('첨부된 악보 파일이 없습니다. 새 악보를 등록해 주세요.');
+    return;
   }
-
-  downloadBtn.onclick = () => {
-    if (fileUrl) {
-      const a = document.createElement('a');
-      a.href = fileUrl;
-      a.download = score.fileName || `${score.title}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      toast('📥 악보 파일을 다운로드합니다.');
-    } else {
-      toast('등록된 악보 파일이 없습니다. 상단에서 파일을 직접 올려보세요.');
-    }
-  };
-
-  dialog.showModal();
+  if (isDownload) {
+    const a = document.createElement('a');
+    a.href = fileUrl;
+    a.download = score.fileName || `${score.title}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('📥 악보 파일을 다운로드합니다.');
+  } else {
+    window.open(fileUrl, '_blank');
+  }
 }
+
 
 function renderScores() {
   const songOptions = [{ value: '', label: '전체 곡 악보 보기' }];
@@ -1252,20 +1193,8 @@ function renderScores() {
       );
 
       const actions = el('div', {class: 'score-actions'},
-        button('📖 악보 보기', () => openScoreViewerModal(sc), 'button primary small'),
-        button('📥 다운로드', () => {
-          if (sc.blobUrl || sc.fileUrl) {
-            const a = document.createElement('a');
-            a.href = sc.blobUrl || sc.fileUrl;
-            a.download = sc.fileName || `${sc.title}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            toast('📥 악보 파일을 다운로드합니다.');
-          } else {
-            openScoreViewerModal(sc);
-          }
-        }, 'button secondary small', 'download'),
+        button('📖 악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
+        button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
         song ? button('연습실 ↗', () => openSong(song), 'button ghost small') : null,
         sc.isCustom ? button('삭제', async () => {
           if (confirm(`'${sc.title}' 악보를 삭제할까요?`)) {
@@ -1796,20 +1725,8 @@ function renderDetail(song) {
             )
           ),
           el('div', {class: 'score-actions', style: 'margin-top: 8px;'},
-            button('📖 악보 보기', () => openScoreViewerModal(sc), 'button primary small'),
-            button('📥 다운로드', () => {
-              if (sc.blobUrl || sc.fileUrl) {
-                const a = document.createElement('a');
-                a.href = sc.blobUrl || sc.fileUrl;
-                a.download = sc.fileName || `${sc.title}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                toast('📥 악보 파일을 다운로드합니다.');
-              } else {
-                openScoreViewerModal(sc);
-              }
-            }, 'button secondary small', 'download')
+            button('📖 악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
+            button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download')
           )
         );
       }))

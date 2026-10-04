@@ -242,26 +242,6 @@
     </form>
   </dialog>
 
-  <!-- Score Viewer Modal -->
-  <dialog class="share-dialog score-viewer-dialog" id="score-viewer-dialog" style="width: min(920px, calc(100vw - 24px)); max-width: 920px; height: 88vh; max-height: 88vh; padding: 0; overflow: hidden; border-radius: 16px;" aria-labelledby="score-viewer-title">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
-      <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-        <span style="font-size: 20px;">🎼</span>
-        <div style="min-width: 0;">
-          <h2 id="score-viewer-title" style="margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">악보 뷰어</h2>
-          <p id="score-viewer-meta" style="margin: 0; font-size: 11px; color: var(--muted);"></p>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-        <button type="button" class="button secondary small" id="score-viewer-download" title="다운로드">📥 다운로드</button>
-        <button type="button" class="dialog-close-x" id="score-viewer-close" onclick="document.getElementById('score-viewer-dialog').close()" aria-label="닫기">✕</button>
-      </div>
-    </div>
-    <div id="score-viewer-body" style="flex: 1; overflow: auto; background: var(--surface-soft); display: flex; justify-content: center; align-items: center; padding: 12px; position: relative;">
-      <!-- PDF iframe or Image injected here -->
-    </div>
-  </dialog>
-
   <!-- Upload Team Memory / Moment Modal -->
   <dialog class="share-dialog" id="upload-memory-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-memory-title">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -356,7 +336,7 @@
         <p class="eyebrow">VOCAL PITCH PIPE</p>
         <h2 id="pitch-title">첫 음 잡기 조율기</h2>
       </div>
-      <form method="dialog"><button class="icon-button dialog-close-x" aria-label="닫기">✕</button></form>
+      <button type="button" class="dialog-close-x" onclick="document.getElementById('pitch-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p class="pitch-dialog-desc">우리 팀 파트별 첫 음을 바로 찾아보세요. 건반을 누르면 조율음이 울립니다.</p>
     
@@ -446,7 +426,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=8';
+      script.src = './js/app.js?v=9';
       script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
       document.body.append(script);
 
