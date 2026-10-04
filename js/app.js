@@ -1344,10 +1344,19 @@ function openMemoryLightboxModal(memory) {
   const likeBtn = document.getElementById('lightbox-like-btn');
   const closeBtn = document.getElementById('memory-lightbox-close');
 
-  if (closeBtn) closeBtn.onclick = () => dialog.close();
-  dialog.onclick = (e) => {
-    if (e.target === dialog) dialog.close();
+  const cleanupLightbox = () => {
+    while (activePlayers.length) {
+      const ap = activePlayers.pop();
+      if (ap && typeof ap.destroy === 'function') ap.destroy();
+    }
+    containerEl.replaceChildren();
   };
+
+  if (closeBtn) closeBtn.onclick = () => { cleanupLightbox(); dialog.close(); };
+  dialog.onclick = (e) => {
+    if (e.target === dialog) { cleanupLightbox(); dialog.close(); }
+  };
+  dialog.onclose = () => cleanupLightbox();
 
   titleEl.textContent = memory.title;
   badgeEl.textContent = memory.category || (memory.type === 'shorts' ? '숏츠' : '사진');
@@ -1358,8 +1367,11 @@ function openMemoryLightboxModal(memory) {
 
   if (memory.type === 'shorts' || (memory.videoUrl && memory.videoUrl.includes('youtube')) || (memory.mediaUrl && memory.mediaUrl.includes('youtube'))) {
     const videoUrl = memory.videoUrl || memory.mediaUrl;
-    const playerHost = el('div', {style: 'width: 100%; max-width: 400px; aspect-ratio: 9/16; max-height: 60vh;'});
+    const playerHost = el('div', {style: 'width: 100%; max-width: 380px; aspect-ratio: 9/16; max-height: 60vh;'});
     const p = createPlayer(playerHost, { type: 'video', url: videoUrl }, memory.title);
+    if (p && typeof p.mount === 'function') {
+      p.mount();
+    }
     activePlayers.push(p);
     containerEl.append(playerHost);
   } else if (memory.type === 'video' || (memory.mediaUrl && /\.(mp4|webm|mov)$/i.test(memory.mediaUrl))) {
