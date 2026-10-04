@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "performances": [
+    {
+      "id": "stage-2026-spring",
+      "title": "2026 봄 정기연주회 무대 실황",
+      "date": "2026-05-20",
+      "venue": "국립극장 달오름극장",
+      "category": "정기공연",
+      "thumbnail": "https://img.youtube.com/vi/18SkVp28X_A/hqdefault.jpg",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=18SkVp28X_A"
+      },
+      "description": "AcaRoom 단원들이 한마음으로 만든 봄 정기연주회 하이라이트 실황 무대입니다. 관객들과 함께 호흡하며 완성된 화음을 확인해 보세요.",
+      "setlist": [
+        {
+          "songId": "butterfly",
+          "title": "Butterfly",
+          "artist": "국가대표 OST",
+          "time": 0
+        },
+        {
+          "songId": "bohemian-rhapsody-5",
+          "title": "보헤미안 랩소디 · 5인용",
+          "artist": "Queen",
+          "time": 180
+        }
+      ]
+    },
+    {
+      "id": "stage-2025-busking",
+      "title": "여의도 한강 버스킹 라이브",
+      "date": "2025-10-18",
+      "venue": "여의도 한강공원 물빛무대",
+      "category": "버스킹",
+      "thumbnail": "https://img.youtube.com/vi/DUwM7EAkJNs/hqdefault.jpg",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=DUwM7EAkJNs"
+      },
+      "description": "선선한 가을 노을을 배경으로 야외에서 펼쳐진 어쿠스틱 아카펠라 버스킹 공연입니다.",
+      "setlist": [
+        {
+          "songId": "bohemian-rhapsody-5",
+          "title": "보헤미안 랩소디",
+          "artist": "Queen",
+          "time": 0
+        }
+      ]
+    }
+  ]
+}

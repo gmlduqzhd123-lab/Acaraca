@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v1';
+const CACHE_NAME = 'acaroom-cache-v2';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   './js/data.js',
   './js/player.js',
   './js/pitch.js',
+  './js/archive.js',
   './js/router.js',
   './js/search.js',
   './js/storage.js',
@@ -42,8 +43,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First for song data to ensure updates show up immediately
-  if (url.pathname.endsWith('/data/songs.json') || url.pathname.endsWith('/songs.json')) {
+  // Network-First for data files to ensure updates show up immediately
+  if (url.pathname.endsWith('.json') && url.pathname.includes('/data/')) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {

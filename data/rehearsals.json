@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "rehearsals": [
+    {
+      "id": "reh-20261002-butterfly",
+      "songId": "butterfly",
+      "date": "2026-10-02",
+      "title": "Butterfly 4회차 최종 런스루 & 합주 녹음",
+      "notes": "2절 코러스 화음 밸런스 집중 연습 및 아웃트로 페이드아웃 안무 동선 체크",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=18SkVp28X_A",
+        "label": "거울 연습실 전체 런스루 영상"
+      },
+      "audio": {
+        "url": "https://actions.google.com/sounds/v1/ambiences/outdoor_recreation.ogg",
+        "label": "10월 2일 정기연습 풀 합주 녹음본",
+        "duration": 195
+      },
+      "initialFeedbacks": [
+        {
+          "id": "fb-1",
+          "author": "지은",
+          "part": "alto",
+          "time": 45,
+          "content": "2절 코러스 들어갈 때 알토 첫 음 피치파이프(도#) 소리 잘 듣고 들어가면 화음이 훨씬 선명해져요!",
+          "createdAt": "2026-10-02T20:15:00.000Z",
+          "likes": 4
+        },
+        {
+          "id": "fb-2",
+          "author": "민수",
+          "part": "bass",
+          "time": 84,
+          "content": "후렴구에서 테너와 베이스 템포가 약간 급해지지 않게 4분음표 비트 단단하게 잡겠습니다.",
+          "createdAt": "2026-10-02T20:22:00.000Z",
+          "likes": 2
+        },
+        {
+          "id": "fb-3",
+          "author": "엽쌤",
+          "part": "all",
+          "time": 130,
+          "content": "아웃트로 점진적 데크레센도 다이나믹 호흡 완벽했습니다. 다음 연습 때 앞부분 화음만 한 번 더 맞춥시다!",
+          "createdAt": "2026-10-02T20:40:00.000Z",
+          "likes": 5
+        }
+      ]
+    },
+    {
+      "id": "reh-20260925-bohemian",
+      "songId": "bohemian-rhapsody-5",
+      "date": "2026-09-25",
+      "title": "보헤미안 랩소디 2회차 오페라 파트 런스루",
+      "notes": "오페라 섹션 스타카토 리듬과 파트 간 주고받는 큐 사인 연습",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=DUwM7EAkJNs",
+        "label": "오페라 섹션 집중 런스루"
+      },
+      "audio": {
+        "url": "https://actions.google.com/sounds/v1/ambiences/outdoor_recreation.ogg",
+        "label": "오페라 섹션 파트 블렌딩 녹음본",
+        "duration": 120
+      },
+      "initialFeedbacks": [
+        {
+          "id": "fb-4",
+          "author": "수진",
+          "part": "soprano",
+          "time": 32,
+          "content": "갈릴레오 고음 부분 볼륨 키우기보다 포커스를 모아서 소리 내는 게 화음이 더 잘 살아요.",
+          "createdAt": "2026-09-25T19:30:00.000Z",
+          "likes": 3
+        },
+        {
+          "id": "fb-5",
+          "author": "엽쌤",
+          "part": "all",
+          "time": 68,
+          "content": "마그니피코 외칠 때 5개 파트 입모양 일치시키는 것 잊지 마세요!",
+          "createdAt": "2026-09-25T19:45:00.000Z",
+          "likes": 6
+        }
+      ]
+    }
+  ]
+}

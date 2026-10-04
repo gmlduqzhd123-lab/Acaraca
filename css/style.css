@@ -807,6 +807,63 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 .practice-pitch-btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
 .practice-pitch-btn .icon { width: 14px; height: 14px; }
 
+/* Stage Performances Tab */
+.stage-grid { display: flex; flex-direction: column; gap: 24px; }
+.stage-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+.stage-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.stage-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.stage-player-host { margin: 16px 0 20px; }
+.stage-desc { font-size: 13px; color: var(--ink); line-height: 1.6; margin-bottom: 18px; }
+.stage-setlist-box { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
+.stage-setlist-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+.stage-setlist-items { display: flex; flex-direction: column; gap: 8px; }
+.setlist-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.04); }
+.setlist-item:last-child { border-bottom: 0; }
+.setlist-song-name { font-weight: 650; font-size: 13px; color: var(--ink); }
+.setlist-time { font-size: 11px; color: var(--muted); margin-left: 6px; font-variant-numeric: tabular-nums; }
+
+/* Rehearsal & Feedback Hub */
+.rehearsal-grid { display: flex; flex-direction: column; gap: 28px; }
+.rehearsal-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+.rehearsal-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.rehearsal-song-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: var(--primary-soft); color: var(--primary); font-size: 12px; font-weight: 650; }
+.rehearsal-notes { font-size: 13px; color: var(--ink); margin-bottom: 16px; background: var(--bg); padding: 12px 16px; border-radius: 8px; border-left: 3px solid var(--primary); }
+.rehearsal-media-box { margin: 16px 0 20px; }
+
+/* In-app Audio Player for Rehearsal Audio */
+.audio-player-card { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 12px 0; }
+.audio-player-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; font-weight: 600; color: var(--primary); }
+.audio-controls-row { display: flex; align-items: center; gap: 12px; }
+.audio-progress-wrap { flex: 1; display: flex; align-items: center; gap: 10px; }
+.audio-progress-wrap input[type=range] { flex: 1; accent-color: var(--primary); cursor: pointer; }
+.audio-time-label { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Collaborative Feedback Section */
+.feedback-section { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 18px; }
+.feedback-section-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.feedback-form-box { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.feedback-form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.feedback-input-sm { min-width: 120px; flex: 1; padding: 8px 10px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.feedback-textarea { width: 100%; min-height: 60px; padding: 10px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); resize: vertical; margin-bottom: 10px; box-sizing: border-box; }
+.feedback-form-actions { display: flex; justify-content: space-between; align-items: center; }
+
+.feedback-feed { display: flex; flex-direction: column; gap: 10px; }
+.feedback-bubble { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: transform .1s; }
+.feedback-bubble-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; }
+.feedback-author { font-weight: 700; color: var(--primary); }
+.feedback-time-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; font-size: 10px; font-weight: 700; color: var(--primary); cursor: pointer; }
+.feedback-time-chip:hover { background: var(--primary); color: #fff; }
+.feedback-text { font-size: 12.5px; color: var(--ink); line-height: 1.5; word-break: keep-all; }
+.feedback-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 10px; color: var(--muted); }
+.feedback-like-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 11px; color: var(--muted-strong); }
+.feedback-like-btn.liked { color: #d64545; border-color: #f0a8a8; background: #fff1f1; font-weight: 700; }
+
+/* Practice Room A/B Audio Switcher */
+.ab-switcher-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; }
+.ab-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-right: 4px; }
+.ab-chip { padding: 6px 14px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg); font-size: 12px; font-weight: 600; cursor: pointer; transition: background .15s; }
+.ab-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+
 /* Dark Theme Overrides */
 html[data-theme="dark"] .qr-preview-box { background: #fff; }
 html[data-theme="dark"] dialog.pitch-dialog { background: var(--surface); color: var(--ink); border-color: var(--border); }
@@ -818,6 +875,18 @@ html[data-theme="dark"] .practice-controller-panel { background: var(--surface);
 html[data-theme="dark"] .practice-btn-big { background: var(--surface-soft); border-color: var(--border); color: var(--ink); }
 html[data-theme="dark"] .practice-btn-big.primary-play { background: var(--primary); color: #1c3524; border-color: var(--primary); }
 html[data-theme="dark"] .practice-rate-chip.active { background: var(--primary-soft); color: var(--primary); }
+html[data-theme="dark"] .stage-card,
+html[data-theme="dark"] .rehearsal-card { background: var(--surface); border-color: var(--border); }
+html[data-theme="dark"] .stage-setlist-box,
+html[data-theme="dark"] .audio-player-card,
+html[data-theme="dark"] .feedback-form-box,
+html[data-theme="dark"] .ab-switcher-box { background: var(--surface-soft); border-color: var(--border); }
+html[data-theme="dark"] .rehearsal-notes { background: #1c2b23; color: var(--ink); }
+html[data-theme="dark"] .feedback-bubble { background: #1a2721; border-color: var(--border); }
+html[data-theme="dark"] .feedback-time-chip { background: #23342c; color: var(--primary); border-color: var(--border-strong); }
+html[data-theme="dark"] .feedback-time-chip:hover { background: var(--primary); color: #1c3524; }
+html[data-theme="dark"] .feedback-like-btn { background: #23342c; border-color: var(--border); color: var(--muted-strong); }
+html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #ff8e8e; border-color: #6a3434; }
 
 @media (max-width: 767px) {
   .practice-control-row { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; }

@@ -3,6 +3,13 @@ import { validateData, availableParts, preferredPart } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
 import { getNoteFrequency, NOTES } from '../js/pitch.js';
+import {
+  getAllFeedbacks,
+  addFeedback,
+  toggleFeedbackLike,
+  getPerformancesForSong,
+  getRehearsalsForSong
+} from '../js/archive.js';
 
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
 export function runCoreTests() {
@@ -104,6 +111,30 @@ export function runCoreTests() {
   check('C3 저음 옥타브 주파수 절반', () => Math.abs(getNoteFrequency(0, 3) - 130.81) < 0.1);
   check('C5 고음 옥타브 주파수 2배', () => Math.abs(getNoteFrequency(0, 5) - 523.25) < 0.1);
   check('피치파이프 반음 12개 음계', () => NOTES.length === 12);
+
+  const samplePerfs = [
+    { id: 'p1', setlist: [{ songId: 'night' }] },
+    { id: 'p2', setlist: [{ songId: 'butterfly' }] }
+  ];
+  const sampleRehs = [
+    { id: 'r1', songId: 'night' },
+    { id: 'r2', songId: 'butterfly' }
+  ];
+  check('곡별 공연 영상 필터링', () => getPerformancesForSong(samplePerfs, 'night').length === 1 && getPerformancesForSong(samplePerfs, 'night')[0].id === 'p1');
+  check('곡별 연습 일지 필터링', () => getRehearsalsForSong(sampleRehs, 'butterfly').length === 1 && getRehearsalsForSong(sampleRehs, 'butterfly')[0].id === 'r2');
+
+  const fb = addFeedback({
+    rehearsalId: 'test-reh',
+    songId: 'night',
+    author: '테스트단원',
+    part: 'alto',
+    time: 75,
+    content: '화음 밸런스 점검'
+  });
+  check('팀원 피드백 등록 및 필드 확인', () => fb && fb.author === '테스트단원' && fb.time === 75 && fb.part === 'alto');
+  check('등록된 피드백 전체 조회', () => getAllFeedbacks('test-reh').some(item => item.id === fb.id));
+  const liked = toggleFeedbackLike(fb.id);
+  check('피드백 공감 토글', () => liked === true && getAllFeedbacks('test-reh').find(item => item.id === fb.id)?.likes === 1);
 
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   try {
