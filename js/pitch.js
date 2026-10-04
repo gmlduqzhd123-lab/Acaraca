@@ -1,5 +1,5 @@
 /**
- * Vocal Pitch Pipe (첫 음 잡기 조율기)
+ * Vocal Pitch Pipe (첫 음 잡기 / 피치파이프)
  * Web Audio API-based tone generator for a cappella vocalists and choir groups.
  */
 

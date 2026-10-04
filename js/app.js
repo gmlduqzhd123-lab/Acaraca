@@ -173,13 +173,13 @@ function refreshChrome() {
     }, icon(navIcons[tab]), el('span', {text: labels[tab]}))));
   }
   document.getElementById('sidebar-bottom').replaceChildren(
-    button('첫 음 조율 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
+    button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
     el('div', {class: 'my-part-mini'}, icon('mic'), el('div', {}, el('span', {text: '나의 목소리'}), el('strong', {text: state.myPart ? PARTS[state.myPart] : '내 파트를 선택해 주세요'})),
       button('변경', () => navigate({tab: 'settings'}), 'text-button')),
     el('p', {class: 'sidebar-tip', text: '서로 다른 목소리, 하나의 하모니.'})
   );
   document.getElementById('topbar-actions').replaceChildren(
-    button('조율기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '피치파이프 첫 음 조율기'}),
+    button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
     button('+ 곡 추가', () => openAdmin('./admin.html?action=new'), 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
     button('', () => navigate({tab: 'settings'}), 'icon-button', 'settings', {'aria-label': '설정 열기'})
@@ -2372,7 +2372,7 @@ function renderPlayerController(player, song, part) {
     })
   );
 
-  const pitchBtn = button('첫 음 조율 (피치파이프)', () => openPitchPipe(), 'text-button practice-pitch-btn', 'music');
+  const pitchBtn = button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'text-button practice-pitch-btn', 'music');
   const subrow = el('div', {class: 'practice-subrow'}, speedGroup, pitchBtn);
 
   const panel = el('div', {class: 'practice-controller-panel', role: 'region', 'aria-label': '연습 플레이어 컨트롤러'},
