@@ -86,7 +86,7 @@ const state = {
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
   stageView: 'list',
   stageFilters: {query: '', category: ''},
-  scoreFilters: {query: '', category: '', songId: ''},
+  scoreFilters: {query: '', category: '', songId: '', year: ''},
   educationFilters: {query: '', category: '', target: ''},
   practiceVideoFilters: {query: '', part: '', songId: '', sourceType: ''},
   appreciationFilters: {query: '', category: '', artist: ''},
@@ -1433,21 +1433,23 @@ function openUploadScoreModal(defaultSongId = '') {
 }
 
 function openOrDownloadScore(score, isDownload = false) {
-  const fileUrl = score.blobUrl || score.fileUrl;
+  const fileUrl = score.blobUrl || score.fileUrl || score.driveUrl;
   if (!fileUrl) {
     toast('첨부된 악보 파일이 없습니다. 새 악보를 등록해 주세요.');
     return;
   }
   if (isDownload) {
+    const downloadTarget = score.blobUrl || score.fileUrl || score.driveUrl;
     const a = document.createElement('a');
-    a.href = fileUrl;
-    a.download = score.fileName || `${score.title}.pdf`;
+    a.href = downloadTarget;
+    a.download = score.fileName || `${score.title}.${score.format || 'nwc'}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    toast('📥 악보 파일을 다운로드합니다.');
+    toast(`📥 '${score.fileName || score.title}' 악보 파일을 다운로드합니다.`);
   } else {
-    window.open(fileUrl, '_blank');
+    const viewUrl = score.driveUrl || fileUrl;
+    window.open(viewUrl, '_blank');
   }
 }
 
@@ -1461,22 +1463,26 @@ function renderScores() {
   }
 
   const categoryOptions = ['전체', '총보', '파트보', '가사/리드시트'];
+  const yearOptions = ['전체 연도', '2025년', '2024년', '2023년'];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
       el('div', {},
         el('p', {class: 'eyebrow', text: 'OUR SCORE ARCHIVE'}),
         el('h1', {text: '악보 창고'}),
-        el('p', {text: '우리 팀의 총보, 파트보, 가사지 모음. 언제 어디서나 바로 열람하고 다운로드하세요.'})
+        el('p', {text: '아카라카 구글 드라이브와 연동된 총보 및 파트보 NWC/PDF 모음입니다. 바로 열람하고 다운로드하세요.'})
       ),
-      button('+ 새 악보 올리기', () => openUploadScoreModal(), 'button primary small', 'plus')
+      el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap;'},
+        button('📁 드라이브 폴더 열기 ↗', () => window.open('https://drive.google.com/drive/folders/1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb', '_blank'), 'button secondary small', 'external'),
+        button('+ 새 악보 올리기', () => openUploadScoreModal(), 'button primary small', 'plus')
+      )
     )
   );
 
   const searchInput = el('input', {
     type: 'search',
     class: 'search-input',
-    placeholder: '악보 제목, 곡명, 편곡자 검색...',
+    placeholder: '악보 제목, 곡명, 편곡자, 연도 검색...',
     value: state.scoreFilters.query || '',
     oninput: (e) => {
       state.scoreFilters.query = e.target.value;
@@ -1494,6 +1500,19 @@ function renderScores() {
     }, `chip${(state.scoreFilters.category === cat || (!state.scoreFilters.category && cat === '전체')) ? ' active' : ''}`))
   );
 
+  const yearChips = el('div', {class: 'chip-group'},
+    yearOptions.map(yr => {
+      const yearVal = yr === '전체 연도' ? '' : yr.replace('년', '');
+      return button(yr, () => {
+        state.scoreFilters.year = yearVal;
+        for (const btn of yearChips.querySelectorAll('button')) {
+          btn.classList.toggle('active', btn.textContent.trim() === yr);
+        }
+        updateScoreList();
+      }, `chip${(state.scoreFilters.year === yearVal || (!state.scoreFilters.year && yr === '전체 연도')) ? ' active' : ''}`);
+    })
+  );
+
   const songSelect = el('select', {
     class: 'filter-select',
     style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12px;',
@@ -1509,9 +1528,13 @@ function renderScores() {
 
   const filterPanel = el('section', {class: 'filter-panel', style: 'margin-bottom: 24px;'},
     el('div', {style: 'margin-bottom: 12px;'}, searchInput),
-    el('div', {style: 'display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;'},
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;'},
       categoryChips,
       songSelect
+    ),
+    el('div', {style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap;'},
+      el('span', {style: 'font-size: 12px; font-weight: 600; color: var(--muted);', text: '연도별:'}),
+      yearChips
     )
   );
 
@@ -1521,17 +1544,20 @@ function renderScores() {
     const q = (state.scoreFilters.query || '').trim().toLowerCase();
     const cat = state.scoreFilters.category || '';
     const sId = state.scoreFilters.songId || '';
+    const yr = state.scoreFilters.year || '';
 
     return state.scores.filter(sc => {
       if (cat && sc.category !== cat) return false;
       if (sId && sc.songId !== sId) return false;
+      if (yr && sc.year && sc.year !== yr) return false;
       if (q) {
         const song = state.songs.find(s => s.id === sc.songId);
-        const matchTitle = sc.title.toLowerCase().includes(q);
-        const matchSong = song?.title?.toLowerCase().includes(q);
-        const matchArranger = sc.arranger?.toLowerCase().includes(q);
-        const matchMemo = sc.memo?.toLowerCase().includes(q);
-        if (!matchTitle && !matchSong && !matchArranger && !matchMemo) return false;
+        const matchTitle = (sc.title || '').toLowerCase().includes(q);
+        const matchSong = (song?.title || '').toLowerCase().includes(q);
+        const matchArranger = (sc.arranger || '').toLowerCase().includes(q);
+        const matchMemo = (sc.memo || '').toLowerCase().includes(q);
+        const matchYear = (sc.year || '').toLowerCase().includes(q);
+        if (!matchTitle && !matchSong && !matchArranger && !matchMemo && !matchYear) return false;
       }
       return true;
     });
@@ -1541,7 +1567,7 @@ function renderScores() {
     const filtered = getFilteredScores();
     if (!filtered.length) {
       gridContainer.replaceChildren(
-        emptyState('조건에 맞는 악보가 없습니다', '검색어를 바꾸거나 새 악보를 직접 등록해 보세요.', button('+ 악보 등록하기', () => openUploadScoreModal(), 'button primary small'))
+        emptyState('조건에 맞는 악보가 없습니다', '검색어나 필터를 바꾸거나 새 악보를 직접 등록해 보세요.', button('+ 악보 등록하기', () => openUploadScoreModal(), 'button primary small'))
       );
       return;
     }
@@ -1550,6 +1576,7 @@ function renderScores() {
       const song = state.songs.find(s => s.id === sc.songId);
 
       const badges = el('div', {class: 'score-badges'},
+        sc.year && el('span', {class: 'badge', style: 'background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand); font-weight: 600;', text: `${sc.year}년`}),
         el('span', {class: 'badge', text: sc.category || '총보'}),
         sc.part && sc.part !== 'all' && el('span', {class: 'status-badge', text: PARTS[sc.part] || sc.part}),
         song && el('span', {class: 'part-pill', text: song.title})
@@ -1562,20 +1589,29 @@ function renderScores() {
         el('div', {class: 'score-info'},
           badges,
           el('h2', {class: 'score-title', text: sc.title}),
-          el('p', {class: 'score-arranger', text: `${sc.arranger || '아카라카'} ${sc.uploadedAt ? `· ${sc.uploadedAt}` : ''}`})
+          el('p', {class: 'score-arranger', text: `${sc.arranger || '아카라카'} ${sc.uploadedAt ? `· ${sc.uploadedAt}` : sc.year ? `· ${sc.year}년` : ''}`})
         )
       );
 
       const memo = sc.memo ? el('p', {class: 'score-memo', text: sc.memo}) : null;
 
+      const formatLabel = sc.fileType === 'nwc' || sc.format === 'nwc'
+        ? '🎵 NWC 악보'
+        : sc.fileType === 'pdf'
+        ? 'PDF 악보'
+        : sc.fileType === 'image'
+        ? '악보 이미지'
+        : '클라우드 악보';
+
       const metaRow = el('div', {class: 'score-meta-row'},
         el('span', {text: `${sc.pages || ''} ${sc.fileSize ? `· ${sc.fileSize}` : ''}`.trim() || '악보 자료'}),
-        el('span', {class: 'badge', style: 'font-size: 10px;', text: sc.fileType === 'pdf' ? 'PDF 악보' : sc.fileType === 'image' ? '악보 이미지' : '클라우드'})
+        el('span', {class: 'badge', style: 'font-size: 10px;', text: formatLabel})
       );
 
       const actions = el('div', {class: 'score-actions'},
         button('📖 악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
         button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
+        sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank'), 'button ghost small') : null,
         song ? button('연습실 ↗', () => openSong(song), 'button ghost small') : null,
         sc.isCustom ? button('삭제', async () => {
           if (confirm(`'${sc.title}' 악보를 삭제할까요?`)) {
@@ -3091,19 +3127,22 @@ function renderDetail(song) {
   if (songScores.length) {
     app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
       el('div', {class: 'score-grid'}, songScores.map(sc => {
+        const formatLabel = sc.fileType === 'nwc' || sc.format === 'nwc' ? '🎵 NWC 악보' : sc.fileType === 'pdf' ? 'PDF 악보' : '악보';
         return el('article', {class: 'score-card', style: 'padding: 16px;'},
           el('div', {class: 'score-top'},
             el('div', {class: 'score-icon-badge'}, icon('document')),
             el('div', {class: 'score-info'},
+              sc.year && el('span', {class: 'badge', style: 'margin-right: 4px; font-weight: 600; background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand);', text: `${sc.year}년`}),
               el('span', {class: 'badge', text: sc.category || '총보'}),
               sc.part && sc.part !== 'all' && el('span', {class: 'status-badge', style: 'margin-left: 4px;', text: PARTS[sc.part] || sc.part}),
               el('h3', {style: 'font-size: 15px; font-weight: 700; margin: 4px 0;', text: sc.title}),
-              el('p', {style: 'font-size: 11px; color: var(--muted);', text: `${sc.pages || ''} ${sc.fileSize ? `· ${sc.fileSize}` : ''}`})
+              el('p', {style: 'font-size: 11px; color: var(--muted);', text: `${sc.fileSize ? `${sc.fileSize} · ` : ''}${formatLabel}`})
             )
           ),
           el('div', {class: 'score-actions', style: 'margin-top: 8px;'},
             button('📖 악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
-            button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download')
+            button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
+            sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank'), 'button ghost small') : null
           )
         );
       }))

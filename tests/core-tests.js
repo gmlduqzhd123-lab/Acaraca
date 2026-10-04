@@ -19,6 +19,14 @@ import {
   deleteCustomAppreciation
 } from '../js/archive.js';
 
+let nodeFs = null;
+if (typeof process !== 'undefined' && process.versions?.node) {
+  try {
+    const fsMod = await import('node:fs');
+    nodeFs = fsMod.default || fsMod;
+  } catch (e) {}
+}
+
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
 export function runCoreTests() {
   const results = [];
@@ -150,6 +158,14 @@ export function runCoreTests() {
   ];
   check('곡별 악보 목록 필터링', () => getScoresForSong(sampleScores, 'bohemian-rhapsody-5').length === 1 && getScoresForSong(sampleScores, 'butterfly')[0].title === '버터플라이 총보');
   check('없는 곡 악보 조회 시 빈 배열 반환', () => getScoresForSong(sampleScores, 'unknown').length === 0);
+
+  if (nodeFs) {
+    const scoresRaw = JSON.parse(nodeFs.readFileSync('./data/scores.json', 'utf8'));
+    check('scores.json 스키마 및 19개 구글 드라이브 악보 로드 검증', () => Array.isArray(scoresRaw.scores) && scoresRaw.scores.length === 19);
+    check('구글 드라이브 폴더 링크 포함 검증', () => typeof scoresRaw.driveFolderUrl === 'string' && scoresRaw.driveFolderUrl.includes('1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb'));
+    check('모든 악보 로컬 NWC 파일 및 드라이브 링크 존재 검증', () => scoresRaw.scores.every(s => s.fileUrl && s.driveUrl && nodeFs.existsSync(s.fileUrl)));
+    check('아카라카 공식 직인 이미지 파일 존재 검증', () => nodeFs.existsSync('./assets/images/acaraca-seal.png'));
+  }
 
   const memLikeRes = toggleMemoryLike('test-mem-1');
   check('기록 공감 토글 및 카운트 증가', () => memLikeRes.isLiked === true && memLikeRes.count === 1);

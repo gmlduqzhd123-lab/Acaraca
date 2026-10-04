@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v19';
+const CACHE_NAME = 'acaroom-cache-v20';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -23,7 +23,8 @@ const CORE_ASSETS = [
   './data/practice_videos.json',
   './data/appreciation.json',
   './assets/icons/logo.svg',
-  './assets/images/fallback.svg'
+  './assets/images/fallback.svg',
+  './assets/images/acaraca-seal.png'
 ];
 
 self.addEventListener('install', (event) => {
