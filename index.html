@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#194d46">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AcaRoom">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./assets/icons/logo.svg">
   <meta name="description" content="곡을 찾고, 내 파트를 고르고, 함께 하모니를 만드는 아카펠라 연습실 AcaRoom.">
   <title>AcaRoom · 우리의 아카펠라 연습실</title>
   <meta property="og:type" content="website">
@@ -52,10 +57,68 @@
   <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-title">
     <h2 id="share-title">연습 링크 공유</h2><p>아래 주소를 복사해서 팀원에게 보내 주세요.</p>
     <label for="share-url">공유 주소</label><input class="share-input" id="share-url" readonly>
-    <form method="dialog"><button class="button primary" autofocus>닫기</button></form>
+    <div class="dialog-actions">
+      <form method="dialog"><button class="button primary" autofocus>닫기</button></form>
+    </div>
   </dialog>
+
+  <!-- QR Code Modal -->
+  <dialog class="share-dialog qr-dialog" id="qr-dialog" aria-labelledby="qr-title">
+    <h2 id="qr-title">연습 화면 QR 코드</h2>
+    <p id="qr-subtitle">팀원이 카메라로 비추면 바로 이 연습 화면이 열려요.</p>
+    <div class="qr-preview-box">
+      <img id="qr-image" src="" alt="화면 연결 QR 코드" width="220" height="220">
+    </div>
+    <p class="qr-target-title" id="qr-target-title"></p>
+    <div class="dialog-actions qr-actions">
+      <button type="button" class="button secondary" id="qr-copy-btn">주소 복사</button>
+      <form method="dialog"><button class="button primary" autofocus>닫기</button></form>
+    </div>
+  </dialog>
+
+  <!-- Vocal Pitch Pipe Modal -->
+  <dialog class="pitch-dialog" id="pitch-dialog" aria-labelledby="pitch-title">
+    <div class="pitch-dialog-header">
+      <div>
+        <p class="eyebrow">VOCAL PITCH PIPE</p>
+        <h2 id="pitch-title">첫 음 잡기 조율기</h2>
+      </div>
+      <form method="dialog"><button class="icon-button dialog-close-x" aria-label="닫기">✕</button></form>
+    </div>
+    <p class="pitch-dialog-desc">우리 팀 파트별 첫 음을 바로 찾아보세요. 건반을 누르면 조율음이 울립니다.</p>
+    
+    <div class="pitch-status-card" id="pitch-status-card">
+      <span class="pitch-now-label">현재 소리</span>
+      <strong class="pitch-now-note" id="pitch-now-note">소리 대기 중</strong>
+      <span class="pitch-now-freq" id="pitch-now-freq">건반을 눌러 소리를 확인하세요</span>
+    </div>
+
+    <div class="pitch-octave-bar" id="pitch-octave-bar">
+      <span class="pitch-bar-label">옥타브:</span>
+      <div class="chip-group" id="pitch-octave-chips"></div>
+    </div>
+
+    <div class="pitch-keyboard" id="pitch-keyboard" role="region" aria-label="조율 건반"></div>
+
+    <div class="pitch-dialog-footer">
+      <div class="pitch-presets">
+        <button type="button" class="button secondary small" id="pitch-preset-a4">A4 (440Hz 기준음)</button>
+        <button type="button" class="button secondary small" id="pitch-preset-c4">가온 도 (C4)</button>
+      </div>
+      <div class="pitch-footer-actions">
+        <button type="button" class="button danger small" id="pitch-stop-btn">소리 끄기 (정지)</button>
+        <form method="dialog"><button class="button primary" autofocus>닫기</button></form>
+      </div>
+    </div>
+  </dialog>
+
   <noscript><p class="notice">AcaRoom을 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
   <script>
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
     if (location.protocol === 'file:') {
       document.getElementById('app').textContent = '이 앱은 GitHub Pages 또는 HTTP 환경에서 실행해 주세요. 로컬 미리보기 방법은 README.md를 참고해 주세요.';
     } else {

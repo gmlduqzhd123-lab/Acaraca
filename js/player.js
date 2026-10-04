@@ -88,14 +88,61 @@ export function createPlayer(container, media, title = 'AcaRoom 연습 영상') 
   screen.className = 'player-screen';
   shell.append(screen);
   let destroyed = false;
+  let iframe = null;
+  let isPlaying = false;
+  let currentTime = 0;
+  let currentRate = 1.0;
+  let ticker = null;
+  const stateListeners = [];
+
+  function notifyChange() {
+    for (const cb of stateListeners) {
+      try { cb({ isPlaying, currentTime, currentRate, mounted: Boolean(iframe) }); } catch {}
+    }
+  }
+
+  function handleMessage(event) {
+    if (!event.data) return;
+    let data = event.data;
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data); } catch { return; }
+    }
+    if (data && data.event === 'infoDelivery' && data.info) {
+      if (typeof data.info.currentTime === 'number') {
+        currentTime = data.info.currentTime;
+      }
+      if (typeof data.info.playerState === 'number') {
+        isPlaying = (data.info.playerState === 1);
+      }
+      if (typeof data.info.playbackRate === 'number') {
+        currentRate = data.info.playbackRate;
+      }
+      notifyChange();
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('message', handleMessage);
+  }
+
+  function sendYT(func, args = []) {
+    if (!iframe || !iframe.contentWindow) return;
+    try {
+      iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+    } catch {}
+  }
 
   function mountFrame() {
     if (!parsed.ok || destroyed) return;
-    const iframe = document.createElement('iframe');
+    iframe = document.createElement('iframe');
     const embed = new URL(parsed.embedUrl);
     embed.searchParams.set('autoplay', '1');
     embed.searchParams.set('rel', '0');
     embed.searchParams.set('start', '0');
+    embed.searchParams.set('enablejsapi', '1');
+    if (typeof window !== 'undefined' && window.location?.origin && window.location.origin !== 'null') {
+      embed.searchParams.set('origin', window.location.origin);
+    }
     iframe.src = embed.href;
     iframe.className = 'player-frame';
     iframe.title = title;
@@ -104,6 +151,24 @@ export function createPlayer(container, media, title = 'AcaRoom 연습 영상') 
     iframe.allowFullscreen = true;
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
     screen.replaceChildren(iframe);
+    isPlaying = true;
+    currentTime = 0;
+    notifyChange();
+
+    iframe.addEventListener('load', () => {
+      try {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
+      } catch {}
+    }, { once: true });
+
+    if (!ticker && typeof setInterval !== 'undefined') {
+      ticker = setInterval(() => {
+        if (isPlaying) {
+          currentTime = Math.max(0, currentTime + 0.5 * currentRate);
+          notifyChange();
+        }
+      }, 500);
+    }
   }
 
   if (parsed.ok) {
@@ -150,10 +215,79 @@ export function createPlayer(container, media, title = 'AcaRoom 연습 영상') 
     screen.append(empty);
   }
   container.replaceChildren(shell);
+
   return {
     restart: mountFrame,
+    mount: mountFrame,
+    seekRelative(delta) {
+      if (!iframe) {
+        mountFrame();
+        return;
+      }
+      const target = Math.max(0, currentTime + delta);
+      currentTime = target;
+      sendYT('seekTo', [target, true]);
+      notifyChange();
+    },
+    seekTo(seconds) {
+      if (!iframe) {
+        mountFrame();
+        return;
+      }
+      currentTime = Math.max(0, seconds);
+      sendYT('seekTo', [currentTime, true]);
+      notifyChange();
+    },
+    setRate(rate) {
+      currentRate = rate;
+      if (iframe) {
+        sendYT('setPlaybackRate', [rate]);
+      }
+      notifyChange();
+    },
+    togglePlay() {
+      if (!iframe) {
+        mountFrame();
+        return;
+      }
+      if (isPlaying) {
+        isPlaying = false;
+        sendYT('pauseVideo', []);
+      } else {
+        isPlaying = true;
+        sendYT('playVideo', []);
+      }
+      notifyChange();
+    },
+    play() {
+      if (!iframe) mountFrame();
+      else {
+        isPlaying = true;
+        sendYT('playVideo', []);
+        notifyChange();
+      }
+    },
+    pause() {
+      if (iframe) {
+        isPlaying = false;
+        sendYT('pauseVideo', []);
+        notifyChange();
+      }
+    },
+    getCurrentTime() { return currentTime; },
+    getRate() { return currentRate; },
+    isPlaying() { return isPlaying; },
+    isMounted() { return Boolean(iframe); },
+    onStateChange(cb) {
+      stateListeners.push(cb);
+      cb({ isPlaying, currentTime, currentRate, mounted: Boolean(iframe) });
+    },
     destroy() {
       destroyed = true;
+      if (ticker) clearInterval(ticker);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('message', handleMessage);
+      }
       shell.remove();
     },
   };

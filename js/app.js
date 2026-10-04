@@ -4,6 +4,7 @@ import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
 import {el, icon, button, toast, cover, emptyState} from './ui.js';
+import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, subscribePitchState} from './pitch.js';
 
 const app = document.getElementById('app');
 const labels = {home: '홈', songs: '전체 곡', favorites: '즐겨찾기', recent: '최근 연습', settings: '설정'};
@@ -50,11 +51,13 @@ function refreshChrome() {
     }, icon(navIcons[tab]), el('span', {text: label}))));
   }
   document.getElementById('sidebar-bottom').replaceChildren(
+    button('첫 음 조율 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
     el('div', {class: 'my-part-mini'}, icon('mic'), el('div', {}, el('span', {text: '나의 목소리'}), el('strong', {text: state.myPart ? PARTS[state.myPart] : '내 파트를 선택해 주세요'})),
       button('변경', () => navigate({tab: 'settings'}), 'text-button')),
     el('p', {class: 'sidebar-tip', text: '서로 다른 목소리, 하나의 하모니.'})
   );
   document.getElementById('topbar-actions').replaceChildren(
+    button('조율기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '피치파이프 첫 음 조율기'}),
     button('+ 곡 추가', () => { window.location.href = './admin.html?action=new'; }, 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
     button('', () => navigate({tab: 'settings'}), 'icon-button', 'settings', {'aria-label': '설정 열기'})
@@ -219,6 +222,177 @@ function renderBrowse(favoritesOnly = false) {
   app.append(searchBar(false, updateResults), filterContainer, results); updateFilters(); updateResults();
 }
 
+function showQR(song, part = null) {
+  const dialog = document.getElementById('qr-dialog');
+  if (!dialog) return;
+  const url = routeUrl({song: song.id, part}).href;
+  const img = document.getElementById('qr-image');
+  const title = document.getElementById('qr-target-title');
+  const copyBtn = document.getElementById('qr-copy-btn');
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+  title.textContent = `${song.title}${part ? ` · ${PARTS[part]}` : ''}`;
+  copyBtn.onclick = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        toast('연습 주소를 복사했어요.');
+      } else {
+        toast('주소 복사 기능이 지원되지 않는 브라우저입니다.');
+      }
+    } catch {
+      toast('주소 복사에 실패했습니다.');
+    }
+  };
+  dialog.showModal();
+}
+
+let currentOctave = 4;
+function openPitchPipe() {
+  const dialog = document.getElementById('pitch-dialog');
+  if (!dialog) return;
+
+  const noteDisplay = document.getElementById('pitch-now-note');
+  const freqDisplay = document.getElementById('pitch-now-freq');
+  const octaveChipsHost = document.getElementById('pitch-octave-chips');
+  const keyboardHost = document.getElementById('pitch-keyboard');
+  const stopBtn = document.getElementById('pitch-stop-btn');
+  const presetA4 = document.getElementById('pitch-preset-a4');
+  const presetC4 = document.getElementById('pitch-preset-c4');
+
+  function renderStatus(playing) {
+    if (playing) {
+      noteDisplay.textContent = playing.note;
+      freqDisplay.textContent = `${playing.label} · ${playing.freq} Hz`;
+    } else {
+      noteDisplay.textContent = '소리 대기 중';
+      freqDisplay.textContent = '건반을 눌러 소리를 확인하세요';
+    }
+  }
+
+  function renderKeyboard() {
+    keyboardHost.replaceChildren(...NOTES.map(item => {
+      const freq = getNoteFrequency(item.semitone, currentOctave);
+      const isCur = getCurrentPlaying()?.semitone === item.semitone && getCurrentPlaying()?.octave === currentOctave;
+      const keyBtn = el('button', {
+        type: 'button',
+        class: `pitch-key${item.accidental ? ' accidental' : ''}${isCur ? ' active' : ''}`,
+        'aria-label': `${item.note}${currentOctave} (${item.korean}) ${freq}Hz`,
+        onclick: () => {
+          playPitch(item.semitone, currentOctave);
+          renderKeyboard();
+        }
+      },
+        el('span', {class: 'pitch-key-note', text: item.note}),
+        el('span', {class: 'pitch-key-kr', text: item.korean}),
+        el('span', {class: 'pitch-key-freq', text: `${Math.round(freq)}Hz`})
+      );
+      return keyBtn;
+    }));
+  }
+
+  function renderOctaves() {
+    octaveChipsHost.replaceChildren(...OCTAVES.map(oct => {
+      const chip = el('button', {
+        type: 'button',
+        class: `chip${currentOctave === oct.octave ? ' active' : ''}`,
+        text: `${oct.octave}옥타브`,
+        onclick: () => {
+          currentOctave = oct.octave;
+          renderOctaves();
+          renderKeyboard();
+        }
+      });
+      return chip;
+    }));
+  }
+
+  subscribePitchState((playing) => {
+    renderStatus(playing);
+    renderKeyboard();
+  });
+
+  renderStatus(getCurrentPlaying());
+  renderOctaves();
+  renderKeyboard();
+
+  stopBtn.onclick = () => stopPitch();
+  presetA4.onclick = () => { currentOctave = 4; renderOctaves(); playPitch(9, 4); };
+  presetC4.onclick = () => { currentOctave = 4; renderOctaves(); playPitch(0, 4); };
+
+  dialog.addEventListener('close', () => stopPitch(), { once: true });
+  dialog.showModal();
+}
+
+function renderPlayerController(player, song, part) {
+  let currentRate = 1.0;
+  let isPlaying = false;
+
+  const rewindBtn = button('5초 뒤로', () => {
+    player.seekRelative(-5);
+    toast('⏪ 5초 뒤로 이동');
+  }, 'practice-btn-big', 'rewind', {'aria-label': '5초 뒤로 되감기'});
+
+  const playBtn = button('재생 / 정지', () => {
+    player.togglePlay();
+  }, 'practice-btn-big primary-play', 'play', {'aria-label': '재생 또는 일시정지'});
+
+  const forwardBtn = button('5초 앞으로', () => {
+    player.seekRelative(5);
+    toast('⏩ 5초 앞으로 이동');
+  }, 'practice-btn-big', 'fastforward', {'aria-label': '5초 앞으로 넘기기'});
+
+  const repeatBtn = button('5초 복습', () => {
+    player.seekRelative(-5);
+    player.play();
+    toast('🔄 이전 5초 구간 다시 재생');
+  }, 'practice-btn-big', 'repeat', {'aria-label': '이전 5초 구간 다시 재생'});
+
+  const controlRow = el('div', {class: 'practice-control-row'},
+    rewindBtn, playBtn, forwardBtn, repeatBtn
+  );
+
+  const speedOptions = [
+    { rate: 0.75, label: '0.75x 느리게' },
+    { rate: 0.9, label: '0.9x' },
+    { rate: 1.0, label: '1.0x 보통' },
+    { rate: 1.25, label: '1.25x 빠르게' }
+  ];
+  const speedGroup = el('div', {class: 'practice-speed-group'},
+    el('span', {class: 'practice-speed-label', text: '재생 배속:'}),
+    ...speedOptions.map(opt => {
+      const chip = el('button', {
+        type: 'button',
+        class: `practice-rate-chip${currentRate === opt.rate ? ' active' : ''}`,
+        text: opt.label,
+        onclick: () => {
+          currentRate = opt.rate;
+          player.setRate(opt.rate);
+          for (const c of speedGroup.querySelectorAll('.practice-rate-chip')) {
+            c.classList.toggle('active', c === chip);
+          }
+          toast(`재생 배속: ${opt.rate}x`);
+        }
+      });
+      return chip;
+    })
+  );
+
+  const pitchBtn = button('첫 음 조율 (피치파이프)', () => openPitchPipe(), 'text-button practice-pitch-btn', 'music');
+  const subrow = el('div', {class: 'practice-subrow'}, speedGroup, pitchBtn);
+
+  const panel = el('div', {class: 'practice-controller-panel', role: 'region', 'aria-label': '연습 플레이어 컨트롤러'},
+    controlRow, subrow
+  );
+
+  player.onStateChange(st => {
+    isPlaying = st.isPlaying;
+    currentRate = st.currentRate;
+    playBtn.replaceChildren(icon(isPlaying ? 'pause' : 'play'), document.createTextNode(isPlaying ? '일시정지' : '재생'));
+  });
+
+  return panel;
+}
+
 function renderDetail(song) {
   const parts = availableParts(song);
   const preferred = preferredPart(song, state.myPart);
@@ -230,6 +404,7 @@ function renderDetail(song) {
       el('div', {class: 'tag-list'}, array(song.tags).map(tag => el('span', {class: 'tag', text: `#${tag}`}))),
       el('div', {class: 'detail-actions'},
         favoriteButton(song),
+        button('QR 코드', () => showQR(song), 'button secondary', 'qr'),
         button('곡 공유', () => share(song), 'button secondary', 'share'),
         button('영상 / 정보 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external')
       ),
@@ -276,15 +451,17 @@ function renderPractice(song, part, record = true) {
   const playerHost = el('div', {class: 'player-panel'});
   const playerLayout = el('div', {class: 'practice-layout'}, playerHost);
   state.player = createPlayer(playerHost, song.videos[part], `${song.title} · ${PARTS[part]} 연습`);
+  const controller = renderPlayerController(state.player, song, part);
   const actions = el('div', {class: 'player-actions'},
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
-    favoriteButton(song),
+    button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
-    button('영상 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external')
+    button('영상 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external'),
+    favoriteButton(song)
   );
   const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => startPractice(song, parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
     el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => startPractice(song, parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
-  app.append(playerLayout, actions, switches);
+  app.append(playerLayout, controller, actions, switches);
   const progressHost = el('div'); const updateProgress = () => progressHost.replaceChildren(progressBar(percentage(song.id, part)));
   updateProgress();
   const checklist = el('section', {class: 'checklist-panel'}, el('p', {class: 'eyebrow', text: 'ONE STEP AT A TIME'}), el('h2', {text: '오늘의 연습 체크'}), el('p', {text: '작은 반복이 우리의 소리를 완성해요.'}), progressHost);
@@ -380,6 +557,7 @@ function normalizeRoute() {
 }
 let lastPractice = '';
 function render() {
+  stopPitch();
   state.player?.destroy(); state.player = null; timerNodes = null;
   app.replaceChildren(); refreshChrome();
   if (state.loading) { app.append(el('div', {class: 'loading-state', role: 'status', text: '연습실을 준비하고 있어요…'})); return; }

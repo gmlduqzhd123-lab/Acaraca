@@ -30,7 +30,13 @@ const paths = {
   sun: ['M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8', 'M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1'],
   check: ['m5 12 4 4L19 6'],
   external: ['M15 3h6v6', 'm21 3-9 9', 'M10 3H3v18h18v-7'],
-  close: ['m6 6 12 12', 'm18 6-12 12']
+  close: ['m6 6 12 12', 'm18 6-12 12'],
+  qr: ['M3 3h6v6H3z', 'M15 3h6v6h-6z', 'M3 15h6v6H3z', 'M15 15h2v2h-2z', 'M19 15h2v2h-2z', 'M15 19h2v2h-2z', 'M19 19h2v2h-2z'],
+  music: ['M9 18V5l12-2v13', 'M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6', 'M18 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6'],
+  rewind: ['m11 19-9-7 9-7v14z', 'm22 19-9-7 9-7v14z'],
+  fastforward: ['m13 5 9 7-9 7V5z', 'm2 5 9 7-9 7V5z'],
+  pause: ['M6 4h4v16H6z', 'M14 4h4v16h-4z'],
+  repeat: ['m17 2 4 4-4 4', 'M3 11v-1a4 4 0 0 1 4-4h14', 'm7 22-4-4 4-4', 'M21 13v1a4 4 0 0 1-4 4H3']
 };
 
 export function icon(name) {

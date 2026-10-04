@@ -2,6 +2,7 @@ import { parseYouTube, createPlayer } from '../js/player.js';
 import { validateData, availableParts, preferredPart } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
+import { getNoteFrequency, NOTES } from '../js/pitch.js';
 
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
 export function runCoreTests() {
@@ -98,6 +99,12 @@ export function runCoreTests() {
   check('즐겨찾기 필터', () => filterSongs(songs, { status: 'favorite', favorites: ['jazz'] })[0]?.id === 'jazz');
   check('필터의 충돌은 결과 없음', () => filterSongs(songs, { category: 'JAZZ', part: 'alto' }).length === 0);
 
+  check('A4 기준음 주파수 440Hz', () => getNoteFrequency(9, 4) === 440.0);
+  check('C4 가온도 주파수 261.63Hz', () => Math.abs(getNoteFrequency(0, 4) - 261.63) < 0.1);
+  check('C3 저음 옥타브 주파수 절반', () => Math.abs(getNoteFrequency(0, 3) - 130.81) < 0.1);
+  check('C5 고음 옥타브 주파수 2배', () => Math.abs(getNoteFrequency(0, 5) - 523.25) < 0.1);
+  check('피치파이프 반음 12개 음계', () => NOTES.length === 12);
+
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   try {
     const fakeValues = new Map();
@@ -138,6 +145,7 @@ export function runCoreTests() {
     check('iframe에 안전한 텍스트 title', () => container.querySelector('iframe').title === '<script>안전한 영상명</script>');
     player.restart();
     check('다시 보기 시 iframe 중복 없음', () => container.querySelectorAll('iframe').length === 1);
+    check('플레이어 컨트롤러 인터페이스 제공', () => typeof player.seekRelative === 'function' && typeof player.setRate === 'function' && typeof player.togglePlay === 'function');
     player.destroy();
     check('destroy 시 플레이어 제거', () => container.childElementCount === 0);
   }
