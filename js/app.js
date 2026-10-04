@@ -726,7 +726,7 @@ function renderStage() {
       viewTabs,
       el('div', {class: 'stage-summary-text', id: 'stage-summary-count'})
     ),
-    el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+    el('div', {class: 'search-box'},
       el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
       categoryChips
     )
@@ -1527,7 +1527,7 @@ function renderScores() {
   })));
 
   const filterPanel = el('section', {class: 'filter-panel', style: 'margin-bottom: 24px;'},
-    el('div', {style: 'margin-bottom: 12px;'}, searchInput),
+    el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
     el('div', {style: 'display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;'},
       categoryChips,
       songSelect
@@ -1816,7 +1816,7 @@ function renderEducation() {
     }
   });
 
-  const categoryChips = el('div', {class: 'chip-group', style: 'margin-bottom: 12px;'},
+  const categoryChips = el('div', {class: 'chip-group'},
     categoryOptions.map(cat => button(cat, () => {
       state.educationFilters.category = cat === '전체' ? '' : cat;
       for (const btn of categoryChips.querySelectorAll('button')) {
@@ -1835,7 +1835,7 @@ function renderEducation() {
     }
   }, targetOptions.map(t => el('option', {value: t, selected: (!state.educationFilters.target && t === '전체 대상') || state.educationFilters.target === t}, t)));
 
-  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;'},
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px;'},
     categoryChips,
     el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
       el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '대상별:'),
@@ -1843,7 +1843,7 @@ function renderEducation() {
     )
   );
 
-  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+  const filterPanel = el('div', {class: 'search-box'},
     el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
     filterRow
   );
@@ -2146,7 +2146,7 @@ function renderPracticeVideos() {
     }
   });
 
-  const partChips = el('div', {class: 'chip-group', style: 'margin-bottom: 12px;'},
+  const partChips = el('div', {class: 'chip-group'},
     partOptions.map(p => button(p, () => {
       state.practiceVideoFilters.part = p === '전체 파트' ? '' : p;
       for (const btn of partChips.querySelectorAll('button')) {
@@ -2178,9 +2178,9 @@ function renderPracticeVideos() {
     }
   }, sourceOptions.map(s => el('option', { value: s, selected: (!state.practiceVideoFilters.sourceType && s === '전체 방식') || state.practiceVideoFilters.sourceType === s }, s)));
 
-  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;'},
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px;'},
     partChips,
-    el('div', {style: 'display: flex; align-items: center; gap: 10px; flex-wrap: wrap;'},
+    el('div', {style: 'display: flex; align-items: center; gap: 12px; flex-wrap: wrap;'},
       el('div', {style: 'display: flex; align-items: center; gap: 6px;'},
         el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '곡:'),
         songSelect
@@ -2192,7 +2192,7 @@ function renderPracticeVideos() {
     )
   );
 
-  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+  const filterPanel = el('div', {class: 'search-box'},
     el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
     filterRow
   );
@@ -2455,7 +2455,7 @@ function renderAppreciation() {
 
   const countSummary = el('div', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;'});
 
-  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;'},
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 16px;'},
     categoryChips,
     el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
       el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '그룹별:'),
@@ -2463,7 +2463,7 @@ function renderAppreciation() {
     )
   );
 
-  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+  const filterPanel = el('div', {class: 'search-box'},
     el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
     filterRow
   );
