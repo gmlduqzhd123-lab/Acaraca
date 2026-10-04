@@ -2,7 +2,12 @@ const tabs = new Set(['home', 'songs', 'scores', 'education', 'stage', 'rehearsa
 
 export function readRoute() {
   const query = new URL(location.href).searchParams;
-  return {tab: tabs.has(query.get('tab')) ? query.get('tab') : 'home', song: query.get('song') || null, part: query.get('part') || null};
+  return {
+    tab: tabs.has(query.get('tab')) ? query.get('tab') : 'home',
+    song: query.get('song') || null,
+    part: query.get('part') || null,
+    view: query.get('view') || null
+  };
 }
 
 export function routeUrl(route) {
@@ -10,7 +15,10 @@ export function routeUrl(route) {
   if (route.song) {
     url.searchParams.set('song', route.song);
     if (route.part) url.searchParams.set('part', route.part);
-  } else if (route.tab && route.tab !== 'home') url.searchParams.set('tab', route.tab);
+  } else if (route.tab && route.tab !== 'home') {
+    url.searchParams.set('tab', route.tab);
+    if (route.view) url.searchParams.set('view', route.view);
+  }
   return url;
 }
 

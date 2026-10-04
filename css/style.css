@@ -816,7 +816,49 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 .practice-pitch-btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
 .practice-pitch-btn .icon { width: 14px; height: 14px; }
 
-/* Stage Performances Tab */
+/* Stage Performances Tab & List View */
+.stage-controls-panel { margin-bottom: 24px; }
+.stage-tabs-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.stage-view-tabs { display: inline-flex; background: var(--surface-soft); padding: 4px; border-radius: 12px; border: 1px solid var(--border); gap: 4px; }
+.stage-tab-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 0; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s ease; }
+.stage-tab-btn:hover { color: var(--ink); background: rgba(0,0,0,.04); }
+.stage-tab-btn.active { background: var(--surface); color: var(--primary); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.stage-summary-text { font-size: 13px; font-weight: 650; color: var(--muted); }
+
+/* Stage List */
+.stage-list { display: flex; flex-direction: column; gap: 14px; }
+.stage-list-item { display: flex; align-items: stretch; gap: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.stage-list-item:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.08); border-color: #abbca5; }
+.stage-list-thumb { position: relative; width: 180px; min-width: 180px; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; cursor: pointer; flex-shrink: 0; }
+.stage-list-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; display: block; }
+.stage-list-item:hover .stage-list-thumb img { transform: scale(1.05); }
+.stage-thumb-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.32); color: #fff; font-size: 22px; transition: background .2s ease; }
+.stage-list-item:hover .stage-thumb-play { background: rgba(25,77,70,.65); }
+.stage-thumb-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,.75); color: #fff; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; backdrop-filter: blur(4px); }
+.stage-list-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.stage-list-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.stage-list-title { font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-bottom: 6px; cursor: pointer; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.stage-list-title:hover { color: var(--primary); }
+.stage-list-setlist { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; font-size: 12px; }
+.stage-setlist-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 6px; font-size: 11.5px; color: var(--ink); }
+.stage-setlist-chip strong { color: var(--primary); font-weight: 650; }
+.stage-list-actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; flex-shrink: 0; min-width: 110px; }
+
+/* Stage Video Theater Modal */
+.stage-modal-dialog { border: 0; border-radius: 16px; padding: 0; max-width: 860px; width: 94vw; background: var(--surface); color: var(--ink); box-shadow: 0 20px 48px rgba(0,0,0,.32); overflow: hidden; margin: auto; }
+.stage-modal-dialog::backdrop { background: rgba(15,23,20,.75); backdrop-filter: blur(4px); }
+.stage-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 12px; }
+.stage-modal-header h3 { font-size: 16px; font-weight: 700; margin: 0; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.stage-modal-body { padding: 20px; max-height: 80vh; overflow-y: auto; }
+.stage-modal-player { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 16px; }
+
+@media (max-width: 768px) {
+  .stage-list-item { flex-direction: column; padding: 14px; gap: 12px; }
+  .stage-list-thumb { width: 100%; min-width: 0; }
+  .stage-list-actions { flex-direction: row; width: 100%; }
+  .stage-list-actions > button, .stage-list-actions > a { flex: 1; justify-content: center; }
+}
+
 .stage-grid { display: flex; flex-direction: column; gap: 24px; }
 .stage-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
 .stage-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -942,6 +984,8 @@ html[data-theme="dark"] .practice-btn-big { background: var(--surface-soft); bor
 html[data-theme="dark"] .practice-btn-big.primary-play { background: var(--primary); color: #1c3524; border-color: var(--primary); }
 html[data-theme="dark"] .practice-rate-chip.active { background: var(--primary-soft); color: var(--primary); }
 html[data-theme="dark"] .stage-card,
+html[data-theme="dark"] .stage-list-item,
+html[data-theme="dark"] .stage-modal-dialog,
 html[data-theme="dark"] .rehearsal-card,
 html[data-theme="dark"] .score-card,
 html[data-theme="dark"] .memory-card,

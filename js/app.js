@@ -74,6 +74,8 @@ const state = {
   myPart: Object.keys(PARTS).filter(part => part !== 'full').includes(read('myPart', '')) ? read('myPart', '') : '',
   progress: object(read('progress', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
+  stageView: 'list',
+  stageFilters: {query: '', category: ''},
   scoreFilters: {query: '', category: '', songId: ''},
   educationFilters: {query: '', category: '', target: ''},
   memoryFilters: {category: ''},
@@ -306,8 +308,9 @@ function renderHome() {
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
     el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
-    el('p', {text: `악보 ${state.scores.length}건, 교육 자료 ${state.education.length}건, 팀의 추억과 숏츠 영상 ${state.memories.length}건이 보관되어 있습니다.`}),
+    el('p', {text: `공연 영상 ${state.performances.length}편, 악보 ${state.scores.length}건, 교육 자료 ${state.education.length}건, 팀의 추억 ${state.memories.length}건이 보관되어 있습니다.`}),
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
+      button('🎬 공연 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
       button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
       button('🎓 교육 자료', () => navigate({tab: 'education'}), 'button secondary small', 'academic'),
       button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
@@ -354,21 +357,172 @@ function renderBrowse(favoritesOnly = false) {
   app.append(searchBar(false, updateResults), filterContainer, results); updateFilters(); updateResults();
 }
 
-function renderStage() {
-  app.append(
-    el('div', {class: 'page-heading'},
-      el('p', {class: 'eyebrow', text: 'OUR STAGE ARCHIVE'}),
-      el('h1', {text: '우리의 무대 영상'}),
-      el('p', {text: '정기 공연, 버스킹, 축제 등 관객과 함께 호흡한 소중한 순간들을 모아봅니다.'})
-    )
-  );
-
-  if (!state.performances.length) {
-    app.append(emptyState('등록된 공연 영상이 아직 없어요', '새로운 무대 실황 영상이 곧 등록됩니다.'));
-    return;
+function openStageModal(perf) {
+  const existing = document.getElementById('stage-video-dialog');
+  if (existing) {
+    existing.close();
+    existing.remove();
   }
 
-  const list = el('div', {class: 'stage-grid'}, state.performances.map(perf => {
+  const dialog = el('dialog', {id: 'stage-video-dialog', class: 'stage-modal-dialog', 'aria-labelledby': 'stage-modal-title'});
+
+  const closeBtn = el('button', {
+    type: 'button',
+    class: 'dialog-close-x',
+    'aria-label': '닫기',
+    onclick: () => dialog.close()
+  }, '✕');
+
+  const header = el('div', {class: 'stage-modal-header'},
+    el('div', {style: 'flex: 1; min-width: 0;'},
+      el('span', {class: 'badge', text: perf.category || '공연', style: 'margin-bottom: 4px;'}),
+      el('h3', {id: 'stage-modal-title', text: perf.title})
+    ),
+    closeBtn
+  );
+
+  const playerHost = el('div', {class: 'stage-modal-player'});
+  const p = createPlayer(playerHost, perf.video, perf.title);
+  activePlayers.push(p);
+
+  const metaBox = el('div', {style: 'display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; font-size: 12.5px; color: var(--muted);'},
+    el('span', {text: `📅 ${perf.date}`}),
+    perf.venue ? el('span', {text: `📍 ${perf.venue}`}) : null
+  );
+
+  const setlistBlock = perf.setlist?.length ? el('div', {class: 'stage-setlist-box', style: 'margin-top: 14px;'},
+    el('div', {class: 'stage-setlist-title', text: '무대 셋리스트 (파트 연습 바로가기)'}),
+    el('div', {class: 'stage-setlist-items'}, perf.setlist.map(item => {
+      const song = state.songs.find(s => s.id === item.songId);
+      return el('div', {class: 'setlist-item'},
+        el('div', {},
+          el('span', {class: 'setlist-song-name', text: item.title}),
+          item.artist && el('span', {class: 'setlist-time', text: `· ${item.artist}`})
+        ),
+        song ? button('파트 연습실 이동', () => {
+          dialog.close();
+          openSong(song);
+        }, 'button primary small', 'play') : null
+      );
+    }))
+  ) : null;
+
+  const body = el('div', {class: 'stage-modal-body'},
+    playerHost,
+    metaBox,
+    perf.description ? el('p', {class: 'stage-desc', text: perf.description}) : null,
+    setlistBlock
+  );
+
+  dialog.append(header, body);
+  document.body.append(dialog);
+
+  dialog.addEventListener('close', () => {
+    p.destroy?.();
+    const idx = activePlayers.indexOf(p);
+    if (idx !== -1) activePlayers.splice(idx, 1);
+    dialog.remove();
+  });
+
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+
+  dialog.showModal();
+}
+
+function renderStageList(performances, container) {
+  const list = el('div', {class: 'stage-list'}, performances.map(perf => {
+    const thumb = el('div', {
+      class: 'stage-list-thumb',
+      role: 'button',
+      tabindex: '0',
+      'aria-label': `${perf.title} 영상 보기`,
+      onclick: () => openStageModal(perf)
+    },
+      el('img', {src: perf.thumbnail, alt: '', loading: 'lazy'}),
+      el('div', {class: 'stage-thumb-play', 'aria-hidden': 'true'}, '▶'),
+      el('span', {class: 'stage-thumb-badge', text: perf.category || '공연'})
+    );
+    thumb.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openStageModal(perf);
+      }
+    });
+
+    const metaRow = el('div', {class: 'stage-list-meta'},
+      el('span', {class: 'badge', text: perf.category || '공연'}),
+      el('span', {class: 'stage-date', text: `📅 ${perf.date}`}),
+      perf.venue ? el('span', {class: 'stage-venue', text: `📍 ${perf.venue}`}) : null
+    );
+
+    const titleBtn = el('h3', {
+      class: 'stage-list-title',
+      role: 'button',
+      tabindex: '0',
+      onclick: () => openStageModal(perf)
+    }, perf.title);
+    titleBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openStageModal(perf);
+      }
+    });
+
+    let setlistRow = null;
+    if (perf.setlist && perf.setlist.length) {
+      setlistRow = el('div', {class: 'stage-list-setlist'},
+        el('span', {style: 'font-weight: 600; color: var(--muted); font-size: 11.5px;'}, '🎵 연주곡:'),
+        ...perf.setlist.map(item => {
+          const song = state.songs.find(s => s.id === item.songId);
+          return el('span', {class: 'stage-setlist-chip'},
+            el('strong', {text: item.title}),
+            item.artist ? el('span', {style: 'color: var(--muted); font-size: 11px;'}, ` (${item.artist})`) : null,
+            song ? button('연습실 이동 ↗', (e) => {
+              e.stopPropagation();
+              openSong(song);
+            }, 'text-button', null, {style: 'font-size: 11px; padding: 0 4px;'}) : null
+          );
+        })
+      );
+    }
+
+    const actions = el('div', {class: 'stage-list-actions'},
+      button('▶ 영상 보기', () => openStageModal(perf), 'button primary small'),
+      el('a', {
+        href: perf.video.url,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        class: 'button secondary small',
+        text: 'YouTube ↗',
+        title: '새 창에서 원본 YouTube 영상 보기'
+      })
+    );
+
+    const content = el('div', {class: 'stage-list-content'},
+      metaRow,
+      titleBtn,
+      perf.description ? el('p', {
+        class: 'stage-list-desc',
+        text: perf.description,
+        style: 'font-size: 12.5px; color: var(--muted); margin: 4px 0 6px; line-height: 1.5;'
+      }) : null,
+      setlistRow
+    );
+
+    return el('article', {class: 'stage-list-item'},
+      thumb,
+      content,
+      actions
+    );
+  }));
+
+  container.append(list);
+}
+
+function renderStageCards(performances, container) {
+  const grid = el('div', {class: 'stage-grid'}, performances.map(perf => {
     const playerHost = el('div', {class: 'stage-player-host'});
     const p = createPlayer(playerHost, perf.video, perf.title);
     activePlayers.push(p);
@@ -404,7 +558,134 @@ function renderStage() {
     );
   }));
 
-  app.append(list);
+  container.append(grid);
+}
+
+function renderStage() {
+  if (state.route.view && (state.route.view === 'list' || state.route.view === 'cards')) {
+    state.stageView = state.route.view;
+  }
+
+  app.append(
+    el('div', {class: 'page-heading'},
+      el('p', {class: 'eyebrow', text: 'OUR STAGE ARCHIVE'}),
+      el('h1', {text: '우리의 무대 영상'}),
+      el('p', {text: '정기 공연, 버스킹, 축제 등 관객과 함께 호흡한 소중한 순간들을 모아봅니다.'})
+    )
+  );
+
+  if (!state.performances.length) {
+    app.append(emptyState('등록된 공연 영상이 아직 없어요', '새로운 무대 실황 영상이 곧 등록됩니다.'));
+    return;
+  }
+
+  // 1. View Mode Switcher Tabs
+  const currentView = state.stageView || 'list';
+  const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '공연 영상 보기 방식'},
+    button('📋 목록으로 보기', () => {
+      state.stageView = 'list';
+      writeRoute({tab: 'stage', view: 'list'}, {replace: true});
+      render();
+    }, `stage-tab-btn${currentView === 'list' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'list')}),
+    button('🎬 영상 카드로 보기', () => {
+      state.stageView = 'cards';
+      writeRoute({tab: 'stage', view: 'cards'}, {replace: true});
+      render();
+    }, `stage-tab-btn${currentView === 'cards' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'cards')})
+  );
+
+  // 2. Category options
+  const allCategories = ['전체', ...new Set(state.performances.map(p => p.category).filter(Boolean))];
+  const selectedCategory = state.stageFilters.category || '전체';
+
+  const categoryChips = el('div', {class: 'chip-group'},
+    allCategories.map(cat => button(
+      cat === '전체' ? `전체 (${state.performances.length})` : cat,
+      () => {
+        state.stageFilters.category = cat === '전체' ? '' : cat;
+        updateStageContent();
+      },
+      `chip${(selectedCategory === cat || (!state.stageFilters.category && cat === '전체')) ? ' active' : ''}`
+    ))
+  );
+
+  // 3. Search Bar
+  const searchInput = el('input', {
+    type: 'search',
+    class: 'search-input',
+    placeholder: '공연명, 연주곡, 장소, 일자 검색...',
+    value: state.stageFilters.query || '',
+    oninput: (e) => {
+      state.stageFilters.query = e.target.value;
+      updateStageContent();
+    }
+  });
+
+  const topControls = el('div', {class: 'stage-controls-panel'},
+    el('div', {class: 'stage-tabs-row'},
+      viewTabs,
+      el('div', {class: 'stage-summary-text', id: 'stage-summary-count'})
+    ),
+    el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+      el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
+      categoryChips
+    )
+  );
+  app.append(topControls);
+
+  const contentArea = el('div', {id: 'stage-content-area'});
+  app.append(contentArea);
+
+  function getFilteredPerformances() {
+    const q = (state.stageFilters.query || '').trim().toLowerCase();
+    const cat = state.stageFilters.category || '';
+
+    return state.performances.filter(perf => {
+      if (cat && perf.category !== cat) return false;
+      if (!q) return true;
+
+      const titleMatch = (perf.title || '').toLowerCase().includes(q);
+      const venueMatch = (perf.venue || '').toLowerCase().includes(q);
+      const descMatch = (perf.description || '').toLowerCase().includes(q);
+      const dateMatch = (perf.date || '').toLowerCase().includes(q);
+      const setlistMatch = perf.setlist?.some(item =>
+        (item.title || '').toLowerCase().includes(q) || (item.artist || '').toLowerCase().includes(q)
+      );
+
+      return titleMatch || venueMatch || descMatch || dateMatch || setlistMatch;
+    });
+  }
+
+  function updateStageContent() {
+    const filtered = getFilteredPerformances();
+    const countEl = document.getElementById('stage-summary-count');
+    if (countEl) {
+      countEl.textContent = `총 ${filtered.length}개 영상`;
+    }
+
+    // Update active category chips
+    for (const btn of categoryChips.querySelectorAll('button')) {
+      const isAll = btn.textContent.startsWith('전체');
+      const text = isAll ? '전체' : btn.textContent.trim();
+      const isActive = (!state.stageFilters.category && text === '전체') || (state.stageFilters.category === text);
+      btn.classList.toggle('active', isActive);
+    }
+
+    contentArea.replaceChildren();
+
+    if (!filtered.length) {
+      contentArea.append(emptyState('검색된 공연 영상이 없습니다', '다른 검색어를 입력하거나 카테고리 필터를 변경해 보세요.'));
+      return;
+    }
+
+    if (state.stageView === 'cards') {
+      renderStageCards(filtered, contentArea);
+    } else {
+      renderStageList(filtered, contentArea);
+    }
+  }
+
+  updateStageContent();
 }
 
 function renderAudioPlayer(audioData, title = '현장 녹음본') {
