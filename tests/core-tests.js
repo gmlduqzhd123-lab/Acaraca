@@ -165,6 +165,14 @@ export function runCoreTests() {
     check('구글 드라이브 폴더 링크 포함 검증', () => typeof scoresRaw.driveFolderUrl === 'string' && scoresRaw.driveFolderUrl.includes('1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb'));
     check('모든 악보 로컬 NWC 파일 및 드라이브 링크 존재 검증', () => scoresRaw.scores.every(s => s.fileUrl && s.driveUrl && nodeFs.existsSync(s.fileUrl)));
     check('아카라카 공식 직인 이미지 파일 존재 검증', () => nodeFs.existsSync('./assets/images/acaraca-seal.png'));
+
+    const apprecRaw = JSON.parse(nodeFs.readFileSync('./data/appreciation.json', 'utf8'));
+    check('appreciation.json 100개 감상 영상 로드 검증', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length === 100);
+    check('모든 감상 영상 YouTube 파싱 유효성 검증', () => apprecRaw.videos.every(v => parseYouTube({ type: 'video', url: v.videoUrl }).ok && Boolean(v.thumbnail)));
+    check('요청된 핵심 그룹(메이트리, 엑시트, 펜타토닉스, 나린, 비트펠라 하우스) 전체 포함 검증', () => {
+      const artists = apprecRaw.videos.map(v => v.artist);
+      return ['메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스'].every(g => artists.some(a => a.includes(g)));
+    });
   }
 
   const memLikeRes = toggleMemoryLike('test-mem-1');

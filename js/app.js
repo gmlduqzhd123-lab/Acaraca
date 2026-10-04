@@ -2545,12 +2545,20 @@ function renderAppreciation() {
       });
 
       if (item.thumbnail) {
-        thumbWrap.append(el('img', {
+        const thumbImg = el('img', {
           src: item.thumbnail,
           alt: item.title,
           class: 'custom-video-thumb',
-          loading: 'lazy'
-        }));
+          loading: 'lazy',
+          onerror: (e) => {
+            const m = (item.videoUrl || '').match(/(?:v=|youtu\.be\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+            if (m && !e.target.dataset.tried) {
+              e.target.dataset.tried = '1';
+              e.target.src = `https://img.youtube.com/vi/${m[1]}/0.jpg`;
+            }
+          }
+        });
+        thumbWrap.append(thumbImg);
       }
 
       thumbWrap.append(
@@ -2605,15 +2613,21 @@ function renderAppreciation() {
         ) : null,
         el('div', {class: 'custom-video-footer'},
           el('span', {}, `추천: ${item.uploader || '단원'} · 📅 ${item.date || ''}`),
-          item.isCustom ? button('', async (e) => {
-            e.stopPropagation();
-            if (confirm(`'${item.title}' 감상 영상을 목록에서 삭제하시겠습니까?`)) {
-              deleteCustomAppreciation(item.id);
-              state.appreciation = await loadAppreciation(true);
-              render();
-              toast('감상 영상이 삭제되었습니다.');
-            }
-          }, 'icon-button', 'trash', {'aria-label': '영상 삭제', title: '영상 삭제'}) : null
+          el('div', {style: 'display: flex; gap: 6px; align-items: center;'},
+            item.videoUrl ? button('YouTube ↗', (e) => {
+              e.stopPropagation();
+              window.open(item.videoUrl, '_blank');
+            }, 'button ghost small', 'external') : null,
+            item.isCustom ? button('', async (e) => {
+              e.stopPropagation();
+              if (confirm(`'${item.title}' 감상 영상을 목록에서 삭제하시겠습니까?`)) {
+                deleteCustomAppreciation(item.id);
+                state.appreciation = await loadAppreciation(true);
+                render();
+                toast('감상 영상이 삭제되었습니다.');
+              }
+            }, 'icon-button', 'trash', {'aria-label': '영상 삭제', title: '영상 삭제'}) : null
+          )
         )
       );
 
