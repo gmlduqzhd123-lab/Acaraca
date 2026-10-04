@@ -200,15 +200,81 @@ function favoriteButton(song) {
   return node;
 }
 
-function songCard(song) {
+function clearPracticeSongs() {
+  const overrides = read('statusOverrides', {});
+  state.songs.forEach(song => {
+    if (song.status === 'practice') {
+      song.status = 'complete';
+      overrides[song.id] = 'complete';
+    }
+  });
+  write('statusOverrides', overrides);
+  render();
+  toast('현재 연습 중인 영상을 모두 비웠어요.');
+}
+
+function togglePracticeStatus(song) {
+  const overrides = read('statusOverrides', {});
+  if (song.status === 'practice') {
+    song.status = 'complete';
+    overrides[song.id] = 'complete';
+    toast(`'${song.title}' 곡을 현재 연습에서 비웠어요.`);
+  } else {
+    song.status = 'practice';
+    overrides[song.id] = 'practice';
+    toast(`'${song.title}' 곡을 현재 연습에 추가했어요.`);
+  }
+  write('statusOverrides', overrides);
+  render();
+}
+
+function resetPracticeSongs() {
+  remove('statusOverrides');
+  initialize();
+  toast('기본 연습곡 목록으로 되돌렸어요.');
+}
+
+function confirmClearPractice() {
+  const dialog = el('dialog', {class: 'share-dialog', 'aria-labelledby': 'clear-practice-title'});
+  dialog.replaceChildren(
+    el('h2', {id: 'clear-practice-title', text: '현재 연습 비우기'}),
+    el('p', {text: '현재 연습 중인 영상 목록을 모두 비우시겠습니까?\n언제든지 곡 상세 화면이나 전체 곡에서 다시 현재 연습으로 등록할 수 있습니다.'}),
+    el('div', {class: 'dialog-actions', style: 'display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;'},
+      button('취소', () => dialog.close(), 'button secondary small'),
+      button('모두 비우기', () => {
+        dialog.close();
+        clearPracticeSongs();
+      }, 'button danger small')
+    )
+  );
+  document.body.append(dialog);
+  dialog.addEventListener('close', () => dialog.remove());
+  dialog.showModal();
+}
+
+function songCard(song, options = {}) {
   const parts = availableParts(song);
+  const isPractice = song.status === 'practice';
+  const showExclude = options.showExclude ?? isPractice;
+
+  const excludeBtn = showExclude ? button('', () => togglePracticeStatus(song), 'icon-button-tiny', 'close', {
+    title: '현재 연습에서 비우기',
+    'aria-label': `${song.title} 현재 연습에서 비우기`
+  }) : null;
+
   return el('article', {class: 'song-card'},
     el('div', {class: 'cover-wrap'}, cover(song),
       el('span', {class: `status-badge ${song.status}`, text: statuses[song.status]}),
       button('', () => openSong(song), 'cover-play', 'play', {'aria-label': `${song.title} 곡과 파트 보기`})
     ),
     el('div', {class: 'card-body'},
-      el('div', {class: 'card-title-row'}, el('h3', {class: 'card-title'}, button(song.title, () => openSong(song), 'title-button', null, {title: song.title})), favoriteButton(song)),
+      el('div', {class: 'card-title-row'},
+        el('h3', {class: 'card-title'}, button(song.title, () => openSong(song), 'title-button', null, {title: song.title})),
+        el('div', {style: 'display: flex; align-items: center; gap: 6px;'},
+          excludeBtn,
+          favoriteButton(song)
+        )
+      ),
       el('p', {class: 'card-artist', text: song.artist || '아티스트 미등록'}),
       el('div', {class: 'card-meta'}, el('span', {class: 'badge', text: song.category || '기타'}), el('span', {text: levels[song.difficulty]}), song.arrangement && el('span', {text: song.arrangement})),
       el('div', {class: 'card-footer'},
@@ -218,8 +284,8 @@ function songCard(song) {
     )
   );
 }
-function songGrid(songs, emptyTitle = '등록된 곡이 없어요', emptyDescription = '데이터 편집기에서 첫 연습곡을 추가해 주세요.') {
-  return songs.length ? el('div', {class: 'song-grid'}, songs.map(songCard)) : emptyState(emptyTitle, emptyDescription);
+function songGrid(songs, emptyTitle = '등록된 곡이 없어요', emptyDescription = '데이터 편집기에서 첫 연습곡을 추가해 주세요.', options = {}) {
+  return songs.length ? el('div', {class: 'song-grid'}, songs.map(s => songCard(s, options))) : emptyState(emptyTitle, emptyDescription);
 }
 function heading(title, note = '', action = null) {
   return el('div', {class: 'section-heading'}, el('div', {}, el('h2', {text: title}), note && el('p', {class: 'section-note', text: note})), action);
@@ -275,15 +341,35 @@ function renderHome() {
   const pendingMedia = state.songs.filter(song => !availableParts(song).length).length;
   if (pendingMedia) app.append(el('p', {class: 'notice', text: `${pendingMedia}곡의 연습 영상이 아직 등록되지 않았어요. 영상이 등록된 파트부터 연습을 시작해 보세요.`}));
   if (!state.songs.length) { app.append(section('연습 라이브러리', '', songGrid([])), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button primary')); return; }
-  const featured = practicing[0] || state.songs[0];
-  const hero = el('div', {class: 'hero-panel'},
-    el('div', {class: 'hero-copy'}, el('span', {class: 'hero-tag', text: 'TODAY’S SPOTLIGHT'}), el('h3', {class: 'hero-title', text: featured.title}), el('p', {class: 'hero-text', text: `${featured.artist || '아티스트 미등록'} · ${featured.arrangement || '함께 부르는 즐거움'}`}),
-      el('div', {class: 'hero-actions'}, button('연습 시작 (파트 선택)', () => openSong(featured), 'button primary', 'play'), button('곡과 파트 보기', () => openSong(featured), 'button ghost', 'arrow')),
-      el('div', {class: 'hero-bottom'}, icon('mic'), el('span', {text: availableParts(featured).length ? `${availableParts(featured).length}개 파트 · ${levels[featured.difficulty]}` : '팀의 연습 영상을 기다리고 있어요'}))
-    ), el('div', {class: 'hero-art'}, cover(featured, 'hero-cover'), el('span', {class: 'hero-art-label', text: 'MAKE ROOM FOR HARMONY'}))
-  );
-  app.append(section('지금 연습 중', `${practicing.length}곡의 하모니를 완성해 가고 있어요`, hero, button('모두 보기', () => { state.filters = {query: '', status: 'practice', category: '', difficulty: '', part: ''}; navigate({tab: 'songs'}); }, 'text-button', 'arrow')));
-  if (practicing.length > 1) app.append(songGrid(practicing.slice(1, 5)));
+  if (!practicing.length) {
+    const emptyPractice = emptyState(
+      '현재 연습 중인 곡이 없어요',
+      '전체 곡 목록에서 원하는 곡을 찾아 ‘현재 연습에 추가’해 보세요.',
+      el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;'},
+        button('연습곡 둘러보기', () => navigate({tab: 'songs'}), 'button primary small', 'arrow'),
+        button('기본 연습곡 불러오기', resetPracticeSongs, 'button secondary small', 'refresh')
+      )
+    );
+    app.append(section('지금 연습 중', '0곡 등록됨', emptyPractice));
+  } else {
+    const featured = practicing[0];
+    const hero = el('div', {class: 'hero-panel'},
+      el('div', {class: 'hero-copy'}, el('span', {class: 'hero-tag', text: 'TODAY’S SPOTLIGHT'}), el('h3', {class: 'hero-title', text: featured.title}), el('p', {class: 'hero-text', text: `${featured.artist || '아티스트 미등록'} · ${featured.arrangement || '함께 부르는 즐거움'}`}),
+        el('div', {class: 'hero-actions'},
+          button('연습 시작 (파트 선택)', () => openSong(featured), 'button primary', 'play'),
+          button('곡과 파트 보기', () => openSong(featured), 'button ghost', 'arrow'),
+          button('현재 연습에서 비우기', () => togglePracticeStatus(featured), 'button ghost danger-text', 'close', {title: '이 곡을 현재 연습에서 제외'})
+        ),
+        el('div', {class: 'hero-bottom'}, icon('mic'), el('span', {text: availableParts(featured).length ? `${availableParts(featured).length}개 파트 · ${levels[featured.difficulty]}` : '팀의 연습 영상을 기다리고 있어요'}))
+      ), el('div', {class: 'hero-art'}, cover(featured, 'hero-cover'), el('span', {class: 'hero-art-label', text: 'MAKE ROOM FOR HARMONY'}))
+    );
+    const practiceHeaderActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
+      button('연습 비우기', confirmClearPractice, 'text-button danger-text', 'close', {title: '현재 연습 중인 영상을 모두 비웁니다'}),
+      button('모두 보기', () => { state.filters = {query: '', status: 'practice', category: '', difficulty: '', part: ''}; navigate({tab: 'songs'}); }, 'text-button', 'arrow')
+    );
+    app.append(section('지금 연습 중', `${practicing.length}곡의 하모니를 완성해 가고 있어요`, hero, practiceHeaderActions));
+    if (practicing.length > 1) app.append(songGrid(practicing.slice(1, 5)));
+  }
   const mine = state.myPart ? state.songs.filter(song => availableParts(song).includes(state.myPart)) : [];
   const myPanel = el('div', {class: 'quick-panel sage'}, el('div', {class: 'quick-panel-title'}, icon('mic'), el('h3', {text: state.myPart ? `내 파트 · ${PARTS[state.myPart]}` : '내 목소리를 찾아보세요'})),
     el('p', {text: state.myPart ? `${PARTS[state.myPart]} 영상이 등록된 ${mine.length}곡을 바로 연습할 수 있어요.` : '기본 파트를 선택하면 내 연습 영상이 먼저 보여요.'}),
@@ -2317,6 +2403,7 @@ function renderDetail(song) {
       el('div', {class: 'tag-list'}, array(song.tags).map(tag => el('span', {class: 'tag', text: `#${tag}`}))),
       el('div', {class: 'detail-actions'},
         favoriteButton(song),
+        button(song.status === 'practice' ? '현재 연습에서 비우기' : '현재 연습에 추가', () => togglePracticeStatus(song), song.status === 'practice' ? 'button secondary' : 'button primary', song.status === 'practice' ? 'close' : 'plus'),
         button('QR 코드', () => showQR(song), 'button secondary', 'qr'),
         button('곡 공유', () => share(song), 'button secondary', 'share'),
         button('영상 / 정보 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
@@ -2595,6 +2682,14 @@ async function initialize() {
       loadEducation()
     ]);
     state.songs = songRes.songs;
+    const savedOverrides = read('statusOverrides', {});
+    if (savedOverrides && typeof savedOverrides === 'object') {
+      state.songs.forEach(song => {
+        if (savedOverrides[song.id]) {
+          song.status = savedOverrides[song.id];
+        }
+      });
+    }
     state.performances = perfRes;
     state.rehearsals = rehRes;
     state.scores = scoresRes;

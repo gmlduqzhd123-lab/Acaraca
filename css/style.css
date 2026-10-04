@@ -179,6 +179,13 @@ button, input, select, textarea { outline-offset: 4px; }
 .button.secondary { background: var(--surface); }
 .button.ghost { background: transparent; border-color: transparent; }
 .button.small { min-height: 34px; padding: 7px 12px; font-size: 11px; }
+.button.danger { background: #bd4236; border-color: #bd4236; color: #fff; }
+.button.danger:hover { background: #a3352b; border-color: #a3352b; }
+.button.danger-text, .text-button.danger-text { color: #c94a38; }
+.button.danger-text:hover, .text-button.danger-text:hover { color: #a3352b; background: rgba(201, 74, 56, .08); }
+.icon-button-tiny { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all .15s ease; flex-shrink: 0; }
+.icon-button-tiny:hover { background: rgba(201, 74, 56, .12); color: #c94a38; border-color: #e59990; }
+.icon-button-tiny .icon { width: 13px; height: 13px; }
 .button .icon { width: 16px; height: 16px; }
 .notice, .demo-banner { border: 1px solid var(--border); background: var(--surface-soft); border-radius: 9px; padding: 12px 15px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted-strong); margin-bottom: 20px; }
 .notice.warning, .demo-banner { background: #f9f1df; border-color: #eddfbc; color: #765f36; }
