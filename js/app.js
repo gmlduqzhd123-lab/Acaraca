@@ -89,7 +89,7 @@ const state = {
   scoreFilters: {query: '', category: '', songId: ''},
   educationFilters: {query: '', category: '', target: ''},
   practiceVideoFilters: {query: '', part: '', songId: '', sourceType: ''},
-  appreciationFilters: {query: '', category: ''},
+  appreciationFilters: {query: '', category: '', artist: ''},
   memoryFilters: {category: ''},
   route: readRoute(),
   random: null,
@@ -2373,13 +2373,14 @@ function openUploadAppreciationModal() {
 
 function renderAppreciation() {
   const categoryOptions = ['전체', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상'];
+  const artistOptions = ['전체 아티스트', '메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스', '제니스', '더 리얼 그룹', '기타 그룹'];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
       el('div', {},
         el('p', {class: 'eyebrow', text: 'ACAPELLA INSPIRATION & MASTERPIECES'}),
         el('h1', {text: '아카펠라 감상'}),
-        el('p', {text: '전 세계 아카펠라 그룹의 환상적인 하모니, 명곡 커버, 라이브 무대를 감상하고 영감을 얻어 보세요.'})
+        el('p', {text: '메이트리, 엑시트, 펜타토닉스, 나린, 비트펠라 하우스 등 국내외 최정상 프로 아카펠라 그룹들의 100선 명작 아카이브입니다.'})
       ),
       button('+ 감상 영상 등록', () => openUploadAppreciationModal(), 'button primary small', 'plus')
     )
@@ -2387,8 +2388,9 @@ function renderAppreciation() {
 
   const searchInput = el('input', {
     type: 'search',
+    id: 'apprec-search-input',
     class: 'search-input',
-    placeholder: '영상 제목, 아티스트 / 그룹명, 추천인 검색...',
+    placeholder: '영상 제목, 아티스트 / 그룹명, 태그(#오징어게임, #BTS 등) 검색...',
     value: state.appreciationFilters.query || '',
     oninput: (e) => {
       state.appreciationFilters.query = e.target.value;
@@ -2396,7 +2398,7 @@ function renderAppreciation() {
     }
   });
 
-  const categoryChips = el('div', {class: 'chip-group', style: 'margin-bottom: 12px;'},
+  const categoryChips = el('div', {class: 'chip-group'},
     categoryOptions.map(cat => button(cat, () => {
       state.appreciationFilters.category = cat === '전체' ? '' : cat;
       for (const btn of categoryChips.querySelectorAll('button')) {
@@ -2406,9 +2408,28 @@ function renderAppreciation() {
     }, `chip${(state.appreciationFilters.category === cat || (!state.appreciationFilters.category && cat === '전체')) ? ' active' : ''}`))
   );
 
+  const artistSelect = el('select', {
+    class: 'search-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
+    onchange: (e) => {
+      state.appreciationFilters.artist = e.target.value === '전체 아티스트' ? '' : e.target.value;
+      updateApprecList();
+    }
+  }, artistOptions.map(a => el('option', { value: a, selected: (!state.appreciationFilters.artist && a === '전체 아티스트') || state.appreciationFilters.artist === a }, a)));
+
+  const countSummary = el('div', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;'});
+
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;'},
+    categoryChips,
+    el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
+      el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '그룹별:'),
+      artistSelect
+    )
+  );
+
   const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
     el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
-    categoryChips
+    filterRow
   );
 
   const gridContainer = el('div', {class: 'video-card-grid'});
@@ -2416,15 +2437,25 @@ function renderAppreciation() {
   function getFilteredAppreciation() {
     const q = (state.appreciationFilters.query || '').trim().toLowerCase();
     const cat = state.appreciationFilters.category || '';
+    const art = state.appreciationFilters.artist || '';
 
     return state.appreciation.filter(item => {
       if (cat && item.category !== cat) return false;
+      if (art) {
+        if (art === '기타 그룹') {
+          const mainGroups = ['메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스', '제니스', '더 리얼 그룹'];
+          if (mainGroups.some(g => item.artist?.includes(g))) return false;
+        } else if (!item.artist?.includes(art)) {
+          return false;
+        }
+      }
       if (q) {
         const matchTitle = item.title?.toLowerCase().includes(q);
         const matchArtist = item.artist?.toLowerCase().includes(q);
         const matchDesc = item.description?.toLowerCase().includes(q);
         const matchUploader = item.uploader?.toLowerCase().includes(q);
-        if (!matchTitle && !matchArtist && !matchDesc && !matchUploader) return false;
+        const matchTags = item.tags?.some(t => t.toLowerCase().includes(q) || `#${t.toLowerCase()}`.includes(q));
+        if (!matchTitle && !matchArtist && !matchDesc && !matchUploader && !matchTags) return false;
       }
       return true;
     });
@@ -2432,9 +2463,31 @@ function renderAppreciation() {
 
   function updateApprecList() {
     const filtered = getFilteredAppreciation();
+    const totalCount = state.appreciation.length;
+    countSummary.replaceChildren(
+      el('span', {}, el('strong', {style: 'color: var(--primary); font-size: 13px;'}, String(filtered.length)), `개의 아카펠라 영상 (전체 ${totalCount}개)`),
+      (state.appreciationFilters.query || state.appreciationFilters.category || state.appreciationFilters.artist) ? button('필터 초기화', () => {
+        state.appreciationFilters = {query: '', category: '', artist: ''};
+        searchInput.value = '';
+        artistSelect.value = '전체 아티스트';
+        for (const btn of categoryChips.querySelectorAll('button')) {
+          btn.classList.toggle('active', btn.textContent.trim() === '전체');
+        }
+        updateApprecList();
+      }, 'text-button', 'close') : null
+    );
+
     if (!filtered.length) {
       gridContainer.replaceChildren(
-        emptyState('등록된 아카펠라 감상 영상이 없습니다', '팀원들과 함께 듣고 영감을 얻을 수 있는 YouTube 아카펠라 영상을 등록해 보세요.', button('+ 감상 영상 등록', () => openUploadAppreciationModal(), 'button primary small', 'plus'))
+        emptyState('조건에 맞는 감상 영상이 없습니다', '검색어를 바꾸거나 필터를 초기화해 보세요.', button('전체 영상 보기', () => {
+          state.appreciationFilters = {query: '', category: '', artist: ''};
+          searchInput.value = '';
+          artistSelect.value = '전체 아티스트';
+          for (const btn of categoryChips.querySelectorAll('button')) {
+            btn.classList.toggle('active', btn.textContent.trim() === '전체');
+          }
+          updateApprecList();
+        }, 'button primary small'))
       );
       return;
     }
@@ -2473,7 +2526,18 @@ function renderAppreciation() {
 
       const body = el('div', {class: 'custom-video-body'},
         item.artist ? el('div', {style: 'margin-bottom: 6px;'},
-          el('span', {class: 'memory-tag'}, `🎙️ ${item.artist}`)
+          el('span', {
+            class: 'memory-tag',
+            style: 'cursor: pointer;',
+            title: '이 아티스트 영상만 모아보기',
+            onclick: (e) => {
+              e.stopPropagation();
+              const groupKeyword = item.artist.split(' ')[0];
+              state.appreciationFilters.query = groupKeyword;
+              searchInput.value = groupKeyword;
+              updateApprecList();
+            }
+          }, `🎙️ ${item.artist}`)
         ) : null,
         el('h3', {
           class: 'custom-video-title',
@@ -2491,6 +2555,18 @@ function renderAppreciation() {
           })
         }),
         item.description ? el('p', {class: 'custom-video-desc', text: item.description}) : null,
+        item.tags && item.tags.length ? el('div', {class: 'memory-tags-row', style: 'margin-bottom: 8px;'},
+          item.tags.slice(0, 4).map(t => el('span', {
+            class: 'memory-tag',
+            style: 'font-size: 10.5px; cursor: pointer;',
+            onclick: (e) => {
+              e.stopPropagation();
+              state.appreciationFilters.query = t;
+              searchInput.value = t;
+              updateApprecList();
+            }
+          }, `#${t}`))
+        ) : null,
         el('div', {class: 'custom-video-footer'},
           el('span', {}, `추천: ${item.uploader || '단원'} · 📅 ${item.date || ''}`),
           item.isCustom ? button('', async (e) => {
@@ -2510,7 +2586,7 @@ function renderAppreciation() {
   }
 
   updateApprecList();
-  app.append(heading, filterPanel, gridContainer);
+  app.append(heading, filterPanel, countSummary, gridContainer);
 }
 
 
