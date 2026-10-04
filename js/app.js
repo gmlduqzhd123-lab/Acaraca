@@ -13,7 +13,6 @@ import {
   loadEducation,
   getAllFeedbacks,
   addFeedback,
-  toggleFeedbackLike,
   getPerformancesForSong,
   getRehearsalsForSong,
   getScoresForSong,
@@ -24,7 +23,6 @@ import {
   deleteCustomScore,
   addCustomMemory,
   deleteCustomMemory,
-  toggleMemoryLike,
   addCustomEducation,
   deleteCustomEducation
 } from './archive.js';
@@ -1017,13 +1015,6 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
         }
       }, `⏱️ ${m}:${s}`) : null;
 
-      const likedKeys = new Set(read('liked_feedbacks', []));
-      const isLiked = likedKeys.has(fb.id);
-      const likeBtn = button(`❤️ ${fb.likes || 0}`, () => {
-        toggleFeedbackLike(fb.id);
-        updateFeed();
-      }, `feedback-like-btn${isLiked ? ' liked' : ''}`, null, {'aria-label': '피드백 공감'});
-
       return el('div', {class: 'feedback-bubble'},
         el('div', {class: 'feedback-bubble-top'},
           el('span', {class: 'feedback-author'}, `${fb.author} (${fb.part === 'all' ? '전체' : (PARTS[fb.part] || fb.part)})`),
@@ -1031,8 +1022,7 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
         ),
         el('p', {class: 'feedback-text', text: fb.content}),
         el('div', {class: 'feedback-bottom-row'},
-          el('span', {text: fb.createdAt ? new Date(fb.createdAt).toLocaleDateString('ko-KR', {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : ''}),
-          likeBtn
+          el('span', {text: fb.createdAt ? new Date(fb.createdAt).toLocaleDateString('ko-KR', {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : ''})
         )
       );
     }));
@@ -2044,7 +2034,6 @@ function openMemoryLightboxModal(memory) {
   const containerEl = document.getElementById('lightbox-media-container');
   const descEl = document.getElementById('lightbox-desc');
   const metaEl = document.getElementById('lightbox-meta');
-  const likeBtn = document.getElementById('lightbox-like-btn');
   const closeBtn = document.getElementById('memory-lightbox-close');
 
   const cleanupLightbox = () => {
@@ -2097,18 +2086,6 @@ function openMemoryLightboxModal(memory) {
     });
     containerEl.append(imgEl);
   }
-
-  const likedKeys = new Set(read('liked_memories', []));
-  const isLiked = likedKeys.has(memory.id);
-  likeBtn.className = `button secondary small${isLiked ? ' primary' : ''}`;
-  likeBtn.textContent = `❤️ ${memory.likes || 0}`;
-
-  likeBtn.onclick = () => {
-    const res = toggleMemoryLike(memory.id);
-    likeBtn.className = `button secondary small${res.isLiked ? ' primary' : ''}`;
-    likeBtn.textContent = `❤️ ${res.count}`;
-    render();
-  };
 
   dialog.showModal();
 }
@@ -2181,21 +2158,10 @@ function renderMemories() {
         mem.tags.map(t => el('span', {class: 'memory-tag', text: `#${t}`}))
       ) : null;
 
-      const likedKeys = new Set(read('liked_memories', []));
-      const isLiked = likedKeys.has(mem.id);
-
-      const likeBtn = button(`❤️ ${mem.likes || 0}`, (e) => {
-        e.stopPropagation();
-        const res = toggleMemoryLike(mem.id);
-        likeBtn.className = `memory-like-button${res.isLiked ? ' liked' : ''}`;
-        likeBtn.textContent = `❤️ ${res.count}`;
-      }, `memory-like-button${isLiked ? ' liked' : ''}`);
-
       const footer = el('div', {class: 'memory-footer'},
         el('span', {text: `📅 ${mem.date || ''} ${mem.venue ? `· ${mem.venue}` : ''}`}),
-        el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
-          likeBtn,
-          mem.isCustom ? button('삭제', async (e) => {
+        mem.isCustom ? el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
+          button('삭제', async (e) => {
             e.stopPropagation();
             if (confirm(`'${mem.title}' 기록을 삭제할까요?`)) {
               await deleteCustomMemory(mem.id);
@@ -2203,8 +2169,8 @@ function renderMemories() {
               render();
               toast('기록을 삭제했습니다.');
             }
-          }, 'button secondary small danger', 'trash') : null
-        )
+          }, 'button secondary small danger', 'trash')
+        ) : null
       );
 
       const body = el('div', {class: 'memory-body'}, titleNode, descNode, tagsNode, footer);
