@@ -57,6 +57,22 @@ export function subscribePitchState(callback) {
   onStateChangeCallback = callback;
 }
 
+export function unlockAudioContext() {
+  if (typeof window === 'undefined') return;
+  const ctx = getAudioContext();
+  if (ctx && ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+}
+
+if (typeof window !== 'undefined') {
+  const unlock = () => {
+    unlockAudioContext();
+  };
+  window.addEventListener('touchstart', unlock, { once: true, passive: true });
+  window.addEventListener('click', unlock, { once: true, passive: true });
+}
+
 function notifyStateChange() {
   if (typeof onStateChangeCallback === 'function') {
     onStateChangeCallback(currentPlaying);
