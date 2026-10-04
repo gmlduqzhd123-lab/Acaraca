@@ -46,14 +46,16 @@ export async function saveMediaFile(id, file, meta = {}) {
       const store = tx.objectStore(STORE_NAME);
       const isVideo = file.type?.startsWith('video') || /\.(mp4|webm|mov)$/i.test(file.name);
       const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+      const isPpt = /\.(ppt|pptx)$/i.test(file.name) || file.type?.includes('presentation') || file.type?.includes('powerpoint');
       const isImage = file.type?.startsWith('image') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name);
       const isAudio = file.type?.startsWith('audio') || /\.(mp3|m4a|wav|aac|ogg)$/i.test(file.name);
       const record = {
         id,
         name: file.name,
-        type: file.type || (isVideo ? 'video/mp4' : isPdf ? 'application/pdf' : isImage ? 'image/jpeg' : 'audio/mpeg'),
+        type: file.type || (isVideo ? 'video/mp4' : isPdf ? 'application/pdf' : isPpt ? 'application/vnd.ms-powerpoint' : isImage ? 'image/jpeg' : 'audio/mpeg'),
         isVideo,
         isPdf,
+        isPpt,
         isImage,
         isAudio,
         size: file.size,

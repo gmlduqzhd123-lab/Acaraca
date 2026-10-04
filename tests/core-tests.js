@@ -10,7 +10,9 @@ import {
   getPerformancesForSong,
   getRehearsalsForSong,
   getScoresForSong,
-  toggleMemoryLike
+  toggleMemoryLike,
+  addCustomEducation,
+  deleteCustomEducation
 } from '../js/archive.js';
 
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
@@ -149,6 +151,11 @@ export function runCoreTests() {
   check('기록 공감 토글 및 카운트 증가', () => memLikeRes.isLiked === true && memLikeRes.count === 1);
   const memUnlikeRes = toggleMemoryLike('test-mem-1');
   check('기록 공감 취소 및 카운트 복원', () => memUnlikeRes.isLiked === false && memUnlikeRes.count === 0);
+
+  const eduItem = addCustomEducation({ id: 'test-edu-1', title: '초등 아카펠라 발성 워크숍', format: 'ppt' });
+  check('교육 자료 추가 기능', () => eduItem.id === 'test-edu-1' && eduItem.format === 'ppt');
+  deleteCustomEducation('test-edu-1');
+  check('교육 자료 삭제 기능', () => !storage.read('custom_education', []).some(e => e.id === 'test-edu-1'));
 
   const fbFallback = addFeedback({
     rehearsalId: 'test-reh',

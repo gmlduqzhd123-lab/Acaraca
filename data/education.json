@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "id": "edu-ppt-vocal-blending",
+      "title": "초등 아카펠라 발성 기초 & 파트별 화음 블렌딩 워크숍 슬라이드",
+      "category": "발표 슬라이드 (PPT)",
+      "format": "ppt",
+      "fileName": "Elementary_Acapella_Vocal_Blending_Workshop.pptx",
+      "fileSize": "4.8 MB",
+      "target": "교사 연수용",
+      "author": "아카라카 교육연구회",
+      "date": "2024-09-15",
+      "description": "호흡, 공명, 마이크 테크닉, 성부 간 밸런스 맞추기(블렌딩), 튜닝 훈련 기법을 담은 교원 직무연수 발표용 PPT 슬라이드 자료입니다.",
+      "tags": ["발성", "화음블렌딩", "교원연수", "PPT"],
+      "slides": "24 slides"
+    },
+    {
+      "id": "edu-pdf-curriculum-12weeks",
+      "title": "학급·동아리에서 바로 쓰는 초등 아카펠라 12차시 수업 지도안 & 활동지",
+      "category": "교재 / PDF",
+      "format": "pdf",
+      "fileName": "Acapella_Curriculum_12Weeks_Guide.pdf",
+      "fileSize": "3.2 MB",
+      "target": "초등 학생용",
+      "author": "아카라카 연구팀",
+      "date": "2024-08-20",
+      "description": "1차시 첫 음 듣고 맞추기부터 12차시 학예회 4성부 합주 발표까지, 주차별 수업 목표 및 학생용 활동지 양식이 수록된 PDF 교재입니다.",
+      "tags": ["수업지도안", "활동지", "12차시", "PDF교재"],
+      "pages": "36 pages"
+    },
+    {
+      "id": "edu-video-vp-basic",
+      "title": "초등학생도 쉽게 따라 하는 보컬 퍼커션(VP) 3가지 기본 비트 강의",
+      "category": "강의 / 교육 영상",
+      "format": "video",
+      "videoUrl": "https://www.youtube.com/watch?v=kJ0nfArx9GI",
+      "target": "초등 학생용",
+      "author": "아카라카 VP 지도팀",
+      "date": "2024-09-05",
+      "description": "킥 드럼(Kick), 하이햇(Hi-hat), 스네어(Snare) 소리 내는 법과 8비트 리듬 조합 연습. 입으로 드럼 치며 신나게 리듬을 익히는 실전 영상 강의입니다.",
+      "tags": ["보컬퍼커션", "비트박스", "기초리듬", "강의영상"]
+    },
+    {
+      "id": "edu-ppt-sound-mic-setup",
+      "title": "교내 아카펠라 동아리 창단 및 무대 마이크 세팅 가이드 (음향 노하우)",
+      "category": "발표 슬라이드 (PPT)",
+      "format": "ppt",
+      "fileName": "Acapella_Club_Sound_Mic_Setup_Guide.pptx",
+      "fileSize": "5.6 MB",
+      "target": "교사용 연수",
+      "author": "아카라카 음향팀",
+      "date": "2024-07-28",
+      "description": "무선 마이크 배치, EQ 조절 팁, 피드백(하울링) 방지법, 무대 모니터링 노하우를 시각 자료로 정리한 프레젠테이션입니다.",
+      "tags": ["음향세팅", "마이크테크닉", "동아리운영", "PPT"],
+      "slides": "19 slides"
+    },
+    {
+      "id": "edu-pdf-warmup-harmony",
+      "title": "아카펠라 웜업(Warm-up) & 화음 청음 훈련용 데일리 악보집",
+      "category": "발성 & 화음 지도안",
+      "format": "pdf",
+      "fileName": "Acapella_Warmup_Daily_Harmony_Exercises.pdf",
+      "fileSize": "1.9 MB",
+      "target": "공통",
+      "author": "아카라카 합창단",
+      "date": "2024-06-15",
+      "description": "합주 전 5분 동안 단원들과 함께 부르는 장·단3도 화음 연습, 도레미파솔 아르페지오, 5성부 코드 체인지 웜업 패턴 악보입니다.",
+      "tags": ["웜업악보", "화음훈련", "하모니", "데일리연습"],
+      "pages": "12 pages"
+    },
+    {
+      "id": "edu-video-speechless-lesson",
+      "title": "Speechless 파트별 솔로 & 오스티나토 화음 레슨 튜토리얼",
+      "category": "강의 / 교육 영상",
+      "format": "video",
+      "videoUrl": "https://www.youtube.com/watch?v=VnFYANEALqs",
+      "target": "아카펠라 동아리",
+      "author": "아카라카",
+      "date": "2024-05-20",
+      "description": "영화 알라딘 OST 'Speechless'의 감동적인 화음 빌드업과 반주 파트 오스티나토 패턴을 단계별로 지도하는 온라인 강의 영상 클립입니다.",
+      "tags": ["Speechless", "오스티나토", "파트연습", "튜토리얼"]
+    }
+  ]
+}

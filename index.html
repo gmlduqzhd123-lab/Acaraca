@@ -242,6 +242,67 @@
     </form>
   </dialog>
 
+  <!-- Upload Education Resource Modal -->
+  <dialog class="share-dialog" id="upload-education-dialog" style="width: min(560px, calc(100vw - 32px)); max-width: 560px;" aria-labelledby="upload-education-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="upload-education-title" style="margin: 0; font-size: 19px;">🎓 + 교육 자료 등록하기</h2>
+      <button type="button" class="dialog-close-x" id="upload-education-close" onclick="document.getElementById('upload-education-dialog').close()" aria-label="닫기">✕</button>
+    </div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">아카펠라 지도안, 워크숍 PPT, 교재 PDF, 수업 강의 영상을 팀원들과 공유하세요.</p>
+    <form id="upload-education-form">
+      <div style="margin-bottom: 12px;">
+        <label for="edu-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">자료 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="text" id="edu-title-input" required placeholder="예: 초등 아카펠라 발성 기초 & 화음 블렌딩 워크숍" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="edu-category-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">자료 분류</label>
+          <select id="edu-category-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="교재 / PDF">📑 교재 / PDF</option>
+            <option value="발표 슬라이드 (PPT)">📊 발표 슬라이드 (PPT)</option>
+            <option value="강의 / 교육 영상">🎬 강의 / 교육 영상</option>
+            <option value="발성 & 화음 지도안">🎵 발성 & 화음 지도안</option>
+            <option value="기타 교육 자료">📂 기타 교육 자료</option>
+          </select>
+        </div>
+        <div>
+          <label for="edu-target-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">교육 대상</label>
+          <select id="edu-target-select" style="width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+            <option value="초등 학생용">초등 학생용</option>
+            <option value="교사 연수용">교사 연수용</option>
+            <option value="아카펠라 동아리">아카펠라 동아리</option>
+            <option value="공통">공통 / 전 연령</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="edu-author-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">작성자 / 강사</label>
+        <input type="text" id="edu-author-input" placeholder="예: 아카라카 교육연구회" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="edu-desc-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">자료 설명 / 핵심 요약</label>
+        <textarea id="edu-desc-input" rows="3" placeholder="수업 목표, 슬라이드 구성, 지도 팁 등을 간략히 적어 주세요." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 16px; padding: 14px; background: var(--surface-soft); border-radius: 10px; border: 1px solid var(--border);">
+        <label for="edu-file-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">📂 내 컴퓨터에서 파일 올리기 (PDF, PPT, 영상, 오디오 등)</label>
+        <input type="file" id="edu-file-input" accept=".pdf,.ppt,.pptx,.key,.mp4,.webm,.mov,.mp3,.wav,.m4a,.zip,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,video/*,audio/*" style="display: block; width: 100%; padding: 8px 0; font-size: 12px; box-sizing: border-box;">
+        <div style="margin-top: 8px;">
+          <label for="edu-url-input" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px;">또는 온라인 링크 (YouTube 강의, 구글 드라이브, 슬라이드 링크)</label>
+          <input type="url" id="edu-url-input" placeholder="https://www.youtube.com/... 또는 https://drive.google.com/..." style="width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: 12px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="upload-edu-cancel">취소</button>
+        <button type="submit" class="button primary" id="upload-edu-submit">교육 자료 등록하기</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- Upload Team Memory / Moment Modal -->
   <dialog class="share-dialog" id="upload-memory-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-memory-title">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -426,7 +487,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=10';
+      script.src = './js/app.js?v=11';
       script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
       document.body.append(script);
 

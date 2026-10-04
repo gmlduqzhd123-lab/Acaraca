@@ -10,6 +10,7 @@ import {
   loadRehearsals,
   loadScores,
   loadMemories,
+  loadEducation,
   getAllFeedbacks,
   addFeedback,
   toggleFeedbackLike,
@@ -23,7 +24,9 @@ import {
   deleteCustomScore,
   addCustomMemory,
   deleteCustomMemory,
-  toggleMemoryLike
+  toggleMemoryLike,
+  addCustomEducation,
+  deleteCustomEducation
 } from './archive.js';
 import { saveMediaFile } from './mediaStorage.js';
 
@@ -32,6 +35,7 @@ const labels = {
   home: '홈',
   songs: '전체 곡',
   scores: '악보 창고',
+  education: '교육 자료',
   stage: '공연 영상',
   rehearsal: '연습 일지',
   memories: '우리들의 기록',
@@ -43,6 +47,7 @@ const navIcons = {
   home: 'home',
   songs: 'library',
   scores: 'document',
+  education: 'academic',
   stage: 'stage',
   rehearsal: 'notes',
   memories: 'camera',
@@ -61,6 +66,7 @@ const state = {
   rehearsals: [],
   scores: [],
   memories: [],
+  education: [],
   loading: true,
   loadError: '',
   favorites: new Set(favoriteIds),
@@ -69,6 +75,7 @@ const state = {
   progress: object(read('progress', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
   scoreFilters: {query: '', category: '', songId: ''},
+  educationFilters: {query: '', category: '', target: ''},
   memoryFilters: {category: ''},
   route: readRoute(),
   random: null,
@@ -76,7 +83,7 @@ const state = {
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = ['home', 'songs', 'scores', 'stage', 'rehearsal', 'memories'];
+const mobileTabs = ['home', 'songs', 'scores', 'education', 'stage', 'rehearsal', 'memories'];
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -298,15 +305,16 @@ function renderHome() {
   app.append(section('연습 라이브러리', `${state.songs.length}곡, 하나의 연습실`, songGrid(state.songs.slice(0, 4)), button('전체 곡 보기', () => navigate({tab: 'songs'}), 'text-button', 'arrow')));
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
-    el('div', {class: 'quick-panel-title'}, icon('document'), el('h3', {text: '악보 창고 & 우리들의 기록'})),
-    el('p', {text: `총보/파트보 악보 ${state.scores.length}건, 팀의 추억과 숏츠 영상 ${state.memories.length}건이 보관되어 있습니다.`}),
+    el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
+    el('p', {text: `악보 ${state.scores.length}건, 교육 자료 ${state.education.length}건, 팀의 추억과 숏츠 영상 ${state.memories.length}건이 보관되어 있습니다.`}),
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
       button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
+      button('🎓 교육 자료', () => navigate({tab: 'education'}), 'button secondary small', 'academic'),
       button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
       button('🎙️ 연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary small', 'notes')
     )
   );
-  app.append(section('아카라카 아카이브', '함께 부르고 함께 나눈 모든 기록', archivePanel));
+  app.append(section('아카라카 아카이브', '함께 부르고 함께 나눈 모든 기록과 배움', archivePanel));
 }
 
 function renderBrowse(favoritesOnly = false) {
@@ -1216,6 +1224,334 @@ function renderScores() {
 
 
 /* -------------------------------------------------------------
+ *  ACAPELLA EDUCATION (아카펠라 교육 자료)
+ * ------------------------------------------------------------- */
+
+function openUploadEducationModal() {
+  const dialog = document.getElementById('upload-education-dialog');
+  if (!dialog) return;
+
+  const form = document.getElementById('upload-education-form');
+  const titleInput = document.getElementById('edu-title-input');
+  const categorySelect = document.getElementById('edu-category-select');
+  const targetSelect = document.getElementById('edu-target-select');
+  const authorInput = document.getElementById('edu-author-input');
+  const descInput = document.getElementById('edu-desc-input');
+  const fileInput = document.getElementById('edu-file-input');
+  const urlInput = document.getElementById('edu-url-input');
+  const cancelBtn = document.getElementById('upload-edu-cancel');
+  const submitBtn = document.getElementById('upload-edu-submit');
+
+  titleInput.value = '';
+  categorySelect.value = '교재 / PDF';
+  targetSelect.value = '초등 학생용';
+  authorInput.value = read('last_feedback_author', '아카라카 교육연구회');
+  descInput.value = '';
+  fileInput.value = '';
+  urlInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '교육 자료 등록하기';
+
+  const closeBtn = document.getElementById('upload-education-close');
+  cancelBtn.onclick = () => dialog.close();
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => {
+    if (e.target === dialog) dialog.close();
+  };
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    if (!title) {
+      toast('자료 제목을 입력해 주세요.');
+      return;
+    }
+
+    const file = fileInput.files?.[0];
+    const url = urlInput.value.trim();
+
+    if (!file && !url) {
+      toast('내 컴퓨터에서 파일을 선택하거나 온라인 링크를 입력해 주세요.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '저장 중...';
+
+    try {
+      const eduId = `edu-custom-${Date.now()}`;
+      let mediaId = null;
+      let fileUrl = url || '';
+      let format = 'other';
+      let fileName = '';
+      let fileSize = '';
+
+      if (file) {
+        mediaId = `media-edu-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        fileName = file.name;
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+        fileSize = sizeMb >= 1 ? `${sizeMb} MB` : `${Math.round(file.size / 1024)} KB`;
+
+        const record = await saveMediaFile(mediaId, file, { title });
+        if (!record) throw new Error('파일 저장에 실패했습니다.');
+
+        if (record.isPpt || /\.(ppt|pptx)$/i.test(fileName)) format = 'ppt';
+        else if (record.isPdf || /\.pdf$/i.test(fileName)) format = 'pdf';
+        else if (record.isVideo) format = 'video';
+        else if (record.isAudio) format = 'audio';
+        else format = 'file';
+      } else if (url) {
+        if (url.includes('youtube.com') || url.includes('youtu.be')) format = 'video';
+        else if (/\.pdf($|\?)/i.test(url)) format = 'pdf';
+        else if (/\.(ppt|pptx)($|\?)/i.test(url)) format = 'ppt';
+        else format = 'link';
+      }
+
+      const category = categorySelect.value;
+      const target = targetSelect.value;
+      const author = authorInput.value.trim() || '아카라카';
+      const description = descInput.value.trim();
+
+      const newEdu = {
+        id: eduId,
+        title,
+        category,
+        format,
+        target,
+        author,
+        date: new Date().toISOString().slice(0, 10),
+        description,
+        fileName,
+        fileSize,
+        fileUrl,
+        mediaId,
+        isCustom: true
+      };
+
+      addCustomEducation(newEdu);
+      state.education = await loadEducation(true);
+      dialog.close();
+      render();
+      toast('🎓 교육 자료가 등록되었습니다.');
+    } catch (err) {
+      console.error(err);
+      toast('자료 등록 중 오류가 발생했습니다: ' + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '교육 자료 등록하기';
+    }
+  };
+
+  dialog.showModal();
+}
+
+function openOrDownloadEducation(edu, forceDownload = false) {
+  const fileUrl = edu.blobUrl || edu.fileUrl || edu.videoUrl;
+  if (!fileUrl) {
+    toast('첨부된 파일이나 링크가 없습니다.');
+    return;
+  }
+
+  if (edu.format === 'video' && !forceDownload) {
+    if (fileUrl.includes('youtube') || fileUrl.includes('youtu.be')) {
+      openMemoryLightboxModal({
+        id: edu.id,
+        title: edu.title,
+        type: 'video',
+        category: '강의 / 교육 영상',
+        videoUrl: fileUrl,
+        date: edu.date,
+        venue: '교육 영상',
+        author: edu.author,
+        description: edu.description
+      });
+      return;
+    }
+  }
+
+  if (forceDownload || edu.format === 'ppt' || edu.format === 'file') {
+    const a = document.createElement('a');
+    a.href = fileUrl;
+    a.download = edu.fileName || `${edu.title}.${edu.format === 'ppt' ? 'pptx' : edu.format === 'pdf' ? 'pdf' : 'dat'}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast(`📥 '${edu.title}' 파일을 다운로드합니다.`);
+  } else {
+    window.open(fileUrl, '_blank');
+  }
+}
+
+function renderEducation() {
+  const categoryOptions = ['전체', '교재 / PDF', '발표 슬라이드 (PPT)', '강의 / 교육 영상', '발성 & 화음 지도안'];
+  const targetOptions = ['전체 대상', '초등 학생용', '교사 연수용', '아카펠라 동아리', '공통'];
+
+  const heading = el('div', {class: 'page-heading'},
+    el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: 'ACAPELLA EDUCATION & WORKSHOPS'}),
+        el('h1', {text: '아카펠라 교육 자료'}),
+        el('p', {text: '선생님과 학생이 함께하는 아카펠라 지도법, 워크숍 슬라이드(PPT), 교재 PDF, 수업 강의 영상 자료실입니다.'})
+      ),
+      button('+ 새 교육 자료 올리기', () => openUploadEducationModal(), 'button primary small', 'plus')
+    )
+  );
+
+  const searchInput = el('input', {
+    type: 'search',
+    class: 'search-input',
+    placeholder: '자료 제목, 강사, 주제, 교육 대상 검색...',
+    value: state.educationFilters.query || '',
+    oninput: (e) => {
+      state.educationFilters.query = e.target.value;
+      updateEduList();
+    }
+  });
+
+  const categoryChips = el('div', {class: 'chip-group', style: 'margin-bottom: 12px;'},
+    categoryOptions.map(cat => button(cat, () => {
+      state.educationFilters.category = cat === '전체' ? '' : cat;
+      for (const btn of categoryChips.querySelectorAll('button')) {
+        btn.classList.toggle('active', btn.textContent.trim() === cat);
+      }
+      updateEduList();
+    }, `chip${(state.educationFilters.category === cat || (!state.educationFilters.category && cat === '전체')) ? ' active' : ''}`))
+  );
+
+  const targetSelect = el('select', {
+    class: 'search-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
+    onchange: (e) => {
+      state.educationFilters.target = e.target.value === '전체 대상' ? '' : e.target.value;
+      updateEduList();
+    }
+  }, targetOptions.map(t => el('option', {value: t, selected: (!state.educationFilters.target && t === '전체 대상') || state.educationFilters.target === t}, t)));
+
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;'},
+    categoryChips,
+    el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
+      el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '대상별:'),
+      targetSelect
+    )
+  );
+
+  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+    el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
+    filterRow
+  );
+
+  const gridContainer = el('div', {class: 'edu-grid'});
+
+  function getFilteredEducation() {
+    const q = (state.educationFilters.query || '').trim().toLowerCase();
+    const cat = state.educationFilters.category || '';
+    const tgt = state.educationFilters.target || '';
+
+    return state.education.filter(item => {
+      if (cat && item.category !== cat) return false;
+      if (tgt && item.target && !item.target.includes(tgt) && !tgt.includes(item.target)) return false;
+      if (q) {
+        const matchTitle = item.title?.toLowerCase().includes(q);
+        const matchAuthor = item.author?.toLowerCase().includes(q);
+        const matchDesc = item.description?.toLowerCase().includes(q);
+        const matchTarget = item.target?.toLowerCase().includes(q);
+        const matchTags = item.tags?.some(t => t.toLowerCase().includes(q));
+        if (!matchTitle && !matchAuthor && !matchDesc && !matchTarget && !matchTags) return false;
+      }
+      return true;
+    });
+  }
+
+  function updateEduList() {
+    const filtered = getFilteredEducation();
+    if (!filtered.length) {
+      gridContainer.replaceChildren(
+        emptyState('조건에 맞는 교육 자료가 없습니다', '검색어를 바꾸거나 새 아카펠라 교육 자료를 등록해 보세요.', button('+ 자료 등록하기', () => openUploadEducationModal(), 'button primary small', 'plus'))
+      );
+      return;
+    }
+
+    gridContainer.replaceChildren(...filtered.map(item => {
+      const fmt = item.format || (item.fileName?.endsWith('.pptx') || item.fileName?.endsWith('.ppt') ? 'ppt' : item.fileName?.endsWith('.pdf') ? 'pdf' : item.videoUrl ? 'video' : 'other');
+
+      let iconType = 'document';
+      let iconClass = 'other';
+      let formatLabel = '자료';
+
+      if (fmt === 'ppt') {
+        iconType = 'presentation';
+        iconClass = 'ppt';
+        formatLabel = '📊 PPT 슬라이드';
+      } else if (fmt === 'pdf') {
+        iconType = 'document';
+        iconClass = 'pdf';
+        formatLabel = '📑 PDF 교재';
+      } else if (fmt === 'video') {
+        iconType = 'play';
+        iconClass = 'video';
+        formatLabel = '🎬 교육 영상';
+      } else if (fmt === 'audio') {
+        iconType = 'audio';
+        iconClass = 'audio';
+        formatLabel = '🎵 실습 음원';
+      } else {
+        iconType = 'academic';
+        iconClass = 'other';
+        formatLabel = '📂 교육 자료';
+      }
+
+      const iconBadge = el('div', {class: `edu-icon-badge ${iconClass}`}, icon(iconType));
+
+      const badges = el('div', {class: 'edu-badges'},
+        el('span', {class: 'badge', text: formatLabel}),
+        item.target && el('span', {class: 'status-badge', text: item.target}),
+        item.category && item.category !== formatLabel && el('span', {class: 'part-pill', text: item.category})
+      );
+
+      const top = el('div', {class: 'edu-top'},
+        iconBadge,
+        el('div', {class: 'edu-info'},
+          badges,
+          el('h2', {class: 'edu-title', text: item.title}),
+          el('p', {class: 'edu-author', text: `${item.author || '아카라카'} ${item.date ? `· ${item.date}` : ''}`})
+        )
+      );
+
+      const desc = item.description ? el('p', {class: 'edu-desc', text: item.description}) : null;
+
+      const metaRow = el('div', {class: 'edu-meta-row'},
+        el('span', {text: `${item.slides || item.pages || ''} ${item.fileSize ? `· ${item.fileSize}` : ''}`.trim() || '아카펠라 교육 자산'}),
+        el('span', {class: 'badge', style: 'font-size: 10.5px;', text: item.format?.toUpperCase() || '자료'})
+      );
+
+      const actions = el('div', {class: 'edu-actions'},
+        fmt === 'video'
+          ? button('🎬 영상 보기', () => openOrDownloadEducation(item, false), 'button primary small', 'play')
+          : fmt === 'ppt'
+          ? button('📥 PPT 다운로드', () => openOrDownloadEducation(item, true), 'button primary small', 'download')
+          : button('📖 자료 열기', () => openOrDownloadEducation(item, false), 'button primary small', 'external'),
+        (item.blobUrl || item.fileUrl) && fmt !== 'ppt'
+          ? button('📥 다운로드', () => openOrDownloadEducation(item, true), 'button secondary small', 'download')
+          : null,
+        item.isCustom ? button('삭제', async () => {
+          if (confirm(`'${item.title}' 교육 자료를 삭제할까요?`)) {
+            await deleteCustomEducation(item.id);
+            state.education = await loadEducation(true);
+            render();
+            toast('교육 자료를 삭제했습니다.');
+          }
+        }, 'button secondary small danger', 'trash') : null
+      );
+
+      return el('article', {class: 'edu-card'}, top, desc, metaRow, actions);
+    }));
+  }
+
+  updateEduList();
+  app.append(heading, filterPanel, gridContainer);
+}
+
+
+/* -------------------------------------------------------------
  *  MEMORIES & MOMENTS (우리들의 기록)
  * ------------------------------------------------------------- */
 
@@ -1956,6 +2292,7 @@ function render() {
     if (song) renderDetail(song);
     else if (state.route.tab === 'songs') renderBrowse();
     else if (state.route.tab === 'scores') renderScores();
+    else if (state.route.tab === 'education') renderEducation();
     else if (state.route.tab === 'stage') renderStage();
     else if (state.route.tab === 'rehearsal') renderRehearsal();
     else if (state.route.tab === 'memories') renderMemories();
@@ -1968,18 +2305,20 @@ function render() {
 async function initialize() {
   state.loading = true; state.loadError = ''; render();
   try {
-    const [songRes, perfRes, rehRes, scoresRes, memoriesRes] = await Promise.all([
+    const [songRes, perfRes, rehRes, scoresRes, memoriesRes, eduRes] = await Promise.all([
       loadSongs(),
       loadPerformances(),
       loadRehearsals(),
       loadScores(),
-      loadMemories()
+      loadMemories(),
+      loadEducation()
     ]);
     state.songs = songRes.songs;
     state.performances = perfRes;
     state.rehearsals = rehRes;
     state.scores = scoresRes;
     state.memories = memoriesRes;
+    state.education = eduRes;
     if (songRes.errors?.length && !songRes.songs.length) state.loadError = songRes.errors.join(' ');
     if (songRes.errors?.length && songRes.songs.length) toast(`${songRes.errors.length}개의 잘못된 데이터 항목을 제외하고 불러왔어요.`);
   } catch (error) { state.loadError = `${error.message || '자료를 확인할 수 없습니다.'} data/songs.json 파일과 HTTP 연결을 확인해 주세요.`; }

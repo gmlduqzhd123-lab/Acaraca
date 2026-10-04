@@ -911,6 +911,25 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 .memory-like-button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 12px; color: var(--muted-strong); transition: all .15s ease; }
 .memory-like-button.liked { color: #e03b3b; border-color: #f7a6a6; background: #fff0f0; font-weight: 700; }
 
+/* Educational Resources (아카펠라 교육 자료) */
+.edu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+.edu-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease; }
+.edu-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(18, 38, 26, 0.08); }
+.edu-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px; }
+.edu-icon-badge { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+.edu-icon-badge.ppt { background: #fff1e5; color: #d9621e; }
+.edu-icon-badge.pdf { background: #feebeb; color: #dc2626; }
+.edu-icon-badge.video { background: #e0f2fe; color: #0284c7; }
+.edu-icon-badge.audio { background: #ecfdf5; color: #059669; }
+.edu-icon-badge.other { background: var(--primary-soft); color: var(--primary); }
+.edu-info { flex: 1; min-width: 0; }
+.edu-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+.edu-title { font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.45; margin-bottom: 4px; word-break: keep-all; }
+.edu-author { font-size: 12px; color: var(--muted); }
+.edu-desc { font-size: 13px; color: var(--muted-strong); background: var(--bg); padding: 12px 14px; border-radius: 8px; margin: 12px 0; line-height: 1.6; border-left: 3px solid #2a6f62; word-break: keep-all; }
+.edu-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--muted); margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
+.edu-actions { display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+
 /* Dark Theme Overrides */
 html[data-theme="dark"] .qr-preview-box { background: #fff; }
 html[data-theme="dark"] dialog.pitch-dialog { background: var(--surface); color: var(--ink); border-color: var(--border); }
@@ -925,13 +944,18 @@ html[data-theme="dark"] .practice-rate-chip.active { background: var(--primary-s
 html[data-theme="dark"] .stage-card,
 html[data-theme="dark"] .rehearsal-card,
 html[data-theme="dark"] .score-card,
-html[data-theme="dark"] .memory-card { background: var(--surface); border-color: var(--border); }
+html[data-theme="dark"] .memory-card,
+html[data-theme="dark"] .edu-card { background: var(--surface); border-color: var(--border); }
 html[data-theme="dark"] .stage-setlist-box,
 html[data-theme="dark"] .audio-player-card,
 html[data-theme="dark"] .feedback-form-box,
 html[data-theme="dark"] .ab-switcher-box { background: var(--surface-soft); border-color: var(--border); }
 html[data-theme="dark"] .rehearsal-notes,
-html[data-theme="dark"] .score-memo { background: #1c2b23; color: var(--ink); }
+html[data-theme="dark"] .score-memo,
+html[data-theme="dark"] .edu-desc { background: #1c2b23; color: var(--ink); }
+html[data-theme="dark"] .edu-icon-badge.ppt { background: #3d2315; color: #ff9858; }
+html[data-theme="dark"] .edu-icon-badge.pdf { background: #3d1717; color: #ff7878; }
+html[data-theme="dark"] .edu-icon-badge.video { background: #162c3d; color: #5bc4ff; }
 html[data-theme="dark"] .memory-like-button.liked { background: #3b1919; color: #ff7878; border-color: #662b2b; }
 html[data-theme="dark"] .feedback-bubble { background: #1a2721; border-color: var(--border); }
 html[data-theme="dark"] .feedback-time-chip { background: #23342c; color: var(--primary); border-color: var(--border-strong); }

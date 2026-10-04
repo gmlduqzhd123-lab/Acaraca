@@ -334,3 +334,55 @@ export function toggleMemoryLike(memoryId) {
 
   return { isLiked: !isLiked, count: nextLikes };
 }
+
+let cachedEducation = null;
+
+export async function loadEducation(forceReload = false) {
+  if (cachedEducation && !forceReload) return cachedEducation;
+  let serverResources = [];
+  try {
+    const res = await fetch('./data/education.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('교육 자료 데이터를 불러올 수 없습니다.');
+    const json = await res.json();
+    serverResources = Array.isArray(json.resources) ? json.resources : [];
+  } catch (error) {
+    console.warn('loadEducation error:', error);
+    serverResources = [];
+  }
+
+  const customEdu = read('custom_education', []);
+  const allEdu = [...(Array.isArray(customEdu) ? customEdu : []), ...serverResources];
+
+  // Resolve blob URLs for materials stored in IndexedDB
+  for (const item of allEdu) {
+    if (item.mediaId) {
+      const blobUrl = await getMediaBlobUrl(item.mediaId);
+      if (blobUrl) {
+        item.blobUrl = blobUrl;
+      }
+    }
+  }
+
+  cachedEducation = allEdu;
+  return cachedEducation;
+}
+
+export function addCustomEducation(newEdu) {
+  const customList = read('custom_education', []);
+  const updated = [newEdu, ...customList];
+  write('custom_education', updated);
+  cachedEducation = null;
+  return newEdu;
+}
+
+export async function deleteCustomEducation(eduId) {
+  const customList = read('custom_education', []);
+  const target = customList.find(e => e.id === eduId);
+  const updated = customList.filter(e => e.id !== eduId);
+  write('custom_education', updated);
+  if (target?.mediaId) {
+    await deleteMediaFile(target.mediaId);
+  }
+  cachedEducation = null;
+}
+
