@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://gmlduqzhd123-lab.github.io/Acaraca/og-image.jpg">
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
-  <link rel="stylesheet" href="./css/style.css?v=7">
+  <link rel="stylesheet" href="./css/style.css?v=8">
 </head>
 <body>
   <a class="skip-link" href="#app">본문으로 건너뛰기</a>
@@ -98,7 +98,7 @@
   <dialog class="share-dialog" id="attach-media-dialog" style="width: min(500px, calc(100vw - 32px)); max-width: 500px;" aria-labelledby="attach-media-title">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h2 id="attach-media-title" style="margin: 0; font-size: 18px;">연습 녹음본 / 영상 올리기</h2>
-      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+      <button type="button" class="dialog-close-x" onclick="document.getElementById('attach-media-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p id="attach-media-target" style="font-size: 13px; color: var(--muted); margin-bottom: 16px;"></p>
     <form id="attach-media-form">
@@ -128,7 +128,7 @@
   <dialog class="share-dialog" id="new-rehearsal-dialog" style="width: min(520px, calc(100vw - 32px)); max-width: 520px;" aria-labelledby="new-rehearsal-title">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h2 id="new-rehearsal-title" style="margin: 0; font-size: 19px;">+ 새 연습 일지 등록</h2>
-      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+      <button type="button" class="dialog-close-x" onclick="document.getElementById('new-rehearsal-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">정기 합주 녹음본이나 런스루 영상을 올리고 팀원들과 피드백을 공유하세요.</p>
     <form id="new-rehearsal-form">
@@ -172,7 +172,7 @@
   <dialog class="share-dialog" id="upload-score-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-score-title">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h2 id="upload-score-title" style="margin: 0; font-size: 19px;">🎼 + 새 악보 등록하기</h2>
-      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+      <button type="button" class="dialog-close-x" id="upload-score-close" onclick="document.getElementById('upload-score-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">합주 총보, 파트보, 가사지 PDF나 악보 이미지 파일을 올려두고 언제든 열람하세요.</p>
     <form id="upload-score-form">
@@ -243,7 +243,7 @@
   </dialog>
 
   <!-- Score Viewer Modal -->
-  <dialog class="share-dialog score-viewer-dialog" id="score-viewer-dialog" style="width: min(920px, calc(100vw - 24px)); max-width: 920px; height: 88vh; max-height: 88vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;" aria-labelledby="score-viewer-title">
+  <dialog class="share-dialog score-viewer-dialog" id="score-viewer-dialog" style="width: min(920px, calc(100vw - 24px)); max-width: 920px; height: 88vh; max-height: 88vh; padding: 0; overflow: hidden; border-radius: 16px;" aria-labelledby="score-viewer-title">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
       <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
         <span style="font-size: 20px;">🎼</span>
@@ -254,7 +254,7 @@
       </div>
       <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
         <button type="button" class="button secondary small" id="score-viewer-download" title="다운로드">📥 다운로드</button>
-        <form method="dialog"><button class="icon-button" style="width: 32px; height: 32px;" aria-label="닫기">✕</button></form>
+        <button type="button" class="dialog-close-x" id="score-viewer-close" onclick="document.getElementById('score-viewer-dialog').close()" aria-label="닫기">✕</button>
       </div>
     </div>
     <div id="score-viewer-body" style="flex: 1; overflow: auto; background: var(--surface-soft); display: flex; justify-content: center; align-items: center; padding: 12px; position: relative;">
@@ -266,7 +266,7 @@
   <dialog class="share-dialog" id="upload-memory-dialog" style="width: min(540px, calc(100vw - 32px)); max-width: 540px;" aria-labelledby="upload-memory-title">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h2 id="upload-memory-title" style="margin: 0; font-size: 19px;">📷 + 우리들의 기록 올리기</h2>
-      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+      <button type="button" class="dialog-close-x" id="upload-memory-close" onclick="document.getElementById('upload-memory-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">연습실 숏츠 영상, 무대 사진, 비하인드 순간을 팀원들과 함께 공유해 보세요.</p>
     <form id="upload-memory-form">
@@ -335,7 +335,7 @@
         <span id="lightbox-badge" class="badge">기록</span>
         <h2 id="lightbox-title" style="margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">기록 보기</h2>
       </div>
-      <form method="dialog"><button class="icon-button" style="width: 32px; height: 32px;" aria-label="닫기">✕</button></form>
+      <button type="button" class="dialog-close-x" id="memory-lightbox-close" onclick="document.getElementById('memory-lightbox-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <div id="lightbox-media-container" style="background: #000; display: flex; justify-content: center; align-items: center; min-height: 280px; max-height: 65vh; overflow: hidden;">
       <!-- Image or Video/Shorts Player injected here -->
@@ -446,7 +446,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=7';
+      script.src = './js/app.js?v=8';
       script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
       document.body.append(script);
 

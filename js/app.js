@@ -979,7 +979,12 @@ function openUploadScoreModal(defaultSongId = '') {
   submitBtn.disabled = false;
   submitBtn.textContent = '악보 등록하기';
 
+  const closeBtn = document.getElementById('upload-score-close');
   cancelBtn.onclick = () => dialog.close();
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => {
+    if (e.target === dialog) dialog.close();
+  };
 
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -1054,6 +1059,12 @@ function openScoreViewerModal(score) {
   const metaEl = document.getElementById('score-viewer-meta');
   const bodyEl = document.getElementById('score-viewer-body');
   const downloadBtn = document.getElementById('score-viewer-download');
+  const closeBtn = document.getElementById('score-viewer-close');
+
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => {
+    if (e.target === dialog) dialog.close();
+  };
 
   titleEl.textContent = score.title;
   metaEl.textContent = `${score.category || '악보'} · ${score.pages || ''} ${score.arranger ? `· ${score.arranger}` : ''} ${score.fileSize ? `(${score.fileSize})` : ''}`;
@@ -1308,7 +1319,12 @@ function openUploadMemoryModal(defaultSongId = '') {
   submitBtn.disabled = false;
   submitBtn.textContent = '기록 올리기';
 
+  const closeBtn = document.getElementById('upload-memory-close');
   cancelBtn.onclick = () => dialog.close();
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => {
+    if (e.target === dialog) dialog.close();
+  };
 
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -1397,6 +1413,12 @@ function openMemoryLightboxModal(memory) {
   const descEl = document.getElementById('lightbox-desc');
   const metaEl = document.getElementById('lightbox-meta');
   const likeBtn = document.getElementById('lightbox-like-btn');
+  const closeBtn = document.getElementById('memory-lightbox-close');
+
+  if (closeBtn) closeBtn.onclick = () => dialog.close();
+  dialog.onclick = (e) => {
+    if (e.target === dialog) dialog.close();
+  };
 
   titleEl.textContent = memory.title;
   badgeEl.textContent = memory.category || (memory.type === 'shorts' ? '숏츠' : '사진');
@@ -2035,4 +2057,19 @@ async function initialize() {
   state.loading = false; render();
 }
 window.addEventListener('popstate', () => { state.route = readRoute(); render(); app.focus({preventScroll: true}); });
+
+// Close dialogs when clicking outside (on backdrop)
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.nodeName === 'DIALOG' && e.target.open) {
+    const rect = e.target.getBoundingClientRect();
+    const isInDialog = (
+      rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+    );
+    if (!isInDialog) {
+      e.target.close();
+    }
+  }
+});
+
 initialize();
