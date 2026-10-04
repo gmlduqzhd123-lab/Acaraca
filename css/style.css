@@ -775,9 +775,13 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 .pitch-key { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--ink); transition: background .15s, border-color .15s, transform .1s; font-size: 13px; font-weight: 600; padding: 6px 4px; user-select: none; }
 .pitch-key:hover { border-color: var(--border-strong); background: var(--surface-soft); }
 .pitch-key:active { transform: scale(0.96); }
-.pitch-key.accidental { background: #2f3e37; color: #f4f6f0; border-color: #24342d; }
-.pitch-key.accidental:hover { background: #3d5047; }
-.pitch-key.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(25,77,70,.25); font-weight: 700; transform: scale(0.98); }
+.pitch-key.accidental { background: var(--bg); color: var(--ink); border-color: var(--border); }
+.pitch-key.accidental:hover { background: var(--surface-soft); border-color: var(--border-strong); }
+.pitch-key.active,
+.pitch-key.active.accidental { background: #111814 !important; color: #ffffff !important; border-color: #050806 !important; box-shadow: 0 0 0 3px rgba(17,24,20,.3) !important; font-weight: 700; transform: scale(0.98); }
+.pitch-key.active .pitch-key-note,
+.pitch-key.active .pitch-key-kr,
+.pitch-key.active .pitch-key-freq { color: #ffffff !important; }
 .pitch-key-note { font-size: 15px; line-height: 1.2; font-weight: 700; }
 .pitch-key-kr { font-size: 10px; opacity: .85; margin-top: 2px; font-weight: 500; }
 .pitch-key-freq { font-size: 9px; opacity: .65; margin-top: 1px; }
@@ -867,10 +871,10 @@ dialog.pitch-dialog { width: min(480px, calc(100vw - 32px)); margin: auto; backg
 /* Dark Theme Overrides */
 html[data-theme="dark"] .qr-preview-box { background: #fff; }
 html[data-theme="dark"] dialog.pitch-dialog { background: var(--surface); color: var(--ink); border-color: var(--border); }
-html[data-theme="dark"] .pitch-status-card { background: var(--surface-soft); border-color: var(--border); }
-html[data-theme="dark"] .pitch-key { background: #23332a; border-color: var(--border); color: var(--ink); }
-html[data-theme="dark"] .pitch-key.accidental { background: #13201a; color: #d0e0d5; border-color: #2b3d33; }
-html[data-theme="dark"] .pitch-key.active { background: var(--primary); color: #1c3524; border-color: var(--primary); }
+html[data-theme="dark"] .pitch-key,
+html[data-theme="dark"] .pitch-key.accidental { background: #23332a; border-color: var(--border); color: var(--ink); }
+html[data-theme="dark"] .pitch-key.active,
+html[data-theme="dark"] .pitch-key.active.accidental { background: #000000 !important; color: #ffffff !important; border-color: #4a6858 !important; box-shadow: 0 0 0 3px rgba(255,255,255,.3) !important; }
 html[data-theme="dark"] .practice-controller-panel { background: var(--surface); border-color: var(--border); }
 html[data-theme="dark"] .practice-btn-big { background: var(--surface-soft); border-color: var(--border); color: var(--ink); }
 html[data-theme="dark"] .practice-btn-big.primary-play { background: var(--primary); color: #1c3524; border-color: var(--primary); }
