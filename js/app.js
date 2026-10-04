@@ -37,8 +37,8 @@ import { saveMediaFile, getMediaBlobUrl } from './mediaStorage.js';
 const app = document.getElementById('app');
 const labels = {
   home: '홈',
+  songs: '아카펠라 연습실',
   appreciation: '아카펠라 감상',
-  songs: '아카라카 연습실',
   stage: '공연 영상',
   scores: '악보 창고',
   memories: '우리들의 기록',
@@ -51,8 +51,8 @@ const labels = {
 };
 const navIcons = {
   home: 'home',
-  appreciation: 'sparkles',
   songs: 'library',
+  appreciation: 'sparkles',
   stage: 'stage',
   scores: 'document',
   memories: 'camera',
@@ -97,7 +97,7 @@ const state = {
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = ['home', 'appreciation', 'songs', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education'];
+const mobileTabs = ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education'];
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -250,7 +250,7 @@ function confirmClearPractice() {
   const dialog = el('dialog', {class: 'share-dialog', 'aria-labelledby': 'clear-practice-title'});
   dialog.replaceChildren(
     el('h2', {id: 'clear-practice-title', text: '현재 연습 비우기'}),
-    el('p', {text: '현재 연습 중인 영상 목록을 모두 비우시겠습니까?\n언제든지 곡 상세 화면이나 아카라카 연습실에서 다시 현재 연습으로 등록할 수 있습니다.'}),
+    el('p', {text: '현재 연습 중인 영상 목록을 모두 비우시겠습니까?\n언제든지 곡 상세 화면이나 아카펠라 연습실에서 다시 현재 연습으로 등록할 수 있습니다.'}),
     el('div', {class: 'dialog-actions', style: 'display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;'},
       button('취소', () => dialog.close(), 'button secondary small'),
       button('모두 비우기', () => {
@@ -402,7 +402,7 @@ function renderHome() {
     }, 'button secondary', 'shuffle'));
   }
   updateRandom(); app.append(section('오늘의 랜덤 연습', '새로운 하모니와 만나는 작은 계기', randomPanel));
-  app.append(section('연습 라이브러리', `${state.songs.length}곡, 하나의 연습실`, songGrid(state.songs.slice(0, 4)), button('아카라카 연습실 바로가기', () => navigate({tab: 'songs'}), 'text-button', 'arrow')));
+  app.append(section('연습 라이브러리', `${state.songs.length}곡, 하나의 연습실`, songGrid(state.songs.slice(0, 4)), button('아카펠라 연습실 바로가기', () => navigate({tab: 'songs'}), 'text-button', 'arrow')));
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
     el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
@@ -424,8 +424,8 @@ function renderBrowse(favoritesOnly = false) {
   const pageHeading = el('div', {class: 'page-heading'},
     el('div', {class: 'section-heading'},
       el('div', {},
-        el('p', {class: 'eyebrow', text: favoritesOnly ? 'YOUR FAVORITES' : 'ACARACA PRACTICE ROOM'}),
-        el('h1', {text: favoritesOnly ? '자꾸 부르고 싶은 곡' : '아카라카 연습실'}),
+        el('p', {class: 'eyebrow', text: favoritesOnly ? 'YOUR FAVORITES' : 'ACAPELLA PRACTICE ROOM'}),
+        el('h1', {text: favoritesOnly ? '자꾸 부르고 싶은 곡' : '아카펠라 연습실'}),
         el('p', {text: favoritesOnly ? '마음에 담아둔 곡을 한곳에서 만나보세요.' : '곡, 아티스트, 파트를 검색하고 나에게 맞는 연습을 찾아보세요.'})
       ),
       !favoritesOnly && button('+ 새 곡 / 영상 추가', () => openAdmin('./admin.html?action=new'), 'button primary small')
