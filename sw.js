@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v3';
+const CACHE_NAME = 'acaroom-cache-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -43,34 +43,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First for data files to ensure updates show up immediately
-  if (url.pathname.endsWith('.json') && url.pathname.includes('/data/')) {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response && response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // Stale-While-Revalidate for app shell and static assets
+  // Network-First for all local assets to ensure latest updates appear immediately
+  // Falls back to cache when offline
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
+    fetch(event.request)
+      .then((networkResponse) => {
         if (networkResponse && networkResponse.ok) {
           const clone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return networkResponse;
-      }).catch(() => null);
-
-      return cachedResponse || fetchPromise;
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
+

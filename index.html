@@ -114,15 +114,76 @@
 
   <noscript><p class="notice">AcaRoom을 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
   <script>
+    function renderEmergencyRecovery(reason) {
+      const appEl = document.getElementById('app');
+      const desktopNav = document.getElementById('desktop-nav');
+      if (!appEl || (desktopNav && desktopNav.children.length > 0)) return;
+
+      appEl.innerHTML = `
+        <div class="error-state" role="alert" style="margin-top: 24px;">
+          <h2>새 버전 연습실 준비</h2>
+          <p>
+            브라우저 캐시로 인해 최신 업데이트를 불러오지 못했습니다.<br>
+            아래 버튼을 눌러 캐시를 비우고 최신 화면으로 새로고침해 주세요.
+          </p>
+          <button type="button" class="button primary" id="cache-reset-btn">최신 버전으로 새로고침</button>
+        </div>
+      `;
+
+      const btn = document.getElementById('cache-reset-btn');
+      if (btn) {
+        btn.onclick = async () => {
+          btn.textContent = '캐시 정리 중...';
+          btn.disabled = true;
+          try {
+            if ('serviceWorker' in navigator) {
+              const regs = await navigator.serviceWorker.getRegistrations();
+              for (const r of regs) await r.unregister();
+            }
+            if ('caches' in window) {
+              const keys = await caches.keys();
+              for (const k of keys) await caches.delete(k);
+            }
+          } catch {}
+          window.location.reload();
+        };
+      }
+    }
+
+    window.addEventListener('error', () => {
+      const desktopNav = document.getElementById('desktop-nav');
+      if (!desktopNav || desktopNav.children.length === 0) {
+        renderEmergencyRecovery('스크립트 오류');
+      }
+    });
+
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          reg.update().catch(() => {});
+        }).catch(() => {});
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
       });
     }
+
     if (location.protocol === 'file:') {
       document.getElementById('app').textContent = '이 앱은 GitHub Pages 또는 HTTP 환경에서 실행해 주세요. 로컬 미리보기 방법은 README.md를 참고해 주세요.';
     } else {
-      const script = document.createElement('script'); script.type = 'module'; script.src = './js/app.js'; document.body.append(script);
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = './js/app.js?v=4';
+      script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
+      document.body.append(script);
+
+      // Watchdog: If navigation hasn't rendered within 3.5s, trigger recovery
+      setTimeout(() => {
+        const desktopNav = document.getElementById('desktop-nav');
+        if (!desktopNav || desktopNav.children.length === 0) {
+          renderEmergencyRecovery('초기 로딩 시간 초과');
+        }
+      }, 3500);
     }
   </script>
 </body>
