@@ -200,6 +200,10 @@ export function runCoreTests() {
       const artists = apprecRaw.videos.map(v => v.artist);
       return ['메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스'].every(g => artists.some(a => a.includes(g)));
     });
+
+    const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
+    check('education.json 5개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 5);
+    check('모든 교육 자료 PDF 파일 실제 존재 검증', () => eduRaw.resources.every(r => r.fileUrl && nodeFs.existsSync(r.fileUrl)));
   }
 
   const memLikeRes = toggleMemoryLike('test-mem-1');

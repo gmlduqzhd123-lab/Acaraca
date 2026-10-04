@@ -1,4 +1,126 @@
 {
   "version": 1,
-  "resources": []
+  "resources": [
+    {
+      "id": "edu-acapella-warmup",
+      "title": "아카펠라 웜업 (다성부 보컬 웜업 가이드)",
+      "author": "한승모 외 (한국아카펠라교육연구회)",
+      "date": "2022",
+      "category": "교재 / PDF",
+      "target": "전체 대상",
+      "format": "pdf",
+      "pages": "32쪽",
+      "fileSize": "912 KB",
+      "fileUrl": "./assets/education/acapella-warmup.pdf",
+      "fileName": "아카펠라_웜업_한국아카펠라교육연구회.pdf",
+      "tags": [
+        "웜업",
+        "발성",
+        "호흡",
+        "리듬",
+        "화음",
+        "다성부",
+        "한국아카펠라교육연구회",
+        "음식랩",
+        "파트너송"
+      ],
+      "description": "한국아카펠라교육연구회 연구팀이 개발한 체계적인 다성부 보컬 웜업 교재입니다. 몸 깨우기(히팅·러빙·카핑), 발성 돕기(공명 유지-Ode to Joy, 발음-바흐, 발성-Silvery waves), 박과 리듬감(일정박·리듬꼴-고세크), 음과 음정 표현력(차례가기-수고했어오늘도, 뛰어가기-Obladi-Oblada, 반음-Beautiful Dreamer), 다성부 화음감(음식랩, 네모의 꿈, 친구, 파트너송-볼빨간사춘기 여행 & 콜드플레이 Viva la vida) 등 6단계 실천 워밍업 악보와 지도법을 수록하고 있습니다."
+    },
+    {
+      "id": "edu-pitch-basics",
+      "title": "음정 기초 활동 (음과 음정 인지·표현 워크북)",
+      "author": "한승모 (한국아카펠라교육연구회)",
+      "date": "2022",
+      "category": "교재 / PDF",
+      "target": "초등 학생",
+      "format": "pdf",
+      "pages": "23쪽",
+      "fileSize": "786 KB",
+      "fileUrl": "./assets/education/pitch-basics.pdf",
+      "fileName": "음정_기초_활동_한승모.pdf",
+      "tags": [
+        "음정",
+        "코다이손기호",
+        "계단계이름",
+        "청음",
+        "내청",
+        "2성부",
+        "기초교육"
+      ],
+      "description": "아카펠라와 합창의 가장 기본이 되는 음과 음정을 익히는 7단계 발달 단계 지도 자료입니다. 소리 인식과 모방(동물/상황/성대모사), 음의 높낮이 구분, 음·가락 인지 및 표현, 선율 진행 발달 단계(솔미→라솔미→솔미레도→도레미→도레미솔라), 코다이 손기호(도~티), 계단 계이름 연습, 반음 표현, 오선 악보 개념화, 2도·3도·5도 도약 연습 악보 및 양손 코다이 손기호를 활용한 2성부 다성부 기초 활동을 상세히 다룹니다."
+    },
+    {
+      "id": "edu-ostinato-acapella",
+      "title": "오스티나토 아카펠라 (반복 패턴 기반 하모니 워크숍)",
+      "author": "한승모 (한국아카펠라교육연구회)",
+      "date": "2022",
+      "category": "교재 / PDF",
+      "target": "전체 대상",
+      "format": "pdf",
+      "pages": "29쪽",
+      "fileSize": "1.27 MB",
+      "fileUrl": "./assets/education/ostinato-acapella.pdf",
+      "fileName": "오스티나토_아카펠라_한승모.pdf",
+      "tags": [
+        "오스티나토",
+        "반복패턴",
+        "학교종",
+        "고요한밤",
+        "The Lion Sleeps Tonight",
+        "아리랑",
+        "쉬운아카펠라"
+      ],
+      "description": "악보 없이도 누구나 쉽게 화음을 만들 수 있는 '오스티나토(일정한 길이의 리듬·가락·화음 반복)' 아카펠라 지도법입니다. 2박~4마디 패턴 구성 원리, 으뜸음(도, 솔) 중심 배치와 다양한 음색 활용법, 학교종·고기잡이·고요한 밤 거룩한 밤·We Wish You a Merry Christmas·섬집아기·아리랑·루돌프 사슴코 등 실전 사례 악보와 The Lion Sleeps Tonight(온음표·2분음표·점음표 화음), Don't Worry Be Happy, 작은별 유니즌 등 풍부한 편곡 예시를 제공합니다."
+    },
+    {
+      "id": "edu-vocal-percussion",
+      "title": "아카펠라 보컬 퍼커션 만들기 (비트박스 기초 및 비트메이킹)",
+      "author": "장형선 (굿펠라즈 Good Fellaz / 2023 화음 랜선 스쿨)",
+      "date": "2023",
+      "category": "발표 슬라이드 (PPT)",
+      "target": "아카펠라 동아리",
+      "format": "pdf",
+      "pages": "27쪽",
+      "fileSize": "1.31 MB",
+      "fileUrl": "./assets/education/vocal-percussion.pdf",
+      "fileName": "아카펠라_보컬_퍼커션_만들기_장형선.pdf",
+      "tags": [
+        "보컬퍼커션",
+        "비트박스",
+        "장형선",
+        "굿펠라즈",
+        "화음랜선스쿨",
+        "4비트",
+        "8비트",
+        "16비트",
+        "신호등"
+      ],
+      "description": "2023 화음 랜선 스쿨 보컬 퍼커션 전문 강좌 자료입니다. 보컬 퍼커션의 의미 및 드럼 세트 악기 매핑, 발음(부/붑/봅, 트/츠/ㅌ, 카/케, 피시/프시 등)으로 쉽게 배우는 킥·하이햇·스네어·효과음 스킬, 4비트·8비트(굿펠라즈 '좋아서 그래')·16비트 리듬 훈련, 곡에 맞는 비트 분석(이무진 '신호등' verse 2/4박 하이햇, pre-chorus 8비트, chorus 변형 16비트 편곡 예시), 필인(Fill-in) 넣기와 보컬 앙상블 호흡 맞추기 팁을 담고 있습니다."
+    },
+    {
+      "id": "edu-high-school-acapella",
+      "title": "Hi~ School Acapella (학급 및 동아리 아카펠라 지도 실전 사례)",
+      "author": "박대현 (양천고등학교 / 2023 화음 랜선 스쿨)",
+      "date": "2023",
+      "category": "교재 / PDF",
+      "target": "교사·지도자",
+      "format": "pdf",
+      "pages": "33쪽",
+      "fileSize": "4.81 MB",
+      "fileUrl": "./assets/education/high-school-acapella.pdf",
+      "fileName": "하이스쿨_아카펠라_수업사례_박대현.pdf",
+      "tags": [
+        "하이스쿨아카펠라",
+        "박대현",
+        "수업사례",
+        "동아리지도",
+        "양천고",
+        "LeadingTone",
+        "벚꽃엔딩",
+        "플래시몹",
+        "합창대회"
+      ],
+      "description": "양천고등학교 박대현 선생님의 고등학교 학급 음악 수업 및 아카펠라 동아리('Leading Tone') 지도 10년의 노하우를 집약한 발표 자료입니다. 일반 수업과 동아리의 목표/선곡 차이점, 아카펠라 수업 6대 Tip(편안한 분위기, 귀로 부르는 노래, 기초단계, 이동도법, 칭찬, 과감한 포기), The Lion Sleeps Tonight(3부) 및 벚꽃엔딩(4부) 10차시 수업 구성, 1학년 전교생 359명 아카펠라 플래시몹, 양천고 동아리 연간 운영 로드맵, 교내 발표회, 음원 제작(스쿨오브아카9), 교가 아카펠라 편곡, 아시아청소년아카펠라대회 수상, 지역사회 연계 및 퇴근길 지하철 위로 플래시몹(YTN/SBS 보도) 등 생생한 현장 사례가 총망라되어 있습니다."
+    }
+  ]
 }
