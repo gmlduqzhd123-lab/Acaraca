@@ -12,8 +12,12 @@ import {
   addFeedback,
   toggleFeedbackLike,
   getPerformancesForSong,
-  getRehearsalsForSong
+  getRehearsalsForSong,
+  addCustomRehearsal,
+  attachMediaToRehearsal,
+  deleteCustomRehearsal
 } from './archive.js';
+import { saveMediaFile } from './mediaStorage.js';
 
 const app = document.getElementById('app');
 const labels = {
@@ -75,6 +79,56 @@ function startPractice(song, part = preferredPart(song, state.myPart)) {
   else { openSong(song); toast('아직 등록된 연습 영상이 없습니다.'); }
 }
 
+function openAdmin(targetUrl = './admin.html') {
+  if (sessionStorage.getItem('acaroom_admin_auth') === 'true') {
+    window.location.href = targetUrl;
+    return;
+  }
+  const dialog = document.getElementById('admin-auth-dialog');
+  if (!dialog) {
+    const pass = window.prompt('관리자 비밀번호를 입력해 주세요:');
+    if (pass === '1234') {
+      sessionStorage.setItem('acaroom_admin_auth', 'true');
+      window.location.href = targetUrl;
+    } else if (pass !== null) {
+      toast('비밀번호가 일치하지 않습니다.');
+    }
+    return;
+  }
+
+  const form = document.getElementById('admin-auth-form');
+  const input = document.getElementById('admin-auth-password');
+  const errEl = document.getElementById('admin-auth-error');
+  const cancelBtn = document.getElementById('admin-auth-cancel');
+
+  input.value = '';
+  if (errEl) { errEl.textContent = ''; errEl.hidden = true; }
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (input.value === '1234') {
+      sessionStorage.setItem('acaroom_admin_auth', 'true');
+      dialog.close();
+      window.location.href = targetUrl;
+    } else {
+      if (errEl) {
+        errEl.textContent = '비밀번호가 일치하지 않습니다.';
+        errEl.hidden = false;
+      }
+      input.select();
+    }
+  };
+
+  const onCancel = () => {
+    dialog.close();
+  };
+
+  form.onsubmit = onSubmit;
+  if (cancelBtn) cancelBtn.onclick = onCancel;
+  dialog.showModal();
+  setTimeout(() => input.focus(), 60);
+}
+
 function refreshChrome() {
   const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
   const desktopNav = document.getElementById('desktop-nav');
@@ -101,7 +155,7 @@ function refreshChrome() {
   );
   document.getElementById('topbar-actions').replaceChildren(
     button('조율기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '피치파이프 첫 음 조율기'}),
-    button('+ 곡 추가', () => { window.location.href = './admin.html?action=new'; }, 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
+    button('+ 곡 추가', () => openAdmin('./admin.html?action=new'), 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
     button('', () => navigate({tab: 'settings'}), 'icon-button', 'settings', {'aria-label': '설정 열기'})
   );
@@ -195,7 +249,7 @@ function renderHome() {
   if (state.songs.length && state.songs.every(song => (song.tags || []).includes('demo'))) app.append(el('p', {class: 'demo-banner', text: '데모 라이브러리입니다. 실제 팀 연습 자료는 데이터 편집기에서 등록해 주세요.'}));
   const pendingMedia = state.songs.filter(song => !availableParts(song).length).length;
   if (pendingMedia) app.append(el('p', {class: 'notice', text: `${pendingMedia}곡의 연습 영상이 아직 등록되지 않았어요. 영상이 등록된 파트부터 연습을 시작해 보세요.`}));
-  if (!state.songs.length) { app.append(section('연습 라이브러리', '', songGrid([])), el('a', {class: 'button primary', href: './admin.html', text: '데이터 편집기 열기'})); return; }
+  if (!state.songs.length) { app.append(section('연습 라이브러리', '', songGrid([])), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button primary')); return; }
   const featured = practicing[0] || state.songs[0];
   const hero = el('div', {class: 'hero-panel'},
     el('div', {class: 'hero-copy'}, el('span', {class: 'hero-tag', text: 'TODAY’S SPOTLIGHT'}), el('h3', {class: 'hero-title', text: featured.title}), el('p', {class: 'hero-text', text: `${featured.artist || '아티스트 미등록'} · ${featured.arrangement || '함께 부르는 즐거움'}`}),
@@ -236,7 +290,7 @@ function renderBrowse(favoritesOnly = false) {
         el('h1', {text: favoritesOnly ? '자꾸 부르고 싶은 곡' : '어떤 하모니를 만들어 볼까요?'}),
         el('p', {text: favoritesOnly ? '마음에 담아둔 곡을 한곳에서 만나보세요.' : '곡, 아티스트, 파트를 검색하고 나에게 맞는 연습을 찾아보세요.'})
       ),
-      !favoritesOnly && el('a', {class: 'button primary small', href: './admin.html?action=new', text: '+ 새 곡 / 영상 추가'})
+      !favoritesOnly && button('+ 새 곡 / 영상 추가', () => openAdmin('./admin.html?action=new'), 'button primary small')
     )
   );
   app.append(pageHeading);
@@ -587,17 +641,191 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
   return section;
 }
 
+function openAttachMediaModal(reh) {
+  const dialog = document.getElementById('attach-media-dialog');
+  if (!dialog) return;
+
+  const targetEl = document.getElementById('attach-media-target');
+  const form = document.getElementById('attach-media-form');
+  const fileInput = document.getElementById('attach-file-input');
+  const urlInput = document.getElementById('attach-url-input');
+  const cancelBtn = document.getElementById('attach-media-cancel');
+  const submitBtn = document.getElementById('attach-media-submit');
+
+  targetEl.textContent = `대상 일지: ${reh.title}`;
+  fileInput.value = '';
+  urlInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '등록 완료';
+
+  cancelBtn.onclick = () => dialog.close();
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const file = fileInput.files?.[0];
+    const url = urlInput.value.trim();
+
+    if (!file && !url) {
+      toast('파일을 선택하거나 온라인 주소를 입력해 주세요.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '저장 중...';
+
+    try {
+      if (file) {
+        const mediaId = `media-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const record = await saveMediaFile(mediaId, file);
+        if (!record) throw new Error('파일 저장에 실패했습니다.');
+
+        const isVideo = file.type?.startsWith('video') || /\.(mp4|webm|mov)$/i.test(file.name);
+        attachMediaToRehearsal(reh.id, {
+          mediaId,
+          isVideo,
+          fileName: file.name
+        });
+      } else if (url) {
+        const isVideo = url.includes('youtube.com') || url.includes('youtu.be') || /\.(mp4|webm)$/i.test(url);
+        attachMediaToRehearsal(reh.id, {
+          mediaUrl: url,
+          isVideo,
+          fileName: '온라인 미디어'
+        });
+      }
+
+      state.rehearsals = await loadRehearsals(true);
+      dialog.close();
+      render();
+      toast('🎙️ 연습 음원/영상이 등록되었습니다.');
+    } catch (err) {
+      console.error(err);
+      toast('미디어 등록 중 오류가 발생했습니다: ' + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '등록 완료';
+    }
+  };
+
+  dialog.showModal();
+}
+
+function openNewRehearsalModal() {
+  const dialog = document.getElementById('new-rehearsal-dialog');
+  if (!dialog) return;
+
+  const form = document.getElementById('new-rehearsal-form');
+  const songSelect = document.getElementById('new-reh-song');
+  const titleInput = document.getElementById('new-reh-title');
+  const dateInput = document.getElementById('new-reh-date');
+  const notesInput = document.getElementById('new-reh-notes');
+  const fileInput = document.getElementById('new-reh-file');
+  const urlInput = document.getElementById('new-reh-url');
+  const cancelBtn = document.getElementById('new-reh-cancel');
+  const submitBtn = document.getElementById('new-reh-submit');
+
+  songSelect.replaceChildren(
+    el('option', { value: '', text: '기타 / 전체 합주' }),
+    ...state.songs.map(s => el('option', { value: s.id, text: `${s.title} (${s.artist || '아티스트 미등록'})` }))
+  );
+
+  titleInput.value = '';
+  dateInput.value = new Date().toISOString().slice(0, 10);
+  notesInput.value = '';
+  fileInput.value = '';
+  urlInput.value = '';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '연습 일지 등록';
+
+  cancelBtn.onclick = () => dialog.close();
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    if (!title) {
+      toast('연습 일지 제목을 입력해 주세요.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '저장 중...';
+
+    try {
+      const file = fileInput.files?.[0];
+      const url = urlInput.value.trim();
+      const rehId = `reh-custom-${Date.now()}`;
+      let mediaOverride = null;
+
+      let videoObj = null;
+      let audioObj = null;
+
+      if (file) {
+        const mediaId = `media-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const record = await saveMediaFile(mediaId, file);
+        if (!record) throw new Error('파일 저장에 실패했습니다.');
+
+        const isVideo = file.type?.startsWith('video') || /\.(mp4|webm|mov)$/i.test(file.name);
+        mediaOverride = {
+          mediaId,
+          isVideo,
+          fileName: file.name
+        };
+      } else if (url) {
+        const isVideo = url.includes('youtube.com') || url.includes('youtu.be') || /\.(mp4|webm)$/i.test(url);
+        if (isVideo) {
+          videoObj = { type: 'video', url, label: '온라인 영상' };
+        } else {
+          audioObj = { url, label: '온라인 음원' };
+        }
+      }
+
+      const newReh = {
+        id: rehId,
+        songId: songSelect.value || '',
+        date: dateInput.value || new Date().toISOString().slice(0, 10),
+        title,
+        notes: notesInput.value.trim(),
+        video: videoObj,
+        audio: audioObj,
+        isCustom: true,
+        initialFeedbacks: []
+      };
+
+      addCustomRehearsal(newReh);
+      if (mediaOverride) {
+        attachMediaToRehearsal(rehId, mediaOverride);
+      }
+
+      state.rehearsals = await loadRehearsals(true);
+      dialog.close();
+      render();
+      toast('✨ 새 연습 일지가 등록되었습니다.');
+    } catch (err) {
+      console.error(err);
+      toast('등록 중 오류가 발생했습니다: ' + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '연습 일지 등록';
+    }
+  };
+
+  dialog.showModal();
+}
+
 function renderRehearsal() {
   app.append(
     el('div', {class: 'page-heading'},
-      el('p', {class: 'eyebrow', text: 'REHEARSAL & FEEDBACK HUB'}),
-      el('h1', {text: '연습 일지 & 팀 피드백'}),
-      el('p', {text: '회차별 런스루, 현장 녹음본을 모니터링하고 단원 누구나 자유롭게 피드백을 남겨요.'})
+      el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+        el('div', {},
+          el('p', {class: 'eyebrow', text: 'REHEARSAL & FEEDBACK HUB'}),
+          el('h1', {text: '연습 일지 & 팀 피드백'}),
+          el('p', {text: '회차별 런스루, 현장 녹음본을 모니터링하고 단원 누구나 자유롭게 피드백을 남겨요.'})
+        ),
+        button('+ 연습 일지 & 녹음본 등록', () => openNewRehearsalModal(), 'button primary small', 'plus')
+      )
     )
   );
 
   if (!state.rehearsals.length) {
-    app.append(emptyState('등록된 연습 일지가 아직 없어요', '첫 합주 연습 일지와 녹음본이 곧 등록됩니다.'));
+    app.append(emptyState('등록된 연습 일지가 아직 없어요', '첫 합주 연습 일지와 녹음본을 등록해 보세요.', button('+ 연습 일지 등록하기', () => openNewRehearsalModal(), 'button primary')));
     return;
   }
 
@@ -608,27 +836,73 @@ function renderRehearsal() {
 
     const mediaBox = el('div', {class: 'rehearsal-media-box'});
     if (reh.video?.url) {
-      const videoHost = el('div');
-      activePlayerInstance = createPlayer(videoHost, reh.video, reh.title);
-      activePlayers.push(activePlayerInstance);
-      mediaBox.append(videoHost);
+      if (reh.video.type === 'local-video') {
+        const videoEl = el('video', {
+          controls: true,
+          src: reh.video.url,
+          style: 'width: 100%; border-radius: 12px; max-height: 480px; background: #000; margin-bottom: 12px;'
+        });
+        activePlayerInstance = {
+          play: () => videoEl.play(),
+          pause: () => videoEl.pause(),
+          seekTo: (sec) => { videoEl.currentTime = sec; },
+          getCurrentTime: () => videoEl.currentTime || 0,
+          destroy: () => { videoEl.pause(); videoEl.src = ''; }
+        };
+        activePlayers.push(activePlayerInstance);
+        mediaBox.append(videoEl);
+      } else {
+        const videoHost = el('div');
+        activePlayerInstance = createPlayer(videoHost, reh.video, reh.title);
+        activePlayers.push(activePlayerInstance);
+        mediaBox.append(videoHost);
+      }
     }
 
-    if (reh.audio?.url) {
+    if (reh.audio?.url && reh.audio.url.trim()) {
       audioCtrl = renderAudioPlayer(reh.audio, reh.title);
       mediaBox.append(audioCtrl.element);
     }
 
+    if (!reh.video?.url && (!reh.audio?.url || !reh.audio.url.trim())) {
+      mediaBox.append(
+        el('div', {style: 'padding: 24px 16px; border: 2px dashed var(--border); border-radius: 12px; text-align: center; background: var(--surface-soft); margin-bottom: 16px;'},
+          el('div', {style: 'font-size: 28px; margin-bottom: 6px;'}, '🎙️'),
+          el('h3', {style: 'font-size: 15px; font-weight: 700; margin-bottom: 4px;'}, '연습 녹음본 또는 영상을 올려보세요'),
+          el('p', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 14px;'}, '컴퓨터의 녹음 파일(.mp3, .m4a, .wav 등)을 올리면 바로 재생하며 아래 구간별 피드백과 싱크를 맞출 수 있습니다.'),
+          button('🎙️ 내 컴퓨터에서 녹음본/영상 파일 올리기', () => openAttachMediaModal(reh), 'button primary small', 'music')
+        )
+      );
+    } else {
+      mediaBox.append(
+        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+          button('📁 녹음본/영상 파일 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+        )
+      );
+    }
+
     const feedbackSection = renderFeedbackSection(reh, activePlayerInstance, audioCtrl);
+
+    const topActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
+      song ? button('파트 연습실 이동', () => openSong(song), 'button primary small', 'play') : null,
+      reh.isCustom ? button('삭제', async () => {
+        if (confirm(`'${reh.title}' 연습 일지를 삭제할까요?`)) {
+          await deleteCustomRehearsal(reh.id);
+          state.rehearsals = await loadRehearsals(true);
+          render();
+          toast('연습 일지를 삭제했습니다.');
+        }
+      }, 'button secondary small danger') : null
+    );
 
     return el('article', {class: 'rehearsal-card'},
       el('div', {class: 'rehearsal-top'},
         el('div', {},
-          el('span', {class: 'rehearsal-song-tag'}, icon('music'), el('span', {text: song?.title || '연습곡'})),
+          el('span', {class: 'rehearsal-song-tag'}, icon('music'), el('span', {text: song?.title || '전체 합주'})),
           el('h2', {style: 'margin-top: 6px; font-size: 20px;', text: reh.title}),
           el('p', {class: 'stage-meta', text: `📅 ${reh.date}`})
         ),
-        song ? button('파트 연습실 이동', () => openSong(song), 'button primary small', 'play') : null
+        topActions
       ),
       reh.notes && el('div', {class: 'rehearsal-notes', text: reh.notes}),
       mediaBox,
@@ -826,7 +1100,7 @@ function renderDetail(song) {
         favoriteButton(song),
         button('QR 코드', () => showQR(song), 'button secondary', 'qr'),
         button('곡 공유', () => share(song), 'button secondary', 'share'),
-        button('영상 / 정보 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external'),
+        button('영상 / 정보 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
         songPerformances.length ? button(`무대 영상 (${songPerformances.length})`, () => navigate({tab: 'stage'}), 'button secondary', 'stage') : null,
         songRehearsals.length ? button(`연습 일지 & 피드백 (${songRehearsals.length})`, () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes') : null
       ),
@@ -839,8 +1113,8 @@ function renderDetail(song) {
     [el('strong', {text: PARTS[part]}), el('span', {class: 'part-subtitle', text: part === state.myPart ? 'MY PART · 바로 연습' : part === 'full' ? '모든 목소리를 함께' : '파트별 연습'}), icon('play')],
     () => startPractice(song, part), `part-button${part === state.myPart ? ' my-part' : ''}`,
     null, {'aria-label': `${PARTS[part]} ${part === state.myPart ? '내 파트 ' : ''}연습 시작`}
-  ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', el('a', {href: `./admin.html?song=${encodeURIComponent(song.id)}`, class: 'button secondary', text: '영상 등록하기'})),
-  button('+ 영상 추가 / 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'text-button', 'external'));
+  ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', button('영상 등록하기', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary')),
+  button('+ 영상 추가 / 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'text-button', 'external'));
   app.append(partsSection);
   const invalid = Object.entries(object(song.videos)).filter(([, media]) => media?.url?.trim() && !parseYouTube(media).ok);
   if (invalid.length) app.append(el('p', {class: 'notice warning', text: `${invalid.map(([part]) => PARTS[part] || part).join(', ')} 영상 주소를 확인해 주세요. 올바른 YouTube 주소가 아니어서 연습 버튼을 표시하지 않았습니다.`}));
@@ -924,7 +1198,7 @@ function renderPractice(song, part, record = true) {
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
-    button('영상 수정', () => { window.location.href = `./admin.html?song=${encodeURIComponent(song.id)}`; }, 'button secondary', 'external'),
+    button('영상 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
     songPerformances.length ? button('무대 실황', () => navigate({tab: 'stage'}), 'button secondary', 'stage', {'aria-label': '이 곡의 무대 실황 영상 보기'}) : null,
     songRehearsals.length ? button('연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null,
     favoriteButton(song)
@@ -1007,7 +1281,7 @@ function renderSettings() {
     theme = value; write('theme', theme); applyTheme();
     for (const node of themePanel.querySelectorAll('[data-theme-choice]')) { node.classList.toggle('active', node.dataset.themeChoice === theme); node.setAttribute('aria-pressed', String(node.dataset.themeChoice === theme)); }
   }, `choice-button${theme === value ? ' active' : ''}`, null, {'data-theme-choice': value, 'aria-pressed': String(theme === value)}))));
-  const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), el('a', {class: 'button secondary', href: './admin.html'}, icon('external'), '데이터 편집기 열기'));
+  const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary', 'external'));
   const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록'}), el('p', {text: '즐겨찾기, 최근 연습, 체크리스트는 이 브라우저에만 저장돼요. 다른 기기와 자동으로 동기화되지 않습니다.'}),
     !isAvailable() && el('p', {class: 'notice warning', text: '브라우저 저장소를 사용할 수 없어 현재 세션에서만 기록됩니다.'}),
     button('개인 연습 기록 초기화', () => {
@@ -1040,7 +1314,7 @@ function render() {
   app.replaceChildren(); refreshChrome();
   if (state.loading) { app.append(el('div', {class: 'loading-state', role: 'status', text: '연습실을 준비하고 있어요…'})); return; }
   if (state.loadError) {
-    app.append(el('div', {class: 'error-state', role: 'alert'}, el('h1', {text: '연습 자료를 불러오지 못했어요'}), el('p', {text: state.loadError}), button('다시 시도', initialize, 'button primary'), el('a', {class: 'button secondary', href: './admin.html', text: '데이터 편집기 열기'}))); return;
+    app.append(el('div', {class: 'error-state', role: 'alert'}, el('h1', {text: '연습 자료를 불러오지 못했어요'}), el('p', {text: state.loadError}), button('다시 시도', initialize, 'button primary'), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary'))); return;
   }
   normalizeRoute(); refreshChrome();
   const song = state.route.song && state.songs.find(song => song.id === state.route.song);

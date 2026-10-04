@@ -87,3 +87,14 @@
 @media (max-width: 760px) { .admin-header { padding: 18px 16px; } .admin-main { padding: 28px 16px 22px; } .admin-brand { font-size: 19px; } .admin-brand-mark { width: 40px; height: 40px; } .admin-header > .admin-button { font-size: 12px; padding: 9px; } .admin-workspace { grid-template-columns: minmax(0, 1fr); gap: 18px; } .admin-library { position: static; } .admin-song-list { max-height: 340px; } .admin-intro { align-items: flex-start; gap: 12px; } .admin-intro h1 { font-size: 27px; } .admin-intro p:not(.admin-eyebrow) { font-size: 12px; } .admin-intro .admin-state { font-size: 10px; padding: 7px 9px; } .admin-toolbar { padding: 12px; } .admin-toolbar-group { width: 100%; } .admin-toolbar-group .admin-button { flex: 1 1 auto; } .admin-button { font-size: 12px; padding: 10px 12px; } .admin-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 440px) { .admin-field-grid, .admin-media-grid { grid-template-columns: minmax(0, 1fr); } .admin-intro { display: block; } .admin-intro .admin-state { margin-top: 13px; } .admin-panel { padding: 18px; } .admin-intro h1 { font-size: 25px; } .admin-header .admin-button { font-size: 10px; } .admin-toolbar-group { gap: 7px; } .admin-toolbar .admin-button { white-space: normal; } }
 @media (prefers-reduced-motion: reduce) { .admin-button { transition: none; } }
+
+/* Admin Authentication Gate */
+.admin-auth-gate { position: fixed; inset: 0; background: rgba(18, 38, 32, 0.78); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.admin-auth-box { background: #fffefb; border: 1px solid #dfe4d9; border-radius: 20px; max-width: 420px; width: 100%; padding: 34px 28px; box-shadow: 0 16px 48px rgba(0,0,0,0.22); text-align: center; }
+.admin-auth-icon { font-size: 38px; margin-bottom: 12px; }
+.admin-auth-box h2 { margin: 0 0 8px; font-size: 22px; color: #153e35; font-weight: 750; letter-spacing: -.5px; }
+.admin-auth-box p { margin: 0 0 20px; color: #586b5d; font-size: 13.5px; line-height: 1.5; }
+.admin-auth-box label { display: block; text-align: left; font-size: 12px; font-weight: 650; color: #405c48; margin-bottom: 7px; }
+.admin-gate-error { color: #b45b42; font-size: 12.5px; margin: 8px 0 0; text-align: left; font-weight: 600; }
+.admin-gate-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+

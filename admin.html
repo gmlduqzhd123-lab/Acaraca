@@ -14,8 +14,27 @@
   <a class="admin-skip" href="#editor-main">본문으로 이동</a>
   <header class="admin-header">
     <a class="admin-brand" href="./index.html" aria-label="AcaRoom 연습실로 돌아가기"><span class="admin-brand-mark" aria-hidden="true">a.</span><span>AcaRoom<small>데이터 편집기</small></span></a>
-    <a class="admin-button admin-button-secondary" href="./index.html">연습실로 돌아가기 <span aria-hidden="true">↗</span></a>
+    <div class="admin-header-actions" style="display: flex; gap: 8px; align-items: center;">
+      <button id="admin-lock-btn" class="admin-button admin-button-secondary" type="button" title="관리자 잠금 후 연습실로 이동">🔒 잠금</button>
+      <a class="admin-button admin-button-secondary" href="./index.html">연습실로 돌아가기 <span aria-hidden="true">↗</span></a>
+    </div>
   </header>
+  <div id="admin-auth-gate" class="admin-auth-gate" role="dialog" aria-modal="true" aria-labelledby="admin-gate-title" hidden>
+    <div class="admin-auth-box">
+      <div class="admin-auth-icon">🔒</div>
+      <h2 id="admin-gate-title">관리자 인증</h2>
+      <p>데이터 편집기에 접근하려면 관리자 비밀번호를 입력해 주세요.</p>
+      <form id="admin-gate-form">
+        <label for="admin-gate-pass">관리자 비밀번호</label>
+        <input type="password" id="admin-gate-pass" class="admin-input" placeholder="비밀번호 4자리" autocomplete="current-password" required>
+        <p id="admin-gate-error" class="admin-gate-error" hidden></p>
+        <div class="admin-gate-actions">
+          <a href="./index.html" class="admin-button admin-button-secondary">연습실로 돌아가기</a>
+          <button type="submit" class="admin-button admin-button-primary">확인</button>
+        </div>
+      </form>
+    </div>
+  </div>
   <main id="editor-main" class="admin-main">
     <section class="admin-intro" aria-labelledby="editor-title">
       <div><p class="admin-eyebrow">LIBRARY STUDIO</p><h1 id="editor-title">우리의 연습곡을 정리해요.</h1><p>곡과 파트 자료를 편집한 뒤 <strong>songs.json</strong>을 다운로드하세요.</p></div>
@@ -81,7 +100,7 @@
       document.getElementById('document-state').textContent = 'HTTP 환경 필요';
       document.querySelectorAll('button, input, select, textarea').forEach(control => { control.disabled = true; });
     } else {
-      const script = document.createElement('script'); script.type = 'module'; script.src = './js/admin.js'; document.body.append(script);
+      const script = document.createElement('script'); script.type = 'module'; script.src = './js/admin.js?v=4'; document.body.append(script);
     }
   </script>
 </body>

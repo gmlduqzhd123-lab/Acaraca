@@ -2,85 +2,211 @@
   "version": 1,
   "rehearsals": [
     {
-      "id": "reh-20261002-butterfly",
-      "songId": "butterfly",
-      "date": "2026-10-02",
-      "title": "Butterfly 4회차 최종 런스루 & 합주 녹음",
-      "notes": "2절 코러스 화음 밸런스 집중 연습 및 아웃트로 페이드아웃 안무 동선 체크",
-      "video": {
-        "type": "video",
-        "url": "https://www.youtube.com/watch?v=18SkVp28X_A",
-        "label": "거울 연습실 전체 런스루 영상"
-      },
-      "audio": {
-        "url": "https://actions.google.com/sounds/v1/ambiences/outdoor_recreation.ogg",
-        "label": "10월 2일 정기연습 풀 합주 녹음본",
-        "duration": 195
-      },
-      "initialFeedbacks": [
-        {
-          "id": "fb-1",
-          "author": "지은",
-          "part": "alto",
-          "time": 45,
-          "content": "2절 코러스 들어갈 때 알토 첫 음 피치파이프(도#) 소리 잘 듣고 들어가면 화음이 훨씬 선명해져요!",
-          "createdAt": "2026-10-02T20:15:00.000Z",
-          "likes": 4
-        },
-        {
-          "id": "fb-2",
-          "author": "민수",
-          "part": "bass",
-          "time": 84,
-          "content": "후렴구에서 테너와 베이스 템포가 약간 급해지지 않게 4분음표 비트 단단하게 잡겠습니다.",
-          "createdAt": "2026-10-02T20:22:00.000Z",
-          "likes": 2
-        },
-        {
-          "id": "fb-3",
-          "author": "엽쌤",
-          "part": "all",
-          "time": 130,
-          "content": "아웃트로 점진적 데크레센도 다이나믹 호흡 완벽했습니다. 다음 연습 때 앞부분 화음만 한 번 더 맞춥시다!",
-          "createdAt": "2026-10-02T20:40:00.000Z",
-          "likes": 5
-        }
-      ]
-    },
-    {
-      "id": "reh-20260925-bohemian",
+      "id": "reh-bohemian-rhapsody",
       "songId": "bohemian-rhapsody-5",
-      "date": "2026-09-25",
-      "title": "보헤미안 랩소디 2회차 오페라 파트 런스루",
-      "notes": "오페라 섹션 스타카토 리듬과 파트 간 주고받는 큐 사인 연습",
+      "date": "2024-10-04",
+      "title": "보헤미안 랩소디 (Bohemian Rhapsody) 연습 일지 & 구간 피드백",
+      "notes": "구간별 집중 체크 포인트: 인트로 마이크 밸런스 및 흉성 코러스, 1절 발라드 심벌즈/박자 타이밍, 기타 솔로 템포 유지, 오페라 파트 전조/피치/발음 입 맞추기, 하드록 파트 퍼커션 및 스케일 칸타빌레, 아웃트로 분위기 전환.",
       "video": {
         "type": "video",
         "url": "https://www.youtube.com/watch?v=DUwM7EAkJNs",
-        "label": "오페라 섹션 집중 런스루"
+        "label": "보헤미안 랩소디 연습 영상"
       },
       "audio": {
-        "url": "https://actions.google.com/sounds/v1/ambiences/outdoor_recreation.ogg",
-        "label": "오페라 섹션 파트 블렌딩 녹음본",
-        "duration": 120
+        "url": "",
+        "label": "연습 녹음본 (상단에서 파일 직접 등록 가능)",
+        "duration": 360
       },
       "initialFeedbacks": [
         {
-          "id": "fb-4",
-          "author": "수진",
-          "part": "soprano",
-          "time": 32,
-          "content": "갈릴레오 고음 부분 볼륨 키우기보다 포커스를 모아서 소리 내는 게 화음이 더 잘 살아요.",
-          "createdAt": "2026-09-25T19:30:00.000Z",
-          "likes": 3
+          "id": "fb-bh-1",
+          "author": "재우",
+          "part": "bass",
+          "section": "intro",
+          "time": 1,
+          "content": "[intro] 재우 베이스 마이크라 소리가 크니까 인트로 부분은 마이크를 떼거나 소리를 작게해서 부르기",
+          "createdAt": "2024-10-04T19:00:01.000Z",
+          "likes": 0
         },
         {
-          "id": "fb-5",
-          "author": "엽쌤",
+          "id": "fb-bh-2",
+          "author": "팀 피드백",
           "part": "all",
-          "time": 68,
-          "content": "마그니피코 외칠 때 5개 파트 입모양 일치시키는 것 잊지 마세요!",
-          "createdAt": "2026-09-25T19:45:00.000Z",
-          "likes": 6
+          "section": "intro",
+          "time": 11,
+          "content": "[intro] slide 부분 레가토로 음 내려가기",
+          "createdAt": "2024-10-04T19:00:11.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-3",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "intro",
+          "time": 25,
+          "content": "[intro] '우' 코러스는 목잡이로 부르지 말고 흉성으로 부르기",
+          "createdAt": "2024-10-04T19:00:25.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-4",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "intro",
+          "time": 27,
+          "content": "[intro] poor boy 풀보이 말고 푸어보이로",
+          "createdAt": "2024-10-04T19:00:27.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-5",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "intro",
+          "time": 45,
+          "content": "[intro] matter 부분, 레가토 표현 좀 더 확실하게",
+          "createdAt": "2024-10-04T19:00:45.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-6",
+          "author": "희엽",
+          "part": "all",
+          "section": "intro",
+          "time": 49,
+          "content": "[intro] 희엽 to 부분, 솔음 확실하게 내고 솔#으로 올라가기",
+          "createdAt": "2024-10-04T19:00:49.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-7",
+          "author": "휘소",
+          "part": "vp",
+          "section": "verse1 ballad",
+          "time": 79,
+          "content": "[verse1 ballad] 휘소 심벌즈 한 박 일찍 들어옴, 정박에 시작하기",
+          "createdAt": "2024-10-04T19:01:19.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-8",
+          "author": "희엽",
+          "part": "all",
+          "section": "verse1 ballad",
+          "time": 105,
+          "content": "[verse1 ballad] 희엽이 66마디 정박에 들어오는 연습",
+          "createdAt": "2024-10-04T19:01:45.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-9",
+          "author": "용석",
+          "part": "lead",
+          "section": "guitar solo",
+          "time": 155,
+          "content": "[guitar solo] 용석 기타 솔로 여유있게, 빨라지는 조짐이 느껴지는 구간",
+          "createdAt": "2024-10-04T19:02:35.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-10",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "verse2 operatic",
+          "time": 180,
+          "content": "[verse2 operatic] 전조 연습",
+          "createdAt": "2024-10-04T19:03:00.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-11",
+          "author": "용석",
+          "part": "lead",
+          "section": "verse2 operatic",
+          "time": 193,
+          "content": "[verse2 operatic] 용석 갈릴레오 피치 올라감",
+          "createdAt": "2024-10-04T19:03:13.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-12",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "verse2 operatic",
+          "time": 208,
+          "content": "[verse2 operatic] from this monstrosity 입 맞추기 연습",
+          "createdAt": "2024-10-04T19:03:28.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-13",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "verse2 operatic",
+          "time": 216,
+          "content": "[verse2 operatic] let him go 두 번 let me go 두 번",
+          "createdAt": "2024-10-04T19:03:36.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-14",
+          "author": "희엽",
+          "part": "all",
+          "section": "verse2 operatic",
+          "time": 227,
+          "content": "[verse2 operatic] 희엽이 아르페지오 E제자리음 들어오는 박자 연습",
+          "createdAt": "2024-10-04T19:03:47.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-15",
+          "author": "휘소",
+          "part": "vp",
+          "section": "verse3 hard rock",
+          "time": 270,
+          "content": "[verse3 hard rock] 퍼커션 박자 안절게 연습하기",
+          "createdAt": "2024-10-04T19:04:30.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-16",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "verse3 hard rock",
+          "time": 280,
+          "content": "[verse3 hard rock] 나나나 음 안맞음, 박자 좀 더 여유있게",
+          "createdAt": "2024-10-04T19:04:40.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-17",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "verse3 hard rock",
+          "time": 282,
+          "content": "[verse3 hard rock] 스케일 구간 맹연습!!! 좀 더 칸타빌레로",
+          "createdAt": "2024-10-04T19:04:42.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-18",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "outro",
+          "time": 308,
+          "content": "[outro] 바뀐 분위기 좀 더 표현, 부드럽게 부르기",
+          "createdAt": "2024-10-04T19:05:08.000Z",
+          "likes": 0
+        },
+        {
+          "id": "fb-bh-19",
+          "author": "희엽",
+          "part": "all",
+          "section": "outro",
+          "time": 346,
+          "content": "[outro] 희엽 마지막 A#음으로 내려와서 확실하게 유지",
+          "createdAt": "2024-10-04T19:05:46.000Z",
+          "likes": 0
         }
       ]
     }

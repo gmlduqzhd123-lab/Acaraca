@@ -76,6 +76,98 @@
     </div>
   </dialog>
 
+  <!-- Admin Authentication Modal -->
+  <dialog class="share-dialog" id="admin-auth-dialog" aria-labelledby="admin-auth-title">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+      <span style="font-size: 22px;">🔒</span>
+      <h2 id="admin-auth-title" style="margin: 0;">관리자 인증</h2>
+    </div>
+    <p style="margin-top: 4px; color: var(--muted); font-size: 13px; margin-bottom: 16px;">데이터 편집기를 열려면 관리자 비밀번호를 입력해 주세요.</p>
+    <form id="admin-auth-form" method="dialog">
+      <label for="admin-auth-password" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--ink);">관리자 비밀번호</label>
+      <input type="password" id="admin-auth-password" class="share-input" placeholder="비밀번호 4자리" autocomplete="current-password" required style="width: 100%; box-sizing: border-box;">
+      <p id="admin-auth-error" style="color: #d9383a; font-size: 12px; margin-top: 8px; font-weight: 600; text-align: left;" hidden></p>
+      <div class="dialog-actions" style="margin-top: 18px; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="admin-auth-cancel">취소</button>
+        <button type="submit" class="button primary" id="admin-auth-submit">확인</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Attach Media to Rehearsal Dialog -->
+  <dialog class="share-dialog" id="attach-media-dialog" style="width: min(500px, calc(100vw - 32px)); max-width: 500px;" aria-labelledby="attach-media-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="attach-media-title" style="margin: 0; font-size: 18px;">연습 녹음본 / 영상 올리기</h2>
+      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+    </div>
+    <p id="attach-media-target" style="font-size: 13px; color: var(--muted); margin-bottom: 16px;"></p>
+    <form id="attach-media-form">
+      <div style="margin-bottom: 16px;">
+        <label for="attach-file-input" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">
+          🎙️ 내 컴퓨터에서 파일 선택 (녹음본 또는 영상)
+        </label>
+        <input type="file" id="attach-file-input" accept="audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.mp4,.webm,.mov" style="display: block; width: 100%; padding: 10px; border: 1px dashed var(--border-strong); border-radius: 8px; background: var(--bg); font-size: 12px; box-sizing: border-box;">
+        <small style="display: block; font-size: 11px; color: var(--muted); margin-top: 5px;">지원 형식: MP3, M4A, WAV, OGG, MP4, WebM 등</small>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label for="attach-url-input" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">
+          🔗 또는 온라인 링크 (YouTube 또는 음원 URL)
+        </label>
+        <input type="url" id="attach-url-input" class="share-input" placeholder="https://www.youtube.com/... 또는 https://..." style="width: 100%; box-sizing: border-box;">
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="attach-media-cancel">취소</button>
+        <button type="submit" class="button primary" id="attach-media-submit">등록 완료</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- New Rehearsal Dialog -->
+  <dialog class="share-dialog" id="new-rehearsal-dialog" style="width: min(520px, calc(100vw - 32px)); max-width: 520px;" aria-labelledby="new-rehearsal-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="new-rehearsal-title" style="margin: 0; font-size: 19px;">+ 새 연습 일지 등록</h2>
+      <form method="dialog"><button class="icon-button" style="width: 28px; height: 28px;" aria-label="닫기">✕</button></form>
+    </div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">정기 합주 녹음본이나 런스루 영상을 올리고 팀원들과 피드백을 공유하세요.</p>
+    <form id="new-rehearsal-form">
+      <div style="margin-bottom: 12px;">
+        <label for="new-reh-song" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습곡 선택</label>
+        <select id="new-reh-song" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;"></select>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="new-reh-title" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습 일지 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
+        <input type="text" id="new-reh-title" required placeholder="예: 보헤미안 랩소디 3회차 풀합주 녹음" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label for="new-reh-date" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습 일자</label>
+        <input type="date" id="new-reh-date" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label for="new-reh-notes" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습 메모 / 체크 포인트</label>
+        <textarea id="new-reh-notes" rows="3" placeholder="오늘 집중한 구간, 개선할 부분, 다음 연습 목표 등을 적어 주세요." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 13px; box-sizing: border-box; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 14px; padding: 14px; background: var(--surface-soft); border-radius: 10px; border: 1px solid var(--border);">
+        <label for="new-reh-file" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">🎙️ 녹음본 또는 영상 파일 올리기</label>
+        <input type="file" id="new-reh-file" accept="audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.mp4,.webm,.mov" style="display: block; width: 100%; padding: 8px 0; font-size: 12px; box-sizing: border-box;">
+        <div style="margin-top: 8px;">
+          <label for="new-reh-url" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px;">또는 온라인 링크 (YouTube 등)</label>
+          <input type="url" id="new-reh-url" placeholder="https://www.youtube.com/..." style="width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: 12px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div class="dialog-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="new-reh-cancel">취소</button>
+        <button type="submit" class="button primary" id="new-reh-submit">연습 일지 등록</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- Vocal Pitch Pipe Modal -->
   <dialog class="pitch-dialog" id="pitch-dialog" aria-labelledby="pitch-title">
     <div class="pitch-dialog-header">
@@ -173,7 +265,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=4';
+      script.src = './js/app.js?v=5';
       script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
       document.body.append(script);
 

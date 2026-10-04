@@ -443,7 +443,47 @@ function downloadJSON() {
   }
 }
 
+function checkAdminAuth() {
+  const isAuth = sessionStorage.getItem('acaroom_admin_auth') === 'true';
+  const gate = $('admin-auth-gate');
+  const gateForm = $('admin-gate-form');
+  const gateInput = $('admin-gate-pass');
+  const gateError = $('admin-gate-error');
+
+  if (isAuth) {
+    if (gate) gate.hidden = true;
+    return;
+  }
+
+  if (gate && gateForm && gateInput) {
+    gate.hidden = false;
+    gateInput.value = '';
+    if (gateError) { gateError.textContent = ''; gateError.hidden = true; }
+    setTimeout(() => gateInput.focus(), 60);
+
+    gateForm.onsubmit = (e) => {
+      e.preventDefault();
+      if (gateInput.value === '1234') {
+        sessionStorage.setItem('acaroom_admin_auth', 'true');
+        gate.hidden = true;
+        $('song-search')?.focus();
+      } else {
+        if (gateError) {
+          gateError.textContent = '비밀번호가 일치하지 않습니다.';
+          gateError.hidden = false;
+        }
+        gateInput.select();
+      }
+    };
+  }
+}
+
 function initialize() {
+  checkAdminAuth();
+  $('admin-lock-btn')?.addEventListener('click', () => {
+    sessionStorage.removeItem('acaroom_admin_auth');
+    window.location.href = './index.html';
+  });
   buildMediaFields();
   fillForm(null);
   $('song-form').addEventListener('submit', saveSong);
