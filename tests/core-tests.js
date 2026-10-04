@@ -202,7 +202,7 @@ export function runCoreTests() {
     });
 
     const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
-    check('education.json 5개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 5);
+    check('education.json 10개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 10);
     check('모든 교육 자료 PDF 파일 실제 존재 검증', () => eduRaw.resources.every(r => r.fileUrl && nodeFs.existsSync(r.fileUrl)));
   }
 
