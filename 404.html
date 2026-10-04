@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>페이지를 찾을 수 없어요 · AcaRoom</title>
+  <title>페이지를 찾을 수 없어요 · AcaRaca</title>
   <style>
     :root { color-scheme: light; font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif; color: #203c34; background: #f7f8f2; }
     * { box-sizing: border-box; }
@@ -20,7 +20,7 @@
 </head>
 <body>
   <main>
-    <div class="brand">AcaRoom.</div>
+    <div class="brand">AcaRaca.</div>
     <p class="code">404 · PAGE NOT FOUND</p>
     <h1>이 페이지를 찾을 수 없어요.</h1>
     <p>주소가 바뀌었거나 잘못 입력되었을 수 있어요.<br>연습실 홈에서 다시 곡을 찾아보세요.</p>
@@ -36,7 +36,7 @@
       while (base.origin === location.origin) {
         try {
           const response = await fetch(new URL('assets/icons/logo.svg', base), { cache: 'no-cache' });
-          if (response.ok && (await response.text()).includes('<title>AcaRoom</title>')) {
+          if (response.ok && (await response.text()).includes('<title>AcaRaca</title>')) {
             link.href = new URL('index.html', base).href;
             return;
           }

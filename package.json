@@ -1,7 +1,7 @@
 {
   "name": "acaroom",
   "version": "1.1.0",
-  "description": "아카펠라 연습실 웹 애플리케이션 (AcaRoom)",
+  "description": "아카펠라 연습실 웹 애플리케이션 (AcaRaca)",
   "type": "module",
   "scripts": {
     "test": "node -e \"import('./tests/core-tests.js').then(m => { const r = m.runCoreTests(); console.log(`Tests: ${r.passed} passed, ${r.failed} failed`); if (r.failed) process.exit(1); })\"",

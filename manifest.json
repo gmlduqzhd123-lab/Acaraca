@@ -1,6 +1,6 @@
 {
-  "name": "AcaRoom · 우리의 아카펠라 연습실",
-  "short_name": "AcaRoom",
+  "name": "AcaRaca · 우리의 아카펠라 연습실",
+  "short_name": "AcaRaca",
   "description": "곡을 찾고, 내 파트를 고르고, 함께 하모니를 만드는 아카펠라 연습실",
   "start_url": "./index.html",
   "scope": "./",

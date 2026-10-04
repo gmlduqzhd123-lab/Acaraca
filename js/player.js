@@ -80,7 +80,7 @@ export function parseYouTube(media) {
 }
 
 /** Create an inert preview; a YouTube iframe exists only after an explicit play action. */
-export function createPlayer(container, media, title = 'AcaRoom 연습 영상') {
+export function createPlayer(container, media, title = 'AcaRaca 연습 영상') {
   const parsed = parseYouTube(media);
   const shell = document.createElement('div');
   shell.className = 'player-shell';

@@ -190,7 +190,7 @@ CSS, JavaScript, JSON, 아이콘과 이미지 경로는 상대경로입니다. `
 
 공유 링크는 `index.html?song=butterfly`, `index.html?song=butterfly&part=alto`처럼 query string을 사용합니다. `/song/butterfly` 같은 가상 경로는 사용하지 않습니다. 브라우저 뒤로/앞으로 이동도 query 상태로 복원합니다.
 
-`404.html`은 오류 안내와 홈 링크만 표시하며 자동 리다이렉트를 하지 않습니다. 깊은 잘못된 URL에서도 상위 폴더의 AcaRoom 로고를 확인해 홈 링크를 배포 루트로 맞춥니다. JavaScript나 네트워크가 꺼져 있으면 저장소의 기본 Pages 주소로 돌아가세요.
+`404.html`은 오류 안내와 홈 링크만 표시하며 자동 리다이렉트를 하지 않습니다. 깊은 잘못된 URL에서도 상위 폴더의 AcaRaca 로고를 확인해 홈 링크를 배포 루트로 맞춥니다. JavaScript나 네트워크가 꺼져 있으면 저장소의 기본 Pages 주소로 돌아가세요.
 
 PWA와 Service Worker는 포함하지 않습니다. 파일 수정은 일반 GitHub Pages 배포로 반영되며 YouTube 영상이나 iframe을 오프라인 캐시하지 않습니다.
 

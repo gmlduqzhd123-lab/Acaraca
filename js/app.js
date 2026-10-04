@@ -2089,7 +2089,7 @@ function renderDetail(song) {
 async function share(song, part = null) {
   const url = routeUrl({song: song.id, part}).href;
   if (navigator.share) {
-    try { await navigator.share({title: `${song.title}${part ? ` · ${PARTS[part]}` : ''} | AcaRoom`, url}); return; }
+    try { await navigator.share({title: `${song.title}${part ? ` · ${PARTS[part]}` : ''} | AcaRaca`, url}); return; }
     catch (error) { if (error.name === 'AbortError') return; }
   }
   if (navigator.clipboard?.writeText) {
@@ -2283,7 +2283,7 @@ function render() {
   }
   normalizeRoute(); refreshChrome();
   const song = state.route.song && state.songs.find(song => song.id === state.route.song);
-  document.title = song ? `${song.title}${state.route.part ? ` · ${PARTS[state.route.part]}` : ''} | AcaRoom` : `${labels[state.route.tab || 'home']} | AcaRoom`;
+  document.title = song ? `${song.title}${state.route.part ? ` · ${PARTS[state.route.part]}` : ''} | AcaRaca` : `${labels[state.route.tab || 'home']} | AcaRaca`;
   if (song && state.route.part) {
     const key = `${song.id}\u0000${state.route.part}`;
     renderPractice(song, state.route.part, lastPractice !== key); lastPractice = key;
