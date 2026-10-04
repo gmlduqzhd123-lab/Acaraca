@@ -37,28 +37,28 @@ import { saveMediaFile, getMediaBlobUrl } from './mediaStorage.js';
 const app = document.getElementById('app');
 const labels = {
   home: '홈',
-  songs: '아카라카 연습실',
-  practiceVideos: '연습 영상',
   appreciation: '아카펠라 감상',
-  scores: '악보 창고',
-  education: '교육 자료',
+  songs: '아카라카 연습실',
   stage: '공연 영상',
-  rehearsal: '연습 일지',
+  scores: '악보 창고',
   memories: '우리들의 기록',
+  rehearsal: '연습 일지',
+  practiceVideos: '연습 영상',
+  education: '교육 자료',
   favorites: '즐겨찾기',
   recent: '최근 연습',
   settings: '설정'
 };
 const navIcons = {
   home: 'home',
-  songs: 'library',
-  practiceVideos: 'video',
   appreciation: 'sparkles',
-  scores: 'document',
-  education: 'academic',
+  songs: 'library',
   stage: 'stage',
-  rehearsal: 'notes',
+  scores: 'document',
   memories: 'camera',
+  rehearsal: 'notes',
+  practiceVideos: 'video',
+  education: 'academic',
   favorites: 'heart',
   recent: 'clock',
   settings: 'settings'
@@ -97,7 +97,7 @@ const state = {
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = ['home', 'songs', 'practiceVideos', 'appreciation', 'scores', 'education', 'stage', 'rehearsal', 'memories'];
+const mobileTabs = ['home', 'appreciation', 'songs', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education'];
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -406,15 +406,15 @@ function renderHome() {
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
     el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
-    el('p', {text: `공연 영상 ${state.performances.length}편, 연습 영상 ${state.practiceVideos.length}건, 감상 영상 ${state.appreciation.length}건, 악보 ${state.scores.length}건, 교육 자료 ${state.education.length}건이 보관되어 있습니다.`}),
+    el('p', {text: `감상 영상 ${state.appreciation.length}건, 공연 영상 ${state.performances.length}편, 악보 ${state.scores.length}건, 우리들의 기록 ${state.memories.length}건, 연습 일지 ${state.rehearsals.length}건이 보관되어 있습니다.`}),
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
-      button('🎬 공연 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
-      button('🎥 연습 영상', () => navigate({tab: 'practiceVideos'}), 'button secondary small', 'video'),
       button('✨ 아카펠라 감상', () => navigate({tab: 'appreciation'}), 'button secondary small', 'sparkles'),
+      button('🎬 공연 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
       button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
-      button('🎓 교육 자료', () => navigate({tab: 'education'}), 'button secondary small', 'academic'),
       button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
-      button('🎙️ 연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary small', 'notes')
+      button('🎙️ 연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary small', 'notes'),
+      button('🎥 연습 영상', () => navigate({tab: 'practiceVideos'}), 'button secondary small', 'video'),
+      button('🎓 교육 자료', () => navigate({tab: 'education'}), 'button secondary small', 'academic')
     )
   );
   app.append(section('아카라카 아카이브', '함께 부르고 함께 나눈 모든 기록과 배움', archivePanel));
