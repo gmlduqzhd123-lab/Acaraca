@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node -e \"import('./tests/core-tests.js').then(m => { const r = m.runCoreTests(); console.log(`Tests: ${r.passed} passed, ${r.failed} failed`); if (r.failed) process.exit(1); })\"",
+    "audit": "node tests/audit-files.cjs && node tests/audit-css.cjs && node tests/audit-dom-ids.cjs && node tests/audit-html.cjs && node tests/audit-pitches.js && node tests/audit-appreciation.js && node tests/audit-education.js",
     "validate": "node -e \"import('./js/data.js').then(m => { const fs = require('fs'); const res = m.validateData(JSON.parse(fs.readFileSync('data/songs.json'))); if (res.errors.length) { console.error(res.errors); process.exit(1); } console.log(`Validation OK: ${res.songs.length} songs`); })\"",
     "start": "npx serve ."
   },

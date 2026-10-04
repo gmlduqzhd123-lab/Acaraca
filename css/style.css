@@ -1240,7 +1240,6 @@ html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #
   .practice-subrow { flex-direction: column; align-items: stretch; gap: 10px; }
   .practice-speed-group { justify-content: space-between; width: 100%; }
   .pitch-keyboard { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-}
   .mobile-brand { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--primary); }
   .mobile-brand img { width: 32px; height: 32px; flex-shrink: 0; }
   .mobile-brand strong { font-size: 22px; line-height: 1; letter-spacing: -.8px; font-weight: 750; }
