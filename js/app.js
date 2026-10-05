@@ -4,7 +4,7 @@ import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
 import {el, icon, button, toast, cover, emptyState} from './ui.js';
-import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, subscribePitchState, parseNoteString, playNoteString, playChordStrings} from './pitch.js';
+import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying} from './pitch.js';
 import {
   loadPerformances,
   loadRehearsals,
@@ -1035,6 +1035,11 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   rangeInput.addEventListener('touchend', commitSeek);
   rangeInput.addEventListener('change', commitSeek);
 
+  let loopStart = null;
+  let loopEnd = null;
+  let isLooping = false;
+  let lastLoopSeek = 0;
+
   audio.addEventListener('loadedmetadata', () => {
     if (audio.duration && !isNaN(audio.duration)) {
       rangeInput.max = audio.duration;
@@ -1043,6 +1048,18 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   });
 
   audio.addEventListener('timeupdate', () => {
+    if (isLooping && loopStart !== null && loopEnd !== null && loopEnd > loopStart) {
+      const now = Date.now();
+      if (audio.currentTime >= loopEnd && (now - lastLoopSeek > 300)) {
+        lastLoopSeek = now;
+        audio.currentTime = loopStart;
+        rangeInput.value = loopStart;
+        updateSliderTime(loopStart);
+        if (audio.paused) {
+          audio.play().catch(() => {});
+        }
+      }
+    }
     if (!isScrubbing) {
       rangeInput.value = audio.currentTime;
       updateSliderTime(audio.currentTime);
@@ -1050,6 +1067,11 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   });
 
   audio.addEventListener('ended', () => {
+    if (isLooping && loopStart !== null) {
+      audio.currentTime = loopStart;
+      audio.play().catch(() => {});
+      return;
+    }
     isPlaying = false;
     playBtn.replaceChildren(icon('play'), document.createTextNode('재생'));
   });
@@ -1066,7 +1088,173 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     el('div', {class: 'audio-progress-wrap'}, rangeInput, timeLabel)
   );
 
-  card.append(header, row);
+  // A-B Section Loop (구간 반복 집중 연습)
+  const loopStatusBadge = el('span', {class: 'loop-status-badge', text: '구간 미설정'});
+
+  const setABtn = el('button', {
+    type: 'button',
+    class: 'loop-point-btn',
+    'aria-label': '현재 위치를 A 시작점으로 설정',
+    onclick: () => {
+      const cur = Math.max(0, Math.round((audio.currentTime || 0) * 10) / 10);
+      loopStart = cur;
+      if (loopEnd !== null && loopStart >= loopEnd) {
+        loopEnd = Math.round((loopStart + 5) * 10) / 10;
+      }
+      updateLoopUI();
+      toast(`📍 A 시작점: ${formatPlayerTime(loopStart)} 설정`);
+    }
+  }, '📍 A 시작');
+
+  const setBBtn = el('button', {
+    type: 'button',
+    class: 'loop-point-btn',
+    'aria-label': '현재 위치를 B 끝점으로 설정',
+    onclick: () => {
+      const cur = Math.max(0, Math.round((audio.currentTime || 0) * 10) / 10);
+      loopEnd = cur;
+      if (loopStart !== null && loopEnd <= loopStart) {
+        loopStart = Math.max(0, Math.round((loopEnd - 5) * 10) / 10);
+      }
+      updateLoopUI();
+      toast(`🏁 B 끝점: ${formatPlayerTime(loopEnd)} 설정`);
+    }
+  }, '🏁 B 끝');
+
+  const loopToggleBtn = el('button', {
+    type: 'button',
+    class: 'loop-btn-toggle',
+    'aria-label': 'A-B 구간 반복 켜기 또는 끄기',
+    'aria-pressed': 'false',
+    onclick: () => {
+      if (isLooping) {
+        isLooping = false;
+        updateLoopUI();
+        toast('⏹️ 구간 반복을 껐습니다.');
+      } else {
+        if (loopStart === null) {
+          loopStart = Math.max(0, Math.round((audio.currentTime || 0) * 10) / 10);
+        }
+        if (loopEnd === null || loopEnd <= loopStart) {
+          const maxDur = audio.duration || audioData.duration || 9999;
+          loopEnd = Math.min(maxDur, Math.round((loopStart + 6) * 10) / 10);
+        }
+        isLooping = true;
+        updateLoopUI();
+        if (audio.currentTime < loopStart || audio.currentTime >= loopEnd) {
+          audio.currentTime = loopStart;
+        }
+        if (audio.paused) {
+          audio.play().then(() => {
+            isPlaying = true;
+            requestWakeLock();
+            syncAudioMediaSession();
+            playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+          }).catch(() => {});
+        }
+        toast(`🔁 구간 반복 시작: ${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)}`);
+      }
+    }
+  }, icon('repeat'), el('span', {text: '구간 반복'}));
+
+  const quick5Btn = el('button', {
+    type: 'button',
+    class: 'loop-btn-sub',
+    'aria-label': '현재 위치부터 5초 빠른 반복',
+    onclick: () => {
+      const cur = Math.max(0, Math.round((audio.currentTime || 0) * 10) / 10);
+      const maxDur = audio.duration || audioData.duration || 9999;
+      loopStart = cur;
+      loopEnd = Math.min(maxDur, Math.round((cur + 5) * 10) / 10);
+      isLooping = true;
+      updateLoopUI();
+      audio.currentTime = loopStart;
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          requestWakeLock();
+          syncAudioMediaSession();
+          playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+        }).catch(() => {});
+      }
+      toast(`⚡ 5초 구간 반복 시작 (${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)})`);
+    }
+  }, '⚡ 5초');
+
+  const quick10Btn = el('button', {
+    type: 'button',
+    class: 'loop-btn-sub',
+    'aria-label': '현재 위치부터 10초 빠른 반복',
+    onclick: () => {
+      const cur = Math.max(0, Math.round((audio.currentTime || 0) * 10) / 10);
+      const maxDur = audio.duration || audioData.duration || 9999;
+      loopStart = cur;
+      loopEnd = Math.min(maxDur, Math.round((cur + 10) * 10) / 10);
+      isLooping = true;
+      updateLoopUI();
+      audio.currentTime = loopStart;
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          requestWakeLock();
+          syncAudioMediaSession();
+          playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+        }).catch(() => {});
+      }
+      toast(`⚡ 10초 구간 반복 시작 (${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)})`);
+    }
+  }, '⚡ 10초');
+
+  const clearLoopBtn = el('button', {
+    type: 'button',
+    class: 'loop-btn-sub ghost',
+    'aria-label': '구간 해제',
+    onclick: () => {
+      isLooping = false;
+      loopStart = null;
+      loopEnd = null;
+      updateLoopUI();
+      toast('구간 설정을 해제했습니다.');
+    }
+  }, '✕ 해제');
+
+  function updateLoopUI() {
+    const hasA = loopStart !== null;
+    const hasB = loopEnd !== null;
+    const dur = (hasA && hasB) ? Math.max(0, Math.round((loopEnd - loopStart) * 10) / 10) : 0;
+    const aStr = hasA ? formatPlayerTime(loopStart) : '--:--';
+    const bStr = hasB ? formatPlayerTime(loopEnd) : '--:--';
+
+    setABtn.textContent = hasA ? `📍 A: ${aStr}` : '📍 A 시작';
+    setBBtn.textContent = hasB ? `🏁 B: ${bStr}` : '🏁 B 끝';
+
+    loopToggleBtn.classList.toggle('active', isLooping);
+    loopToggleBtn.setAttribute('aria-pressed', String(isLooping));
+    loopToggleBtn.replaceChildren(
+      icon('repeat'),
+      document.createTextNode(isLooping ? '반복 중' : '구간 반복')
+    );
+
+    if (isLooping && hasA && hasB) {
+      loopStatusBadge.className = 'loop-status-badge active';
+      loopStatusBadge.textContent = `🔁 ${aStr} ~ ${bStr} (${Math.round(dur)}초 반복 중)`;
+    } else if (hasA || hasB) {
+      loopStatusBadge.className = 'loop-status-badge ready';
+      loopStatusBadge.textContent = `구간: ${aStr} ~ ${bStr}${dur ? ` (${Math.round(dur)}초)` : ''}`;
+    } else {
+      loopStatusBadge.className = 'loop-status-badge';
+      loopStatusBadge.textContent = '구간 미설정';
+    }
+  }
+
+  const loopBar = el('div', {class: 'audio-loop-bar'},
+    el('div', {class: 'audio-loop-left'}, loopStatusBadge),
+    el('div', {class: 'audio-loop-right'},
+      setABtn, setBBtn, loopToggleBtn, quick5Btn, quick10Btn, clearLoopBtn
+    )
+  );
+
+  card.append(header, row, loopBar);
 
   return {
     element: card,
@@ -1109,6 +1297,24 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
         audio.addEventListener('loadedmetadata', applySeek, { once: true });
         audio.load();
       }
+    },
+    setLoop(startSec, endSec) {
+      loopStart = Math.max(0, Math.round(startSec * 10) / 10);
+      const maxDur = audio.duration || audioData.duration || 9999;
+      loopEnd = Math.min(maxDur, Math.max(loopStart + 1, Math.round(endSec * 10) / 10));
+      isLooping = true;
+      updateLoopUI();
+      this.seekTo(loopStart);
+      this.play();
+    },
+    clearLoop() {
+      isLooping = false;
+      loopStart = null;
+      loopEnd = null;
+      updateLoopUI();
+    },
+    getLoopState() {
+      return { loopStart, loopEnd, isLooping };
     },
     isPlaying() {
       return isPlaying && !audio.paused;
@@ -1222,10 +1428,32 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
         }
       }, `⏱️ ${m}:${s}`) : null;
 
+      const loopChip = hasTime ? el('button', {
+        type: 'button',
+        class: 'feedback-loop-chip',
+        title: `${m}:${s} 피드백 구간 집중 반복 연습 (6초간 무한 루프)`,
+        onclick: () => {
+          const targetPlayer = audioCtrl || playerInstance;
+          if (targetPlayer?.setLoop) {
+            targetPlayer.setLoop(fb.time, fb.time + 6);
+            if (targetPlayer.element?.scrollIntoView) {
+              targetPlayer.element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            toast(`🔁 ${m}:${s} 피드백 구간 집중 반복(6초)을 시작합니다.`);
+          } else if (targetPlayer?.seekTo) {
+            targetPlayer.seekTo(fb.time);
+            targetPlayer.play?.();
+            toast(`▶ ${m}:${s} 녹음 구간으로 이동합니다.`);
+          }
+        }
+      }, icon('repeat'), el('span', {text: '반복'})) : null;
+
+      const timeGroup = hasTime ? el('div', {class: 'feedback-time-group'}, timeNode, loopChip) : null;
+
       return el('div', {class: 'feedback-bubble'},
         el('div', {class: 'feedback-bubble-top'},
           el('span', {class: 'feedback-author'}, `${fb.author} (${fb.part === 'all' ? '전체' : (PARTS[fb.part] || fb.part)})`),
-          timeNode
+          timeGroup
         ),
         el('p', {class: 'feedback-text', text: fb.content}),
         el('div', {class: 'feedback-bottom-row'},
@@ -3415,11 +3643,58 @@ function renderStartingPitchPanel(song, currentPart = null) {
 
   const allNotes = partItems.map(item => item.noteStr);
 
+  const seqStatusBadge = el('div', {
+    class: 'pitch-seq-badge',
+    style: 'display: none;',
+  });
+
+  const seqBtn = el('button', {
+    type: 'button',
+    class: 'button primary small seq-play-btn',
+    title: '베이스부터 소프라노까지 차례대로 음을 잡은 후 화음으로 울려줍니다.',
+    onclick: () => {
+      if (isPitchSequencePlaying()) {
+        stopPitchSequence();
+        seqBtn.classList.remove('playing');
+        seqBtn.replaceChildren(icon('play'), document.createTextNode('차례대로 듣고 화음 🎵'));
+        seqStatusBadge.style.display = 'none';
+        toast('⏹️ 시작음 순차 재생을 중지했습니다.');
+        return;
+      }
+
+      toast('🎶 베이스부터 소프라노까지 차례대로 음을 맞춘 후 전체 화음을 울려줍니다.');
+      seqBtn.classList.add('playing');
+      seqBtn.replaceChildren(icon('pause'), document.createTextNode('순차 재생 중지'));
+      seqStatusBadge.style.display = 'flex';
+      seqStatusBadge.textContent = '🎶 전 파트 시작음 시퀀스를 준비 중...';
+
+      playPitchSequence(partItems, {
+        noteDuration: 900,
+        gapDuration: 150,
+        chordDuration: 2800,
+        onStep: (step) => {
+          if (step.type === 'note') {
+            seqStatusBadge.textContent = `🎵 [${step.index + 1}/${step.total}] ${step.label} (${step.parsed.displayNote} · ${step.parsed.koreanNote}) 울림 중...`;
+          } else if (step.type === 'chord') {
+            seqStatusBadge.textContent = `✨ 전체 성부 화음 합창 (${step.notes.join(' · ')})! 함께 화음을 맞춰보세요.`;
+          } else if (step.type === 'finish') {
+            seqBtn.classList.remove('playing');
+            seqBtn.replaceChildren(icon('play'), document.createTextNode('차례대로 듣고 화음 🎵'));
+            seqStatusBadge.style.display = 'none';
+          }
+        }
+      });
+    }
+  }, icon('play'), el('span', {text: '차례대로 듣고 화음 🎵'}));
+
   const chordBtn = el('button', {
     type: 'button',
     class: 'button secondary small chord-play-btn',
     text: '🎶 첫음 화음 전체 듣기',
     onclick: () => {
+      if (isPitchSequencePlaying()) {
+        stopPitchSequence();
+      }
       const playing = playChordStrings(allNotes);
       if (playing) {
         toast('🎶 전체 파트 첫 음 화음을 재생합니다.');
@@ -3433,6 +3708,9 @@ function renderStartingPitchPanel(song, currentPart = null) {
     text: '⏹️ 소리 끄기',
     onclick: () => {
       stopPitch();
+      if (isPitchSequencePlaying()) {
+        stopPitchSequence();
+      }
     }
   });
 
@@ -3446,7 +3724,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
   });
 
   const actions = el('div', {class: 'starting-pitch-actions'},
-    el('div', {class: 'pitch-action-left'}, chordBtn, stopBtn),
+    el('div', {class: 'pitch-action-left'}, seqBtn, chordBtn, stopBtn),
     el('div', {class: 'pitch-action-right'}, pipeBtn)
   );
 
@@ -3511,7 +3789,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
 
   updateActiveStates();
 
-  container.append(header, grid, actions);
+  container.append(header, grid, seqStatusBadge, actions);
   return container;
 }
 

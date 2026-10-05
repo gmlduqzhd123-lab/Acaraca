@@ -85,10 +85,44 @@ function notifyStateChange() {
   }
 }
 
+let sequenceTimer = null;
+let currentSequence = null;
+
+export function stopPitchSequence() {
+  if (sequenceTimer) {
+    clearTimeout(sequenceTimer);
+    sequenceTimer = null;
+  }
+  const prevSeq = currentSequence;
+  currentSequence = null;
+  stopPitch(false);
+  if (prevSeq && typeof prevSeq.onStep === 'function') {
+    try { prevSeq.onStep({ type: 'finish', stoppedEarly: true }); } catch {}
+  }
+}
+
+export function isPitchSequencePlaying() {
+  return Boolean(currentSequence);
+}
+
+export function getCurrentSequence() {
+  return currentSequence;
+}
+
 /**
  * Stop any currently sounding pitch or chord.
  */
-export function stopPitch() {
+export function stopPitch(cancelSequence = true) {
+  if (cancelSequence && sequenceTimer) {
+    clearTimeout(sequenceTimer);
+    sequenceTimer = null;
+    const prevSeq = currentSequence;
+    currentSequence = null;
+    if (prevSeq && typeof prevSeq.onStep === 'function') {
+      try { prevSeq.onStep({ type: 'finish', stoppedEarly: true }); } catch {}
+    }
+  }
+
   if (currentGainNode && audioCtx) {
     try {
       const now = audioCtx.currentTime;
@@ -358,4 +392,141 @@ export function playChordStrings(notesList, volume = 0.38) {
 export function getCurrentPlaying() {
   return currentPlaying;
 }
+
+/**
+ * Play starting pitches sequentially (arpeggio from bass to soprano),
+ * followed by all parts sounding together as a starting harmony chord.
+ */
+export function playPitchSequence(items, options = {}) {
+  const ctx = getAudioContext();
+  if (!ctx) return null;
+
+  // Toggle off if sequence is already actively playing
+  if (currentSequence) {
+    stopPitchSequence();
+    return null;
+  }
+
+  stopPitch(true);
+
+  const noteDuration = options.noteDuration || 850;
+  const gapDuration = options.gapDuration || 140;
+  const chordDuration = options.chordDuration || 2600;
+  const onStep = options.onStep;
+
+  // Normalize items to objects with parsed note info
+  const rawList = Array.isArray(items) ? items : [];
+  const validItems = [];
+  rawList.forEach((it) => {
+    if (!it) return;
+    if (typeof it === 'string') {
+      const parsed = parseNoteString(it);
+      if (parsed) validItems.push({ noteStr: it, parsed, label: it });
+    } else if (typeof it === 'object') {
+      const parsed = it.parsed || (it.noteStr ? parseNoteString(it.noteStr) : null);
+      if (parsed) validItems.push({ ...it, parsed, noteStr: it.noteStr || parsed.displayNote });
+    }
+  });
+
+  if (!validItems.length) return null;
+
+  // Sort ascending by frequency (Low bass -> high soprano arpeggio)
+  const sorted = [...validItems].sort((a, b) => a.parsed.freq - b.parsed.freq);
+
+  currentSequence = {
+    isPlaying: true,
+    index: 0,
+    total: sorted.length,
+    sorted,
+    onStep,
+  };
+
+  let currentIndex = 0;
+
+  function runNext() {
+    if (!currentSequence) return;
+
+    if (currentIndex < sorted.length) {
+      const item = sorted[currentIndex];
+      currentSequence.index = currentIndex;
+      currentSequence.currentItem = item;
+
+      stopPitch(false);
+      const played = playPitch(item.parsed.semitone, item.parsed.octave, 0.5);
+      if (played) {
+        played.raw = item.noteStr;
+        played.displayNote = item.parsed.displayNote;
+        played.koreanNote = item.parsed.koreanNote;
+        played.label = `${item.label ? `${item.label} ` : ''}${item.parsed.label}`;
+        notifyStateChange();
+      }
+
+      if (typeof onStep === 'function') {
+        try {
+          onStep({
+            type: 'note',
+            index: currentIndex,
+            total: sorted.length,
+            item,
+            noteStr: item.noteStr,
+            parsed: item.parsed,
+            label: item.label
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      sequenceTimer = setTimeout(() => {
+        if (!currentSequence) return;
+        stopPitch(false);
+
+        sequenceTimer = setTimeout(() => {
+          if (!currentSequence) return;
+          currentIndex++;
+          runNext();
+        }, gapDuration);
+      }, noteDuration);
+
+    } else if (currentIndex === sorted.length) {
+      // Step: Play Full Choral Chord
+      currentSequence.isChordPhase = true;
+      const allNotes = sorted.map((it) => it.noteStr);
+
+      stopPitch(false);
+      playChordStrings(allNotes, 0.42);
+
+      if (typeof onStep === 'function') {
+        try {
+          onStep({
+            type: 'chord',
+            notes: allNotes,
+            duration: chordDuration,
+            items: sorted
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      sequenceTimer = setTimeout(() => {
+        const prevSeq = currentSequence;
+        currentSequence = null;
+        sequenceTimer = null;
+        stopPitch(false);
+        if (prevSeq && typeof prevSeq.onStep === 'function') {
+          try {
+            prevSeq.onStep({ type: 'finish', stoppedEarly: false });
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }, chordDuration);
+    }
+  }
+
+  runNext();
+  return currentSequence;
+}
+
 

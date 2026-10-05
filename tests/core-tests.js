@@ -2,7 +2,7 @@ import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } fro
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitchSequence, stopPitchSequence, isPitchSequencePlaying } from '../js/pitch.js';
 import {
   getAllFeedbacks,
   addFeedback,
@@ -376,6 +376,93 @@ export function runCoreTests() {
   const unsubsPitch = subscribePitchState(() => {});
   check('피치파이프 구독 해제(unsubscribe) 함수 반환', () => typeof unsubsPitch === 'function');
   unsubsPitch();
+
+  // --- Pitch Sequence (아르페지오 & 화음) Tests ---
+  check('playPitchSequence 빈 배열 전달 시 null 반환', () => {
+    return playPitchSequence([]) === null;
+  });
+
+  const testParts = [
+    { label: '소프라노', noteStr: 'E5' },
+    { label: '베이스', noteStr: 'E3' },
+    { label: '테너', noteStr: 'B3' },
+    { label: '알토', noteStr: 'G#4' }
+  ];
+
+  const hadWindow = typeof globalThis.window !== 'undefined';
+  const prevWin = globalThis.window;
+  let prevAudioCtx = undefined;
+  try {
+    const createMockAudioNode = () => ({
+      connect: () => {},
+      disconnect: () => {},
+      start: () => {},
+      stop: () => {},
+      gain: {
+        value: 1,
+        setValueAtTime: () => {},
+        exponentialRampToValueAtTime: () => {},
+        cancelScheduledValues: () => {}
+      },
+      frequency: {
+        value: 440,
+        setValueAtTime: () => {},
+        exponentialRampToValueAtTime: () => {}
+      }
+    });
+
+    class MockAudioContext {
+      constructor() {
+        this.currentTime = 0;
+        this.state = 'running';
+        this.destination = {};
+      }
+      createOscillator() { return createMockAudioNode(); }
+      createGain() { return createMockAudioNode(); }
+      createBiquadFilter() { return createMockAudioNode(); }
+      resume() { return Promise.resolve(); }
+    }
+
+    if (!hadWindow) {
+      globalThis.window = {};
+    }
+    prevAudioCtx = globalThis.window.AudioContext;
+    if (!globalThis.window.AudioContext) {
+      globalThis.window.AudioContext = MockAudioContext;
+    }
+
+    let seqSteps = [];
+    const seqHandle = playPitchSequence(testParts, {
+      noteDuration: 10,
+      gapDuration: 5,
+      chordDuration: 20,
+      onStep: (st) => { seqSteps.push(st); }
+    });
+
+    check('playPitchSequence 저음(베이스 E3)부터 고음(소프라노 E5) 순으로 자동 오름차순 정렬', () => {
+      if (!seqHandle) return false;
+      return seqHandle.sorted[0].noteStr === 'E3' &&
+        seqHandle.sorted[1].noteStr === 'B3' &&
+        seqHandle.sorted[2].noteStr === 'G#4' &&
+        seqHandle.sorted[3].noteStr === 'E5';
+    });
+
+    check('playPitchSequence 실행 핸들 및 isPlaying 플래그 확인', () => {
+      return seqHandle && seqHandle.isPlaying === true && isPitchSequencePlaying() === true;
+    });
+
+    stopPitchSequence();
+    check('stopPitchSequence 호출 시 isPitchSequencePlaying() false 복귀', () => {
+      return isPitchSequencePlaying() === false;
+    });
+  } finally {
+    if (!hadWindow) {
+      delete globalThis.window;
+    } else {
+      if (prevAudioCtx !== undefined) globalThis.window.AudioContext = prevAudioCtx;
+      else delete globalThis.window.AudioContext;
+    }
+  }
 
   // --- Section Looper (A-B 반복) Core Tests ---
   check('formatPlayerTime 시간 형식 변환', () => {

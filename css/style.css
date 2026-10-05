@@ -1493,12 +1493,80 @@ html[data-theme="dark"] .chord-play-btn.playing {
 .feedback-bubble { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: transform .1s; }
 .feedback-bubble-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; flex-wrap: wrap; gap: 6px; }
 .feedback-author { font-weight: 700; color: var(--primary); }
+.feedback-time-group { display: inline-flex; align-items: center; gap: 5px; }
 .feedback-time-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; font-size: 10px; font-weight: 700; color: var(--primary); cursor: pointer; }
 .feedback-time-chip:hover { background: var(--primary); color: #fff; }
+.feedback-loop-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; background: var(--primary-soft); border: 1px solid var(--border); border-radius: 5px; font-size: 10px; font-weight: 700; color: var(--primary); cursor: pointer; transition: all .15s ease; }
+.feedback-loop-chip:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.feedback-loop-chip .icon { width: 10px; height: 10px; }
 .feedback-text { font-size: 12.5px; color: var(--ink); line-height: 1.5; word-break: keep-all; }
 .feedback-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 10px; color: var(--muted); }
 .feedback-like-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 11px; color: var(--muted-strong); }
 .feedback-like-btn.liked { color: #d64545; border-color: #f0a8a8; background: #fff1f1; font-weight: 700; }
+
+/* In-app Audio Loop Bar */
+.audio-loop-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.audio-loop-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.audio-loop-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .audio-loop-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .audio-loop-right {
+    justify-content: flex-start;
+  }
+}
+
+/* Starting Pitch Sequence */
+.pitch-seq-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 10px 0 12px;
+  animation: pitch-pulse-border 1.5s infinite ease-in-out;
+}
+.seq-play-btn {
+  font-weight: 700;
+}
+.seq-play-btn.playing {
+  background: var(--primary-hover);
+  animation: pitch-pulse-subtle 1.2s infinite ease-in-out;
+}
+@keyframes pitch-pulse-border {
+  0%, 100% { border-color: var(--border); box-shadow: 0 0 0 rgba(25,77,70,0); }
+  50% { border-color: var(--primary); box-shadow: 0 0 8px rgba(25,77,70,.18); }
+}
+@keyframes pitch-pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(0.98); }
+}
 
 /* Practice Room A/B Audio Switcher */
 .ab-switcher-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; }
