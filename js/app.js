@@ -1608,15 +1608,15 @@ function renderScores() {
     }
   }
 
-  const categoryOptions = ['전체', '남성팀', '혼성팀', '총보', '파트보'];
-  const yearOptions = ['전체 연도', '2025년', '2024년', '2023년'];
+  const categoryOptions = ['전체', '남성팀', '혼성팀', '연구회', '가요', '동요', 'POP', 'OST', '캐롤', '클래식', '창작', '페스티벌', '총보', '파트보'];
+  const yearOptions = ['전체 연도', '2025년', '2024년', '2023년', '2022년', '2021년'];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
       el('div', {},
         el('p', {class: 'eyebrow', text: 'OUR SCORE ARCHIVE'}),
         el('h1', {text: '악보 창고'}),
-        el('p', {text: '아카라카 구글 드라이브와 연동된 총보 및 파트보 NWC/PDF 모음입니다. 바로 열람하고 다운로드하세요.'})
+        el('p', {text: `아카라카 및 한국아카펠라교육연구회 악보 아카이브 (총 ${state.scores.length.toLocaleString()}개 악보)`})
       ),
       el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap;'},
         button('📁 드라이브 폴더 열기 ↗', () => window.open('https://drive.google.com/drive/folders/1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb', '_blank'), 'button secondary small', 'external'),
@@ -1632,7 +1632,7 @@ function renderScores() {
     value: state.scoreFilters.query || '',
     oninput: (e) => {
       state.scoreFilters.query = e.target.value;
-      updateScoreList();
+      updateScoreList(true);
     }
   });
 
@@ -1642,7 +1642,7 @@ function renderScores() {
       for (const btn of categoryChips.querySelectorAll('button')) {
         btn.classList.toggle('active', btn.textContent.trim() === cat);
       }
-      updateScoreList();
+      updateScoreList(true);
     }, `chip${(state.scoreFilters.category === cat || (!state.scoreFilters.category && cat === '전체')) ? ' active' : ''}`))
   );
 
@@ -1654,7 +1654,7 @@ function renderScores() {
         for (const btn of yearChips.querySelectorAll('button')) {
           btn.classList.toggle('active', btn.textContent.trim() === yr);
         }
-        updateScoreList();
+        updateScoreList(true);
       }, `chip${(state.scoreFilters.year === yearVal || (!state.scoreFilters.year && yr === '전체 연도')) ? ' active' : ''}`);
     })
   );
@@ -1664,7 +1664,7 @@ function renderScores() {
     style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12px;',
     onchange: (e) => {
       state.scoreFilters.songId = e.target.value;
-      updateScoreList();
+      updateScoreList(true);
     }
   }, songOptions.map(opt => el('option', {
     value: opt.value,
@@ -1685,6 +1685,7 @@ function renderScores() {
   );
 
   const gridContainer = el('div', {class: 'score-grid'});
+  const paginationContainer = el('div', {style: 'text-align: center; margin: 24px 0 40px;'});
 
   function getFilteredScores() {
     const q = (state.scoreFilters.query || '').trim().toLowerCase();
@@ -1697,8 +1698,11 @@ function renderScores() {
         if (sc.team !== '남성팀' && sc.category !== '남성팀' && !sc.title?.includes('남성')) return false;
       } else if (cat === '혼성팀') {
         if (sc.team !== '혼성팀' && sc.category !== '혼성팀' && !sc.title?.includes('혼성')) return false;
-      } else if (cat && sc.category !== cat) {
-        return false;
+      } else if (cat === '연구회') {
+        if (sc.team !== '연구회' && sc.source !== '한국아카펠라교육연구회' && !sc.fileUrl?.includes('research')) return false;
+      } else if (cat) {
+        const matchesCategory = sc.category === cat || (sc.category && sc.category.toLowerCase().includes(cat.toLowerCase())) || (sc.title && sc.title.includes(cat));
+        if (!matchesCategory) return false;
       }
       if (sId && sc.songId !== sId) return false;
       if (yr && sc.year && sc.year !== yr) return false;
@@ -1710,14 +1714,23 @@ function renderScores() {
         const matchMemo = (sc.memo || '').toLowerCase().includes(q);
         const matchYear = (sc.year || '').toLowerCase().includes(q);
         const matchTeam = (sc.team || '').toLowerCase().includes(q);
-        if (!matchTitle && !matchSong && !matchArranger && !matchMemo && !matchYear && !matchTeam) return false;
+        const matchCategory = (sc.category || '').toLowerCase().includes(q);
+        const matchSource = (sc.source || '').toLowerCase().includes(q);
+        if (!matchTitle && !matchSong && !matchArranger && !matchMemo && !matchYear && !matchTeam && !matchCategory && !matchSource) return false;
       }
       return true;
     });
   }
 
-  function updateScoreList() {
+  let displayLimit = 36;
+
+  function updateScoreList(resetLimit = false) {
+    if (resetLimit) {
+      displayLimit = 36;
+    }
     const filtered = getFilteredScores();
+    paginationContainer.replaceChildren();
+
     if (!filtered.length) {
       gridContainer.replaceChildren(
         emptyState('조건에 맞는 악보가 없습니다', '검색어나 필터를 바꾸거나 새 악보를 직접 등록해 보세요.', button('+ 악보 등록하기', () => openUploadScoreModal(), 'button primary small'))
@@ -1725,7 +1738,8 @@ function renderScores() {
       return;
     }
 
-    gridContainer.replaceChildren(...filtered.map(sc => {
+    const visibleScores = filtered.slice(0, displayLimit);
+    gridContainer.replaceChildren(...visibleScores.map(sc => {
       const song = state.songs.find(s => s.id === sc.songId);
 
       const badges = el('div', {class: 'score-badges'},
@@ -1735,11 +1749,13 @@ function renderScores() {
             ? 'background: rgba(37, 99, 235, 0.12); color: #1d4ed8; font-weight: 700;'
             : sc.team === '혼성팀'
             ? 'background: rgba(219, 39, 119, 0.12); color: #be185d; font-weight: 700;'
+            : sc.team === '연구회'
+            ? 'background: rgba(16, 185, 129, 0.14); color: #047857; font-weight: 700;'
             : 'background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand); font-weight: 600;',
-          text: sc.team
+          text: sc.team === '연구회' ? '한아교연' : sc.team
         }),
         sc.year && el('span', {class: 'badge', style: 'background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand); font-weight: 600;', text: `${sc.year}년`}),
-        el('span', {class: 'badge', text: sc.category || '총보'}),
+        sc.category && el('span', {class: 'badge', text: sc.category}),
         sc.part && sc.part !== 'all' && el('span', {class: 'badge status-badge', text: PARTS[sc.part] || sc.part}),
         song && el('span', {class: 'part-pill', text: song.title})
       );
@@ -1751,7 +1767,7 @@ function renderScores() {
         el('div', {class: 'score-info'},
           badges,
           el('h2', {class: 'score-title', text: sc.title}),
-          el('p', {class: 'score-arranger', text: `${sc.arranger || '아카라카'} ${sc.uploadedAt ? `· ${sc.uploadedAt}` : sc.year ? `· ${sc.year}년` : ''}`})
+          el('p', {class: 'score-arranger', text: `${sc.arranger || (sc.source || '아카라카')} ${sc.uploadedAt ? `· ${sc.uploadedAt}` : sc.year ? `· ${sc.year}년` : ''}`})
         )
       );
 
@@ -1763,8 +1779,10 @@ function renderScores() {
         ? '🎹 MIDI 음원'
         : sc.fileType === 'audio' || sc.format === 'audio'
         ? '🎙️ 가이드 음원'
-        : sc.fileType === 'pdf'
-        ? 'PDF 악보'
+        : sc.fileType === 'pdf' || sc.format === 'pdf'
+        ? '📄 PDF 악보'
+        : sc.fileType === 'mscz' || sc.format === 'mscz'
+        ? '🎼 뮤즈스코어'
         : sc.fileType === 'image'
         ? '악보 이미지'
         : '클라우드 악보';
@@ -1791,10 +1809,20 @@ function renderScores() {
 
       return el('article', {class: 'score-card'}, top, memo, metaRow, actions);
     }));
+
+    if (filtered.length > displayLimit) {
+      const remaining = filtered.length - displayLimit;
+      const loadMoreBtn = button(`악보 더 보기 (+36개 더보기 · 남은 악보: ${remaining.toLocaleString()}개)`, () => {
+        displayLimit += 36;
+        updateScoreList(false);
+      }, 'button secondary', 'chevron-down');
+      loadMoreBtn.style.cssText = 'padding: 12px 28px; font-weight: 700; border-radius: 999px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer;';
+      paginationContainer.replaceChildren(loadMoreBtn);
+    }
   }
 
-  updateScoreList();
-  app.append(heading, filterPanel, gridContainer);
+  updateScoreList(true);
+  app.append(heading, filterPanel, gridContainer, paginationContainer);
 }
 
 
