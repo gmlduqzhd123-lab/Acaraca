@@ -16,8 +16,10 @@ import {
   addCustomPracticeVideo,
   deleteCustomPracticeVideo,
   addCustomAppreciation,
-  deleteCustomAppreciation
+  deleteCustomAppreciation,
+  attachMediaToRehearsal
 } from '../js/archive.js';
+import { icon } from '../js/ui.js';
 
 let nodeFs = null;
 if (typeof process !== 'undefined' && process.versions?.node) {
@@ -179,6 +181,12 @@ export function runCoreTests() {
   const liked = toggleFeedbackLike(fb.id);
   check('피드백 공감 토글', () => liked === true && getAllFeedbacks('test-reh').find(item => item.id === fb.id)?.likes === 1);
 
+  attachMediaToRehearsal('test-reh', { mediaUrl: 'https://example.com/audio.mp3', isVideo: false, fileName: '테스트 음원' });
+  check('연습 일지 미디어 override 등록 검증', () => {
+    const overrides = storage.read('rehearsal_media_overrides', {});
+    return overrides['test-reh']?.mediaUrl === 'https://example.com/audio.mp3';
+  });
+
   const sampleScores = [
     { id: 'sc-1', songId: 'bohemian-rhapsody-5', title: '보헤미안 총보' },
     { id: 'sc-2', songId: 'butterfly', title: '버터플라이 총보' }
@@ -240,6 +248,10 @@ export function runCoreTests() {
         if (count < 0) return false;
       }
       return count === 0;
+    });
+    check('UI 신규 아이콘 정의 검증 (refresh, chevron-down, chevron-up)', () => {
+      const ui = nodeFs.readFileSync('./js/ui.js', 'utf8');
+      return ui.includes('refresh:') && ui.includes('\'chevron-down\':') && ui.includes('\'chevron-up\':');
     });
   }
 

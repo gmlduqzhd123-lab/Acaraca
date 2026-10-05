@@ -40,21 +40,37 @@ export async function loadRehearsals(forceReload = false) {
   // Resolve any local blob URLs for attached audio/video
   for (const reh of allRehearsals) {
     const override = mediaOverrides[reh.id];
-    if (override && override.mediaId) {
-      const blobUrl = await getMediaBlobUrl(override.mediaId);
-      if (blobUrl) {
+    if (override) {
+      if (override.mediaId) {
+        const blobUrl = await getMediaBlobUrl(override.mediaId);
+        if (blobUrl) {
+          if (override.isVideo) {
+            reh.video = {
+              type: 'local-video',
+              url: blobUrl,
+              label: override.fileName || '업로드된 연습 영상'
+            };
+          } else {
+            reh.audio = {
+              url: blobUrl,
+              label: override.fileName || '업로드된 연습 녹음본',
+              duration: override.duration || 0,
+              isLocal: true
+            };
+          }
+        }
+      } else if (override.mediaUrl) {
         if (override.isVideo) {
           reh.video = {
-            type: 'local-video',
-            url: blobUrl,
-            label: override.fileName || '업로드된 연습 영상'
+            type: (override.mediaUrl.includes('youtube.com') || override.mediaUrl.includes('youtu.be')) ? 'video' : 'local-video',
+            url: override.mediaUrl,
+            label: override.fileName || '온라인 영상'
           };
         } else {
           reh.audio = {
-            url: blobUrl,
-            label: override.fileName || '업로드된 연습 녹음본',
-            duration: override.duration || 0,
-            isLocal: true
+            url: override.mediaUrl,
+            label: override.fileName || '온라인 녹음본',
+            duration: override.duration || 0
           };
         }
       }

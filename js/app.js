@@ -1414,6 +1414,15 @@ function renderRehearsal() {
           button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
         )
       );
+    } else if (reh.video?.url) {
+      const ytPlayer = createPlayer(mediaBox, reh.video, reh.title);
+      activePlayerInstance = ytPlayer;
+      activePlayers.push(ytPlayer);
+      mediaBox.append(
+        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+          button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+        )
+      );
     } else {
       mediaBox.append(
         el('div', {style: 'padding: 24px 16px; border: 2px dashed var(--border); border-radius: 12px; text-align: center; background: var(--surface-soft); margin-bottom: 16px;'},
@@ -1585,18 +1594,19 @@ function openOrDownloadScore(score, isDownload = false) {
     toast('첨부된 악보 파일이 없습니다. 새 악보를 등록해 주세요.');
     return;
   }
-  if (isDownload) {
-    const downloadTarget = score.blobUrl || score.fileUrl || score.driveUrl;
+  const safeUrl = score.blobUrl ? score.blobUrl : (score.driveUrl || (score.fileUrl ? encodeURI(decodeURI(score.fileUrl)) : ''));
+  const isPdf = Boolean(score.format === 'pdf' || (score.fileUrl && score.fileUrl.toLowerCase().endsWith('.pdf')));
+
+  if (isDownload || (!isPdf && !score.driveUrl)) {
     const a = document.createElement('a');
-    a.href = downloadTarget;
+    a.href = safeUrl;
     a.download = score.fileName || `${score.title}.${score.format || 'nwc'}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     toast(`📥 '${score.fileName || score.title}' 악보 파일을 다운로드합니다.`);
   } else {
-    const viewUrl = score.driveUrl || fileUrl;
-    window.open(viewUrl, '_blank');
+    window.open(safeUrl, '_blank');
   }
 }
 

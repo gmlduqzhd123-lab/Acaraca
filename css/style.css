@@ -1491,7 +1491,7 @@ html[data-theme="dark"] .chord-play-btn.playing {
 
 .feedback-feed { display: flex; flex-direction: column; gap: 10px; }
 .feedback-bubble { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: transform .1s; }
-.feedback-bubble-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; }
+.feedback-bubble-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; flex-wrap: wrap; gap: 6px; }
 .feedback-author { font-weight: 700; color: var(--primary); }
 .feedback-time-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; font-size: 10px; font-weight: 700; color: var(--primary); cursor: pointer; }
 .feedback-time-chip:hover { background: var(--primary); color: #fff; }
