@@ -1610,14 +1610,14 @@ function renderScores() {
   }
 
   const categoryOptions = ['전체', '남성팀', '혼성팀', '연구회', '가요', '동요', 'POP', 'OST', '캐롤', '클래식', '창작', '페스티벌', '총보', '파트보'];
-  const yearOptions = ['전체 연도', '2025년', '2024년', '2023년', '2022년', '2021년'];
+  const yearOptions = ['전체 연도', '2025년', '2024년', '2023년', '2022년', '2021년', '2020년 이전'];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
       el('div', {},
         el('p', {class: 'eyebrow', text: 'OUR SCORE ARCHIVE'}),
         el('h1', {text: '악보 창고'}),
-        el('p', {text: `아카라카 및 한국아카펠라교육연구회 악보 아카이브 (총 ${state.scores.length.toLocaleString()}개 악보)`})
+        el('p', {text: `아카라카 및 연구회 통합 악보 아카이브 (총 ${state.scores.length.toLocaleString()}개 악보)`})
       ),
       el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap;'},
         button('📁 드라이브 폴더 열기 ↗', () => window.open('https://drive.google.com/drive/folders/1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb', '_blank'), 'button secondary small', 'external'),
@@ -1649,7 +1649,7 @@ function renderScores() {
 
   const yearChips = el('div', {class: 'chip-group'},
     yearOptions.map(yr => {
-      const yearVal = yr === '전체 연도' ? '' : yr.replace('년', '');
+      const yearVal = yr === '전체 연도' ? '' : yr === '2020년 이전' ? '2020이전' : yr.replace('년', '');
       return button(yr, () => {
         state.scoreFilters.year = yearVal;
         for (const btn of yearChips.querySelectorAll('button')) {
@@ -1706,7 +1706,11 @@ function renderScores() {
         if (!matchesCategory) return false;
       }
       if (sId && sc.songId !== sId) return false;
-      if (yr && sc.year && sc.year !== yr) return false;
+      if (yr === '2020이전') {
+        if (!sc.year || Number(sc.year) > 2020) return false;
+      } else if (yr && sc.year && sc.year !== yr) {
+        return false;
+      }
       if (q) {
         const song = state.songs.find(s => s.id === sc.songId);
         const matchTitle = (sc.title || '').toLowerCase().includes(q);
@@ -1776,6 +1780,8 @@ function renderScores() {
 
       const formatLabel = sc.fileType === 'nwc' || sc.format === 'nwc'
         ? '🎵 NWC 악보'
+        : sc.fileType === 'nwctxt' || sc.format === 'nwctxt'
+        ? '📝 NWC 텍스트 악보'
         : sc.fileType === 'midi' || sc.format === 'midi'
         ? '🎹 MIDI 음원'
         : sc.fileType === 'audio' || sc.format === 'audio'
