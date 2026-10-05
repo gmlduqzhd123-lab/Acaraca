@@ -33,6 +33,16 @@ import {
   deleteCustomEducation
 } from './archive.js';
 import { saveMediaFile, getMediaBlobUrl } from './mediaStorage.js';
+import {
+  requestWakeLock,
+  releaseWakeLock,
+  isWakeLockActive,
+  enterPocketMode,
+  exitPocketMode,
+  isPocketModeActive,
+  updateMediaSession,
+  setMediaSessionPlaybackState
+} from './backgroundPlay.js';
 
 const app = document.getElementById('app');
 const labels = {
@@ -221,6 +231,11 @@ function openInstallDialog() {
 
 function openGuideDialog() {
   const dialog = document.getElementById('guide-dialog');
+  if (dialog) dialog.showModal();
+}
+
+function openBackgroundGuideModal() {
+  const dialog = document.getElementById('background-guide-dialog');
   if (dialog) dialog.showModal();
 }
 
@@ -910,19 +925,52 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     }
   });
 
+  function syncAudioMediaSession() {
+    updateMediaSession({
+      title: audioData.label || title,
+      artist: 'AcaRaca 현장 녹음본',
+      album: '연습 일지',
+      onPlay: () => { audio.play().catch(() => {}); },
+      onPause: () => { audio.pause(); },
+      onSeekBackward: () => { audio.currentTime = Math.max(0, (audio.currentTime || 0) - 5); },
+      onSeekForward: () => { audio.currentTime = Math.min(audio.duration || 9999, (audio.currentTime || 0) + 5); },
+      position: audio.currentTime || 0,
+      duration: audio.duration || audioData.duration || 0,
+      playbackRate: speed
+    });
+    setMediaSessionPlaybackState(isPlaying ? 'playing' : 'paused');
+  }
+
+  const pocketBtn = el('button', {
+    type: 'button',
+    class: 'chip small',
+    text: '🔒 절전',
+    title: '화면 끄고 주머니에 넣은 채 계속 듣기 (포켓 절전 모드)',
+    onclick: () => {
+      enterPocketMode({
+        title: audioData.label || title,
+        partLabel: '연습 일지 현장 녹음본 · 백그라운드 재생 중'
+      });
+      toast('🔒 화면 절전 모드가 켜졌습니다. 화면을 두 번 탭하면 잠금이 해제됩니다.');
+    }
+  });
+
   const header = el('div', {class: 'audio-player-header'},
     el('span', {text: `🎙️ ${audioData.label || title}`}),
-    rateBtn
+    el('div', {style: 'display: flex; gap: 6px; align-items: center;'}, pocketBtn, rateBtn)
   );
 
   const playBtn = button('재생', () => {
     if (isPlaying) {
       audio.pause();
       isPlaying = false;
+      setMediaSessionPlaybackState('paused');
       playBtn.replaceChildren(icon('play'), document.createTextNode('재생'));
     } else {
       audio.play().then(() => {
         isPlaying = true;
+        requestWakeLock();
+        syncAudioMediaSession();
         playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
       }).catch((e) => {
         console.warn('Audio play failed:', e);
@@ -1062,6 +1110,8 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
         audio.pause();
         audio.src = '';
       } catch (e) {}
+      releaseWakeLock();
+      exitPocketMode();
     }
   };
 }
@@ -3510,8 +3560,9 @@ function renderPlayerController(player, song, part) {
   );
 
   const landscapeBtn = button('가로 확대', () => player.toggleLandscape?.(), 'text-button practice-pitch-btn', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'});
+  const pocketBtn = button('화면 절전', () => player.enterPocketMode?.(), 'text-button practice-pitch-btn', 'eye', {'aria-label': '화면 잠금 및 주머니 절전 모드'});
   const pitchBtn = button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'text-button practice-pitch-btn', 'music');
-  const subrowRight = el('div', {style: 'display: flex; gap: 8px; align-items: center; flex-wrap: wrap;'}, landscapeBtn, pitchBtn);
+  const subrowRight = el('div', {style: 'display: flex; gap: 8px; align-items: center; flex-wrap: wrap;'}, landscapeBtn, pocketBtn, pitchBtn);
   const subrow = el('div', {class: 'practice-subrow'}, speedGroup, subrowRight);
 
   // --- A-B Section Loop (구간 반복 연습) ---
@@ -3881,6 +3932,27 @@ function renderPractice(song, part, record = true) {
   const actions = el('div', {class: 'player-actions'},
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('가로 확대', () => state.player?.toggleLandscape?.(), 'button secondary', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'}),
+    button('화면 절전 (포켓)', () => {
+      enterPocketMode({
+        title: `${song.title} (${PARTS[part]})`,
+        partLabel: `${song.artist || 'AcaRaca'} · 포켓 절전 모드`
+      });
+      toast('🔒 화면 절전 모드가 켜졌습니다. 화면을 두 번 탭하면 잠금이 해제됩니다.');
+    }, 'button secondary', 'eye', {'aria-label': '화면 잠금 및 주머니 절전 모드'}),
+    button('화면 켜짐 유지', async () => {
+      if (isWakeLockActive()) {
+        await releaseWakeLock();
+        toast('💡 화면 자동 꺼짐 방지를 해제했습니다.');
+      } else {
+        const ok = await requestWakeLock();
+        if (ok) {
+          toast('💡 화면이 꺼지지 않도록 켜짐 유지를 활성화했습니다.');
+        } else {
+          toast('이 브라우저에서는 화면 켜짐 유지를 지원하지 않습니다.');
+        }
+      }
+    }, 'button secondary', 'sun', {'aria-label': '연습 중 화면 꺼짐 방지 토글'}),
+    button('백그라운드 안내', () => openBackgroundGuideModal(), 'button ghost', 'sparkles', {'aria-label': '모바일 백그라운드 및 화면 잠금 안내'}),
     button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
     songScores.length ? button(`악보 창고 (${songScores.length})`, () => {
@@ -3919,6 +3991,12 @@ function renderSettings() {
     theme = value; write('theme', theme); applyTheme();
     for (const node of themePanel.querySelectorAll('[data-theme-choice]')) { node.classList.toggle('active', node.dataset.themeChoice === theme); node.setAttribute('aria-pressed', String(node.dataset.themeChoice === theme)); }
   }, `choice-button${theme === value ? ' active' : ''}`, null, {'data-theme-choice': value, 'aria-pressed': String(theme === value)}))));
+  const bgPlayPanel = el('section', {class: 'settings-panel'},
+    icon('sparkles'),
+    el('h2', {text: '모바일 백그라운드 & 절전 모드'}),
+    el('p', {text: '스마트폰 화면을 끄거나 주머니에 넣고 이동하며 끊김 없이 아카펠라를 연습할 수 있는 기능입니다.'}),
+    button('백그라운드 & 절전 모드 안내', () => openBackgroundGuideModal(), 'button secondary', 'sparkles')
+  );
   const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary', 'external'));
   const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록'}), el('p', {text: '즐겨찾기와 최근 연습 기록은 이 브라우저에만 저장돼요. 다른 기기와 자동으로 동기화되지 않습니다.'}),
     !isAvailable() && el('p', {class: 'notice warning', text: '브라우저 저장소를 사용할 수 없어 현재 세션에서만 기록됩니다.'}),
@@ -3928,7 +4006,7 @@ function renderSettings() {
       state.favorites.clear(); state.recent = []; state.progress = {};
       toast('개인 연습 기록을 초기화했어요.');
     }, 'button secondary danger'));
-  app.append(el('div', {class: 'settings-grid'}, partPanel, themePanel, dataPanel, privacyPanel));
+  app.append(el('div', {class: 'settings-grid'}, partPanel, themePanel, bgPlayPanel, dataPanel, privacyPanel));
 }
 
 function normalizeRoute() {

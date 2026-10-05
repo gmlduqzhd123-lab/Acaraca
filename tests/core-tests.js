@@ -20,6 +20,16 @@ import {
   attachMediaToRehearsal
 } from '../js/archive.js';
 import { icon } from '../js/ui.js';
+import {
+  requestWakeLock,
+  releaseWakeLock,
+  isWakeLockActive,
+  enterPocketMode,
+  exitPocketMode,
+  isPocketModeActive,
+  updateMediaSession,
+  setMediaSessionPlaybackState
+} from '../js/backgroundPlay.js';
 
 let nodeFs = null;
 if (typeof process !== 'undefined' && process.versions?.node) {
@@ -441,6 +451,125 @@ export function runCoreTests() {
   });
 
   looper.destroy();
+
+  // --- Mobile Background Play & Pocket Mode Core Tests ---
+  check('초기 Wake Lock 상태는 false', () => isWakeLockActive() === false);
+
+  check('초기 포켓 모드 상태는 false', () => isPocketModeActive() === false);
+
+  exitPocketMode();
+  check('비활성 상태에서 exitPocketMode 호출 시에도 false 유지', () => isPocketModeActive() === false);
+
+  // Test Wake Lock API error resilience (e.g. Node env without navigator.wakeLock)
+  const wakeLockPromise = requestWakeLock();
+  check('requestWakeLock 안전 실행 (Promise 반환)', () => typeof wakeLockPromise?.then === 'function');
+  const releasePromise = releaseWakeLock();
+  check('releaseWakeLock 안전 실행 (Promise 반환)', () => typeof releasePromise?.then === 'function');
+
+  // Test MediaSession registration & handlers
+  const origNavDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const mockHandlers = {};
+  let mockMeta = null;
+  let mockPlaybackState = 'none';
+  try {
+    Object.defineProperty(globalThis, 'navigator', {
+      value: {
+        mediaSession: {
+          setActionHandler(name, fn) { mockHandlers[name] = fn; },
+          set metadata(meta) { mockMeta = meta; },
+          get metadata() { return mockMeta; },
+          set playbackState(st) { mockPlaybackState = st; },
+          get playbackState() { return mockPlaybackState; },
+          setPositionState() {}
+        }
+      },
+      configurable: true,
+      writable: true
+    });
+
+    let playTriggered = false;
+    let pauseTriggered = false;
+    const ok = updateMediaSession({
+      title: '바람이 불어오는 곳',
+      artist: '김광석 / AcaRaca',
+      album: 'AcaRaca Collection',
+      onPlay: () => { playTriggered = true; },
+      onPause: () => { pauseTriggered = true; }
+    });
+
+    check('updateMediaSession 정상 등록', () => ok === true);
+    check('미디어 세션 핸들러(play/pause) 바인딩 확인', () => {
+      mockHandlers.play?.();
+      mockHandlers.pause?.();
+      return playTriggered === true && pauseTriggered === true;
+    });
+
+    setMediaSessionPlaybackState('playing');
+    check('setMediaSessionPlaybackState("playing") 상태 반영', () => mockPlaybackState === 'playing');
+    setMediaSessionPlaybackState('paused');
+    check('setMediaSessionPlaybackState("paused") 상태 반영', () => mockPlaybackState === 'paused');
+  } finally {
+    if (origNavDescriptor) Object.defineProperty(globalThis, 'navigator', origNavDescriptor);
+    else delete globalThis.navigator;
+  }
+
+  // Test Pocket Mode DOM lifecycle (Enter / Exit)
+  const prevDoc = globalThis.document;
+  try {
+    const mockBody = {
+      classList: {
+        _set: new Set(),
+        add(c) { this._set.add(c); },
+        remove(c) { this._set.delete(c); },
+        contains(c) { return this._set.has(c); }
+      },
+      children: [],
+      appendChild(node) {
+        this.children.push(node);
+        node.parentNode = this;
+      },
+      removeChild(node) {
+        const idx = this.children.indexOf(node);
+        if (idx >= 0) this.children.splice(idx, 1);
+        node.parentNode = null;
+      }
+    };
+
+    globalThis.document = {
+      body: mockBody,
+      createElement(tag) {
+        return {
+          tagName: tag.toUpperCase(),
+          id: '',
+          className: '',
+          attributes: {},
+          innerHTML: '',
+          parentNode: null,
+          setAttribute(k, v) { this.attributes[k] = v; },
+          getAttribute(k) { return this.attributes[k]; },
+          addEventListener() {},
+          querySelector() { return null; }
+        };
+      }
+    };
+
+    let unlockNotified = false;
+    enterPocketMode({
+      title: '풍선 (테너 파트)',
+      partLabel: '동방신기 · 포켓 절전 모드',
+      onUnlock: () => { unlockNotified = true; }
+    });
+
+    check('enterPocketMode 호출 시 isPocketModeActive() true 전환', () => isPocketModeActive() === true);
+    check('enterPocketMode 시 body.classList in-pocket-mode 추가', () => mockBody.classList.contains('in-pocket-mode'));
+
+    exitPocketMode();
+    check('exitPocketMode 호출 시 isPocketModeActive() false 복귀', () => isPocketModeActive() === false);
+    check('exitPocketMode 시 body.classList in-pocket-mode 제거', () => !mockBody.classList.contains('in-pocket-mode'));
+  } finally {
+    if (prevDoc !== undefined) globalThis.document = prevDoc;
+    else delete globalThis.document;
+  }
 
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };
 }

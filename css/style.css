@@ -1754,6 +1754,137 @@ html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #
 
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes page-enter { from { opacity: .3; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* OLED Pocket Mode / Screen Lock Veil */
+.pocket-mode-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(env(safe-area-inset-top, 24px) + 36px) 24px calc(env(safe-area-inset-bottom, 24px) + 36px);
+  color: #ffffff;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  box-sizing: border-box;
+}
+
+.pocket-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.65;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pocket-lock-icon { font-size: 18px; }
+
+.pocket-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 380px;
+}
+
+.pocket-song-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  opacity: 0.9;
+  letter-spacing: -0.3px;
+}
+
+.pocket-part-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #34d399;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.pocket-pulse-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.pocket-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse-dot 1.8s infinite;
+}
+
+.pocket-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 28px;
+  line-height: 1.5;
+  transition: color 0.25s, transform 0.25s;
+}
+
+.pocket-hint.highlight {
+  color: #facc15;
+  font-weight: 700;
+  transform: scale(1.05);
+}
+
+.pocket-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pocket-unlock-button {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 12px 34px;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.pocket-unlock-button:active {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(0.97);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.player-pocket-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

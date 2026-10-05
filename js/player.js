@@ -1,3 +1,14 @@
+import {
+  requestWakeLock,
+  releaseWakeLock,
+  startAudioAnchor,
+  stopAudioAnchor,
+  updateMediaSession,
+  setMediaSessionPlaybackState,
+  enterPocketMode,
+  exitPocketMode,
+} from './backgroundPlay.js';
+
 const YOUTUBE_HOSTS = new Set([
   'youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com',
   'youtu.be', 'www.youtu.be', 'youtube-nocookie.com', 'www.youtube-nocookie.com',
@@ -90,6 +101,20 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
 
   let isLandscapeExpanded = false;
   let rotateAngle = 90;
+
+  const pocketBtn = document.createElement('button');
+  pocketBtn.type = 'button';
+  pocketBtn.className = 'player-pocket-btn';
+  pocketBtn.setAttribute('aria-label', '화면 끄고 계속 듣기 (포켓 절전 모드)');
+  pocketBtn.innerHTML = '<span>🔒 절전</span>';
+  pocketBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    enterPocketMode({
+      title,
+      partLabel: 'AcaRaca 연습 영상 · 백그라운드 재생 중',
+      onUnlock: () => {}
+    });
+  });
 
   const expandBtn = document.createElement('button');
   expandBtn.type = 'button';
@@ -198,6 +223,35 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     }
   }
 
+  function syncMediaSession() {
+    updateMediaSession({
+      title,
+      artist: 'AcaRaca 아카펠라',
+      album: '파트 연습실',
+      artwork: parsed.videoId ? `https://i.ytimg.com/vi/${parsed.videoId}/hqdefault.jpg` : null,
+      onPlay: () => {
+        sendYT('playVideo', []);
+        startAudioAnchor();
+      },
+      onPause: () => {
+        sendYT('pauseVideo', []);
+      },
+      onSeekBackward: () => {
+        const target = Math.max(0, currentTime - 5);
+        currentTime = target;
+        sendYT('seekTo', [target, true]);
+      },
+      onSeekForward: () => {
+        const target = currentTime + 5;
+        currentTime = target;
+        sendYT('seekTo', [target, true]);
+      },
+      position: currentTime,
+      playbackRate: currentRate,
+    });
+    setMediaSessionPlaybackState(isPlaying ? 'playing' : 'paused');
+  }
+
   function handleMessage(event) {
     if (!event.data) return;
     let data = event.data;
@@ -215,6 +269,13 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
             sendYT('seekTo', [pendingSeek, true]);
           }
           pendingSeek = null;
+        }
+        if (data.info.playerState === 1) {
+          requestWakeLock();
+          startAudioAnchor();
+          syncMediaSession();
+        } else if (data.info.playerState === 2) {
+          setMediaSessionPlaybackState('paused');
         }
       }
       if (typeof data.info.playbackRate === 'number') {
@@ -256,8 +317,11 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.allowFullscreen = true;
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    screen.replaceChildren(iframe, expandBtn, exitBtn, rotateBtn);
+    screen.replaceChildren(iframe, pocketBtn, expandBtn, exitBtn, rotateBtn);
     isPlaying = true;
+    requestWakeLock();
+    startAudioAnchor();
+    syncMediaSession();
     notifyChange();
 
     iframe.addEventListener('load', () => {
@@ -310,7 +374,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     label.textContent = parsed.type === 'playlist' ? '재생목록 재생' : '영상 재생';
     play.append(icon, label);
     play.addEventListener('click', () => mountFrame(0));
-    screen.append(play, expandBtn, exitBtn, rotateBtn);
+    screen.append(play, pocketBtn, expandBtn, exitBtn, rotateBtn);
     const link = document.createElement('a');
     link.className = 'button secondary player-external';
     link.href = parsed.originalUrl;
@@ -418,8 +482,21 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     },
     toggleLandscape(force) { return toggleLandscapeExpanded(force); },
     isLandscape() { return isLandscapeExpanded; },
+    enterPocketMode() {
+      return enterPocketMode({
+        title,
+        partLabel: 'AcaRaca 연습 영상 · 백그라운드 재생 중',
+        onUnlock: () => {}
+      });
+    },
+    exitPocketMode() {
+      return exitPocketMode();
+    },
     destroy() {
       destroyed = true;
+      releaseWakeLock();
+      exitPocketMode();
+      stopAudioAnchor();
       if (isLandscapeExpanded) {
         toggleLandscapeExpanded(false);
       }
