@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v34';
+const CACHE_NAME = 'acaroom-cache-v35';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -25,7 +25,19 @@ const CORE_ASSETS = [
   './assets/icons/logo.svg',
   './assets/icons/logo.png',
   './assets/images/fallback.svg',
-  './assets/images/acaraca-seal.png'
+  './assets/images/acaraca-seal.png',
+  './assets/icons/nav/home.png',
+  './assets/icons/nav/songs.png',
+  './assets/icons/nav/appreciation.png',
+  './assets/icons/nav/stage.png',
+  './assets/icons/nav/scores.png',
+  './assets/icons/nav/memories.png',
+  './assets/icons/nav/rehearsal.png',
+  './assets/icons/nav/practiceVideos.png',
+  './assets/icons/nav/education.png',
+  './assets/icons/nav/favorites.png',
+  './assets/icons/nav/recent.png',
+  './assets/icons/nav/settings.png'
 ];
 
 self.addEventListener('install', (event) => {

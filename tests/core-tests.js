@@ -213,6 +213,7 @@ export function runCoreTests() {
     check('education.json 11개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 11);
     check('모든 교육 자료 PDF 파일 실제 존재 검증', () => eduRaw.resources.every(r => r.fileUrl && nodeFs.existsSync(r.fileUrl)));
     check('네비게이션 12개 탭 아이콘 이미지 파일 실제 존재 검증', () => ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'].every(t => nodeFs.existsSync(`./assets/icons/nav/${t}.png`)));
+    check('모바일 하단 네비게이션 12개 전체 탭 연동 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes('const mobileTabs = Object.keys(labels);'));
     check('아카라카 영상 탭 레이블 반영 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '아카라카 영상'"));
     check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
     check('33곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {

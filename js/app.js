@@ -97,7 +97,7 @@ const state = {
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education'];
+const mobileTabs = Object.keys(labels);
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
