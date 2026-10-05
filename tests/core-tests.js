@@ -2,7 +2,7 @@ import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } fro
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES, parseNoteString } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState } from '../js/pitch.js';
 import {
   getAllFeedbacks,
   addFeedback,
@@ -350,6 +350,10 @@ export function runCoreTests() {
     });
     player2.destroy();
   }
+
+  const unsubsPitch = subscribePitchState(() => {});
+  check('피치파이프 구독 해제(unsubscribe) 함수 반환', () => typeof unsubsPitch === 'function');
+  unsubsPitch();
 
   // --- Section Looper (A-B 반복) Core Tests ---
   check('formatPlayerTime 시간 형식 변환', () => {

@@ -1436,7 +1436,7 @@ html[data-theme="dark"] .chord-play-btn.playing {
 .stage-modal-body { padding: 20px; max-height: 80vh; overflow-y: auto; }
 .stage-modal-player { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 16px; }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .stage-list-item { flex-direction: column; padding: 14px; gap: 12px; }
   .stage-list-thumb { width: 100%; min-width: 0; }
   .stage-list-actions { flex-direction: row; width: 100%; }
@@ -1706,7 +1706,7 @@ html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #
   .part-switcher { gap: 8px; }
   .part-switcher .button { padding-left: 9px; padding-right: 9px; }
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .page {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 20px));
     padding-bottom: max(96px, calc(86px + env(safe-area-inset-bottom, 20px)));

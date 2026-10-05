@@ -130,8 +130,8 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       } catch (e) {}
 
       try {
-        if (typeof screen !== 'undefined' && screen.orientation?.lock) {
-          await screen.orientation.lock('landscape');
+        if (typeof window !== 'undefined' && window.screen?.orientation?.lock) {
+          await window.screen.orientation.lock('landscape');
         }
       } catch (e) {}
     } else {
@@ -146,8 +146,8 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       } catch (e) {}
 
       try {
-        if (typeof screen !== 'undefined' && screen.orientation?.unlock) {
-          screen.orientation.unlock();
+        if (typeof window !== 'undefined' && window.screen?.orientation?.unlock) {
+          window.screen.orientation.unlock();
         }
       } catch (e) {}
     }
@@ -428,6 +428,11 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
         document.removeEventListener('keydown', handleKeyDown);
         document.body?.classList.remove('has-landscape-player');
       }
+      try {
+        if (typeof window !== 'undefined' && window.screen?.orientation?.unlock) {
+          window.screen.orientation.unlock();
+        }
+      } catch (e) {}
       if (ticker) clearInterval(ticker);
       if (typeof window !== 'undefined') {
         window.removeEventListener('message', handleMessage);

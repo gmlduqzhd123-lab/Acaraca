@@ -3153,7 +3153,7 @@ function openPitchPipe() {
     }));
   }
 
-  subscribePitchState((playing) => {
+  const unsubscribePitch = subscribePitchState((playing) => {
     renderStatus(playing);
     renderKeyboard();
   });
@@ -3166,7 +3166,10 @@ function openPitchPipe() {
   presetA4.onclick = () => { currentOctave = 4; renderOctaves(); playPitch(9, 4); };
   presetC4.onclick = () => { currentOctave = 4; renderOctaves(); playPitch(0, 4); };
 
-  dialog.addEventListener('close', () => stopPitch(), { once: true });
+  dialog.addEventListener('close', () => {
+    stopPitch();
+    unsubscribePitch();
+  }, { once: true });
   dialog.showModal();
 }
 
