@@ -2633,7 +2633,7 @@ function renderAppreciation() {
         ) : null,
         el('div', {class: 'custom-video-footer'},
           el('span', {}, `추천: ${item.uploader || '단원'} · 📅 ${item.date || ''}`),
-          el('div', {style: 'display: flex; gap: 6px; align-items: center;'},
+          el('div', {class: 'custom-video-actions'},
             item.songId ? button('연습실 ↗', (e) => {
               e.stopPropagation();
               navigate({song: item.songId});

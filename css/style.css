@@ -178,7 +178,7 @@ button, input, select, textarea { outline-offset: 4px; }
 .app-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 0 4px; margin-top: 10px; border-top: 1px solid var(--border); color: #65715f; font-size: 9px; }
 .app-footer a:hover { color: var(--primary); }
 
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 18px; min-height: 42px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--primary); font-size: 12px; font-weight: 600; line-height: 1.4; transition: background .18s, border-color .18s, transform .18s; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 18px; min-height: 42px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--primary); font-size: 12px; font-weight: 600; line-height: 1.4; white-space: nowrap; transition: background .18s, border-color .18s, transform .18s; }
 .button:hover { background: var(--surface-soft); border-color: #a9b9a2; }
 .button.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
 .button.primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
@@ -1192,8 +1192,10 @@ html[data-theme="dark"] .chord-play-btn.playing {
 .custom-video-body { padding: 16px 18px; display: flex; flex-direction: column; flex: 1; }
 .custom-video-title { font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.45; margin-bottom: 8px; cursor: pointer; word-break: keep-all; }
 .custom-video-title:hover { color: var(--primary); }
-.custom-video-desc { font-size: 12.5px; color: var(--muted-strong); line-height: 1.55; margin-bottom: 12px; word-break: keep-all; background: var(--bg); padding: 10px 12px; border-radius: 8px; }
-.custom-video-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+.custom-video-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+.custom-video-footer > span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.custom-video-actions { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.custom-video-footer .button, .custom-video-actions .button { white-space: nowrap !important; flex-shrink: 0; min-height: 32px; padding: 6px 11px; }
 
 /* Dark Theme Overrides */
 html[data-theme="dark"] .qr-preview-box { background: #fff; }

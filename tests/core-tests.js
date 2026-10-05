@@ -201,6 +201,13 @@ export function runCoreTests() {
       const artists = apprecRaw.videos.map(v => v.artist);
       return ['메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스'].every(g => artists.some(a => a.includes(g)));
     });
+    check('33개 연습곡 감상 영상 국내외 프로 아카펠라 그룹 영상 검증', () => {
+      const practiceVideos = apprecRaw.videos.filter(v => v.category === '연습곡');
+      return practiceVideos.length === 33 && practiceVideos.every(v => {
+        const isNotGuide = !v.title.includes('위주') && !v.title.includes('파트)') && !v.uploader.includes('엽쌤');
+        return isNotGuide && v.videoUrl.startsWith('https://www.youtube.com/watch?v=');
+      });
+    });
 
     const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
     check('education.json 11개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 11);
