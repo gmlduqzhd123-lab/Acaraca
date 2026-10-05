@@ -30,9 +30,7 @@ import {
   addCustomMemory,
   deleteCustomMemory,
   addCustomEducation,
-  deleteCustomEducation,
-  loadLyrics,
-  getLyricsForSong
+  deleteCustomEducation
 } from './archive.js';
 import { saveMediaFile, getMediaBlobUrl } from './mediaStorage.js';
 
@@ -79,10 +77,6 @@ const state = {
   education: [],
   practiceVideos: [],
   appreciation: [],
-  lyrics: [],
-  lyricsFontSize: Number(read('lyricsFontSize', 15)) || 15,
-  lyricsHideOtherParts: read('lyricsHideOtherParts', false) === true,
-  showBreatheMarks: read('showBreatheMarks', true) !== false,
   loading: true,
   loadError: '',
   favorites: new Set(favoriteIds),
@@ -3371,336 +3365,12 @@ function renderPlayerController(player, song, part) {
   return panel;
 }
 
-function matchPart(lineParts, selectedPart) {
-  if (!selectedPart || selectedPart === 'all') return true;
-  if (!Array.isArray(lineParts) || !lineParts.length) return false;
-  if (lineParts.includes('all')) return true;
-  if (lineParts.includes(selectedPart)) return true;
-  const aliases = {
-    part1: ['part1', 'lead', 'soprano'],
-    lead: ['lead', 'part1', 'soprano'],
-    part2: ['part2', 'alto', 'soprano'],
-    soprano: ['soprano', 'part1', 'part2', 'lead'],
-    part3: ['part3', 'tenor', 'alto'],
-    alto: ['alto', 'part2', 'part3'],
-    part4: ['part4', 'baritone', 'tenor'],
-    tenor: ['tenor', 'part3', 'part4'],
-    part5: ['part5', 'bass', 'baritone'],
-    baritone: ['baritone', 'part4', 'part5'],
-    bass: ['bass', 'part5', 'part6', 'part7'],
-    vp: ['vp', 'part6', 'part7']
-  };
-  const list = aliases[selectedPart] || [selectedPart];
-  return lineParts.some(p => list.includes(p));
-}
-
-function renderLyricsSheet(song, defaultPart = 'all') {
-  const songLyrics = getLyricsForSong(state.lyrics, song.id);
-  const container = el('section', {class: 'lyrics-panel', id: 'lyrics-sheet-section'});
-  container.style.setProperty('--lyrics-font-size', `${state.lyricsFontSize || 15}px`);
-
-  if (!songLyrics || !songLyrics.sections || !songLyrics.sections.length) {
-    container.append(
-      el('div', {class: 'lyrics-panel-header'},
-        el('div', {class: 'lyrics-title-group'},
-          el('h2', {}, icon('notes'), el('span', {text: '파트별 가사 & 호흡 큐시트'})),
-          el('p', {text: '이 곡은 아직 등록된 가사 및 호흡 큐시트가 없습니다.'})
-        )
-      )
-    );
-    return container;
-  }
-
-  let currentPart = defaultPart && (defaultPart === 'all' || PARTS[defaultPart]) ? defaultPart : 'all';
-  let showBreathe = state.showBreatheMarks !== false;
-  let hideOthers = state.lyricsHideOtherParts === true;
-  let fontSize = state.lyricsFontSize || 15;
-  const isExample = Boolean(songLyrics.isExample);
-
-  const titleGroup = el('div', {class: 'lyrics-title-group'},
-    el('h2', {},
-      icon('notes'),
-      el('span', {text: isExample ? '파트별 가사 & 호흡 큐시트' : '파트별 가사 & 호흡 싱크 큐시트'}),
-      isExample ? el('span', {class: 'badge example-badge', style: 'margin-left: 6px; font-size: 11px; background: rgba(224, 86, 36, 0.12); color: #c44018; font-weight: 700;', text: '예시 자료 (미검증)'}) : null,
-      songLyrics.key ? el('span', {class: 'badge', style: 'margin-left: 6px; font-size: 11px; background: rgba(25, 77, 70, 0.08); color: var(--primary);', text: `Key: ${songLyrics.key}`}) : null
-    ),
-    el('p', {text: isExample ? '악보·영상 대조 전 등록된 [예시 큐시트]입니다. 실제 영상 싱크와 차이가 있을 수 있어 악보·영상 대조 전까지 시간 이동 기능이 꺼져 있습니다.' : '타임스탬프를 누르면 해당 구간으로 이동하며, 호흡(∨) 및 파트별 큐를 확인할 수 있습니다.'})
-  );
-
-  const sizeDisplay = el('span', {class: 'lyrics-font-indicator', text: `${fontSize}px`});
-  const zoomOutBtn = button('A-', () => {
-    if (fontSize > 12) {
-      fontSize -= 1;
-      state.lyricsFontSize = fontSize;
-      write('lyricsFontSize', fontSize);
-      container.style.setProperty('--lyrics-font-size', `${fontSize}px`);
-      sizeDisplay.textContent = `${fontSize}px`;
-    }
-  }, 'lyrics-zoom-btn', null, {'title': '가사 글자 크기 축소 (A-)'});
-
-  const zoomInBtn = button('A+', () => {
-    if (fontSize < 24) {
-      fontSize += 1;
-      state.lyricsFontSize = fontSize;
-      write('lyricsFontSize', fontSize);
-      container.style.setProperty('--lyrics-font-size', `${fontSize}px`);
-      sizeDisplay.textContent = `${fontSize}px`;
-    }
-  }, 'lyrics-zoom-btn', null, {'title': '가사 글자 크기 확대 (A+)'});
-
-  const breatheToggleBtn = button(
-    showBreathe ? '∨ 숨표: 켜짐' : '∨ 숨표: 꺼짐',
-    () => {
-      showBreathe = !showBreathe;
-      state.showBreatheMarks = showBreathe;
-      write('showBreatheMarks', showBreathe);
-      breatheToggleBtn.classList.toggle('active', showBreathe);
-      breatheToggleBtn.textContent = showBreathe ? '∨ 숨표: 켜짐' : '∨ 숨표: 꺼짐';
-      container.querySelectorAll('.lyrics-breathe').forEach(span => {
-        span.classList.toggle('hidden', !showBreathe);
-      });
-      toast(showBreathe ? '호흡(숨표 ∨) 표시를 켰어요.' : '호흡(숨표 ∨) 표시를 숨겼어요.');
-    },
-    `lyrics-tool-btn${showBreathe ? ' active' : ''}`,
-    null,
-    {'title': '가사 내 숨표(∨) 가시성 토글'}
-  );
-
-  const copyLyricsBtn = button(
-    '가사 복사 📋',
-    () => {
-      const linesToCopy = [];
-      const partLabel = currentPart === 'all' ? '전체 파트' : (PARTS[currentPart] || currentPart);
-      linesToCopy.push(`[${song.title} - ${song.artist || 'AcaRaca'}] (${partLabel})`);
-      linesToCopy.push('');
-      songLyrics.sections.forEach(sec => {
-        linesToCopy.push(`[${sec.name}]${sec.cue ? ` (${sec.cue})` : ''}`);
-        (sec.lines || []).forEach(l => {
-          if (currentPart === 'all' || matchPart(l.parts, currentPart)) {
-            const timeStr = l.time ? `[${l.time}] ` : '';
-            const cueStr = l.cue ? ` (${l.cue})` : '';
-            linesToCopy.push(`${timeStr}${l.text}${cueStr}`);
-          }
-        });
-        linesToCopy.push('');
-      });
-      const fullText = linesToCopy.join('\n').trim();
-      if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(fullText).then(() => {
-          toast(`📋 ${partLabel} 가사 & 큐시트를 복사했어요!`);
-        }).catch(() => {
-          toast('클립보드 접근이 제한되었습니다.');
-        });
-      } else {
-        toast('클립보드 복사를 지원하지 않는 환경입니다.');
-      }
-    },
-    'lyrics-tool-btn',
-    null,
-    {'title': '가사 텍스트 전체 클립보드 복사'}
-  );
-
-  const toolbar = el('div', {class: 'lyrics-toolbar'},
-    zoomOutBtn,
-    sizeDisplay,
-    zoomInBtn,
-    breatheToggleBtn,
-    copyLyricsBtn
-  );
-
-  const header = el('div', {class: 'lyrics-panel-header'}, titleGroup, toolbar);
-
-  const lyricParts = new Set();
-  songLyrics.sections.forEach(sec => {
-    (sec.lines || []).forEach(l => {
-      (l.parts || []).forEach(p => {
-        if (p !== 'all' && PARTS[p]) lyricParts.add(p);
-      });
-    });
-  });
-  const availParts = availableParts(song).filter(p => p !== 'full');
-  const uniqueParts = Array.from(new Set([...availParts, ...lyricParts]));
-
-  const partNav = el('div', {class: 'lyrics-part-nav'});
-  partNav.append(el('span', {class: 'lyrics-part-nav-label', text: '파트 강조:'}));
-
-  const allChip = button('전체', () => {
-    currentPart = 'all';
-    updateView();
-  }, `lyrics-part-chip${currentPart === 'all' ? ' active' : ''}`, null, {
-    'data-part': 'all',
-    'aria-pressed': String(currentPart === 'all')
-  });
-  partNav.append(allChip);
-
-  uniqueParts.forEach(p => {
-    const isMy = p === state.myPart;
-    const chipText = isMy ? `${PARTS[p]} ★` : PARTS[p];
-    const chip = button(chipText, () => {
-      currentPart = p;
-      updateView();
-    }, `lyrics-part-chip${currentPart === p ? ' active' : ''}`, null, {
-      'data-part': p,
-      'aria-pressed': String(currentPart === p),
-      'title': isMy ? `${PARTS[p]} (내 파트)` : PARTS[p]
-    });
-    partNav.append(chip);
-  });
-
-  const viewToggleBtn = button(
-    hideOthers ? '👁️ 모든 파트 가사 보기' : '🎯 선택 파트 가사만 보기',
-    () => {
-      hideOthers = !hideOthers;
-      state.lyricsHideOtherParts = hideOthers;
-      write('lyricsHideOtherParts', hideOthers);
-      updateView();
-      toast(hideOthers ? '선택한 파트 가사만 모아서 봅니다.' : '전체 파트 가사 흐름을 봅니다.');
-    },
-    'lyrics-view-toggle',
-    null,
-    {'title': '다른 파트 숨기기/모두 보기 토글'}
-  );
-  partNav.append(viewToggleBtn);
-
-  const sectionsHost = el('div', {class: 'lyrics-sections-host'});
-
-  function handleSeek(seconds, timeStr) {
-    if (state.player && typeof state.player.seekTo === 'function') {
-      state.player.seekTo(seconds);
-      toast(`⏱️ [${timeStr}] 구간으로 이동했습니다.`);
-    } else {
-      const targetPart = (currentPart !== 'all' && currentPart) ? currentPart : (state.myPart || preferredPart(song, state.myPart) || availableParts(song)[0]);
-      if (targetPart) {
-        state.initialSeek = seconds;
-        startPractice(song, targetPart);
-        toast(`⏱️ [${timeStr}] 파트 연습 화면으로 이동하여 재생합니다.`);
-      } else {
-        toast(`⏱️ [${timeStr}] 파트 연습 화면에서 영상과 함께 싱크 재생됩니다.`);
-      }
-    }
-  }
-
-  function formatTextWithBreathe(text) {
-    const p = el('div', {class: 'lyrics-text-content'});
-    if (!text.includes('∨')) {
-      p.textContent = text;
-      return p;
-    }
-    const chunks = text.split('∨');
-    chunks.forEach((chunk, idx) => {
-      if (chunk) p.append(document.createTextNode(chunk));
-      if (idx < chunks.length - 1) {
-        const b = el('span', {
-          class: `lyrics-breathe${showBreathe ? '' : ' hidden'}`,
-          text: '∨',
-          title: '호흡 구간 (숨표)',
-          'aria-label': '숨표'
-        });
-        p.append(b);
-      }
-    });
-    return p;
-  }
-
-  const sectionNodes = songLyrics.sections.map(sec => {
-    const secEl = el('div', {class: 'lyrics-section'});
-    const secHeader = el('div', {class: 'lyrics-section-header'},
-      el('span', {class: 'lyrics-section-title', text: sec.name}),
-      sec.cue ? el('span', {class: 'lyrics-section-cue', text: `💡 ${sec.cue}`}) : null
-    );
-    const lineList = el('div', {class: 'lyrics-line-list'});
-
-    const lineElements = (sec.lines || []).map(line => {
-      const lineParts = Array.isArray(line.parts) ? line.parts : ['all'];
-      const lineEl = el('div', {class: 'lyrics-line'});
-      lineEl.dataset.parts = JSON.stringify(lineParts);
-
-      const meta = el('div', {class: 'lyrics-line-meta'});
-      if (line.time) {
-        if (isExample) {
-          const disabledTimeBtn = el('button', {
-            type: 'button',
-            class: 'lyrics-time-btn disabled',
-            disabled: true,
-            'aria-disabled': 'true',
-            title: '악보·영상 대조 전에는 시간 이동 기능이 비활성화됩니다 (예시 자료)',
-            onclick: (e) => {
-              e.preventDefault();
-              toast('⚠️ 악보·영상 대조 전 등록된 예시 자료이므로 시간 이동이 지원되지 않습니다.');
-            }
-          }, `⏱️ ${line.time}`);
-          meta.append(disabledTimeBtn);
-        } else {
-          meta.append(button(`▶ ${line.time}`, () => handleSeek(line.seconds || 0, line.time), 'lyrics-time-btn', null, {
-            'title': `${line.time} 구간 이동 및 재생`,
-            'aria-label': `${line.time} 구간으로 이동`
-          }));
-        }
-      }
-
-      const partBadgeText = lineParts.map(p => p === 'all' ? '전체' : (PARTS[p] || p)).join(', ');
-      meta.append(el('span', {class: 'lyrics-part-badge', text: partBadgeText}));
-
-      if (line.cue) {
-        meta.append(el('span', {class: 'lyrics-cue-text', text: line.cue}));
-      }
-
-      const textEl = formatTextWithBreathe(line.text || '');
-      lineEl.append(meta, textEl);
-      lineList.append(lineEl);
-      return { el: lineEl, parts: lineParts };
-    });
-
-    secEl.append(secHeader, lineList);
-    return { el: secEl, lines: lineElements };
-  });
-
-  sectionNodes.forEach(item => sectionsHost.append(item.el));
-
-  function updateView() {
-    partNav.querySelectorAll('.lyrics-part-chip').forEach(chip => {
-      const active = chip.dataset.part === currentPart;
-      chip.classList.toggle('active', active);
-      chip.setAttribute('aria-pressed', String(active));
-    });
-    viewToggleBtn.textContent = hideOthers ? '👁️ 모든 파트 가사 보기' : '🎯 선택 파트 가사만 보기';
-
-    sectionNodes.forEach(secItem => {
-      let visibleLinesInSection = 0;
-      secItem.lines.forEach(lineItem => {
-        const isMatch = (currentPart === 'all') || matchPart(lineItem.parts, currentPart);
-        const isHighlight = (currentPart !== 'all') && isMatch;
-        const isDimmed = (currentPart !== 'all') && !isMatch;
-        const shouldHide = hideOthers && !isMatch && (currentPart !== 'all');
-
-        lineItem.el.classList.toggle('highlight', isHighlight);
-        lineItem.el.classList.toggle('dimmed', isDimmed);
-        lineItem.el.style.display = shouldHide ? 'none' : '';
-
-        if (!shouldHide) visibleLinesInSection++;
-      });
-      secItem.el.style.display = visibleLinesInSection > 0 ? '' : 'none';
-    });
-  }
-
-  updateView();
-
-  const exampleAlert = isExample ? el('div', {class: 'lyrics-example-alert', role: 'note'},
-    icon('info'),
-    el('span', {text: '💡 이 곡의 가사 및 호흡 큐시트는 악보·영상 대조 전 등록된 [예시] 항목입니다. 실제 연습 자료로 오해를 방지하기 위해 악보·영상 대조 전까지 시간 이동 기능이 꺼져 있습니다.'})
-  ) : null;
-
-  container.append(header, ...(exampleAlert ? [exampleAlert] : []), partNav, sectionsHost);
-  return container;
-}
-
 function renderDetail(song) {
   const parts = availableParts(song);
   const preferred = preferredPart(song, state.myPart);
   const songPerformances = getPerformancesForSong(state.performances, song.id);
   const songRehearsals = getRehearsalsForSong(state.rehearsals, song.id);
   const songScores = getScoresForSong(state.scores, song.id);
-  const songLyrics = getLyricsForSong(state.lyrics, song.id);
 
   app.append(button('목록으로', () => navigate({tab: 'songs'}), 'text-button back-button', 'back'));
   const detail = el('div', {class: 'detail-layout'},
@@ -3713,10 +3383,6 @@ function renderDetail(song) {
         button(song.status === 'practice' ? '현재 연습에서 비우기' : '현재 연습에 추가', () => togglePracticeStatus(song), song.status === 'practice' ? 'button secondary' : 'button primary', song.status === 'practice' ? 'close' : 'plus'),
         button('QR 코드', () => showQR(song), 'button secondary', 'qr'),
         button('곡 공유', () => share(song), 'button secondary', 'share'),
-        button(songLyrics?.isExample ? '가사 & 큐시트 (예시)' : '가사 & 큐시트', () => {
-          const elLyrics = document.getElementById('lyrics-sheet-section');
-          if (elLyrics) elLyrics.scrollIntoView({ behavior: 'smooth' });
-        }, 'button secondary', 'notes'),
         button('영상 / 정보 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
         songScores.length ? button(`악보 창고 (${songScores.length})`, () => {
           state.scoreFilters.songId = song.id;
@@ -3738,8 +3404,6 @@ function renderDetail(song) {
   ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', button('영상 등록하기', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary')),
   button('+ 영상 추가 / 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'text-button', 'external'));
   app.append(partsSection);
-
-  app.append(renderLyricsSheet(song, state.myPart || preferredPart(song, state.myPart) || 'all'));
 
   if (songScores.length) {
     app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
@@ -3795,7 +3459,6 @@ function renderPractice(song, part, record = true) {
   const songRehearsals = getRehearsalsForSong(state.rehearsals, song.id);
   const songPerformances = getPerformancesForSong(state.performances, song.id);
   const songScores = getScoresForSong(state.scores, song.id);
-  const songLyrics = getLyricsForSong(state.lyrics, song.id);
   const rehearsalAudio = songRehearsals[0]?.audio?.url ? songRehearsals[0].audio : null;
 
   app.append(button('파트 선택으로', () => openSong(song), 'text-button back-button', 'back'),
@@ -3856,10 +3519,6 @@ function renderPractice(song, part, record = true) {
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
-    button(songLyrics?.isExample ? '가사 & 큐시트 (예시)' : '가사 & 큐시트', () => {
-      const elLyrics = document.getElementById('lyrics-sheet-section');
-      if (elLyrics) elLyrics.scrollIntoView({ behavior: 'smooth' });
-    }, 'button secondary', 'notes'),
     songScores.length ? button(`악보 창고 (${songScores.length})`, () => {
       state.scoreFilters.songId = song.id;
       navigate({tab: 'scores'});
@@ -3874,7 +3533,6 @@ function renderPractice(song, part, record = true) {
   
   if (abSwitcher) app.append(abSwitcher);
   app.append(startingPitchPanel, playerLayout, controller, actions, switches);
-  app.append(renderLyricsSheet(song, part));
 }
 
 function renderSettings() {
@@ -3976,7 +3634,7 @@ function render() {
 async function initialize() {
   state.loading = true; state.loadError = ''; render();
   try {
-    const [songRes, perfRes, rehRes, scoresRes, memoriesRes, eduRes, practiceVidRes, apprecRes, lyricsRes] = await Promise.all([
+    const [songRes, perfRes, rehRes, scoresRes, memoriesRes, eduRes, practiceVidRes, apprecRes] = await Promise.all([
       loadSongs(),
       loadPerformances(),
       loadRehearsals(),
@@ -3984,8 +3642,7 @@ async function initialize() {
       loadMemories(),
       loadEducation(),
       loadPracticeVideos(),
-      loadAppreciation(),
-      loadLyrics()
+      loadAppreciation()
     ]);
     state.songs = songRes.songs;
     const savedOverrides = read('statusOverrides', {});
@@ -4003,7 +3660,6 @@ async function initialize() {
     state.education = eduRes;
     state.practiceVideos = practiceVidRes;
     state.appreciation = apprecRes;
-    state.lyrics = lyricsRes || [];
     if (songRes.errors?.length && !songRes.songs.length) state.loadError = songRes.errors.join(' ');
     if (songRes.errors?.length && songRes.songs.length) toast(`${songRes.errors.length}개의 잘못된 데이터 항목을 제외하고 불러왔어요.`);
   } catch (error) { state.loadError = `${error.message || '자료를 확인할 수 없습니다.'} data/songs.json 파일과 HTTP 연결을 확인해 주세요.`; }

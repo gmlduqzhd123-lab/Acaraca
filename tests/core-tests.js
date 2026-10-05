@@ -16,8 +16,7 @@ import {
   addCustomPracticeVideo,
   deleteCustomPracticeVideo,
   addCustomAppreciation,
-  deleteCustomAppreciation,
-  getLyricsForSong
+  deleteCustomAppreciation
 } from '../js/archive.js';
 
 let nodeFs = null;
@@ -342,33 +341,7 @@ export function runCoreTests() {
     player2.destroy();
   }
 
-  if (nodeFs) {
-    try {
-      const lyricsRaw = nodeFs.readFileSync(new URL('../data/lyrics.json', import.meta.url), 'utf8');
-      const lyricsData = JSON.parse(lyricsRaw);
-      check('가사 데이터셋 존재 및 33곡 전체 지원', () => Array.isArray(lyricsData.lyrics) && lyricsData.lyrics.length >= 33);
-      check('보헤미안 랩소디 가사 및 호흡표기(∨) 확인', () => {
-        const br = getLyricsForSong(lyricsData.lyrics, 'bohemian-rhapsody-5');
-        return br && br.sections?.length > 0 && br.sections[0].lines[0].text.includes('∨') && br.isExample === false && br.verified === true;
-      });
-      check('단발머리 가사 및 큐 정보 확인', () => {
-        const sh = getLyricsForSong(lyricsData.lyrics, 'short-hair');
-        return sh && sh.sections?.length > 0 && sh.sections[0].lines.some(l => l.cue);
-      });
-      check('보헤미안 랩소디 6인용 예시(isExample) 및 미검증 플래그 확인', () => {
-        const br6 = getLyricsForSong(lyricsData.lyrics, 'bohemian-rhapsody-6');
-        return br6 && br6.isExample === true && br6.verified === false && Boolean(br6.notice) && br6.sections[0].lines[0].text.includes('[예시]');
-      });
-      check('예시 큐시트 15곡과 검증 큐시트 18곡 분류 검증', () => {
-        const examples = lyricsData.lyrics.filter(l => l.isExample === true);
-        const verified = lyricsData.lyrics.filter(l => l.isExample === false && l.verified === true);
-        return examples.length === 15 && verified.length === 18;
-      });
-      check('getLyricsForSong 없는 곡 fallback null', () => getLyricsForSong(lyricsData.lyrics, 'non-existent-song') === null);
-    } catch (e) {
-      results.push({ name: '가사 데이터셋 검증', passed: false, error: e.message });
-    }
-  }
+
 
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };
 }
