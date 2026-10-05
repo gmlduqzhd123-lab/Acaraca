@@ -947,6 +947,14 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     text: '🔒 절전',
     title: '화면 끄고 주머니에 넣은 채 계속 듣기 (포켓 절전 모드)',
     onclick: () => {
+      if (!isPlaying) {
+        audio.play().then(() => {
+          isPlaying = true;
+          requestWakeLock();
+          syncAudioMediaSession();
+          playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+        }).catch(() => {});
+      }
       enterPocketMode({
         title: audioData.label || title,
         partLabel: '연습 일지 현장 녹음본 · 백그라운드 재생 중'
@@ -1110,8 +1118,10 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
         audio.pause();
         audio.src = '';
       } catch (e) {}
+      activeAudios.delete(audio);
       releaseWakeLock();
       exitPocketMode();
+      setMediaSessionPlaybackState('none');
     }
   };
 }
@@ -3933,6 +3943,9 @@ function renderPractice(song, part, record = true) {
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('가로 확대', () => state.player?.toggleLandscape?.(), 'button secondary', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'}),
     button('화면 절전 (포켓)', () => {
+      if (state.player && !state.player.isMounted()) {
+        state.player.play();
+      }
       enterPocketMode({
         title: `${song.title} (${PARTS[part]})`,
         partLabel: `${song.artist || 'AcaRaca'} · 포켓 절전 모드`

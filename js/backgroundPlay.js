@@ -7,6 +7,7 @@ const SILENT_WAV_BASE64 = 'UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkY
 const SILENT_WAV_URI = `data:audio/wav;base64,${SILENT_WAV_BASE64}`;
 
 let wakeLockSentinel = null;
+let userWantsWakeLock = false;
 let audioAnchor = null;
 let currentPocketOverlay = null;
 let lastTapTime = 0;
@@ -16,11 +17,12 @@ let isAudioAnchorRunning = false;
  * Request Screen Wake Lock to prevent the screen from automatically sleeping or locking.
  */
 export async function requestWakeLock() {
+  userWantsWakeLock = true;
   if (typeof navigator === 'undefined' || !('wakeLock' in navigator)) {
     return false;
   }
   try {
-    if (wakeLockSentinel) return true;
+    if (wakeLockSentinel && !wakeLockSentinel.released) return true;
     wakeLockSentinel = await navigator.wakeLock.request('screen');
     wakeLockSentinel.addEventListener('release', () => {
       wakeLockSentinel = null;
@@ -37,6 +39,7 @@ export async function requestWakeLock() {
  * Release Screen Wake Lock.
  */
 export async function releaseWakeLock() {
+  userWantsWakeLock = false;
   if (wakeLockSentinel) {
     try {
       await wakeLockSentinel.release();
@@ -47,6 +50,23 @@ export async function releaseWakeLock() {
 
 export function isWakeLockActive() {
   return Boolean(wakeLockSentinel && !wakeLockSentinel.released);
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && (userWantsWakeLock || currentPocketOverlay)) {
+      if (typeof navigator !== 'undefined' && 'wakeLock' in navigator) {
+        try {
+          if (!wakeLockSentinel || wakeLockSentinel.released) {
+            wakeLockSentinel = await navigator.wakeLock.request('screen');
+            wakeLockSentinel.addEventListener('release', () => {
+              wakeLockSentinel = null;
+            });
+          }
+        } catch {}
+      }
+    }
+  });
 }
 
 /**
@@ -215,7 +235,7 @@ export function enterPocketMode({
         <span class="pocket-pulse-dot"></span>
         <span class="pocket-pulse-text">음악이 백그라운드에서 재생 중입니다</span>
       </div>
-      <p class="pocket-hint">💡 화면을 두 번 연속 탭하거나 아래 버튼을 길게 누르면 잠금이 해제됩니다.</p>
+      <p class="pocket-hint">💡 화면을 두 번 연속 탭하거나 아래 [잠금 해제] 버튼을 누르면 잠금이 해제됩니다.</p>
     </div>
     <div class="pocket-bottom">
       <button type="button" class="pocket-unlock-button" id="pocket-unlock-btn">
@@ -234,6 +254,7 @@ export function enterPocketMode({
 
   // Double tap anywhere on black screen to unlock
   overlay.addEventListener('click', (e) => {
+    if (e.target.closest('#pocket-unlock-btn')) return;
     const now = Date.now();
     if (now - lastTapTime < 380) {
       exitMode();
@@ -249,10 +270,13 @@ export function enterPocketMode({
 
   const unlockBtn = overlay.querySelector('#pocket-unlock-btn');
   if (unlockBtn) {
-    unlockBtn.addEventListener('click', (e) => {
+    const handleUnlock = (e) => {
+      e.preventDefault();
       e.stopPropagation();
       exitMode();
-    });
+    };
+    unlockBtn.addEventListener('click', handleUnlock);
+    unlockBtn.addEventListener('touchend', handleUnlock, { passive: false });
   }
 
   // Prevent default context menu or unwanted selections

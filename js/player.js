@@ -109,6 +109,9 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   pocketBtn.innerHTML = '<span>🔒 절전</span>';
   pocketBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (!iframe) {
+      mountFrame(currentTime);
+    }
     enterPocketMode({
       title,
       partLabel: 'AcaRaca 연습 영상 · 백그라운드 재생 중',
@@ -497,6 +500,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       releaseWakeLock();
       exitPocketMode();
       stopAudioAnchor();
+      setMediaSessionPlaybackState('none');
       if (isLandscapeExpanded) {
         toggleLandscapeExpanded(false);
       }
