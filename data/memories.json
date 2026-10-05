@@ -2,6 +2,20 @@
   "version": 1,
   "memories": [
     {
+      "id": "mem-shorts-bohemian-rhapsody",
+      "title": "보헤미안 랩소디 (Bohemian Rhapsody) - 퀸 👑⚡",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2025-11-01",
+      "venue": "아카라카 공연 무대",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/shorts/fZyHXECeye4",
+      "thumbnail": "https://img.youtube.com/vi/fZyHXECeye4/hqdefault.jpg",
+      "description": "퀸(Queen)의 전설적인 명곡 '보헤미안 랩소디'! 웅장하고 전율 넘치는 아카라카의 5성부 아카펠라 라이브 숏츠 클립.",
+      "tags": ["아카라카", "아카펠라", "보헤미안랩소디", "퀸", "queen", "bohemianrhapsody", "라이브", "공연", "숏츠"],
+      "songId": "bohemian-rhapsody"
+    },
+    {
       "id": "mem-shorts-pororo",
       "title": "뽀롱뽀롱 뽀로로 - 노는 게 제일 좋아 🐧🎶",
       "type": "shorts",
