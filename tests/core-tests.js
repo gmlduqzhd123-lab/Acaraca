@@ -315,6 +315,15 @@ export function runCoreTests() {
     check('플레이어 컨트롤러 인터페이스 제공', () => typeof player.seekRelative === 'function' && typeof player.setRate === 'function' && typeof player.togglePlay === 'function');
     player.destroy();
     check('destroy 시 플레이어 제거', () => container.childElementCount === 0);
+
+    const container2 = document.createElement('div');
+    const player2 = createPlayer(container2, validVideo, 'seek test');
+    player2.seekTo(36);
+    check('seekTo(36) 첫 클릭 시 즉시 iframe 마운트 및 start=36 파라미터 적용', () => {
+      const iframeEl = container2.querySelector('iframe');
+      return iframeEl && iframeEl.src.includes('start=36');
+    });
+    player2.destroy();
   }
 
   if (nodeFs) {

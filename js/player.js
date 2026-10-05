@@ -94,6 +94,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   let currentRate = 1.0;
   let ticker = null;
   const stateListeners = [];
+  let pendingSeek = null;
 
   function notifyChange() {
     for (const cb of stateListeners) {
@@ -113,6 +114,12 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       }
       if (typeof data.info.playerState === 'number') {
         isPlaying = (data.info.playerState === 1);
+        if (data.info.playerState === 1 && pendingSeek !== null) {
+          if (Math.abs(currentTime - pendingSeek) > 1.5) {
+            sendYT('seekTo', [pendingSeek, true]);
+          }
+          pendingSeek = null;
+        }
       }
       if (typeof data.info.playbackRate === 'number') {
         currentRate = data.info.playbackRate;
@@ -132,13 +139,16 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     } catch {}
   }
 
-  function mountFrame() {
+  function mountFrame(startSeconds = 0) {
     if (!parsed.ok || destroyed) return;
+    const initialTime = Math.max(0, Number(startSeconds) || 0);
+    currentTime = initialTime;
+    pendingSeek = initialTime;
     iframe = document.createElement('iframe');
     const embed = new URL(parsed.embedUrl);
     embed.searchParams.set('autoplay', '1');
     embed.searchParams.set('rel', '0');
-    embed.searchParams.set('start', '0');
+    embed.searchParams.set('start', String(Math.floor(initialTime)));
     embed.searchParams.set('enablejsapi', '1');
     if (typeof window !== 'undefined' && window.location?.origin && window.location.origin !== 'null') {
       embed.searchParams.set('origin', window.location.origin);
@@ -152,13 +162,23 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
     screen.replaceChildren(iframe);
     isPlaying = true;
-    currentTime = 0;
     notifyChange();
 
     iframe.addEventListener('load', () => {
       try {
         iframe.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
       } catch {}
+      if (pendingSeek !== null) {
+        const sec = pendingSeek;
+        sendYT('seekTo', [sec, true]);
+        sendYT('playVideo', []);
+        setTimeout(() => {
+          if (!destroyed && iframe) {
+            sendYT('seekTo', [sec, true]);
+            sendYT('playVideo', []);
+          }
+        }, 250);
+      }
     }, { once: true });
 
     if (!ticker && typeof setInterval !== 'undefined') {
@@ -193,7 +213,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     label.className = 'player-play-label';
     label.textContent = parsed.type === 'playlist' ? '재생목록 재생' : '영상 재생';
     play.append(icon, label);
-    play.addEventListener('click', mountFrame);
+    play.addEventListener('click', () => mountFrame(0));
     screen.append(play);
     const link = document.createElement('a');
     link.className = 'button secondary player-external';
@@ -217,26 +237,43 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   container.replaceChildren(shell);
 
   return {
-    restart: mountFrame,
-    mount: mountFrame,
+    restart() { mountFrame(0); },
+    mount(startSec = 0) { mountFrame(startSec); },
     seekRelative(delta) {
-      if (!iframe) {
-        mountFrame();
-        return;
-      }
       const target = Math.max(0, currentTime + delta);
       currentTime = target;
-      sendYT('seekTo', [target, true]);
-      notifyChange();
-    },
-    seekTo(seconds) {
+      isPlaying = true;
       if (!iframe) {
-        mountFrame();
+        mountFrame(target);
         return;
       }
-      currentTime = Math.max(0, seconds);
-      sendYT('seekTo', [currentTime, true]);
+      pendingSeek = target;
+      sendYT('seekTo', [target, true]);
       notifyChange();
+      setTimeout(() => {
+        if (!destroyed && iframe) {
+          sendYT('seekTo', [target, true]);
+        }
+      }, 100);
+    },
+    seekTo(seconds) {
+      const target = Math.max(0, Number(seconds) || 0);
+      currentTime = target;
+      isPlaying = true;
+      if (!iframe) {
+        mountFrame(target);
+        return;
+      }
+      pendingSeek = target;
+      sendYT('seekTo', [target, true]);
+      sendYT('playVideo', []);
+      notifyChange();
+      setTimeout(() => {
+        if (!destroyed && iframe) {
+          sendYT('seekTo', [target, true]);
+          sendYT('playVideo', []);
+        }
+      }, 100);
     },
     setRate(rate) {
       currentRate = rate;
@@ -247,7 +284,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     },
     togglePlay() {
       if (!iframe) {
-        mountFrame();
+        mountFrame(currentTime);
         return;
       }
       if (isPlaying) {
@@ -260,8 +297,9 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       notifyChange();
     },
     play() {
-      if (!iframe) mountFrame();
-      else {
+      if (!iframe) {
+        mountFrame(currentTime);
+      } else {
         isPlaying = true;
         sendYT('playVideo', []);
         notifyChange();

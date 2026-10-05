@@ -99,7 +99,8 @@ const state = {
   memoryFilters: {category: ''},
   route: readRoute(),
   random: null,
-  player: null
+  player: null,
+  initialSeek: null
 };
 const activeAudios = new Set();
 const activePlayers = [];
@@ -3498,10 +3499,16 @@ function renderLyricsSheet(song, defaultPart = 'all') {
   function handleSeek(seconds, timeStr) {
     if (state.player && typeof state.player.seekTo === 'function') {
       state.player.seekTo(seconds);
-      try { state.player.play?.(); } catch {}
       toast(`⏱️ [${timeStr}] 구간으로 이동했습니다.`);
     } else {
-      toast(`⏱️ [${timeStr}] 파트 연습 화면에서 영상과 함께 싱크 재생됩니다.`);
+      const targetPart = (currentPart !== 'all' && currentPart) ? currentPart : (state.myPart || preferredPart(song, state.myPart) || availableParts(song)[0]);
+      if (targetPart) {
+        state.initialSeek = seconds;
+        startPractice(song, targetPart);
+        toast(`⏱️ [${timeStr}] 파트 연습 화면으로 이동하여 재생합니다.`);
+      } else {
+        toast(`⏱️ [${timeStr}] 파트 연습 화면에서 영상과 함께 싱크 재생됩니다.`);
+      }
     }
   }
 
@@ -3707,6 +3714,11 @@ function renderPractice(song, part, record = true) {
   const playerHost = el('div', {class: 'player-panel'});
   const playerLayout = el('div', {class: 'practice-layout'}, playerHost);
   state.player = createPlayer(playerHost, song.videos[part], `${song.title} · ${PARTS[part]} 연습`);
+  if (typeof state.initialSeek === 'number') {
+    const s = state.initialSeek;
+    state.initialSeek = null;
+    state.player.seekTo(s);
+  }
   const controller = renderPlayerController(state.player, song, part);
 
   let audioPlayerCtrl = null;
