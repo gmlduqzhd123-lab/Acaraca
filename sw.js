@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v61';
+const CACHE_NAME = 'acaroom-cache-v62';
 
 
 const CORE_ASSETS = [
@@ -65,6 +65,11 @@ self.addEventListener('fetch', (event) => {
 
   // External requests (YouTube, QR Server, etc.) bypass service worker cache
   if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Bypass SW for Range requests or media files so browser natively handles 206 Partial Content and audio streaming
+  if (event.request.headers.get('range') || /\.(m4a|mp3|wav|ogg|aac|mp4|webm|mov)(\?.*)?$/i.test(url.pathname)) {
     return;
   }
 

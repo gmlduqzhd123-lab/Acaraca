@@ -45,6 +45,13 @@ srcMatches.forEach(m => checkExists('index.html ref', m[1]));
 const navKeys = ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'];
 navKeys.forEach(k => checkExists('nav icon', './assets/icons/nav/' + k + '.png'));
 
+// 7. Check rehearsals.json audio/video files
+const rehearsals = JSON.parse(fs.readFileSync('data/rehearsals.json', 'utf8'));
+rehearsals.rehearsals.forEach(r => {
+  if (r.audio?.url) checkExists('rehearsal audioUrl', r.audio.url);
+  if (r.video?.url) checkExists('rehearsal videoUrl', r.video.url);
+});
+
 if (missingCount === 0) {
   console.log('✓ ALL referenced local files exist on disk! No broken paths.');
 } else {

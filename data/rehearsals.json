@@ -13,9 +13,9 @@
         "label": "보헤미안 랩소디 연습 영상"
       },
       "audio": {
-        "url": "",
-        "label": "연습 녹음본 (상단에서 파일 직접 등록 가능)",
-        "duration": 360
+        "url": "./assets/audio/rehearsals/10.1.보헤미안연습.m4a",
+        "label": "10.1.보헤미안연습.m4a",
+        "duration": 363
       },
       "initialFeedbacks": [
         {

@@ -1475,6 +1475,11 @@ html[data-theme="dark"] .chord-play-btn.playing {
 .audio-progress-wrap input[type=range] { flex: 1; accent-color: var(--primary); cursor: pointer; }
 .audio-time-label { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
+@media (max-width: 600px) {
+  .audio-controls-row { flex-wrap: wrap; gap: 8px; }
+  .audio-progress-wrap { width: 100%; order: 2; margin-top: 6px; }
+}
+
 /* Collaborative Feedback Section */
 .feedback-section { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 18px; }
 .feedback-section-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }

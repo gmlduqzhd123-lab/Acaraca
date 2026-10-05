@@ -891,7 +891,8 @@ function renderStage() {
 
 function renderAudioPlayer(audioData, title = '현장 녹음본') {
   const card = el('div', {class: 'audio-player-card', role: 'region', 'aria-label': `${title} 오디오 플레이어`});
-  const audio = new Audio(audioData.url);
+  const audioSrc = audioData.url ? encodeURI(decodeURI(audioData.url)) : '';
+  const audio = new Audio(audioSrc);
   audio.preload = 'metadata';
   activeAudios.add(audio);
   let isPlaying = false;
