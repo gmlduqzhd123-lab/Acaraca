@@ -1,5 +1,5 @@
 import { parseYouTube, createPlayer } from '../js/player.js';
-import { validateData, availableParts, preferredPart } from '../js/data.js';
+import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
 import { getNoteFrequency, NOTES, parseNoteString } from '../js/pitch.js';
@@ -215,6 +215,9 @@ export function runCoreTests() {
     check('네비게이션 12개 탭 아이콘 이미지 파일 실제 존재 검증', () => ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'].every(t => nodeFs.existsSync(`./assets/icons/nav/${t}.png`)));
     check('모바일 하단 네비게이션 12개 전체 탭 연동 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes('const mobileTabs = Object.keys(labels);'));
     check('아카라카 영상 탭 레이블 반영 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '아카라카 영상'"));
+    check('PARTS 객체 최상단에 1번~7번 파트 순서 배치 검증', () => Object.keys(PARTS).slice(0, 7).join() === 'part1,part2,part3,part4,part5,part6,part7');
+    check('Pretendard 웹폰트 링크 삽입 검증', () => nodeFs.readFileSync('./index.html', 'utf8').includes('pretendardvariable.min.css') && nodeFs.readFileSync('./admin.html', 'utf8').includes('pretendardvariable.min.css'));
+    check('체크리스트 및 집중 연습 타이머 제거 검증', () => !nodeFs.readFileSync('./js/app.js', 'utf8').includes('오늘의 연습 체크') && !nodeFs.readFileSync('./js/app.js', 'utf8').includes('10분 집중 연습'));
     check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
     check('33곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
       const songsRaw = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
