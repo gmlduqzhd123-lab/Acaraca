@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart} from './data.js';
-import {parseYouTube, createPlayer} from './player.js';
+import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
@@ -3352,14 +3352,215 @@ function renderPlayerController(player, song, part) {
   const pitchBtn = button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'text-button practice-pitch-btn', 'music');
   const subrow = el('div', {class: 'practice-subrow'}, speedGroup, pitchBtn);
 
+  // --- A-B Section Loop (구간 반복 연습) ---
+  const loopStatusBadge = el('span', {class: 'loop-status-badge', text: '구간 미설정'});
+  const loopStartTime = el('span', {class: 'loop-time-tag', text: '--:--'});
+  const loopEndTime = el('span', {class: 'loop-time-tag', text: '--:--'});
+
+  const loopToggleBtn = el('button', {
+    type: 'button',
+    class: 'loop-btn-toggle',
+    'aria-label': 'A-B 구간 반복 켜기 또는 끄기',
+    'aria-pressed': 'false',
+    onclick: () => {
+      const active = looper.toggleLoop();
+      const st = looper.getState();
+      if (active) {
+        toast(`🔁 구간 반복 시작: ${formatPlayerTime(st.loopStart)} ~ ${formatPlayerTime(st.loopEnd)}`);
+      } else {
+        toast('⏹️ 구간 반복을 껐습니다.');
+      }
+    }
+  }, icon('repeat'), '구간 반복');
+
+  const looper = createSectionLooper(player, {
+    onStateChange: (st) => {
+      const { loopStart, loopEnd, isLooping, duration } = st;
+      loopStartTime.textContent = formatPlayerTime(loopStart);
+      loopEndTime.textContent = formatPlayerTime(loopEnd);
+
+      loopToggleBtn.classList.toggle('active', isLooping);
+      loopToggleBtn.setAttribute('aria-pressed', String(isLooping));
+      loopToggleBtn.replaceChildren(
+        icon('repeat'),
+        document.createTextNode(isLooping ? '반복 중' : '구간 반복')
+      );
+
+      if (isLooping) {
+        loopStatusBadge.className = 'loop-status-badge active';
+        loopStatusBadge.textContent = `🔁 ${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)} (${Math.round(duration)}초 반복 중)`;
+      } else if (loopStart !== null || loopEnd !== null) {
+        loopStatusBadge.className = 'loop-status-badge ready';
+        loopStatusBadge.textContent = `구간: ${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)}${duration ? ` (${Math.round(duration)}초)` : ''}`;
+      } else {
+        loopStatusBadge.className = 'loop-status-badge';
+        loopStatusBadge.textContent = '구간 미설정';
+      }
+    }
+  });
+
+  const setStartBtn = el('button', {
+    type: 'button',
+    class: 'loop-point-btn',
+    'aria-label': '현재 재생 위치를 구간 시작점으로 설정',
+    onclick: () => {
+      const s = looper.setStart();
+      toast(`📍 A 시작점: ${formatPlayerTime(s)} 설정`);
+    }
+  }, '📍 A 시작점');
+
+  const nudgeStartMinus = el('button', {
+    type: 'button',
+    class: 'loop-nudge-btn',
+    'aria-label': '시작점 1초 뒤로',
+    onclick: () => {
+      const s = looper.nudgeStart(-1);
+      toast(`📍 A 시작점: ${formatPlayerTime(s)} (1초 뒤로)`);
+    }
+  }, '-1s');
+
+  const nudgeStartPlus = el('button', {
+    type: 'button',
+    class: 'loop-nudge-btn',
+    'aria-label': '시작점 1초 앞으로',
+    onclick: () => {
+      const s = looper.nudgeStart(1);
+      toast(`📍 A 시작점: ${formatPlayerTime(s)} (1초 앞으로)`);
+    }
+  }, '+1s');
+
+  const setEndBtn = el('button', {
+    type: 'button',
+    class: 'loop-point-btn',
+    'aria-label': '현재 재생 위치를 구간 끝점으로 설정',
+    onclick: () => {
+      const e = looper.setEnd();
+      toast(`🏁 B 끝점: ${formatPlayerTime(e)} 설정`);
+    }
+  }, '🏁 B 끝점');
+
+  const nudgeEndMinus = el('button', {
+    type: 'button',
+    class: 'loop-nudge-btn',
+    'aria-label': '끝점 1초 뒤로',
+    onclick: () => {
+      const e = looper.nudgeEnd(-1);
+      toast(`🏁 B 끝점: ${formatPlayerTime(e)} (1초 뒤로)`);
+    }
+  }, '-1s');
+
+  const nudgeEndPlus = el('button', {
+    type: 'button',
+    class: 'loop-nudge-btn',
+    'aria-label': '끝점 1초 앞으로',
+    onclick: () => {
+      const e = looper.nudgeEnd(1);
+      toast(`🏁 B 끝점: ${formatPlayerTime(e)} (1초 앞으로)`);
+    }
+  }, '+1s');
+
+  const jumpStartBtn = el('button', {
+    type: 'button',
+    class: 'loop-btn-sub',
+    'aria-label': '시작점 A로 바로 이동',
+    onclick: () => {
+      const st = looper.getState();
+      if (st.loopStart === null) {
+        toast('시작점(A)을 먼저 설정해 주세요.');
+        return;
+      }
+      looper.jumpToStart();
+      toast(`⏮️ A 시작점(${formatPlayerTime(st.loopStart)})으로 이동`);
+    }
+  }, '⏮️ A로 점프');
+
+  const clearLoopBtn = el('button', {
+    type: 'button',
+    class: 'loop-btn-sub ghost',
+    'aria-label': '설정된 반복 구간 해제',
+    onclick: () => {
+      looper.clear();
+      toast('구간 설정을 해제했습니다.');
+    }
+  }, '✕ 해제');
+
+  const preset5Btn = el('button', {
+    type: 'button',
+    class: 'loop-preset-chip',
+    'aria-label': '현재 위치부터 5초 구간 반복',
+    onclick: () => {
+      const { loopStart, loopEnd } = looper.setQuickPreset(5);
+      toast(`⚡ 5초 구간 반복 시작 (${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)})`);
+    }
+  }, '⚡ 5초');
+
+  const preset10Btn = el('button', {
+    type: 'button',
+    class: 'loop-preset-chip',
+    'aria-label': '현재 위치부터 10초 구간 반복',
+    onclick: () => {
+      const { loopStart, loopEnd } = looper.setQuickPreset(10);
+      toast(`⚡ 10초 구간 반복 시작 (${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)})`);
+    }
+  }, '⚡ 10초');
+
+  const preset15Btn = el('button', {
+    type: 'button',
+    class: 'loop-preset-chip',
+    'aria-label': '현재 위치부터 15초 구간 반복',
+    onclick: () => {
+      const { loopStart, loopEnd } = looper.setQuickPreset(15);
+      toast(`⚡ 15초 구간 반복 시작 (${formatPlayerTime(loopStart)} ~ ${formatPlayerTime(loopEnd)})`);
+    }
+  }, '⚡ 15초');
+
+  const loopPanel = el('div', {class: 'practice-loop-panel', role: 'region', 'aria-label': '구간 반복 연습 (A-B Loop)'},
+    el('div', {class: 'practice-loop-header'},
+      el('div', {class: 'practice-loop-title-box'},
+        el('span', {class: 'practice-loop-title'}, icon('repeat'), el('strong', {text: '구간 반복 연습'})),
+        loopStatusBadge
+      ),
+      el('div', {class: 'practice-loop-presets'},
+        el('span', {class: 'loop-preset-label', text: '빠른 반복:'}),
+        preset5Btn, preset10Btn, preset15Btn
+      )
+    ),
+    el('div', {class: 'practice-loop-body'},
+      el('div', {class: 'loop-controls-left'},
+        el('div', {class: 'loop-point-unit'},
+          setStartBtn,
+          loopStartTime,
+          nudgeStartMinus,
+          nudgeStartPlus
+        ),
+        el('span', {class: 'loop-separator', text: '~'}),
+        el('div', {class: 'loop-point-unit'},
+          setEndBtn,
+          loopEndTime,
+          nudgeEndMinus,
+          nudgeEndPlus
+        )
+      ),
+      el('div', {class: 'loop-controls-right'},
+        loopToggleBtn,
+        jumpStartBtn,
+        clearLoopBtn
+      )
+    )
+  );
+
   const panel = el('div', {class: 'practice-controller-panel', role: 'region', 'aria-label': '연습 플레이어 컨트롤러'},
-    controlRow, subrow
+    controlRow, subrow, loopPanel
   );
 
   player.onStateChange(st => {
     isPlaying = st.isPlaying;
     currentRate = st.currentRate;
     playBtn.replaceChildren(icon(isPlaying ? 'pause' : 'play'), document.createTextNode(isPlaying ? '일시정지' : '재생'));
+    looper.checkTick();
+    if (!panel.isConnected) {
+      looper.destroy();
+    }
   });
 
   return panel;

@@ -330,3 +330,172 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     },
   };
 }
+
+/** Formats seconds into mm:ss (or --:-- when empty/invalid) */
+export function formatPlayerTime(seconds) {
+  if (seconds === null || seconds === undefined || isNaN(seconds)) return '--:--';
+  const total = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+/**
+ * Creates an A-B section repeat looper for practice.
+ * Supports setting A/B points, fine-tuning (-1s/+1s), quick presets (5s, 10s, 15s),
+ * toggle, and high-frequency turnaround watcher.
+ */
+export function createSectionLooper(player, options = {}) {
+  const { onStateChange } = options;
+  let loopStart = null;
+  let loopEnd = null;
+  let isLooping = false;
+  let loopTimer = null;
+  let lastSeekTime = 0;
+
+  function notify() {
+    if (typeof onStateChange === 'function') {
+      onStateChange({
+        loopStart,
+        loopEnd,
+        isLooping,
+        duration: (loopStart !== null && loopEnd !== null) ? Math.max(0, Math.round((loopEnd - loopStart) * 10) / 10) : 0
+      });
+    }
+  }
+
+  function checkLoopTick() {
+    if (!isLooping || loopStart === null || loopEnd === null) return;
+    const cur = typeof player?.getCurrentTime === 'function' ? player.getCurrentTime() : 0;
+    const now = Date.now();
+    if (cur >= loopEnd && (now - lastSeekTime > 350)) {
+      lastSeekTime = now;
+      if (typeof player?.seekTo === 'function') {
+        player.seekTo(loopStart);
+      }
+    }
+  }
+
+  function startWatcher() {
+    if (loopTimer) clearInterval(loopTimer);
+    if (typeof setInterval !== 'undefined') {
+      loopTimer = setInterval(checkLoopTick, 100);
+    }
+  }
+
+  function stopWatcher() {
+    if (loopTimer) {
+      clearInterval(loopTimer);
+      loopTimer = null;
+    }
+  }
+
+  return {
+    setStart(sec = null) {
+      const cur = sec !== null ? Number(sec) : (player?.getCurrentTime?.() ?? 0);
+      loopStart = Math.max(0, Math.round(cur * 10) / 10);
+      if (loopEnd !== null && loopStart >= loopEnd) {
+        loopEnd = Math.round((loopStart + 5) * 10) / 10;
+      }
+      notify();
+      return loopStart;
+    },
+    setEnd(sec = null) {
+      const cur = sec !== null ? Number(sec) : (player?.getCurrentTime?.() ?? 0);
+      loopEnd = Math.max(0, Math.round(cur * 10) / 10);
+      if (loopStart !== null && loopEnd <= loopStart) {
+        loopStart = Math.max(0, Math.round((loopEnd - 5) * 10) / 10);
+      }
+      notify();
+      return loopEnd;
+    },
+    nudgeStart(delta) {
+      if (loopStart === null) {
+        loopStart = Math.max(0, Math.round((player?.getCurrentTime?.() ?? 0) * 10) / 10);
+      }
+      loopStart = Math.max(0, Math.round((loopStart + delta) * 10) / 10);
+      if (loopEnd !== null && loopStart >= loopEnd) {
+        loopEnd = Math.round((loopStart + 1) * 10) / 10;
+      }
+      notify();
+      return loopStart;
+    },
+    nudgeEnd(delta) {
+      if (loopEnd === null) {
+        loopEnd = Math.max(5, Math.round(((player?.getCurrentTime?.() ?? 0) + 5) * 10) / 10);
+      }
+      loopEnd = Math.max(1, Math.round((loopEnd + delta) * 10) / 10);
+      if (loopStart !== null && loopEnd <= loopStart) {
+        loopStart = Math.max(0, Math.round((loopEnd - 1) * 10) / 10);
+      }
+      notify();
+      return loopEnd;
+    },
+    setQuickPreset(duration) {
+      const dur = Math.max(1, Number(duration) || 5);
+      const cur = Math.max(0, Math.round((player?.getCurrentTime?.() ?? 0) * 10) / 10);
+      loopStart = cur;
+      loopEnd = Math.round((cur + dur) * 10) / 10;
+      isLooping = true;
+      startWatcher();
+      if (typeof player?.seekTo === 'function') {
+        player.seekTo(loopStart);
+      }
+      notify();
+      return { loopStart, loopEnd };
+    },
+    toggleLoop() {
+      if (isLooping) {
+        isLooping = false;
+        stopWatcher();
+      } else {
+        if (loopStart === null && loopEnd === null) {
+          const cur = Math.max(0, Math.round((player?.getCurrentTime?.() ?? 0) * 10) / 10);
+          loopStart = cur;
+          loopEnd = Math.round((cur + 10) * 10) / 10;
+        } else if (loopStart === null) {
+          loopStart = Math.max(0, Math.round((loopEnd - 5) * 10) / 10);
+        } else if (loopEnd === null) {
+          loopEnd = Math.round((loopStart + 5) * 10) / 10;
+        }
+        isLooping = true;
+        startWatcher();
+        const cur = player?.getCurrentTime?.() ?? 0;
+        if (cur < loopStart || cur >= loopEnd) {
+          if (typeof player?.seekTo === 'function') {
+            player.seekTo(loopStart);
+          }
+        }
+      }
+      notify();
+      return isLooping;
+    },
+    jumpToStart() {
+      if (loopStart !== null && typeof player?.seekTo === 'function') {
+        player.seekTo(loopStart);
+      }
+    },
+    clear() {
+      loopStart = null;
+      loopEnd = null;
+      isLooping = false;
+      stopWatcher();
+      notify();
+    },
+    checkTick() {
+      checkLoopTick();
+    },
+    getState() {
+      return {
+        loopStart,
+        loopEnd,
+        isLooping,
+        duration: (loopStart !== null && loopEnd !== null) ? Math.max(0, Math.round((loopEnd - loopStart) * 10) / 10) : 0
+      };
+    },
+    destroy() {
+      stopWatcher();
+    }
+  };
+}
+

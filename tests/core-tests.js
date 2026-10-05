@@ -1,4 +1,4 @@
-import { parseYouTube, createPlayer } from '../js/player.js';
+import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } from '../js/player.js';
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
@@ -341,7 +341,80 @@ export function runCoreTests() {
     player2.destroy();
   }
 
+  // --- Section Looper (A-B 반복) Core Tests ---
+  check('formatPlayerTime 시간 형식 변환', () => {
+    return formatPlayerTime(0) === '0:00' &&
+      formatPlayerTime(65) === '1:05' &&
+      formatPlayerTime(723) === '12:03' &&
+      formatPlayerTime(null) === '--:--' &&
+      formatPlayerTime(undefined) === '--:--';
+  });
 
+  let mockTime = 15;
+  let seekCalls = [];
+  const mockPlayer = {
+    getCurrentTime() { return mockTime; },
+    seekTo(sec) {
+      mockTime = sec;
+      seekCalls.push(sec);
+    }
+  };
+
+  const looper = createSectionLooper(mockPlayer);
+  check('초기 구간 반복 상태 확인', () => {
+    const st = looper.getState();
+    return st.loopStart === null && st.loopEnd === null && st.isLooping === false && st.duration === 0;
+  });
+
+  looper.setStart(10);
+  check('시작점 A 설정 (10초)', () => looper.getState().loopStart === 10);
+
+  looper.setEnd(25);
+  check('끝점 B 설정 (25초)', () => looper.getState().loopEnd === 25 && looper.getState().duration === 15);
+
+  looper.nudgeStart(-1);
+  check('시작점 -1초 미세조정 (9초)', () => looper.getState().loopStart === 9 && looper.getState().duration === 16);
+
+  looper.nudgeEnd(1);
+  check('끝점 +1초 미세조정 (26초)', () => looper.getState().loopEnd === 26 && looper.getState().duration === 17);
+
+  // If start is set beyond end, end automatically extends
+  looper.setStart(30);
+  check('시작점이 끝점보다 커지면 끝점 자동 보정', () => looper.getState().loopStart === 30 && looper.getState().loopEnd > 30);
+
+  // Test toggling loop
+  looper.toggleLoop();
+  check('구간 반복 켜기 (toggleLoop)', () => looper.getState().isLooping === true);
+
+  // Test loop turnaround seek
+  const currentStart = looper.getState().loopStart;
+  const currentEnd = looper.getState().loopEnd;
+  seekCalls = [];
+  mockTime = currentEnd + 0.1;
+  looper.checkTick();
+  check('끝점 도달 시 시작점(A)으로 즉시 seekTo 트리거', () => seekCalls.length > 0 && seekCalls[seekCalls.length - 1] === currentStart);
+
+  // Test jump to start
+  seekCalls = [];
+  looper.jumpToStart();
+  check('A로 이동 (jumpToStart)', () => seekCalls.includes(currentStart));
+
+  // Test quick presets
+  mockTime = 50;
+  looper.setQuickPreset(10);
+  check('10초 빠른 프리셋 설정', () => {
+    const st = looper.getState();
+    return st.loopStart === 50 && st.loopEnd === 60 && st.isLooping === true && st.duration === 10;
+  });
+
+  // Test clear
+  looper.clear();
+  check('구간 해제 (clear)', () => {
+    const st = looper.getState();
+    return st.loopStart === null && st.loopEnd === null && st.isLooping === false;
+  });
+
+  looper.destroy();
 
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };
 }
