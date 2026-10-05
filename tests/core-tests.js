@@ -211,8 +211,9 @@ export function runCoreTests() {
     });
 
     const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
-    check('education.json 11개 전문 교육 자료 로드 검증', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 11);
-    check('모든 교육 자료 PDF 파일 실제 존재 검증', () => eduRaw.resources.every(r => r.fileUrl && nodeFs.existsSync(r.fileUrl)));
+    check('education.json 41개 전문 교육 자료 로드 검증 (교재 11개 + 교육 영상 30개)', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 41 && eduRaw.resources.filter(r => r.format === 'video').length === 30);
+    check('모든 로컬 교육 자료 파일 존재 및 영상 리소스 유효성 검증', () => eduRaw.resources.every(r => (r.format === 'video' || r.fileUrl.startsWith('http')) ? (r.videoUrl && r.thumbnail) : nodeFs.existsSync(r.fileUrl)));
+
     check('네비게이션 12개 탭 아이콘 이미지 파일 실제 존재 검증', () => ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'].every(t => nodeFs.existsSync(`./assets/icons/nav/${t}.png`)));
     check('모바일 하단 네비게이션 12개 전체 탭 연동 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes('const mobileTabs = Object.keys(labels);'));
     check('아카라카 영상 탭 레이블 반영 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '아카라카 영상'"));

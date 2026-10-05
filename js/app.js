@@ -1932,6 +1932,27 @@ function renderEducation() {
         item.category && item.category !== formatLabel && el('span', {class: 'part-pill', text: item.category})
       );
 
+      let thumbWrap = null;
+      if (fmt === 'video' && item.thumbnail) {
+        thumbWrap = el('div', {
+          class: 'custom-video-thumb-wrap',
+          style: 'border-radius: 12px; margin-bottom: 14px; overflow: hidden; cursor: pointer;',
+          onclick: () => openOrDownloadEducation(item, false)
+        },
+          el('img', {
+            src: item.thumbnail,
+            alt: item.title,
+            class: 'custom-video-thumb',
+            loading: 'lazy'
+          }),
+          item.duration ? el('div', { class: 'custom-video-badge' }, item.duration) : null,
+          el('div', { class: 'custom-video-source-pill' }, '🔗 YouTube'),
+          el('div', { class: 'custom-video-play-overlay' },
+            el('div', { class: 'custom-video-play-btn' }, icon('play'))
+          )
+        );
+      }
+
       const top = el('div', {class: 'edu-top'},
         iconBadge,
         el('div', {class: 'edu-info'},
@@ -1944,8 +1965,8 @@ function renderEducation() {
       const desc = item.description ? el('p', {class: 'edu-desc', text: item.description}) : null;
 
       const metaRow = el('div', {class: 'edu-meta-row'},
-        el('span', {text: `${item.slides || item.pages || ''} ${item.fileSize ? `· ${item.fileSize}` : ''}`.trim() || '아카펠라 교육 자산'}),
-        el('span', {class: 'badge', style: 'font-size: 10.5px;', text: item.format?.toUpperCase() || '자료'})
+        el('span', {text: `${item.duration ? `⏱ ${item.duration} · ` : ''}${item.slides || item.pages || ''} ${item.fileSize ? `· ${item.fileSize}` : ''}`.trim() || '아카펠라 교육 자료'}),
+        el('span', {class: 'badge', style: 'font-size: 10.5px;', text: (item.format === 'video' ? 'VIDEO' : item.format?.toUpperCase()) || '자료'})
       );
 
       const actions = el('div', {class: 'edu-actions'},
@@ -1967,8 +1988,9 @@ function renderEducation() {
         }, 'button secondary small danger', 'trash') : null
       );
 
-      return el('article', {class: 'edu-card'}, top, desc, metaRow, actions);
+      return el('article', {class: 'edu-card'}, thumbWrap, top, desc, metaRow, actions);
     }));
+
   }
 
   updateEduList();
