@@ -39,7 +39,7 @@ const labels = {
   home: '홈',
   songs: '아카라카 연습실',
   appreciation: '아카펠라 감상',
-  stage: '공연 영상',
+  stage: '아카라카 영상',
   scores: '악보 창고',
   memories: '우리들의 기록',
   rehearsal: '연습 일지',
@@ -424,10 +424,10 @@ function renderHome() {
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
     el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
-    el('p', {text: `감상 영상 ${state.appreciation.length}건, 공연 영상 ${state.performances.length}편, 악보 ${state.scores.length}건, 우리들의 기록 ${state.memories.length}건, 연습 일지 ${state.rehearsals.length}건이 보관되어 있습니다.`}),
+    el('p', {text: `감상 영상 ${state.appreciation.length}건, 아카라카 영상 ${state.performances.length}편, 악보 ${state.scores.length}건, 우리들의 기록 ${state.memories.length}건, 연습 일지 ${state.rehearsals.length}건이 보관되어 있습니다.`}),
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
       button('✨ 아카펠라 감상', () => navigate({tab: 'appreciation'}), 'button secondary small', 'sparkles'),
-      button('🎬 공연 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
+      button('🎬 아카라카 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
       button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
       button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
       button('🎙️ 연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary small', 'notes'),
@@ -687,19 +687,19 @@ function renderStage() {
   app.append(
     el('div', {class: 'page-heading'},
       el('p', {class: 'eyebrow', text: 'OUR STAGE ARCHIVE'}),
-      el('h1', {text: '우리의 무대 영상'}),
-      el('p', {text: '정기 공연, 버스킹, 축제 등 관객과 함께 호흡한 소중한 순간들을 모아봅니다.'})
+      el('h1', {text: '아카라카 영상'}),
+      el('p', {text: '정기 공연, 버스킹, 축제 등 관객과 함께 호흡한 아카라카의 소중한 무대 영상을 모아봅니다.'})
     )
   );
 
   if (!state.performances.length) {
-    app.append(emptyState('등록된 공연 영상이 아직 없어요', '새로운 무대 실황 영상이 곧 등록됩니다.'));
+    app.append(emptyState('등록된 아카라카 영상이 아직 없어요', '새로운 무대 실황 영상이 곧 등록됩니다.'));
     return;
   }
 
   // 1. View Mode Switcher Tabs
   const currentView = state.stageView || 'list';
-  const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '공연 영상 보기 방식'},
+  const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '아카라카 영상 보기 방식'},
     button('📋 목록으로 보기', () => {
       state.stageView = 'list';
       writeRoute({tab: 'stage', view: 'list'}, {replace: true});
@@ -792,7 +792,7 @@ function renderStage() {
     contentArea.replaceChildren();
 
     if (!filtered.length) {
-      contentArea.append(emptyState('검색된 공연 영상이 없습니다', '다른 검색어를 입력하거나 카테고리 필터를 변경해 보세요.'));
+      contentArea.append(emptyState('검색된 아카라카 영상이 없습니다', '다른 검색어를 입력하거나 카테고리 필터를 변경해 보세요.'));
       return;
     }
 
