@@ -28,7 +28,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=55">
+  <link rel="stylesheet" href="./css/style.css?v=56">
 
 
 </head>
@@ -379,8 +379,8 @@
       </div>
 
       <div style="margin-bottom: 16px; padding: 14px; background: var(--surface-soft); border-radius: 10px; border: 1px solid var(--border);">
-        <label for="score-file-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">📄 내 컴퓨터에서 악보 파일 선택 (PDF 또는 이미지)</label>
-        <input type="file" id="score-file-input" accept="application/pdf,image/*,.pdf,.png,.jpg,.jpeg,.webp" style="display: block; width: 100%; padding: 8px 0; font-size: 12px; box-sizing: border-box;">
+        <label for="score-file-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">📄 내 기기에서 악보/MIDI 파일 선택 (PDF, MIDI, NWC, 음원, 이미지)</label>
+        <input type="file" id="score-file-input" accept=".mid,.midi,.nwc,.pdf,.png,.jpg,.jpeg,.webp,.mp3,.wav,audio/midi,application/pdf,image/*,audio/*" style="display: block; width: 100%; padding: 8px 0; font-size: 12px; box-sizing: border-box;">
         <div style="margin-top: 8px;">
           <label for="score-url-input" style="display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px;">또는 온라인 링크 (구글 드라이브, 클라우드 악보 링크)</label>
           <input type="url" id="score-url-input" placeholder="https://drive.google.com/... 또는 https://..." style="width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: 12px; box-sizing: border-box;">
@@ -779,7 +779,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=55';
+      script.src = './js/app.js?v=56';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);

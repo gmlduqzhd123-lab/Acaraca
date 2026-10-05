@@ -1480,7 +1480,7 @@ function openUploadScoreModal(defaultSongId = '') {
     const url = urlInput.value.trim();
 
     if (!file && !url) {
-      toast('악보 파일(PDF 또는 이미지)을 선택하거나 온라인 주소를 입력해 주세요.');
+      toast('악보 또는 MIDI/음원 파일을 선택하거나 온라인 주소를 입력해 주세요.');
       return;
     }
 
@@ -1491,7 +1491,17 @@ function openUploadScoreModal(defaultSongId = '') {
       const scoreId = `score-custom-${Date.now()}`;
       let mediaId = null;
       let fileName = file?.name || '온라인 악보';
-      let fileType = file?.type === 'application/pdf' || /\.pdf$/i.test(file?.name || '') ? 'pdf' : (file?.type?.startsWith('image') || /\.(jpg|png|jpeg|webp)$/i.test(file?.name || '')) ? 'image' : 'link';
+      const ext = (file?.name || '').split('.').pop().toLowerCase();
+      let fileType = 'link';
+      let format = 'link';
+      if (file) {
+        if (ext === 'pdf') { fileType = 'pdf'; format = 'pdf'; }
+        else if (ext === 'mid' || ext === 'midi') { fileType = 'midi'; format = 'midi'; }
+        else if (ext === 'nwc') { fileType = 'nwc'; format = 'nwc'; }
+        else if (['mp3', 'wav', 'm4a', 'aac', 'ogg'].includes(ext)) { fileType = 'audio'; format = 'audio'; }
+        else if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) { fileType = 'image'; format = 'image'; }
+        else { fileType = 'other'; format = ext; }
+      }
       let fileSize = file ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` : '';
 
       if (file) {
@@ -1509,6 +1519,7 @@ function openUploadScoreModal(defaultSongId = '') {
         arranger: arrangerInput.value.trim() || '단원 등록',
         memo: memoInput.value.trim(),
         fileType,
+        format,
         fileName,
         fileSize,
         fileUrl: url || '',
@@ -1698,6 +1709,10 @@ function renderScores() {
 
       const formatLabel = sc.fileType === 'nwc' || sc.format === 'nwc'
         ? '🎵 NWC 악보'
+        : sc.fileType === 'midi' || sc.format === 'midi'
+        ? '🎹 MIDI 음원'
+        : sc.fileType === 'audio' || sc.format === 'audio'
+        ? '🎙️ 가이드 음원'
         : sc.fileType === 'pdf'
         ? 'PDF 악보'
         : sc.fileType === 'image'
