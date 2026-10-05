@@ -1,6 +1,6 @@
 /**
- * Mobile Background Play, Media Session, Wake Lock, and OLED Pocket Lock Mode.
- * Enables continuous playback when screen is locked, switching apps, or placed in pocket.
+ * Mobile Background Play, Media Session, Wake Lock, and Pocket Mode.
+ * Helps prevent accidental touches and provides system media controls.
  */
 
 const SILENT_WAV_BASE64 = 'UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
@@ -201,9 +201,9 @@ export function setMediaSessionPlaybackState(state) {
 }
 
 /**
- * Enter OLED Pocket Lock Mode.
- * Covers screen with 100% pure black (#000), locks touches, keeps WakeLock active.
- * Perfect for practicing with phone in pocket or bag with 0% screen battery usage.
+ * Enter Pocket Lock Mode.
+ * Covers screen with a black overlay to block accidental touches while keeping playback alive.
+ * Note: The screen remains ON and consumes battery.
  */
 export function enterPocketMode({
   title = '연습곡',
@@ -221,12 +221,12 @@ export function enterPocketMode({
   overlay.id = 'pocket-mode-overlay';
   overlay.className = 'pocket-mode-overlay';
   overlay.setAttribute('role', 'dialog');
-  overlay.setAttribute('aria-label', '화면 잠금 절전 모드');
+  overlay.setAttribute('aria-label', '화면 터치 방지 포켓 모드');
 
   overlay.innerHTML = `
     <div class="pocket-top">
       <span class="pocket-lock-icon">🔒</span>
-      <span class="pocket-mode-badge">화면 잠금 절전 중 (포켓 모드)</span>
+      <span class="pocket-mode-badge">터치 방지 모드 (화면 켜짐 유지 중)</span>
     </div>
     <div class="pocket-center">
       <p class="pocket-song-title">${title}</p>
@@ -235,7 +235,7 @@ export function enterPocketMode({
         <span class="pocket-pulse-dot"></span>
         <span class="pocket-pulse-text">음악이 백그라운드에서 재생 중입니다</span>
       </div>
-      <p class="pocket-hint">💡 화면을 두 번 연속 탭하거나 아래 [잠금 해제] 버튼을 누르면 잠금이 해제됩니다.</p>
+      <p class="pocket-hint">💡 화면은 켜진 상태(배터리 사용 중)입니다. 화면을 두 번 연속 탭하거나 아래 [잠금 해제] 버튼을 누르면 원래 화면으로 복귀합니다.</p>
     </div>
     <div class="pocket-bottom">
       <button type="button" class="pocket-unlock-button" id="pocket-unlock-btn">
@@ -290,7 +290,7 @@ export function enterPocketMode({
 }
 
 /**
- * Exit OLED Pocket Lock Mode.
+ * Exit Pocket Mode.
  */
 export function exitPocketMode() {
   if (currentPocketOverlay && currentPocketOverlay.parentNode) {

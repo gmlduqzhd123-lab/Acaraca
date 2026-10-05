@@ -4007,7 +4007,7 @@ function renderSettings() {
   const bgPlayPanel = el('section', {class: 'settings-panel'},
     icon('sparkles'),
     el('h2', {text: '모바일 백그라운드 & 절전 모드'}),
-    el('p', {text: '스마트폰 화면을 끄거나 주머니에 넣고 이동하며 끊김 없이 아카펠라를 연습할 수 있는 기능입니다.'}),
+    el('p', {text: '주머니 속 터치 오작동을 방지하는 포켓 모드와 잠금 화면 미디어 컨트롤 안내를 확인하세요.'}),
     button('백그라운드 & 절전 모드 안내', () => openBackgroundGuideModal(), 'button secondary', 'sparkles')
   );
   const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary', 'external'));
