@@ -1679,7 +1679,7 @@ function renderScores() {
       const badges = el('div', {class: 'score-badges'},
         sc.year && el('span', {class: 'badge', style: 'background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand); font-weight: 600;', text: `${sc.year}년`}),
         el('span', {class: 'badge', text: sc.category || '총보'}),
-        sc.part && sc.part !== 'all' && el('span', {class: 'status-badge', text: PARTS[sc.part] || sc.part}),
+        sc.part && sc.part !== 'all' && el('span', {class: 'badge status-badge', text: PARTS[sc.part] || sc.part}),
         song && el('span', {class: 'part-pill', text: song.title})
       );
 
@@ -2013,7 +2013,7 @@ function renderEducation() {
 
       const badges = el('div', {class: 'edu-badges'},
         el('span', {class: 'badge', text: formatLabel}),
-        item.target && el('span', {class: 'status-badge', text: item.target}),
+        item.target && el('span', {class: 'badge status-badge', text: item.target}),
         item.category && item.category !== formatLabel && el('span', {class: 'part-pill', text: item.category})
       );
 
@@ -3668,7 +3668,7 @@ function renderDetail(song) {
             el('div', {class: 'score-info'},
               sc.year && el('span', {class: 'badge', style: 'margin-right: 4px; font-weight: 600; background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand);', text: `${sc.year}년`}),
               el('span', {class: 'badge', text: sc.category || '총보'}),
-              sc.part && sc.part !== 'all' && el('span', {class: 'status-badge', style: 'margin-left: 4px;', text: PARTS[sc.part] || sc.part}),
+              sc.part && sc.part !== 'all' && el('span', {class: 'badge status-badge', style: 'margin-left: 4px;', text: PARTS[sc.part] || sc.part}),
               el('h3', {style: 'font-size: 15px; font-weight: 700; margin: 4px 0;', text: sc.title}),
               el('p', {style: 'font-size: 11px; color: var(--muted);', text: `${sc.fileSize ? `${sc.fileSize} · ` : ''}${formatLabel}`})
             )
