@@ -228,6 +228,9 @@ export function runCoreTests() {
         return isNotGuide && v.videoUrl.startsWith('https://www.youtube.com/watch?v=');
       });
     });
+    check('감상 영상 최신 추가 100곡(apprec-kr) 최신순 기본 상단 배치 검증', () => {
+      return apprecRaw.videos[0].id === 'apprec-kr-001' && apprecRaw.videos[99].id === 'apprec-kr-100';
+    });
 
     const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
     check('education.json 41개 전문 교육 자료 로드 검증 (교재 11개 + 교육 영상 30개)', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 41 && eduRaw.resources.filter(r => r.format === 'video').length === 30);

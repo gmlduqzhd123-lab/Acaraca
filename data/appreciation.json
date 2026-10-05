@@ -2,1966 +2,6 @@
   "version": 4,
   "videos": [
     {
-      "id": "apprec-song-bohemian-rhapsody-5",
-      "songId": "bohemian-rhapsody-5",
-      "title": "보헤미안 랩소디 · 5인용 - 보이스플레이 (VoicePlay Queen Medley)",
-      "artist": "보이스플레이 (VoicePlay)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=krcU5xmlzqA",
-      "thumbnail": "https://img.youtube.com/vi/krcU5xmlzqA/hqdefault.jpg",
-      "uploader": "보이스플레이 (VoicePlay)",
-      "date": "공식 MV",
-      "description": "미국 최정상 5인조 프로 아카펠라 그룹 보이스플레이(VoicePlay)의 압도적인 Queen & Bohemian Rhapsody 메들리 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "보헤미안 랩소디",
-        "VoicePlay",
-        "5인조",
-        "Queen"
-      ]
-    },
-    {
-      "id": "apprec-song-bohemian-rhapsody-6",
-      "songId": "bohemian-rhapsody-6",
-      "title": "보헤미안 랩소디 · 6인용 (Bohemian Rhapsody) - 펜타토닉스",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5oCI",
-      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5oCI/hqdefault.jpg",
-      "uploader": "펜타토닉스 (Pentatonix)",
-      "date": "공식 MV",
-      "description": "펜타토닉스(Pentatonix)의 명품 퀸 보헤미안 랩소디 공식 연주 영상입니다. 아카라카 연습실에서 파트별 음정과 함께 연습해 보세요.",
-      "tags": [
-        "연습곡",
-        "보헤미안 랩소디",
-        "펜타토닉스",
-        "Queen",
-        "6부"
-      ]
-    },
-    {
-      "id": "apprec-song-mujogeon",
-      "songId": "mujogeon",
-      "title": "신나는 트로트 메들리 (Trot Live) - 아카펠라 그룹 다이아 (D.I.A)",
-      "artist": "다이아 (D.I.A)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=Pya8GKVnfC4",
-      "thumbnail": "https://img.youtube.com/vi/Pya8GKVnfC4/hqdefault.jpg",
-      "uploader": "아카펠라 다이아",
-      "date": "프로 라이브 실황",
-      "description": "원조 아카펠라 프로팀 다이아(D.I.A)가 박상철의 ‘무조건’ 등 흥겨운 트로트 명곡들을 유쾌한 화음과 입체적인 보컬 연기로 소화한 무대 영상입니다.",
-      "tags": [
-        "연습곡",
-        "무조건",
-        "다이아",
-        "DIA",
-        "트로트"
-      ]
-    },
-    {
-      "id": "apprec-song-short-hair",
-      "songId": "short-hair",
-      "title": "단발머리 (조용필) - 메이트리 (MayTree 1집 Maybe 수록)",
-      "artist": "메이트리 (MayTree)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=-QwGNWKKiAE",
-      "thumbnail": "https://img.youtube.com/vi/-QwGNWKKiAE/hqdefault.jpg",
-      "uploader": "메이트리 (MayTree)",
-      "date": "공식 정규앨범 트랙 (07:17)",
-      "description": "세계적인 아카펠라 그룹 메이트리(MayTree)가 1집 정규앨범 ‘Maybe’에 수록하여 수많은 공연에서 사랑받은 조용필 원곡 ‘단발머리’ 아카펠라 트랙입니다.",
-      "tags": [
-        "연습곡",
-        "단발머리",
-        "메이트리",
-        "MayTree",
-        "조용필"
-      ]
-    },
-    {
-      "id": "apprec-song-disney-medley-7",
-      "songId": "disney-medley-7",
-      "title": "디즈니 메들리 · 7부 (Disney Medley) - Peter Hollens & Alex G",
-      "artist": "피터 홀렌스 (Peter Hollens) · Alex G",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=GDEFuG30FYg",
-      "thumbnail": "https://img.youtube.com/vi/GDEFuG30FYg/hqdefault.jpg",
-      "uploader": "피터 홀렌스 (Peter Hollens)",
-      "date": "공식 MV",
-      "description": "세계적인 아카펠라 아티스트 피터 홀렌스(Peter Hollens)와 Alex G가 7개 이상의 성부로 화려하게 쌓아올린 디즈니 메들리 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "디즈니",
-        "Peter Hollens",
-        "Alex G",
-        "7부"
-      ]
-    },
-    {
-      "id": "apprec-song-disney-medley",
-      "songId": "disney-medley",
-      "title": "Disney Medley - 엑시트 (VoiceBand EXIT feat. 이희주)",
-      "artist": "엑시트 (VoiceBand EXIT)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=lVqNI6qP1ms",
-      "thumbnail": "https://img.youtube.com/vi/lVqNI6qP1ms/hqdefault.jpg",
-      "uploader": "보이스밴드 엑시트",
-      "date": "공식 영상 (조회수 2300만)",
-      "description": "대한민국 대표 프로 아카펠라 그룹 엑시트(EXIT)와 보컬 이희주의 2300만 뷰 디즈니 명곡 아카펠라 메들리 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "디즈니 메들리",
-        "EXIT",
-        "엑시트",
-        "이희주"
-      ]
-    },
-    {
-      "id": "apprec-song-first-impression",
-      "songId": "first-impression",
-      "title": "첫인상 (First Impression) - 메이트리 (MayTree Live at Arirang)",
-      "artist": "메이트리 (MayTree)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=koKC3zS_CYw",
-      "thumbnail": "https://img.youtube.com/vi/koKC3zS_CYw/hqdefault.jpg",
-      "uploader": "아리랑 라디오 (Arirang Radio)",
-      "date": "라디오 라이브 스튜디오",
-      "description": "아리랑 라디오 ‘K-Poppin’ 스튜디오에서 메이트리(MayTree)가 김건모의 대표 그루브 댄스곡 ‘첫인상’을 완벽한 5인 하모니로 부른 라이브 실황입니다.",
-      "tags": [
-        "연습곡",
-        "첫인상",
-        "메이트리",
-        "MayTree",
-        "김건모"
-      ]
-    },
-    {
-      "id": "apprec-song-tobacco-shop-girl",
-      "songId": "tobacco-shop-girl",
-      "title": "담배가게 아가씨 (송창식) - 엑시트 (EXIT Live ver.)",
-      "artist": "엑시트 (VoiceBand EXIT)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=6gw6D0RRFDs",
-      "thumbnail": "https://img.youtube.com/vi/6gw6D0RRFDs/hqdefault.jpg",
-      "uploader": "오프더레코드 라이브",
-      "date": "프로 라이브 실황",
-      "description": "보이스밴드 엑시트(EXIT)가 폭발적인 가창력과 보컬 퍼커션으로 완성한 송창식 원곡 ‘담배가게 아가씨’ 고화질 라이브 무대입니다.",
-      "tags": [
-        "연습곡",
-        "담배가게 아가씨",
-        "엑시트",
-        "EXIT",
-        "라이브"
-      ]
-    },
-    {
-      "id": "apprec-song-aloha",
-      "songId": "aloha",
-      "title": "쿨 - 아로하 | 를 오직목소리로 (Cool - Aloha by Acapella)",
-      "artist": "오직목소리 (구 두왑사운즈)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=bw9c_Gp5Ixs",
-      "thumbnail": "https://img.youtube.com/vi/bw9c_Gp5Ixs/hqdefault.jpg",
-      "uploader": "오직목소리 (구 두왑사운즈)",
-      "date": "공식 커버 영상",
-      "description": "국민 애창곡 ‘아로하’를 프로 아카펠라 그룹 오직목소리(두왑사운즈)의 달콤한 화음과 비트박스로 완성한 공식 아카펠라 커버 영상입니다.",
-      "tags": [
-        "연습곡",
-        "아로하",
-        "오직목소리",
-        "두왑사운즈",
-        "쿨"
-      ]
-    },
-    {
-      "id": "apprec-song-tayo-pororo",
-      "songId": "tayo-pororo",
-      "title": "타요 오프닝 송 (아카펠라 ver.) - 꼬마버스 타요 X 엑시트 (EXIT)",
-      "artist": "엑시트 (VoiceBand EXIT)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=z4cOfW52eJ8",
-      "thumbnail": "https://img.youtube.com/vi/z4cOfW52eJ8/hqdefault.jpg",
-      "uploader": "꼬마버스 타요 공식 채널",
-      "date": "공식 콜라보레이션",
-      "description": "꼬마버스 타요와 보이스밴드 엑시트(EXIT)가 공식 콜라보레이션으로 제작한 신나는 애니메이션 테마송 아카펠라 버전입니다.",
-      "tags": [
-        "연습곡",
-        "타요",
-        "뽀로로",
-        "엑시트",
-        "EXIT"
-      ]
-    },
-    {
-      "id": "apprec-song-run-the-sky",
-      "songId": "run-the-sky",
-      "title": "이적 '하늘을 달리다' - 아카펠라 그룹 나린 (NARIN Live)",
-      "artist": "나린 (NARIN)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=ZoSmLW7e9jk",
-      "thumbnail": "https://img.youtube.com/vi/ZoSmLW7e9jk/hqdefault.jpg",
-      "uploader": "국립항공박물관 공식",
-      "date": "프로 특별 라이브",
-      "description": "실력파 혼성 아카펠라 그룹 나린(NARIN)이 국립항공박물관 특별 무대에서 시원하고 힘찬 5성부 하모니로 노래한 이적의 ‘하늘을 달리다’ 라이브 영상입니다.",
-      "tags": [
-        "연습곡",
-        "하늘을 달리다",
-        "나린",
-        "NARIN",
-        "이적"
-      ]
-    },
-    {
-      "id": "apprec-song-acaroom-opening",
-      "songId": "acaroom-opening",
-      "title": "아카라카 응원가 메들리 - 연세대학교 아카펠라 그룹 YAYAN",
-      "artist": "연세대학교 & YAYAN",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=-xAYYFYyrVw",
-      "thumbnail": "https://img.youtube.com/vi/-xAYYFYyrVw/hqdefault.jpg",
-      "uploader": "연세대학교 공식 채널 (Yonsei Univ)",
-      "date": "연세대학교 공식 제작 영상",
-      "description": "연세대학교 중앙 아카펠라 동아리 YAYAN이 신촌 노천극장의 축제 ‘아카라카를 온누리에’ 대표 응원곡들을 화려한 아카펠라 하모니로 노래한 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "아카라카",
-        "YAYAN",
-        "연세대학교",
-        "응원가"
-      ]
-    },
-    {
-      "id": "apprec-song-speechless",
-      "songId": "speechless",
-      "title": "Speechless (알라딘 OST) - 디카펠라 (DCappella Official Video)",
-      "artist": "디카펠라 (DCappella)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=vGG62umYgvg",
-      "thumbnail": "https://img.youtube.com/vi/vGG62umYgvg/hqdefault.jpg",
-      "uploader": "디즈니 뮤직 (DisneyMusicVEVO)",
-      "date": "공식 MV",
-      "description": "월트 디즈니 공식 7인조 프로 아카펠라 그룹 디카펠라(DCappella)가 부른 영화 알라딘 OST ‘Speechless’ 공식 뮤직비디오입니다.",
-      "tags": [
-        "연습곡",
-        "Speechless",
-        "DCappella",
-        "디즈니",
-        "알라딘"
-      ]
-    },
-    {
-      "id": "apprec-song-in-your-arms",
-      "songId": "in-your-arms",
-      "title": "그대 내 품에 (유재하 / EXIT 편곡) - 아카펠라 힐링 콘서트 라이브",
-      "artist": "엑시트 편곡 / 아카펠라 마카",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=FGCC5aorfns",
-      "thumbnail": "https://img.youtube.com/vi/FGCC5aorfns/hqdefault.jpg",
-      "uploader": "올드앤뉴 아카펠라 아카이빙",
-      "date": "아카펠라 콘서트 라이브",
-      "description": "유재하의 불후의 명곡 ‘그대 내 품에’ 엑시트(EXIT) 편곡 버전을 아카펠라 그룹의 아름다운 5성부 하모니로 공연한 콘서트 실황입니다.",
-      "tags": [
-        "연습곡",
-        "그대 내 품에",
-        "엑시트",
-        "유재하",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-song-happy-school",
-      "songId": "happy-school",
-      "title": "교실을 빛내는 하모니 - 아카펠라 별의별 (교육부 스승의 날 응원)",
-      "artist": "별의별 (Byeol-ui-Byeol)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=s0_kbld9PB8",
-      "thumbnail": "https://img.youtube.com/vi/s0_kbld9PB8/hqdefault.jpg",
-      "uploader": "대한민국 교육부 공식",
-      "date": "교육부 공식 특별 영상",
-      "description": "현직 교사들로 구성된 한국 대표 교육 아카펠라 그룹 별의별과 교육부가 함께한 행복한 학교와 교실을 위한 따뜻한 아카펠라 영상입니다.",
-      "tags": [
-        "연습곡",
-        "행복한 학교",
-        "별의별",
-        "교육부",
-        "동요"
-      ]
-    },
-    {
-      "id": "apprec-song-go-to-school",
-      "songId": "go-to-school",
-      "title": "[별의별 1집] 학교가자 - 아카펠라 별의별 (Official MV)",
-      "artist": "별의별 (Byeol-ui-Byeol)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=nPqnsaIXWxw",
-      "thumbnail": "https://img.youtube.com/vi/nPqnsaIXWxw/hqdefault.jpg",
-      "uploader": "아카펠라 별의별",
-      "date": "공식 1집 타이틀 MV",
-      "description": "아이들의 발걸음과 학교생활의 설렘을 경쾌한 아카펠라 보컬로 표현한 아카펠라 별의별 정규 1집 타이틀곡 ‘학교가자’ 공식 뮤직비디오입니다.",
-      "tags": [
-        "연습곡",
-        "학교 가자",
-        "별의별",
-        "공식MV",
-        "동요"
-      ]
-    },
-    {
-      "id": "apprec-song-well-done-today",
-      "songId": "well-done-today",
-      "title": "옥상달빛 - 수고했어 오늘도 | 아카펠라 나린 (Narin Official Cover)",
-      "artist": "나린 (NARIN)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=w9Gf4T6Gsg0",
-      "thumbnail": "https://img.youtube.com/vi/w9Gf4T6Gsg0/hqdefault.jpg",
-      "uploader": "아카펠라 나린 (Narin Official)",
-      "date": "공식 커버 영상",
-      "description": "많은 이들에게 따뜻한 위로를 전하는 옥상달빛의 ‘수고했어 오늘도’를 아카펠라 그룹 나린(NARIN)이 청아하고 포근한 보컬 하모니로 커버한 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "수고했어 오늘도",
-        "나린",
-        "NARIN",
-        "옥상달빛"
-      ]
-    },
-    {
-      "id": "apprec-song-bohemian-rhapsody",
-      "songId": "bohemian-rhapsody",
-      "title": "Bohemian Rhapsody - 펜타토닉스 (Pentatonix Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5oCI",
-      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5oCI/hqdefault.jpg",
-      "uploader": "펜타토닉스 (Pentatonix)",
-      "date": "공식 MV",
-      "description": "세계적인 아카펠라 그룹 펜타토닉스(Pentatonix)의 전설적인 퀸(Queen) ‘Bohemian Rhapsody’ 공식 뮤직비디오입니다.",
-      "tags": [
-        "연습곡",
-        "보헤미안 랩소디",
-        "Pentatonix",
-        "Queen",
-        "Official"
-      ]
-    },
-    {
-      "id": "apprec-song-daft-punk",
-      "songId": "daft-punk",
-      "title": "Daft Punk Medley - 펜타토닉스 (Pentatonix Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=3MteSlpxCpo",
-      "thumbnail": "https://img.youtube.com/vi/3MteSlpxCpo/hqdefault.jpg",
-      "uploader": "펜타토닉스 (Pentatonix)",
-      "date": "공식 MV",
-      "description": "펜타토닉스를 세계 최고로 만든 그래미 수상작 ‘Daft Punk’ 공식 뮤직비디오입니다. 연습실에서 파트별 첫음과 비트박스를 익혀보세요.",
-      "tags": [
-        "연습곡",
-        "Daft Punk",
-        "Pentatonix",
-        "그래미",
-        "Official"
-      ]
-    },
-    {
-      "id": "apprec-song-dansori",
-      "songId": "dansori",
-      "title": "Amazing Grace + 아리랑 - 국악아카펠라 토리스 (Toris)",
-      "artist": "토리스 (Toris 국악아카펠라)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=d1Dcf2_ICDI",
-      "thumbnail": "https://img.youtube.com/vi/d1Dcf2_ICDI/hqdefault.jpg",
-      "uploader": "KBS 국악한마당 공식",
-      "date": "KBS 국악한마당 방송 실황",
-      "description": "국내 유일의 국악 아카펠라 프로팀 토리스(Toris)가 KBS 국악한마당에서 선보인 국악과 서양 화음의 경이로운 만남 ‘Amazing Grace & 아리랑’ 무대입니다.",
-      "tags": [
-        "연습곡",
-        "단소리",
-        "토리스",
-        "국악아카펠라",
-        "KBS국악한마당"
-      ]
-    },
-    {
-      "id": "apprec-song-isnt-she-lovely",
-      "songId": "isnt-she-lovely",
-      "title": "Isn't She Lovely (스티비 원더) - 보이스밴드 엑시트 (EXIT)",
-      "artist": "엑시트 (VoiceBand EXIT)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=VCDXJbA2YjI",
-      "thumbnail": "https://img.youtube.com/vi/VCDXJbA2YjI/hqdefault.jpg",
-      "uploader": "보이스밴드 엑시트",
-      "date": "공식 커버 영상",
-      "description": "스티비 원더의 대표 명곡 ‘Isn't She Lovely’를 프로 아카펠라 그룹 엑시트(EXIT)만의 감미롭고 스윙감 넘치는 하모니로 커버한 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "Isnt She Lovely",
-        "엑시트",
-        "EXIT",
-        "Stevie Wonder"
-      ]
-    },
-    {
-      "id": "apprec-song-lets-travel",
-      "songId": "lets-travel",
-      "title": "여행을 떠나요 (조용필) - 아카펠라 그룹 엑시트 (EXIT 산사음악회)",
-      "artist": "엑시트 (VoiceBand EXIT)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=bW0tcG8oLro",
-      "thumbnail": "https://img.youtube.com/vi/bW0tcG8oLro/hqdefault.jpg",
-      "uploader": "봉은사 산사음악회 라이브",
-      "date": "프로 라이브 실황",
-      "description": "조용필 원곡의 신나는 명곡 ‘여행을 떠나요’를 보이스밴드 엑시트(EXIT)가 열정적인 비트박스와 화려한 애드리브로 공연한 야외 음악회 실황입니다.",
-      "tags": [
-        "연습곡",
-        "여행을 떠나요",
-        "엑시트",
-        "EXIT",
-        "조용필"
-      ]
-    },
-    {
-      "id": "apprec-song-love-song-medley",
-      "songId": "love-song-medley",
-      "title": "디즈니 러브송 메들리 - 제니스 (ZENITH 레코드방 라이브)",
-      "artist": "제니스 (ZENITH)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=dVgzbLgkLdY",
-      "thumbnail": "https://img.youtube.com/vi/dVgzbLgkLdY/hqdefault.jpg",
-      "uploader": "서울역사박물관 레트로라이브",
-      "date": "프로 라이브 실황",
-      "description": "프로 아카펠라 그룹 제니스(Zenith)가 전하는 로맨틱한 디즈니 사랑 노래 메들리 라이브 무대입니다. 환상적인 혼성 화음을 감상해 보세요.",
-      "tags": [
-        "연습곡",
-        "러브송 메들리",
-        "제니스",
-        "ZENITH",
-        "디즈니"
-      ]
-    },
-    {
-      "id": "apprec-song-l-o-v-e",
-      "songId": "l-o-v-e",
-      "title": "L.O.V.E. (Nat King Cole) - 메이트리 (MayTree Live in Moscow)",
-      "artist": "메이트리 (MayTree)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=peiYcaL6BvQ",
-      "thumbnail": "https://img.youtube.com/vi/peiYcaL6BvQ/hqdefault.jpg",
-      "uploader": "모스크바 국제 아카펠라 페스티벌",
-      "date": "국제 페스티벌 라이브",
-      "description": "세계적인 아카펠라 그룹 메이트리(MayTree)가 모스크바 아카펠라 페스티벌 현장에서 마이크 없이 오직 목소리의 울림만으로 선사한 명품 재즈 라이브입니다.",
-      "tags": [
-        "연습곡",
-        "LOVE",
-        "메이트리",
-        "MayTree",
-        "재즈"
-      ]
-    },
-    {
-      "id": "apprec-song-old-pop-medley",
-      "songId": "old-pop-medley",
-      "title": "한국인이 사랑하는 팝 메들리 - 보이스밴드 엑시트 (EXIT)",
-      "artist": "엑시트 (VoiceBand EXIT)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=8cNuJQ6pgg8",
-      "thumbnail": "https://img.youtube.com/vi/8cNuJQ6pgg8/hqdefault.jpg",
-      "uploader": "보이스밴드 엑시트",
-      "date": "공식 메들리 영상",
-      "description": "보이스밴드 엑시트(EXIT)가 한국인이 가장 사랑하는 올드팝 명곡들을 모아 파워풀한 보컬과 비트박스로 엮어낸 풀버전 아카펠라 메들리입니다.",
-      "tags": [
-        "연습곡",
-        "올드팝 메들리",
-        "엑시트",
-        "EXIT",
-        "팝송"
-      ]
-    },
-    {
-      "id": "apprec-song-beautiful-world",
-      "songId": "beautiful-world",
-      "title": "아름다운 세상 - 보이쳐 (Voiture EBS 스페이스 공감 페스티벌)",
-      "artist": "보이쳐 (Voiture)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=RPY5H6drjDk",
-      "thumbnail": "https://img.youtube.com/vi/RPY5H6drjDk/hqdefault.jpg",
-      "uploader": "EBS 스페이스 공감",
-      "date": "EBS 스페이스 공감 방송 실황 (03:22)",
-      "description": "대한민국 1세대 대표 혼성 프로 아카펠라 그룹 보이쳐(Voiture)가 EBS 스페이스 공감 아카펠라 페스티벌에서 부른 감동적인 ‘아름다운 세상’ 라이브입니다.",
-      "tags": [
-        "연습곡",
-        "아름다운 세상",
-        "보이쳐",
-        "Voiture",
-        "EBS공감"
-      ]
-    },
-    {
-      "id": "apprec-song-butterfly",
-      "songId": "butterfly",
-      "title": "영화 국가대표 OST 'Butterfly' (러브홀릭스 by MayTree 편곡)",
-      "artist": "메이트리 편곡 / 아카펠라 하모니",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=8lubcsg8lA8",
-      "thumbnail": "https://img.youtube.com/vi/8lubcsg8lA8/hqdefault.jpg",
-      "uploader": "아카펠라 하모니 라이브",
-      "date": "아카펠라 라이브 실황",
-      "description": "메이트리(MayTree)의 시그니처 편곡으로 재탄생한 영화 국가대표 OST ‘Butterfly’의 웅장하고 희망찬 아카펠라 합창 실황 영상입니다.",
-      "tags": [
-        "연습곡",
-        "Butterfly",
-        "국가대표",
-        "메이트리",
-        "러브홀릭스"
-      ]
-    },
-    {
-      "id": "apprec-song-cherry-blossom-ending",
-      "songId": "cherry-blossom-ending",
-      "title": "벚꽃엔딩 (아카펠라) - 제니스 (ZENITH Official)",
-      "artist": "제니스 (ZENITH)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=Q0QkJQ3RYeo",
-      "thumbnail": "https://img.youtube.com/vi/Q0QkJQ3RYeo/hqdefault.jpg",
-      "uploader": "제니스 (ZENITH Official)",
-      "date": "공식 아카펠라 영상",
-      "description": "국내 최정상 혼성 프로 아카펠라 그룹 제니스(ZENITH)가 봄의 대표곡 버스커 버스커 ‘벚꽃 엔딩’을 섬세한 5성부 하모니로 노래한 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "벚꽃엔딩",
-        "제니스",
-        "ZENITH",
-        "버스커버스커"
-      ]
-    },
-    {
-      "id": "apprec-song-love-love",
-      "songId": "love-love",
-      "title": "다이아 (D.I.A) - 사랑해 사랑해 (Official Music Video)",
-      "artist": "다이아 (D.I.A)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=abd9ioW3u_E",
-      "thumbnail": "https://img.youtube.com/vi/abd9ioW3u_E/hqdefault.jpg",
-      "uploader": "스톤뮤직 (Stone Music Ent.)",
-      "date": "공식 MV / 음원",
-      "description": "국내 1세대 대표 아카펠라 그룹 다이아(D.I.A)의 메가 히트 축가이자 경쾌한 스윙 보사노바 하모니가 돋보이는 ‘사랑해 사랑해’ 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "사랑해 사랑해",
-        "다이아",
-        "DIA",
-        "축가"
-      ]
-    },
-    {
-      "id": "apprec-song-carol-medley",
-      "songId": "carol-medley",
-      "title": "Carol of the Bells - 펜타토닉스 (Pentatonix Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=WSUFzC6_fp8",
-      "thumbnail": "https://img.youtube.com/vi/WSUFzC6_fp8/hqdefault.jpg",
-      "uploader": "펜타토닉스 (PentatonixVEVO)",
-      "date": "공식 MV (조회수 2억뷰)",
-      "description": "유튜브 2억 조회수를 기록한 펜타토닉스의 상징적인 크리스마스 아카펠라 명작 ‘Carol of the Bells’ 공식 뮤직비디오입니다.",
-      "tags": [
-        "연습곡",
-        "캐롤 메들리",
-        "Pentatonix",
-        "펜타토닉스",
-        "Carol of the Bells"
-      ]
-    },
-    {
-      "id": "apprec-song-same-place",
-      "songId": "same-place",
-      "title": "같은 곳에서 (프로듀스 101) - 메이트리 (MayTree) X I.O.I",
-      "artist": "메이트리 (MayTree)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=kY1TMDiNSq0",
-      "thumbnail": "https://img.youtube.com/vi/kY1TMDiNSq0/hqdefault.jpg",
-      "uploader": "Mnet 방송 무대",
-      "date": "너목보3 방송 무대",
-      "description": "Mnet 너의 목소리가 보여 시즌3에서 I.O.I와 메이트리(MayTree)가 선보인 환상적인 ‘같은 곳에서’ 아카펠라 콜라보레이션 무대입니다.",
-      "tags": [
-        "연습곡",
-        "같은 곳에서",
-        "메이트리",
-        "MayTree",
-        "IOI"
-      ]
-    },
-    {
-      "id": "apprec-song-would-be-good",
-      "songId": "would-be-good",
-      "title": "스윗소로우 (Sweet Sorrow) - 좋겠다 (Official Music Video)",
-      "artist": "스윗소로우 (Sweet Sorrow)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=CziTqWTKIHw",
-      "thumbnail": "https://img.youtube.com/vi/CziTqWTKIHw/hqdefault.jpg",
-      "uploader": "젬 컬처스 (Gem Cultures)",
-      "date": "공식 MV",
-      "description": "대한민국 대표 4인조 보컬 하모니 그룹 스윗소로우(Sweet Sorrow)가 부른 달콤하고 설레는 국민 축가 ‘좋겠다’ 공식 뮤직비디오입니다.",
-      "tags": [
-        "연습곡",
-        "좋겠다",
-        "스윗소로우",
-        "성시경",
-        "축가"
-      ]
-    },
-    {
-      "id": "apprec-song-ditto",
-      "songId": "ditto",
-      "title": "뉴진스 - Ditto | 오직 목소리로 (NewJeans - Ditto by Acapella)",
-      "artist": "오직목소리 (구 두왑사운즈)",
-      "category": "연습곡",
-      "videoUrl": "https://www.youtube.com/watch?v=u4SWcpt08VE",
-      "thumbnail": "https://img.youtube.com/vi/u4SWcpt08VE/hqdefault.jpg",
-      "uploader": "오직목소리 (구 두왑사운즈)",
-      "date": "공식 커버 영상",
-      "description": "프로 아카펠라 그룹 오직목소리(구 두왑사운즈)가 뉴진스(NewJeans)의 몽환적인 명곡 ‘Ditto’를 100% 목소리 화음만으로 재해석한 공식 영상입니다.",
-      "tags": [
-        "연습곡",
-        "Ditto",
-        "뉴진스",
-        "오직목소리",
-        "두왑사운즈"
-      ]
-    },
-    {
-      "id": "apprec-001",
-      "title": "오징어게임 & K팝 데몬 헌터스 메들리 - 메이트리 | [KBS제주] 20251225 방송",
-      "artist": "메이트리 (MayTree)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=1eBkmIY2Glo",
-      "thumbnail": "https://img.youtube.com/vi/1eBkmIY2Glo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "오징어게임 K팝 데몬 헌터스 (Your Idol + Soda Pop + Golden) Copyright c KBS. All rights reserved. 무단 전재, 재배포 및 이용(AI ...",
-      "tags": [
-        "메이트리",
-        "영화 / OST",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-002",
-      "title": "I Can See Your Voice 3 [후공개]소름주의! 메이트리, 아카펠라 앵콜 무대! 160908 EP.11",
-      "artist": "메이트리 (MayTree)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=xotvPCQOUfA",
-      "thumbnail": "https://img.youtube.com/vi/xotvPCQOUfA/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "I.O.I편 우승자, 세계 합창 대회 금메달 리스트 ′메이트리′의 앵콜무대 gloria estefant Turn The Beat Around ☆ 우승자 메이트리의 ...",
-      "tags": [
-        "메이트리",
-        "라이브 콘서트",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-003",
-      "title": "[ENG SUB] 메이트리 X 바버렛츠, 아카펠라 버전의 '뿜뿜'♥ 완벽한 하모니로 모두에게 놀라움을!! l 보컬플레이 4회 다시보기",
-      "artist": "메이트리 (MayTree)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=l-IL82pVs9s",
-      "thumbnail": "https://img.youtube.com/vi/l-IL82pVs9s/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "[ENG SUB] Acappella version of 'Bboom Bboom' by Maytree X The Barberettes! Their perfect harmony gives everyone a shock ...",
-      "tags": [
-        "메이트리",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-004",
-      "title": "I Can See Your Voice 3 [꽃길♡] I.O.I&메이트리, 환상 아카펠라 ′같은 곳에서′ 160908 EP.11",
-      "artist": "메이트리 (MayTree)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=kY1TMDiNSq0",
-      "thumbnail": "https://img.youtube.com/vi/kY1TMDiNSq0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "세계 합창 대회 금메달 리스트 메이트리&I.O.I - ′같은 곳에서(I.O.I)′ ☆ 우승자 메이트리의 ′같은곳에서′ 음원이 9/9(금) 정오 모든 ...",
-      "tags": [
-        "메이트리",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-005",
-      "title": "메이트리 (Maytree)│아카펠라로 듣는 '명화메들리' (캐리비안의 해적, 미션임파서블, 대부, 영광의 탈출ost) MBC220823방송",
-      "artist": "메이트리 (MayTree)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=Iu0iMSE7q_o",
-      "thumbnail": "https://img.youtube.com/vi/Iu0iMSE7q_o/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "클래식은티예무 #TV예술무대 #티예무 #MBC #tvartshow 아카펠라그룹- 메이트리 (Maytree) ♪ 명화메들리 Theme of Exodus (영광 ...",
-      "tags": [
-        "메이트리",
-        "영화 / OST",
-        "메들리",
-        "OST"
-      ]
-    },
-    {
-      "id": "apprec-006",
-      "title": "BRILLIANT! Korean Acapella Group Maytree SHOCKS The Judges on Americas Got Talent",
-      "artist": "메이트리 (MayTree)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=y6FqyhmMCmA",
-      "thumbnail": "https://img.youtube.com/vi/y6FqyhmMCmA/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Hey, if you hadn't had a chance to watch HERE are the best AGT 2023 auditions https://youtu.be/V55xv4zaXL8 What?",
-      "tags": [
-        "메이트리",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-007",
-      "title": "Movie Intro Medley Acapella- May Tree",
-      "artist": "메이트리 (MayTree)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=G-nA2COrpOs",
-      "thumbnail": "https://img.youtube.com/vi/G-nA2COrpOs/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Full Video: https://www.youtube.com/watch?v=k4D7cuDAvXE.",
-      "tags": [
-        "메이트리",
-        "영화 / OST",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-008",
-      "title": "Encanto OST (acapella) #maytree #disney #디즈니 #brasil",
-      "artist": "메이트리 (MayTree)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=agEBWT2OHbY",
-      "thumbnail": "https://img.youtube.com/vi/agEBWT2OHbY/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "encanto​ #disney​ #디즈니​ Você seguiria Maytree? :) www.instagram.com/maytree_music www.facebook.com/maytreemusic ...",
-      "tags": [
-        "메이트리",
-        "영화 / OST",
-        "OST"
-      ]
-    },
-    {
-      "id": "apprec-009",
-      "title": "Maytree on tv show (feat.비행기 타고 가요)",
-      "artist": "메이트리 (MayTree)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=60cCOQJpbyY",
-      "thumbnail": "https://img.youtube.com/vi/60cCOQJpbyY/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Maytree on tv show (feat.비행기 타고 가요) 채널A 비행기 타고가요 시즌2 - 메이트리 출연분 입니다 :) . . #메이트리 #비행기타고가요 ...",
-      "tags": [
-        "메이트리",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-010",
-      "title": "‘아카펠라 그룹’ 메이트리, SBS 드라마 OST 메들리 축하무대★ #2022SBS연기대상 #SBSdrama",
-      "artist": "메이트리 (MayTree)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=T2jjL84Op5k",
-      "thumbnail": "https://img.youtube.com/vi/T2jjL84Op5k/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "2022 SBS 연기대상 SBS '2022 SBS 연기대상' ☞ 12월 31일 오후 8시 35분 본방송 #2022SBS연기대상 #메이트리 #축하무대 ...",
-      "tags": [
-        "메이트리",
-        "영화 / OST",
-        "메들리",
-        "OST"
-      ]
-    },
-    {
-      "id": "apprec-011",
-      "title": "BTS - Dynamite (acapella cover) by Maytree",
-      "artist": "메이트리 (MayTree)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=QyKXyQ0fzGA",
-      "thumbnail": "https://img.youtube.com/vi/QyKXyQ0fzGA/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "BTS - Dynamite (acapella cover) by Maytree #BTS #Dynamite #acapella #cover BTS - Dynamite (acapella cover) by Maytree.",
-      "tags": [
-        "메이트리",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-012",
-      "title": "A Capella Group Deliver Pitch Perfect Audition on America's Got Talent 2022!",
-      "artist": "메이트리 (MayTree)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=VQEoNwURAOQ",
-      "thumbnail": "https://img.youtube.com/vi/VQEoNwURAOQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Watch Live Comedy ▶︎ https://youtu.be/KzrwaJJoKk4?t=6 This audition will take you down memory lane, recreating some of the ...",
-      "tags": [
-        "메이트리",
-        "라이브 콘서트",
-        "라이브"
-      ]
-    },
-    {
-      "id": "apprec-013",
-      "title": "MayTree Compilation",
-      "artist": "메이트리 (MayTree)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=rNKmR10182Y",
-      "thumbnail": "https://img.youtube.com/vi/rNKmR10182Y/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "MayTree Channel: - https://www.youtube.com/c/MayTreeofficial I found their YouTube channel and I think they are really good.",
-      "tags": [
-        "메이트리",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-014",
-      "title": "Running Up That Hill | MayTree (A Cappella) 🎶",
-      "artist": "메이트리 (MayTree)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=8Ujp1SDeu9g",
-      "thumbnail": "https://img.youtube.com/vi/8Ujp1SDeu9g/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "enjoylife #enjoymusic #charityvlog #credit_copyright_used.",
-      "tags": [
-        "메이트리",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-015",
-      "title": "Minecraft OST acapella",
-      "artist": "메이트리 (MayTree)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=2tLPASp_VkM",
-      "thumbnail": "https://img.youtube.com/vi/2tLPASp_VkM/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "shorts #short #acapella #music #song #respect #game #minecraft #mine #craft #games #motivation.",
-      "tags": [
-        "메이트리",
-        "영화 / OST",
-        "OST"
-      ]
-    },
-    {
-      "id": "apprec-016",
-      "title": "The Other Side(Trolls World Tour OST) - VBEXIT",
-      "artist": "엑시트 (EXIT)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=0IH5yY-xtMw",
-      "thumbnail": "https://img.youtube.com/vi/0IH5yY-xtMw/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "40만 구독기념 셰프중에 최고가수 레이먼 킴세범씨와 함께 했습니다. #구독자#40만기념 #TrollsWorldTour #SZA#JustinTimberlake ...",
-      "tags": [
-        "엑시트",
-        "영화 / OST",
-        "OST"
-      ]
-    },
-    {
-      "id": "apprec-017",
-      "title": "[아카펠라] BTS Acappella Medley cover by 보이스밴드 엑시트(Voiceband EXIT)",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=2bhqQlf1EEM",
-      "thumbnail": "https://img.youtube.com/vi/2bhqQlf1EEM/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Hi! Happy Chinese New Year! Youtubers! I know you love BTS! Same here. It's BTS acappella Medley! Wow~! I hope you like it ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-018",
-      "title": "[선공개] 엑시트(EXIT) - 디즈니 메들리(Disney Medley) | 스페이스 공감 LIVE",
-      "artist": "엑시트 (EXIT)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=S0g5g3j6Ank",
-      "thumbnail": "https://img.youtube.com/vi/S0g5g3j6Ank/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "EBS #스페이스공감 #엑시트 #EXIT.",
-      "tags": [
-        "엑시트",
-        "영화 / OST",
-        "메들리",
-        "라이브"
-      ]
-    },
-    {
-      "id": "apprec-019",
-      "title": "Disney Medley - VBEXIT(feat. Heeju Lee)",
-      "artist": "엑시트 (EXIT)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=lVqNI6qP1ms",
-      "thumbnail": "https://img.youtube.com/vi/lVqNI6qP1ms/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "From Cinderella To Frozen! Enjoy the Disney Music in Acappella! Don't forget to subscribe and like and share! Directed by ...",
-      "tags": [
-        "엑시트",
-        "영화 / OST",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-020",
-      "title": "[STARDIUM x EXIT] 아카펠라 국민체조 with 엑시트(EXIT)l STARDIUM",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=cj8ExJ_RZYo",
-      "thumbnail": "https://img.youtube.com/vi/cj8ExJ_RZYo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "듣지 않은 사람은 있어도 한번만 들은 사람은 없다! 국민체조 (ver.아카펠라) Arranged by 보이쳐 STARDIUM영상 재미있게 보셨다면 ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-021",
-      "title": "Frozen2 Medley - VBEXIT(feat. Heeju Lee)",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=E7jdyoQDF3g",
-      "thumbnail": "https://img.youtube.com/vi/E7jdyoQDF3g/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Happy New Year! Subscribers! Here's exit's newyear-gift for you! Frozen2 Medley!! . Directed by Youngjun Kim . #Frozen2 ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-022",
-      "title": "[#vbexit] 봄메들리 아카펠라 by 보이스밴드 엑시트",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=4Ai6P3DZbmU",
-      "thumbnail": "https://img.youtube.com/vi/4Ai6P3DZbmU/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'봄' 하면 떠오르는 노래 메들리 엑시트만의 느낌으로 부른 봄 메들리. 재밌게 보셨다면 구독하기와 좋아요입니당♥ . . . 페이스북 팬 ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-023",
-      "title": "[아카펠라] Isn't she lovely(Stevie Wonder) cover by 보이스밴드 엑시트(EXIT)",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=VCDXJbA2YjI",
-      "thumbnail": "https://img.youtube.com/vi/VCDXJbA2YjI/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "homepage : www.exitzone.co.kr -facebook : www.facebook.com/exitzone [엑시트 COVER] Isn't she lovely made : 2015. 11.",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-024",
-      "title": "Disney Medley 2 - VBEXIT(feat.SUHYUN of AKMU)",
-      "artist": "엑시트 (EXIT)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=9E-j1wrGcgI",
-      "thumbnail": "https://img.youtube.com/vi/9E-j1wrGcgI/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Disney Medley 2 with SUHYUN of AKMU! I hope you like it! . . Directed by Youngjun Kim . SUHYUN YOUTUBE https://youtube.com/c ...",
-      "tags": [
-        "엑시트",
-        "영화 / OST",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-025",
-      "title": "[EXIT(엑시트)] Acappella LIVE 믿을 수 없다면 보라!!!! 이어스트라이크할 라이브를!!!!",
-      "artist": "엑시트 (EXIT)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=sBFcWHwhDbk",
-      "thumbnail": "https://img.youtube.com/vi/sBFcWHwhDbk/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "LOEN MUSIC's New Brand Name, 1theK! 로엔뮤직의 새이름 1theK! [EXIT(엑시트)] Acappella LIVE 믿을 수 없다면 보라!",
-      "tags": [
-        "엑시트",
-        "라이브 콘서트",
-        "라이브"
-      ]
-    },
-    {
-      "id": "apprec-026",
-      "title": "[아카펠라] 에드쉬런X찰리푸스 cover by 보이스밴드 엑시트(Voiceband EXIT)",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=_sltrf0shjE",
-      "thumbnail": "https://img.youtube.com/vi/_sltrf0shjE/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "에드쉬런X찰리푸스 빌보드 씹어먹는 2guys!!!빼애앰!! 휴가철 폭염도 씹어먹즈아아아 #공유하기#이어폰꼭 #휴가갈때들어야징 #폭염 ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-027",
-      "title": "런닝맨 보이스밴드 엑시트가 아카펠라 버전으로 부른 (라이온킹ost)Circle of life",
-      "artist": "엑시트 (EXIT)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=jDZ-_Z3vUd0",
-      "thumbnail": "https://img.youtube.com/vi/jDZ-_Z3vUd0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "엑시트 (EXIT)의 대표적인 공식 아카펠라 명작 영상입니다.",
-      "tags": [
-        "엑시트",
-        "영화 / OST",
-        "OST"
-      ]
-    },
-    {
-      "id": "apprec-028",
-      "title": "BTS DNA+IDOL - VBEXIT (Channel A Vocalplay #1)",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=GkcZo-wg6ow",
-      "thumbnail": "https://img.youtube.com/vi/GkcZo-wg6ow/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "BTS MEDLEY EXIT Official Cover: https://youtu.be/2bhqQlf1EEM Directed by Youngjun Kim HASHTAG : #vbexit FACEBOOK ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-029",
-      "title": "[#vbexit] 감성 발라드 메들리 아카펠라 by 보이스밴드 엑시트(EXIT)",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=eK1ifU91etU",
-      "thumbnail": "https://img.youtube.com/vi/eK1ifU91etU/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "여러분의 시린 마음을 녹여줄 감성 발라드 메들리입니다! 즐감하시고 좋아요! 구독! 공유! 잊지마세용~ ^^ 페이스북 팬 페이지 : www ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-030",
-      "title": "[#vbexit] 한국인이 사랑하는 팝 메들리 아카펠라 by 보이스밴드 엑시트 MBC 마리텔 출연영상",
-      "artist": "엑시트 (EXIT)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=UESGQ4MnFOw",
-      "thumbnail": "https://img.youtube.com/vi/UESGQ4MnFOw/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "저희가 MBC 마이리틀텔레비젼 방송에 나왔습니다! 한국인이 사랑하는 팝 메들리입니다~ www.facebook.com/exitzone 보이스밴드 엑시트 ...",
-      "tags": [
-        "엑시트",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-031",
-      "title": "Pentatonix - Daft Punk (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=3MteSlpxCpo",
-      "thumbnail": "https://img.youtube.com/vi/3MteSlpxCpo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-032",
-      "title": "[Official Video] Love Again - Pentatonix",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=F80FsZDTgn0",
-      "thumbnail": "https://img.youtube.com/vi/F80FsZDTgn0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-033",
-      "title": "Pentatonix - The Sound of Silence (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=gdVjVtpr55M",
-      "thumbnail": "https://img.youtube.com/vi/gdVjVtpr55M/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-034",
-      "title": "Pentatonix - La La Latch (Sam Smith/Disclosure/Naughty Boy Mashup) (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=TsVeQnBmp70",
-      "thumbnail": "https://img.youtube.com/vi/TsVeQnBmp70/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Official Music Video for “La La Latch (Sam Smith/Disclosure/Naughty Boy Mashup)” by Pentatonix Listen to Pentatonix: ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-035",
-      "title": "Pentatonix - 90s Dance Medley (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=57YEAEKKcOk",
-      "thumbnail": "https://img.youtube.com/vi/57YEAEKKcOk/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-036",
-      "title": "Pentatonix - Get Happy / Happy Days Are Here Again (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=9memX31_52g",
-      "thumbnail": "https://img.youtube.com/vi/9memX31_52g/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Pentatonix - Get Happy / Happy Days Are Here Again (Official Video) Listen/download: https://Pentatonix.lnk.to/HappyID Pre-order ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-037",
-      "title": "Pentatonix - Hallelujah (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=LRP8d7hhpoQ",
-      "thumbnail": "https://img.youtube.com/vi/LRP8d7hhpoQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-038",
-      "title": "Pentatonix - Come Along (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=u8rT6ij0PSo",
-      "thumbnail": "https://img.youtube.com/vi/u8rT6ij0PSo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Official Music Video for “Come Along” by Pentatonix Listen to Pentatonix: https://Pentatonix.lnk.to/listenYD Watch More Videos by ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-039",
-      "title": "Pentatonix - Bohemian Rhapsody (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5oCI",
-      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5oCI/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-040",
-      "title": "Pentatonix - Can You Feel the Love Tonight (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=cT1Kzk7akjQ",
-      "thumbnail": "https://img.youtube.com/vi/cT1Kzk7akjQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-041",
-      "title": "Pentatonix - God Rest Ye Merry Gentlemen (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=ku7ohU1IGls",
-      "thumbnail": "https://img.youtube.com/vi/ku7ohU1IGls/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-042",
-      "title": "[Official Video] Little Drummer Boy - Pentatonix",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=qJ_MGWio-vc",
-      "thumbnail": "https://img.youtube.com/vi/qJ_MGWio-vc/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-043",
-      "title": "Pentatonix - Mary, Did You Know? (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=ifCWN5pJGIE",
-      "thumbnail": "https://img.youtube.com/vi/ifCWN5pJGIE/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-044",
-      "title": "Pentatonix - If I Ever Fall In Love (Official Video) ft. Jason Derulo",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=WbV8htgtbfs",
-      "thumbnail": "https://img.youtube.com/vi/WbV8htgtbfs/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-045",
-      "title": "Pentatonix - Perfect (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=_NWs7ntMRBA",
-      "thumbnail": "https://img.youtube.com/vi/_NWs7ntMRBA/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-046",
-      "title": "Pentatonix - Rather Be (Clean Bandit Cover) (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=OPWPa-HMpj8",
-      "thumbnail": "https://img.youtube.com/vi/OPWPa-HMpj8/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Official Music Video for ”Rather Be (Clean Bandit Cover)” by Pentatonix Listen to Pentatonix: https://Pentatonix.lnk.to/listenYD ...",
-      "tags": [
-        "펜타토닉스",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-047",
-      "title": "Pentatonix - You're A Mean One, Mr. Grinch (Official Video)",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=6KdLcd-sUQA",
-      "thumbnail": "https://img.youtube.com/vi/6KdLcd-sUQA/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-048",
-      "title": "Pentatonix - \"The Prayer\" - OFFICIAL VIDEO",
-      "artist": "펜타토닉스 (Pentatonix)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=wnvzwAPqniU",
-      "thumbnail": "https://img.youtube.com/vi/wnvzwAPqniU/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
-      "tags": [
-        "펜타토닉스",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-049",
-      "title": "제 1회 나린능력시험",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=9Y-x9bhBkbU",
-      "thumbnail": "https://img.youtube.com/vi/9Y-x9bhBkbU/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '제 1회 나린능력시험' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-050",
-      "title": "나린이 뽑은 최애 나린 곡 플리",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=xBq4IwUP0UQ",
-      "thumbnail": "https://img.youtube.com/vi/xBq4IwUP0UQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린이 뽑은 최애 나린 곡 플리' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-051",
-      "title": "[나린이니까 나불나불] 6화 - 나린이 뽑은 최애 나린 음악 (ENG, JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=p0uCDLIpDJQ",
-      "thumbnail": "https://img.youtube.com/vi/p0uCDLIpDJQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 6화 - 나린이 뽑은 최애 나린 음악 (ENG, JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-052",
-      "title": "나린 10주년 감사 인사",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=fPPZQvaTHtY",
-      "thumbnail": "https://img.youtube.com/vi/fPPZQvaTHtY/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린 10주년 감사 인사' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-053",
-      "title": "아름다운 나라 (Acapella Cover)",
-      "artist": "나린 (Narin)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=4PK3X--GqEQ",
-      "thumbnail": "https://img.youtube.com/vi/4PK3X--GqEQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '아름다운 나라 (Acapella Cover)' 입니다.",
-      "tags": [
-        "나린",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-054",
-      "title": "유피 - 바다 (Acapella Cover)",
-      "artist": "나린 (Narin)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=pbUgvPr2eak",
-      "thumbnail": "https://img.youtube.com/vi/pbUgvPr2eak/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '유피 - 바다 (Acapella Cover)' 입니다.",
-      "tags": [
-        "나린",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-055",
-      "title": "[나린이니까 나불나불] 5화 - 무소의 뿔 (ENG, JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=uocdU-El3ek",
-      "thumbnail": "https://img.youtube.com/vi/uocdU-El3ek/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 5화 - 무소의 뿔 (ENG, JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-056",
-      "title": "Narin - 무소의 뿔 (Official)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=zZoUbz1hjxg",
-      "thumbnail": "https://img.youtube.com/vi/zZoUbz1hjxg/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 'Narin - 무소의 뿔 (Official)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-057",
-      "title": "나린로그: 오늘은 기홍 (ENG/JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=Sk35G_ahpCo",
-      "thumbnail": "https://img.youtube.com/vi/Sk35G_ahpCo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린로그: 오늘은 기홍 (ENG/JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-058",
-      "title": "[나린이니까 나불나불] 4화 - Color In You (ENG, JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=ZvDAKdaXtfc",
-      "thumbnail": "https://img.youtube.com/vi/ZvDAKdaXtfc/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 4화 - Color In You (ENG, JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-059",
-      "title": "Narin - Color In You (Official)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=8CXLJltrDZo",
-      "thumbnail": "https://img.youtube.com/vi/8CXLJltrDZo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 'Narin - Color In You (Official)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-060",
-      "title": "나린로그: 오늘은 서영 (ENG/JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=7HejUk-taRc",
-      "thumbnail": "https://img.youtube.com/vi/7HejUk-taRc/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린로그: 오늘은 서영 (ENG/JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-061",
-      "title": "[나린이니까 나불나불] 3화 - Glasses (ENG, JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=brvUpXxDn54",
-      "thumbnail": "https://img.youtube.com/vi/brvUpXxDn54/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 3화 - Glasses (ENG, JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-062",
-      "title": "나린(Narin) - Glasses(Official)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=ia-4kn9qu7c",
-      "thumbnail": "https://img.youtube.com/vi/ia-4kn9qu7c/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린(Narin) - Glasses(Official)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-063",
-      "title": "나린로그: 오늘은 보인 (ENG/JPN Sub)",
-      "artist": "나린 (Narin)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=_mPiapjLPJE",
-      "thumbnail": "https://img.youtube.com/vi/_mPiapjLPJE/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린로그: 오늘은 보인 (ENG/JPN Sub)' 입니다.",
-      "tags": [
-        "나린",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-064",
-      "title": "Dear My Girl - 세훈 (Acapella Cover)",
-      "artist": "나린 (Narin)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=Hu45jI1oVTw",
-      "thumbnail": "https://img.youtube.com/vi/Hu45jI1oVTw/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "나린 (Narin)의 공식 아카펠라 영상 'Dear My Girl - 세훈 (Acapella Cover)' 입니다.",
-      "tags": [
-        "나린",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-078",
-      "title": "WING - Phenomenon (Official Video) (BEATBOX)",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=eDcLqMp7idQ",
-      "thumbnail": "https://img.youtube.com/vi/eDcLqMp7idQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'WING - Phenomenon (Official Video) (BEATBOX)' 입니다.",
-      "tags": [
-        "비트펠라",
-        "국내 아카펠라",
-        "비트박스",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-080",
-      "title": "그때 그 사람.......송민경,두왑 사운즈(Doo Wop Sounds)",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=eCo_SouCI24",
-      "thumbnail": "https://img.youtube.com/vi/eCo_SouCI24/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비가 오면 생각나는 그 사람 언제나 말이 없던 그 사람 사랑의 괴로움을 몰래 감추고 떠난 사람 못 잊어서 울던 그 사람 그 어느 날 차 ...",
-      "tags": [
-        "두왑사운즈",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-081",
-      "title": "[Live. ON] 두왑사운즈 (Doowopsounds) & 여름메들리 (Summer Medley) + Focus",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=wuO4YqhdfTU",
-      "thumbnail": "https://img.youtube.com/vi/wuO4YqhdfTU/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "여름의 시작을 알리는 다섯 천사의 환상적인 하모니 두왑사운즈 [여름메들리 + Focus] - The five angels' fantastic harmony, ...",
-      "tags": [
-        "두왑사운즈",
-        "라이브 콘서트",
-        "메들리",
-        "라이브"
-      ]
-    },
-    {
-      "id": "apprec-082",
-      "title": "[소녀야 - 두왑사운즈] 자작곡 가사감상소 #2",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=gDIFyYeQoD0",
-      "thumbnail": "https://img.youtube.com/vi/gDIFyYeQoD0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "두왑사운즈 #7번째목소리 #소녀야 당신에게 필요한 건 오직 목소리 안녕하세요 두왑사운즈 입니다. . 오늘 준비한 영상은 저희들의 ...",
-      "tags": [
-        "두왑사운즈",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-083",
-      "title": "두왑사운즈 (Doo-Wop Sounds)_소녀야 [PurplePine Entertainment]",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=49PFkYbQReI",
-      "thumbnail": "https://img.youtube.com/vi/49PFkYbQReI/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "2019.10.15 Released by Purplepine Entertainment ======================================== 당신에게 필요한 건 오직 ...",
-      "tags": [
-        "두왑사운즈",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-084",
-      "title": "[넌, - 두왑사운즈] 자작곡 가사감상소 #1",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=x1W_ZfnL7V8",
-      "thumbnail": "https://img.youtube.com/vi/x1W_ZfnL7V8/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "두왑사운즈 #6번째목소리 #넌 당신에게 필요한건 오직 목소리 안녕하세요, 두왑사운즈입니다. . 오늘 준비한 영상은 저희들의 마음이 ...",
-      "tags": [
-        "두왑사운즈",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-085",
-      "title": "두왑사운즈 (Doo-Wop Sounds)_사진 [PurplePine Entertainment]",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=Pe9S7FUArEM",
-      "thumbnail": "https://img.youtube.com/vi/Pe9S7FUArEM/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "2020.03.11 Released by Purplepine Entertainment ======================================== 당신에게 필요한 건 오직 ...",
-      "tags": [
-        "두왑사운즈",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-086",
-      "title": "두왑사운즈 Doowopsounds - 기억의 노래(Don't ever forget) 아카펠라 커버 | 2021 유엔참전용사 국제추모의 날 기념",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=b3v4UHDqpuQ",
-      "thumbnail": "https://img.youtube.com/vi/b3v4UHDqpuQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "2021 유엔참전용사 국제추모의 날을 맞아 뮤지컬배우 마이클리님이 부른 기억의 노래(Don't ever forget)를 아카펠라 그룹 두왑사운즈 ...",
-      "tags": [
-        "두왑사운즈",
-        "보컬 커버",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-088",
-      "title": "[핫클립]아카펠라 그룹 제니스_보컬매직 / YTN 사이언스",
-      "artist": "제니스 (Zenith)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=QYVnw5bhqt0",
-      "thumbnail": "https://img.youtube.com/vi/QYVnw5bhqt0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "[YTN 사이언스 기사원문] http://www.ytnscience.co.kr/hotclip/view.php?s_mcd=1120&key=201501161612165984이지영의 뮤직 ...",
-      "tags": [
-        "제니스",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-089",
-      "title": "[핫클립]아카펠라 그룹 제니스_기차타고 / YTN 사이언스",
-      "artist": "제니스 (Zenith)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=8tnAygh0Dy8",
-      "thumbnail": "https://img.youtube.com/vi/8tnAygh0Dy8/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "[YTN 사이언스 기사원문] http://www.ytnscience.co.kr/hotclip/view.php?s_mcd=1120&key=201501161607299635이지영의 뮤직 ...",
-      "tags": [
-        "제니스",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-090",
-      "title": "기차타고 - 제니스(Zenith) [2026 제니스+보이스토이 연합 콘서트]",
-      "artist": "제니스 (Zenith)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=-KzR_Qi0Puo",
-      "thumbnail": "https://img.youtube.com/vi/-KzR_Qi0Puo/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Zenith + Voice Toy Special Joint Concert 2026 임혜린 김세희 김민구 김양우 에릭킴 장세나 노윤하 김동규 연규환 전수진 ...",
-      "tags": [
-        "제니스",
-        "라이브 콘서트",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-093",
-      "title": "Words (a cappella, The Real Group)",
-      "artist": "더 리얼 그룹 (The Real Group)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=zPwwDr0qFow",
-      "thumbnail": "https://img.youtube.com/vi/zPwwDr0qFow/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Title: Words Video Taken From: The Real Group - Live at Stockholm Concert Hall (2005) Performer: The Real Group (Sweden) ...",
-      "tags": [
-        "더",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-094",
-      "title": "The Real Group live in Seoul --- I Sing, You Sing (a cappella)",
-      "artist": "더 리얼 그룹 (The Real Group)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=HuKJCWkqbJE",
-      "thumbnail": "https://img.youtube.com/vi/HuKJCWkqbJE/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Title: I Sing, You Sing Video Taken from: The Real Group Live in Seoul (2007) Performer: The Real Group (Sweden)",
-      "tags": [
-        "더",
-        "라이브 콘서트",
-        "라이브"
-      ]
-    },
-    {
-      "id": "apprec-095",
-      "title": "A Cappella in Acapulco",
-      "artist": "더 리얼 그룹 (The Real Group)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=ZpIz_eW1j1w",
-      "thumbnail": "https://img.youtube.com/vi/ZpIz_eW1j1w/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Provided to YouTube by The Orchard Enterprises A Cappella in Acapulco · The Real Group Unreal ℗ 2004 Town Crier ...",
-      "tags": [
-        "더",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-096",
-      "title": "I Sing, You Sing (a cappella, The Real Group)",
-      "artist": "더 리얼 그룹 (The Real Group)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=0V2b3AACGSs",
-      "thumbnail": "https://img.youtube.com/vi/0V2b3AACGSs/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Title: I Sing, You Sing Album: The Best - Tour Souvenir Album (2002) Performer: The Real Group (Sweden) Offical Website: ...",
-      "tags": [
-        "더",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-097",
-      "title": "K-Pop Demon Hunters - MEDLEY ft. Grace Kinstler (acapella)",
-      "artist": "보이스플레이 (VoicePlay)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=CbmoITvMCX0",
-      "thumbnail": "https://img.youtube.com/vi/CbmoITvMCX0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Gonna Be Golden\" acapella cover from \"K-Pop Demon Hunters\" VoicePlay ft. @gracekinstlerofficial Subscribe: ...",
-      "tags": [
-        "보이스플레이",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-098",
-      "title": "Can't Help Falling In Love | VoicePlay A Cappella",
-      "artist": "보이스플레이 (VoicePlay)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=786-XvOK8rM",
-      "thumbnail": "https://img.youtube.com/vi/786-XvOK8rM/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "COME SEE US LIVE!: https://thevoiceplay.com/tour Listen on Apple Music https://vcpl.me/chfil-am Listen on Spotify ...",
-      "tags": [
-        "보이스플레이",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-099",
-      "title": "Hoist the Colours Acapella VoicePlay ft Jose Rosario Jr",
-      "artist": "보이스플레이 (VoicePlay)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=vO8NEsx9m58",
-      "thumbnail": "https://img.youtube.com/vi/vO8NEsx9m58/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Hoist The Colours” from \"Pirates of the Caribbean\" acapella cover from VoicePlay ft. Jose Rosario Jr. Subscribe: ...",
-      "tags": [
-        "보이스플레이",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-100",
-      "title": "SUPERSTITION A Cappella | VoicePlay feat. Omar Cardona",
-      "artist": "보이스플레이 (VoicePlay)",
-      "category": "해외 명작",
-      "videoUrl": "https://www.youtube.com/watch?v=FuR5FpqPJII",
-      "thumbnail": "https://img.youtube.com/vi/FuR5FpqPJII/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "Listen on Apple Music https://vcpl.me/vp-itunes Listen on Spotify https://vcpl.me/sptfy Stream VoicePlay's Music Everywhere!",
-      "tags": [
-        "보이스플레이",
-        "해외 명작",
-        "아카펠라"
-      ]
-    },
-    {
       "id": "apprec-kr-001",
       "title": "Squid Game (acapella) - 메이트리 (MayTree)",
       "artist": "메이트리 (MayTree)",
@@ -3664,6 +1704,1966 @@
         "아카펠라",
         "국내 아카펠라",
         "제니스"
+      ]
+    },
+    {
+      "id": "apprec-001",
+      "title": "오징어게임 & K팝 데몬 헌터스 메들리 - 메이트리 | [KBS제주] 20251225 방송",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=1eBkmIY2Glo",
+      "thumbnail": "https://img.youtube.com/vi/1eBkmIY2Glo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "오징어게임 K팝 데몬 헌터스 (Your Idol + Soda Pop + Golden) Copyright c KBS. All rights reserved. 무단 전재, 재배포 및 이용(AI ...",
+      "tags": [
+        "메이트리",
+        "영화 / OST",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-002",
+      "title": "I Can See Your Voice 3 [후공개]소름주의! 메이트리, 아카펠라 앵콜 무대! 160908 EP.11",
+      "artist": "메이트리 (MayTree)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=xotvPCQOUfA",
+      "thumbnail": "https://img.youtube.com/vi/xotvPCQOUfA/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "I.O.I편 우승자, 세계 합창 대회 금메달 리스트 ′메이트리′의 앵콜무대 gloria estefant Turn The Beat Around ☆ 우승자 메이트리의 ...",
+      "tags": [
+        "메이트리",
+        "라이브 콘서트",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-003",
+      "title": "[ENG SUB] 메이트리 X 바버렛츠, 아카펠라 버전의 '뿜뿜'♥ 완벽한 하모니로 모두에게 놀라움을!! l 보컬플레이 4회 다시보기",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=l-IL82pVs9s",
+      "thumbnail": "https://img.youtube.com/vi/l-IL82pVs9s/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "[ENG SUB] Acappella version of 'Bboom Bboom' by Maytree X The Barberettes! Their perfect harmony gives everyone a shock ...",
+      "tags": [
+        "메이트리",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-004",
+      "title": "I Can See Your Voice 3 [꽃길♡] I.O.I&메이트리, 환상 아카펠라 ′같은 곳에서′ 160908 EP.11",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=kY1TMDiNSq0",
+      "thumbnail": "https://img.youtube.com/vi/kY1TMDiNSq0/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "세계 합창 대회 금메달 리스트 메이트리&I.O.I - ′같은 곳에서(I.O.I)′ ☆ 우승자 메이트리의 ′같은곳에서′ 음원이 9/9(금) 정오 모든 ...",
+      "tags": [
+        "메이트리",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-005",
+      "title": "메이트리 (Maytree)│아카펠라로 듣는 '명화메들리' (캐리비안의 해적, 미션임파서블, 대부, 영광의 탈출ost) MBC220823방송",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=Iu0iMSE7q_o",
+      "thumbnail": "https://img.youtube.com/vi/Iu0iMSE7q_o/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "클래식은티예무 #TV예술무대 #티예무 #MBC #tvartshow 아카펠라그룹- 메이트리 (Maytree) ♪ 명화메들리 Theme of Exodus (영광 ...",
+      "tags": [
+        "메이트리",
+        "영화 / OST",
+        "메들리",
+        "OST"
+      ]
+    },
+    {
+      "id": "apprec-006",
+      "title": "BRILLIANT! Korean Acapella Group Maytree SHOCKS The Judges on Americas Got Talent",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=y6FqyhmMCmA",
+      "thumbnail": "https://img.youtube.com/vi/y6FqyhmMCmA/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Hey, if you hadn't had a chance to watch HERE are the best AGT 2023 auditions https://youtu.be/V55xv4zaXL8 What?",
+      "tags": [
+        "메이트리",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-007",
+      "title": "Movie Intro Medley Acapella- May Tree",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=G-nA2COrpOs",
+      "thumbnail": "https://img.youtube.com/vi/G-nA2COrpOs/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Full Video: https://www.youtube.com/watch?v=k4D7cuDAvXE.",
+      "tags": [
+        "메이트리",
+        "영화 / OST",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-008",
+      "title": "Encanto OST (acapella) #maytree #disney #디즈니 #brasil",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=agEBWT2OHbY",
+      "thumbnail": "https://img.youtube.com/vi/agEBWT2OHbY/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "encanto​ #disney​ #디즈니​ Você seguiria Maytree? :) www.instagram.com/maytree_music www.facebook.com/maytreemusic ...",
+      "tags": [
+        "메이트리",
+        "영화 / OST",
+        "OST"
+      ]
+    },
+    {
+      "id": "apprec-009",
+      "title": "Maytree on tv show (feat.비행기 타고 가요)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=60cCOQJpbyY",
+      "thumbnail": "https://img.youtube.com/vi/60cCOQJpbyY/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Maytree on tv show (feat.비행기 타고 가요) 채널A 비행기 타고가요 시즌2 - 메이트리 출연분 입니다 :) . . #메이트리 #비행기타고가요 ...",
+      "tags": [
+        "메이트리",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-010",
+      "title": "‘아카펠라 그룹’ 메이트리, SBS 드라마 OST 메들리 축하무대★ #2022SBS연기대상 #SBSdrama",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=T2jjL84Op5k",
+      "thumbnail": "https://img.youtube.com/vi/T2jjL84Op5k/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "2022 SBS 연기대상 SBS '2022 SBS 연기대상' ☞ 12월 31일 오후 8시 35분 본방송 #2022SBS연기대상 #메이트리 #축하무대 ...",
+      "tags": [
+        "메이트리",
+        "영화 / OST",
+        "메들리",
+        "OST"
+      ]
+    },
+    {
+      "id": "apprec-011",
+      "title": "BTS - Dynamite (acapella cover) by Maytree",
+      "artist": "메이트리 (MayTree)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=QyKXyQ0fzGA",
+      "thumbnail": "https://img.youtube.com/vi/QyKXyQ0fzGA/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "BTS - Dynamite (acapella cover) by Maytree #BTS #Dynamite #acapella #cover BTS - Dynamite (acapella cover) by Maytree.",
+      "tags": [
+        "메이트리",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-012",
+      "title": "A Capella Group Deliver Pitch Perfect Audition on America's Got Talent 2022!",
+      "artist": "메이트리 (MayTree)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=VQEoNwURAOQ",
+      "thumbnail": "https://img.youtube.com/vi/VQEoNwURAOQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Watch Live Comedy ▶︎ https://youtu.be/KzrwaJJoKk4?t=6 This audition will take you down memory lane, recreating some of the ...",
+      "tags": [
+        "메이트리",
+        "라이브 콘서트",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-013",
+      "title": "MayTree Compilation",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=rNKmR10182Y",
+      "thumbnail": "https://img.youtube.com/vi/rNKmR10182Y/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "MayTree Channel: - https://www.youtube.com/c/MayTreeofficial I found their YouTube channel and I think they are really good.",
+      "tags": [
+        "메이트리",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-014",
+      "title": "Running Up That Hill | MayTree (A Cappella) 🎶",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=8Ujp1SDeu9g",
+      "thumbnail": "https://img.youtube.com/vi/8Ujp1SDeu9g/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "enjoylife #enjoymusic #charityvlog #credit_copyright_used.",
+      "tags": [
+        "메이트리",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-015",
+      "title": "Minecraft OST acapella",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=2tLPASp_VkM",
+      "thumbnail": "https://img.youtube.com/vi/2tLPASp_VkM/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "shorts #short #acapella #music #song #respect #game #minecraft #mine #craft #games #motivation.",
+      "tags": [
+        "메이트리",
+        "영화 / OST",
+        "OST"
+      ]
+    },
+    {
+      "id": "apprec-016",
+      "title": "The Other Side(Trolls World Tour OST) - VBEXIT",
+      "artist": "엑시트 (EXIT)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=0IH5yY-xtMw",
+      "thumbnail": "https://img.youtube.com/vi/0IH5yY-xtMw/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "40만 구독기념 셰프중에 최고가수 레이먼 킴세범씨와 함께 했습니다. #구독자#40만기념 #TrollsWorldTour #SZA#JustinTimberlake ...",
+      "tags": [
+        "엑시트",
+        "영화 / OST",
+        "OST"
+      ]
+    },
+    {
+      "id": "apprec-017",
+      "title": "[아카펠라] BTS Acappella Medley cover by 보이스밴드 엑시트(Voiceband EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=2bhqQlf1EEM",
+      "thumbnail": "https://img.youtube.com/vi/2bhqQlf1EEM/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Hi! Happy Chinese New Year! Youtubers! I know you love BTS! Same here. It's BTS acappella Medley! Wow~! I hope you like it ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-018",
+      "title": "[선공개] 엑시트(EXIT) - 디즈니 메들리(Disney Medley) | 스페이스 공감 LIVE",
+      "artist": "엑시트 (EXIT)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=S0g5g3j6Ank",
+      "thumbnail": "https://img.youtube.com/vi/S0g5g3j6Ank/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "EBS #스페이스공감 #엑시트 #EXIT.",
+      "tags": [
+        "엑시트",
+        "영화 / OST",
+        "메들리",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-019",
+      "title": "Disney Medley - VBEXIT(feat. Heeju Lee)",
+      "artist": "엑시트 (EXIT)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=lVqNI6qP1ms",
+      "thumbnail": "https://img.youtube.com/vi/lVqNI6qP1ms/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "From Cinderella To Frozen! Enjoy the Disney Music in Acappella! Don't forget to subscribe and like and share! Directed by ...",
+      "tags": [
+        "엑시트",
+        "영화 / OST",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-020",
+      "title": "[STARDIUM x EXIT] 아카펠라 국민체조 with 엑시트(EXIT)l STARDIUM",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=cj8ExJ_RZYo",
+      "thumbnail": "https://img.youtube.com/vi/cj8ExJ_RZYo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "듣지 않은 사람은 있어도 한번만 들은 사람은 없다! 국민체조 (ver.아카펠라) Arranged by 보이쳐 STARDIUM영상 재미있게 보셨다면 ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-021",
+      "title": "Frozen2 Medley - VBEXIT(feat. Heeju Lee)",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=E7jdyoQDF3g",
+      "thumbnail": "https://img.youtube.com/vi/E7jdyoQDF3g/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Happy New Year! Subscribers! Here's exit's newyear-gift for you! Frozen2 Medley!! . Directed by Youngjun Kim . #Frozen2 ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-022",
+      "title": "[#vbexit] 봄메들리 아카펠라 by 보이스밴드 엑시트",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=4Ai6P3DZbmU",
+      "thumbnail": "https://img.youtube.com/vi/4Ai6P3DZbmU/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'봄' 하면 떠오르는 노래 메들리 엑시트만의 느낌으로 부른 봄 메들리. 재밌게 보셨다면 구독하기와 좋아요입니당♥ . . . 페이스북 팬 ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-023",
+      "title": "[아카펠라] Isn't she lovely(Stevie Wonder) cover by 보이스밴드 엑시트(EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=VCDXJbA2YjI",
+      "thumbnail": "https://img.youtube.com/vi/VCDXJbA2YjI/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "homepage : www.exitzone.co.kr -facebook : www.facebook.com/exitzone [엑시트 COVER] Isn't she lovely made : 2015. 11.",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-024",
+      "title": "Disney Medley 2 - VBEXIT(feat.SUHYUN of AKMU)",
+      "artist": "엑시트 (EXIT)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=9E-j1wrGcgI",
+      "thumbnail": "https://img.youtube.com/vi/9E-j1wrGcgI/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Disney Medley 2 with SUHYUN of AKMU! I hope you like it! . . Directed by Youngjun Kim . SUHYUN YOUTUBE https://youtube.com/c ...",
+      "tags": [
+        "엑시트",
+        "영화 / OST",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-025",
+      "title": "[EXIT(엑시트)] Acappella LIVE 믿을 수 없다면 보라!!!! 이어스트라이크할 라이브를!!!!",
+      "artist": "엑시트 (EXIT)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=sBFcWHwhDbk",
+      "thumbnail": "https://img.youtube.com/vi/sBFcWHwhDbk/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "LOEN MUSIC's New Brand Name, 1theK! 로엔뮤직의 새이름 1theK! [EXIT(엑시트)] Acappella LIVE 믿을 수 없다면 보라!",
+      "tags": [
+        "엑시트",
+        "라이브 콘서트",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-026",
+      "title": "[아카펠라] 에드쉬런X찰리푸스 cover by 보이스밴드 엑시트(Voiceband EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=_sltrf0shjE",
+      "thumbnail": "https://img.youtube.com/vi/_sltrf0shjE/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "에드쉬런X찰리푸스 빌보드 씹어먹는 2guys!!!빼애앰!! 휴가철 폭염도 씹어먹즈아아아 #공유하기#이어폰꼭 #휴가갈때들어야징 #폭염 ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-027",
+      "title": "런닝맨 보이스밴드 엑시트가 아카펠라 버전으로 부른 (라이온킹ost)Circle of life",
+      "artist": "엑시트 (EXIT)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=jDZ-_Z3vUd0",
+      "thumbnail": "https://img.youtube.com/vi/jDZ-_Z3vUd0/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "엑시트 (EXIT)의 대표적인 공식 아카펠라 명작 영상입니다.",
+      "tags": [
+        "엑시트",
+        "영화 / OST",
+        "OST"
+      ]
+    },
+    {
+      "id": "apprec-028",
+      "title": "BTS DNA+IDOL - VBEXIT (Channel A Vocalplay #1)",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=GkcZo-wg6ow",
+      "thumbnail": "https://img.youtube.com/vi/GkcZo-wg6ow/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "BTS MEDLEY EXIT Official Cover: https://youtu.be/2bhqQlf1EEM Directed by Youngjun Kim HASHTAG : #vbexit FACEBOOK ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-029",
+      "title": "[#vbexit] 감성 발라드 메들리 아카펠라 by 보이스밴드 엑시트(EXIT)",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=eK1ifU91etU",
+      "thumbnail": "https://img.youtube.com/vi/eK1ifU91etU/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "여러분의 시린 마음을 녹여줄 감성 발라드 메들리입니다! 즐감하시고 좋아요! 구독! 공유! 잊지마세용~ ^^ 페이스북 팬 페이지 : www ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-030",
+      "title": "[#vbexit] 한국인이 사랑하는 팝 메들리 아카펠라 by 보이스밴드 엑시트 MBC 마리텔 출연영상",
+      "artist": "엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=UESGQ4MnFOw",
+      "thumbnail": "https://img.youtube.com/vi/UESGQ4MnFOw/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "저희가 MBC 마이리틀텔레비젼 방송에 나왔습니다! 한국인이 사랑하는 팝 메들리입니다~ www.facebook.com/exitzone 보이스밴드 엑시트 ...",
+      "tags": [
+        "엑시트",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-031",
+      "title": "Pentatonix - Daft Punk (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=3MteSlpxCpo",
+      "thumbnail": "https://img.youtube.com/vi/3MteSlpxCpo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-032",
+      "title": "[Official Video] Love Again - Pentatonix",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=F80FsZDTgn0",
+      "thumbnail": "https://img.youtube.com/vi/F80FsZDTgn0/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-033",
+      "title": "Pentatonix - The Sound of Silence (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=gdVjVtpr55M",
+      "thumbnail": "https://img.youtube.com/vi/gdVjVtpr55M/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-034",
+      "title": "Pentatonix - La La Latch (Sam Smith/Disclosure/Naughty Boy Mashup) (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=TsVeQnBmp70",
+      "thumbnail": "https://img.youtube.com/vi/TsVeQnBmp70/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Official Music Video for “La La Latch (Sam Smith/Disclosure/Naughty Boy Mashup)” by Pentatonix Listen to Pentatonix: ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-035",
+      "title": "Pentatonix - 90s Dance Medley (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=57YEAEKKcOk",
+      "thumbnail": "https://img.youtube.com/vi/57YEAEKKcOk/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-036",
+      "title": "Pentatonix - Get Happy / Happy Days Are Here Again (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=9memX31_52g",
+      "thumbnail": "https://img.youtube.com/vi/9memX31_52g/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Pentatonix - Get Happy / Happy Days Are Here Again (Official Video) Listen/download: https://Pentatonix.lnk.to/HappyID Pre-order ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-037",
+      "title": "Pentatonix - Hallelujah (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=LRP8d7hhpoQ",
+      "thumbnail": "https://img.youtube.com/vi/LRP8d7hhpoQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-038",
+      "title": "Pentatonix - Come Along (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=u8rT6ij0PSo",
+      "thumbnail": "https://img.youtube.com/vi/u8rT6ij0PSo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Official Music Video for “Come Along” by Pentatonix Listen to Pentatonix: https://Pentatonix.lnk.to/listenYD Watch More Videos by ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-039",
+      "title": "Pentatonix - Bohemian Rhapsody (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5oCI",
+      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5oCI/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-040",
+      "title": "Pentatonix - Can You Feel the Love Tonight (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=cT1Kzk7akjQ",
+      "thumbnail": "https://img.youtube.com/vi/cT1Kzk7akjQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-041",
+      "title": "Pentatonix - God Rest Ye Merry Gentlemen (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=ku7ohU1IGls",
+      "thumbnail": "https://img.youtube.com/vi/ku7ohU1IGls/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-042",
+      "title": "[Official Video] Little Drummer Boy - Pentatonix",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=qJ_MGWio-vc",
+      "thumbnail": "https://img.youtube.com/vi/qJ_MGWio-vc/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-043",
+      "title": "Pentatonix - Mary, Did You Know? (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=ifCWN5pJGIE",
+      "thumbnail": "https://img.youtube.com/vi/ifCWN5pJGIE/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-044",
+      "title": "Pentatonix - If I Ever Fall In Love (Official Video) ft. Jason Derulo",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=WbV8htgtbfs",
+      "thumbnail": "https://img.youtube.com/vi/WbV8htgtbfs/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-045",
+      "title": "Pentatonix - Perfect (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=_NWs7ntMRBA",
+      "thumbnail": "https://img.youtube.com/vi/_NWs7ntMRBA/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-046",
+      "title": "Pentatonix - Rather Be (Clean Bandit Cover) (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=OPWPa-HMpj8",
+      "thumbnail": "https://img.youtube.com/vi/OPWPa-HMpj8/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Official Music Video for ”Rather Be (Clean Bandit Cover)” by Pentatonix Listen to Pentatonix: https://Pentatonix.lnk.to/listenYD ...",
+      "tags": [
+        "펜타토닉스",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-047",
+      "title": "Pentatonix - You're A Mean One, Mr. Grinch (Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=6KdLcd-sUQA",
+      "thumbnail": "https://img.youtube.com/vi/6KdLcd-sUQA/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "'THE GREATEST CHRISTMAS HITS' AVAILABLE NOW https://ptx.lnk.to/greatestchristmashits PENTATONIX THE MOST ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-048",
+      "title": "Pentatonix - \"The Prayer\" - OFFICIAL VIDEO",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=wnvzwAPqniU",
+      "thumbnail": "https://img.youtube.com/vi/wnvzwAPqniU/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "COME SEE US ON OUR 2026 UK / EUROPEAN TOUR!!!! https://ptxofficial.com/ 4/7 – Budapest, Hungary 4/9 – Prague, Czech ...",
+      "tags": [
+        "펜타토닉스",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-049",
+      "title": "제 1회 나린능력시험",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=9Y-x9bhBkbU",
+      "thumbnail": "https://img.youtube.com/vi/9Y-x9bhBkbU/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '제 1회 나린능력시험' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-050",
+      "title": "나린이 뽑은 최애 나린 곡 플리",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=xBq4IwUP0UQ",
+      "thumbnail": "https://img.youtube.com/vi/xBq4IwUP0UQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린이 뽑은 최애 나린 곡 플리' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-051",
+      "title": "[나린이니까 나불나불] 6화 - 나린이 뽑은 최애 나린 음악 (ENG, JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=p0uCDLIpDJQ",
+      "thumbnail": "https://img.youtube.com/vi/p0uCDLIpDJQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 6화 - 나린이 뽑은 최애 나린 음악 (ENG, JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-052",
+      "title": "나린 10주년 감사 인사",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=fPPZQvaTHtY",
+      "thumbnail": "https://img.youtube.com/vi/fPPZQvaTHtY/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린 10주년 감사 인사' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-053",
+      "title": "아름다운 나라 (Acapella Cover)",
+      "artist": "나린 (Narin)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=4PK3X--GqEQ",
+      "thumbnail": "https://img.youtube.com/vi/4PK3X--GqEQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '아름다운 나라 (Acapella Cover)' 입니다.",
+      "tags": [
+        "나린",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-054",
+      "title": "유피 - 바다 (Acapella Cover)",
+      "artist": "나린 (Narin)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=pbUgvPr2eak",
+      "thumbnail": "https://img.youtube.com/vi/pbUgvPr2eak/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '유피 - 바다 (Acapella Cover)' 입니다.",
+      "tags": [
+        "나린",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-055",
+      "title": "[나린이니까 나불나불] 5화 - 무소의 뿔 (ENG, JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=uocdU-El3ek",
+      "thumbnail": "https://img.youtube.com/vi/uocdU-El3ek/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 5화 - 무소의 뿔 (ENG, JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-056",
+      "title": "Narin - 무소의 뿔 (Official)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=zZoUbz1hjxg",
+      "thumbnail": "https://img.youtube.com/vi/zZoUbz1hjxg/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 'Narin - 무소의 뿔 (Official)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-057",
+      "title": "나린로그: 오늘은 기홍 (ENG/JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=Sk35G_ahpCo",
+      "thumbnail": "https://img.youtube.com/vi/Sk35G_ahpCo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린로그: 오늘은 기홍 (ENG/JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-058",
+      "title": "[나린이니까 나불나불] 4화 - Color In You (ENG, JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=ZvDAKdaXtfc",
+      "thumbnail": "https://img.youtube.com/vi/ZvDAKdaXtfc/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 4화 - Color In You (ENG, JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-059",
+      "title": "Narin - Color In You (Official)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=8CXLJltrDZo",
+      "thumbnail": "https://img.youtube.com/vi/8CXLJltrDZo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 'Narin - Color In You (Official)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-060",
+      "title": "나린로그: 오늘은 서영 (ENG/JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=7HejUk-taRc",
+      "thumbnail": "https://img.youtube.com/vi/7HejUk-taRc/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린로그: 오늘은 서영 (ENG/JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-061",
+      "title": "[나린이니까 나불나불] 3화 - Glasses (ENG, JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=brvUpXxDn54",
+      "thumbnail": "https://img.youtube.com/vi/brvUpXxDn54/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '[나린이니까 나불나불] 3화 - Glasses (ENG, JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-062",
+      "title": "나린(Narin) - Glasses(Official)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=ia-4kn9qu7c",
+      "thumbnail": "https://img.youtube.com/vi/ia-4kn9qu7c/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린(Narin) - Glasses(Official)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-063",
+      "title": "나린로그: 오늘은 보인 (ENG/JPN Sub)",
+      "artist": "나린 (Narin)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=_mPiapjLPJE",
+      "thumbnail": "https://img.youtube.com/vi/_mPiapjLPJE/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 '나린로그: 오늘은 보인 (ENG/JPN Sub)' 입니다.",
+      "tags": [
+        "나린",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-064",
+      "title": "Dear My Girl - 세훈 (Acapella Cover)",
+      "artist": "나린 (Narin)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=Hu45jI1oVTw",
+      "thumbnail": "https://img.youtube.com/vi/Hu45jI1oVTw/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "나린 (Narin)의 공식 아카펠라 영상 'Dear My Girl - 세훈 (Acapella Cover)' 입니다.",
+      "tags": [
+        "나린",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-078",
+      "title": "WING - Phenomenon (Official Video) (BEATBOX)",
+      "artist": "비트펠라 하우스 (Beatpella House)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=eDcLqMp7idQ",
+      "thumbnail": "https://img.youtube.com/vi/eDcLqMp7idQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'WING - Phenomenon (Official Video) (BEATBOX)' 입니다.",
+      "tags": [
+        "비트펠라",
+        "국내 아카펠라",
+        "비트박스",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-080",
+      "title": "그때 그 사람.......송민경,두왑 사운즈(Doo Wop Sounds)",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=eCo_SouCI24",
+      "thumbnail": "https://img.youtube.com/vi/eCo_SouCI24/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "비가 오면 생각나는 그 사람 언제나 말이 없던 그 사람 사랑의 괴로움을 몰래 감추고 떠난 사람 못 잊어서 울던 그 사람 그 어느 날 차 ...",
+      "tags": [
+        "두왑사운즈",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-081",
+      "title": "[Live. ON] 두왑사운즈 (Doowopsounds) & 여름메들리 (Summer Medley) + Focus",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=wuO4YqhdfTU",
+      "thumbnail": "https://img.youtube.com/vi/wuO4YqhdfTU/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "여름의 시작을 알리는 다섯 천사의 환상적인 하모니 두왑사운즈 [여름메들리 + Focus] - The five angels' fantastic harmony, ...",
+      "tags": [
+        "두왑사운즈",
+        "라이브 콘서트",
+        "메들리",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-082",
+      "title": "[소녀야 - 두왑사운즈] 자작곡 가사감상소 #2",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=gDIFyYeQoD0",
+      "thumbnail": "https://img.youtube.com/vi/gDIFyYeQoD0/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "두왑사운즈 #7번째목소리 #소녀야 당신에게 필요한 건 오직 목소리 안녕하세요 두왑사운즈 입니다. . 오늘 준비한 영상은 저희들의 ...",
+      "tags": [
+        "두왑사운즈",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-083",
+      "title": "두왑사운즈 (Doo-Wop Sounds)_소녀야 [PurplePine Entertainment]",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=49PFkYbQReI",
+      "thumbnail": "https://img.youtube.com/vi/49PFkYbQReI/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "2019.10.15 Released by Purplepine Entertainment ======================================== 당신에게 필요한 건 오직 ...",
+      "tags": [
+        "두왑사운즈",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-084",
+      "title": "[넌, - 두왑사운즈] 자작곡 가사감상소 #1",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=x1W_ZfnL7V8",
+      "thumbnail": "https://img.youtube.com/vi/x1W_ZfnL7V8/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "두왑사운즈 #6번째목소리 #넌 당신에게 필요한건 오직 목소리 안녕하세요, 두왑사운즈입니다. . 오늘 준비한 영상은 저희들의 마음이 ...",
+      "tags": [
+        "두왑사운즈",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-085",
+      "title": "두왑사운즈 (Doo-Wop Sounds)_사진 [PurplePine Entertainment]",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=Pe9S7FUArEM",
+      "thumbnail": "https://img.youtube.com/vi/Pe9S7FUArEM/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "2020.03.11 Released by Purplepine Entertainment ======================================== 당신에게 필요한 건 오직 ...",
+      "tags": [
+        "두왑사운즈",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-086",
+      "title": "두왑사운즈 Doowopsounds - 기억의 노래(Don't ever forget) 아카펠라 커버 | 2021 유엔참전용사 국제추모의 날 기념",
+      "artist": "두왑사운즈 (Doowop Sounds)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=b3v4UHDqpuQ",
+      "thumbnail": "https://img.youtube.com/vi/b3v4UHDqpuQ/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "2021 유엔참전용사 국제추모의 날을 맞아 뮤지컬배우 마이클리님이 부른 기억의 노래(Don't ever forget)를 아카펠라 그룹 두왑사운즈 ...",
+      "tags": [
+        "두왑사운즈",
+        "보컬 커버",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-088",
+      "title": "[핫클립]아카펠라 그룹 제니스_보컬매직 / YTN 사이언스",
+      "artist": "제니스 (Zenith)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=QYVnw5bhqt0",
+      "thumbnail": "https://img.youtube.com/vi/QYVnw5bhqt0/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "[YTN 사이언스 기사원문] http://www.ytnscience.co.kr/hotclip/view.php?s_mcd=1120&key=201501161612165984이지영의 뮤직 ...",
+      "tags": [
+        "제니스",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-089",
+      "title": "[핫클립]아카펠라 그룹 제니스_기차타고 / YTN 사이언스",
+      "artist": "제니스 (Zenith)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=8tnAygh0Dy8",
+      "thumbnail": "https://img.youtube.com/vi/8tnAygh0Dy8/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "[YTN 사이언스 기사원문] http://www.ytnscience.co.kr/hotclip/view.php?s_mcd=1120&key=201501161607299635이지영의 뮤직 ...",
+      "tags": [
+        "제니스",
+        "국내 아카펠라",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-090",
+      "title": "기차타고 - 제니스(Zenith) [2026 제니스+보이스토이 연합 콘서트]",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=-KzR_Qi0Puo",
+      "thumbnail": "https://img.youtube.com/vi/-KzR_Qi0Puo/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Zenith + Voice Toy Special Joint Concert 2026 임혜린 김세희 김민구 김양우 에릭킴 장세나 노윤하 김동규 연규환 전수진 ...",
+      "tags": [
+        "제니스",
+        "라이브 콘서트",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-093",
+      "title": "Words (a cappella, The Real Group)",
+      "artist": "더 리얼 그룹 (The Real Group)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=zPwwDr0qFow",
+      "thumbnail": "https://img.youtube.com/vi/zPwwDr0qFow/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Title: Words Video Taken From: The Real Group - Live at Stockholm Concert Hall (2005) Performer: The Real Group (Sweden) ...",
+      "tags": [
+        "더",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-094",
+      "title": "The Real Group live in Seoul --- I Sing, You Sing (a cappella)",
+      "artist": "더 리얼 그룹 (The Real Group)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=HuKJCWkqbJE",
+      "thumbnail": "https://img.youtube.com/vi/HuKJCWkqbJE/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Title: I Sing, You Sing Video Taken from: The Real Group Live in Seoul (2007) Performer: The Real Group (Sweden)",
+      "tags": [
+        "더",
+        "라이브 콘서트",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-095",
+      "title": "A Cappella in Acapulco",
+      "artist": "더 리얼 그룹 (The Real Group)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=ZpIz_eW1j1w",
+      "thumbnail": "https://img.youtube.com/vi/ZpIz_eW1j1w/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Provided to YouTube by The Orchard Enterprises A Cappella in Acapulco · The Real Group Unreal ℗ 2004 Town Crier ...",
+      "tags": [
+        "더",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-096",
+      "title": "I Sing, You Sing (a cappella, The Real Group)",
+      "artist": "더 리얼 그룹 (The Real Group)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=0V2b3AACGSs",
+      "thumbnail": "https://img.youtube.com/vi/0V2b3AACGSs/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Title: I Sing, You Sing Album: The Best - Tour Souvenir Album (2002) Performer: The Real Group (Sweden) Offical Website: ...",
+      "tags": [
+        "더",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-097",
+      "title": "K-Pop Demon Hunters - MEDLEY ft. Grace Kinstler (acapella)",
+      "artist": "보이스플레이 (VoicePlay)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=CbmoITvMCX0",
+      "thumbnail": "https://img.youtube.com/vi/CbmoITvMCX0/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Gonna Be Golden\" acapella cover from \"K-Pop Demon Hunters\" VoicePlay ft. @gracekinstlerofficial Subscribe: ...",
+      "tags": [
+        "보이스플레이",
+        "보컬 커버",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-098",
+      "title": "Can't Help Falling In Love | VoicePlay A Cappella",
+      "artist": "보이스플레이 (VoicePlay)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=786-XvOK8rM",
+      "thumbnail": "https://img.youtube.com/vi/786-XvOK8rM/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "COME SEE US LIVE!: https://thevoiceplay.com/tour Listen on Apple Music https://vcpl.me/chfil-am Listen on Spotify ...",
+      "tags": [
+        "보이스플레이",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-099",
+      "title": "Hoist the Colours Acapella VoicePlay ft Jose Rosario Jr",
+      "artist": "보이스플레이 (VoicePlay)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=vO8NEsx9m58",
+      "thumbnail": "https://img.youtube.com/vi/vO8NEsx9m58/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Hoist The Colours” from \"Pirates of the Caribbean\" acapella cover from VoicePlay ft. Jose Rosario Jr. Subscribe: ...",
+      "tags": [
+        "보이스플레이",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-100",
+      "title": "SUPERSTITION A Cappella | VoicePlay feat. Omar Cardona",
+      "artist": "보이스플레이 (VoicePlay)",
+      "category": "해외 명작",
+      "videoUrl": "https://www.youtube.com/watch?v=FuR5FpqPJII",
+      "thumbnail": "https://img.youtube.com/vi/FuR5FpqPJII/hqdefault.jpg",
+      "uploader": "아카라카 명작선",
+      "date": "2023-2025",
+      "description": "Listen on Apple Music https://vcpl.me/vp-itunes Listen on Spotify https://vcpl.me/sptfy Stream VoicePlay's Music Everywhere!",
+      "tags": [
+        "보이스플레이",
+        "해외 명작",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-song-bohemian-rhapsody-5",
+      "songId": "bohemian-rhapsody-5",
+      "title": "보헤미안 랩소디 · 5인용 - 보이스플레이 (VoicePlay Queen Medley)",
+      "artist": "보이스플레이 (VoicePlay)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=krcU5xmlzqA",
+      "thumbnail": "https://img.youtube.com/vi/krcU5xmlzqA/hqdefault.jpg",
+      "uploader": "보이스플레이 (VoicePlay)",
+      "date": "공식 MV",
+      "description": "미국 최정상 5인조 프로 아카펠라 그룹 보이스플레이(VoicePlay)의 압도적인 Queen & Bohemian Rhapsody 메들리 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "보헤미안 랩소디",
+        "VoicePlay",
+        "5인조",
+        "Queen"
+      ]
+    },
+    {
+      "id": "apprec-song-bohemian-rhapsody-6",
+      "songId": "bohemian-rhapsody-6",
+      "title": "보헤미안 랩소디 · 6인용 (Bohemian Rhapsody) - 펜타토닉스",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5oCI",
+      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5oCI/hqdefault.jpg",
+      "uploader": "펜타토닉스 (Pentatonix)",
+      "date": "공식 MV",
+      "description": "펜타토닉스(Pentatonix)의 명품 퀸 보헤미안 랩소디 공식 연주 영상입니다. 아카라카 연습실에서 파트별 음정과 함께 연습해 보세요.",
+      "tags": [
+        "연습곡",
+        "보헤미안 랩소디",
+        "펜타토닉스",
+        "Queen",
+        "6부"
+      ]
+    },
+    {
+      "id": "apprec-song-mujogeon",
+      "songId": "mujogeon",
+      "title": "신나는 트로트 메들리 (Trot Live) - 아카펠라 그룹 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=Pya8GKVnfC4",
+      "thumbnail": "https://img.youtube.com/vi/Pya8GKVnfC4/hqdefault.jpg",
+      "uploader": "아카펠라 다이아",
+      "date": "프로 라이브 실황",
+      "description": "원조 아카펠라 프로팀 다이아(D.I.A)가 박상철의 ‘무조건’ 등 흥겨운 트로트 명곡들을 유쾌한 화음과 입체적인 보컬 연기로 소화한 무대 영상입니다.",
+      "tags": [
+        "연습곡",
+        "무조건",
+        "다이아",
+        "DIA",
+        "트로트"
+      ]
+    },
+    {
+      "id": "apprec-song-short-hair",
+      "songId": "short-hair",
+      "title": "단발머리 (조용필) - 메이트리 (MayTree 1집 Maybe 수록)",
+      "artist": "메이트리 (MayTree)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=-QwGNWKKiAE",
+      "thumbnail": "https://img.youtube.com/vi/-QwGNWKKiAE/hqdefault.jpg",
+      "uploader": "메이트리 (MayTree)",
+      "date": "공식 정규앨범 트랙 (07:17)",
+      "description": "세계적인 아카펠라 그룹 메이트리(MayTree)가 1집 정규앨범 ‘Maybe’에 수록하여 수많은 공연에서 사랑받은 조용필 원곡 ‘단발머리’ 아카펠라 트랙입니다.",
+      "tags": [
+        "연습곡",
+        "단발머리",
+        "메이트리",
+        "MayTree",
+        "조용필"
+      ]
+    },
+    {
+      "id": "apprec-song-disney-medley-7",
+      "songId": "disney-medley-7",
+      "title": "디즈니 메들리 · 7부 (Disney Medley) - Peter Hollens & Alex G",
+      "artist": "피터 홀렌스 (Peter Hollens) · Alex G",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=GDEFuG30FYg",
+      "thumbnail": "https://img.youtube.com/vi/GDEFuG30FYg/hqdefault.jpg",
+      "uploader": "피터 홀렌스 (Peter Hollens)",
+      "date": "공식 MV",
+      "description": "세계적인 아카펠라 아티스트 피터 홀렌스(Peter Hollens)와 Alex G가 7개 이상의 성부로 화려하게 쌓아올린 디즈니 메들리 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "디즈니",
+        "Peter Hollens",
+        "Alex G",
+        "7부"
+      ]
+    },
+    {
+      "id": "apprec-song-disney-medley",
+      "songId": "disney-medley",
+      "title": "Disney Medley - 엑시트 (VoiceBand EXIT feat. 이희주)",
+      "artist": "엑시트 (VoiceBand EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=lVqNI6qP1ms",
+      "thumbnail": "https://img.youtube.com/vi/lVqNI6qP1ms/hqdefault.jpg",
+      "uploader": "보이스밴드 엑시트",
+      "date": "공식 영상 (조회수 2300만)",
+      "description": "대한민국 대표 프로 아카펠라 그룹 엑시트(EXIT)와 보컬 이희주의 2300만 뷰 디즈니 명곡 아카펠라 메들리 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "디즈니 메들리",
+        "EXIT",
+        "엑시트",
+        "이희주"
+      ]
+    },
+    {
+      "id": "apprec-song-first-impression",
+      "songId": "first-impression",
+      "title": "첫인상 (First Impression) - 메이트리 (MayTree Live at Arirang)",
+      "artist": "메이트리 (MayTree)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=koKC3zS_CYw",
+      "thumbnail": "https://img.youtube.com/vi/koKC3zS_CYw/hqdefault.jpg",
+      "uploader": "아리랑 라디오 (Arirang Radio)",
+      "date": "라디오 라이브 스튜디오",
+      "description": "아리랑 라디오 ‘K-Poppin’ 스튜디오에서 메이트리(MayTree)가 김건모의 대표 그루브 댄스곡 ‘첫인상’을 완벽한 5인 하모니로 부른 라이브 실황입니다.",
+      "tags": [
+        "연습곡",
+        "첫인상",
+        "메이트리",
+        "MayTree",
+        "김건모"
+      ]
+    },
+    {
+      "id": "apprec-song-tobacco-shop-girl",
+      "songId": "tobacco-shop-girl",
+      "title": "담배가게 아가씨 (송창식) - 엑시트 (EXIT Live ver.)",
+      "artist": "엑시트 (VoiceBand EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=6gw6D0RRFDs",
+      "thumbnail": "https://img.youtube.com/vi/6gw6D0RRFDs/hqdefault.jpg",
+      "uploader": "오프더레코드 라이브",
+      "date": "프로 라이브 실황",
+      "description": "보이스밴드 엑시트(EXIT)가 폭발적인 가창력과 보컬 퍼커션으로 완성한 송창식 원곡 ‘담배가게 아가씨’ 고화질 라이브 무대입니다.",
+      "tags": [
+        "연습곡",
+        "담배가게 아가씨",
+        "엑시트",
+        "EXIT",
+        "라이브"
+      ]
+    },
+    {
+      "id": "apprec-song-aloha",
+      "songId": "aloha",
+      "title": "쿨 - 아로하 | 를 오직목소리로 (Cool - Aloha by Acapella)",
+      "artist": "오직목소리 (구 두왑사운즈)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=bw9c_Gp5Ixs",
+      "thumbnail": "https://img.youtube.com/vi/bw9c_Gp5Ixs/hqdefault.jpg",
+      "uploader": "오직목소리 (구 두왑사운즈)",
+      "date": "공식 커버 영상",
+      "description": "국민 애창곡 ‘아로하’를 프로 아카펠라 그룹 오직목소리(두왑사운즈)의 달콤한 화음과 비트박스로 완성한 공식 아카펠라 커버 영상입니다.",
+      "tags": [
+        "연습곡",
+        "아로하",
+        "오직목소리",
+        "두왑사운즈",
+        "쿨"
+      ]
+    },
+    {
+      "id": "apprec-song-tayo-pororo",
+      "songId": "tayo-pororo",
+      "title": "타요 오프닝 송 (아카펠라 ver.) - 꼬마버스 타요 X 엑시트 (EXIT)",
+      "artist": "엑시트 (VoiceBand EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=z4cOfW52eJ8",
+      "thumbnail": "https://img.youtube.com/vi/z4cOfW52eJ8/hqdefault.jpg",
+      "uploader": "꼬마버스 타요 공식 채널",
+      "date": "공식 콜라보레이션",
+      "description": "꼬마버스 타요와 보이스밴드 엑시트(EXIT)가 공식 콜라보레이션으로 제작한 신나는 애니메이션 테마송 아카펠라 버전입니다.",
+      "tags": [
+        "연습곡",
+        "타요",
+        "뽀로로",
+        "엑시트",
+        "EXIT"
+      ]
+    },
+    {
+      "id": "apprec-song-run-the-sky",
+      "songId": "run-the-sky",
+      "title": "이적 '하늘을 달리다' - 아카펠라 그룹 나린 (NARIN Live)",
+      "artist": "나린 (NARIN)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ZoSmLW7e9jk",
+      "thumbnail": "https://img.youtube.com/vi/ZoSmLW7e9jk/hqdefault.jpg",
+      "uploader": "국립항공박물관 공식",
+      "date": "프로 특별 라이브",
+      "description": "실력파 혼성 아카펠라 그룹 나린(NARIN)이 국립항공박물관 특별 무대에서 시원하고 힘찬 5성부 하모니로 노래한 이적의 ‘하늘을 달리다’ 라이브 영상입니다.",
+      "tags": [
+        "연습곡",
+        "하늘을 달리다",
+        "나린",
+        "NARIN",
+        "이적"
+      ]
+    },
+    {
+      "id": "apprec-song-acaroom-opening",
+      "songId": "acaroom-opening",
+      "title": "아카라카 응원가 메들리 - 연세대학교 아카펠라 그룹 YAYAN",
+      "artist": "연세대학교 & YAYAN",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=-xAYYFYyrVw",
+      "thumbnail": "https://img.youtube.com/vi/-xAYYFYyrVw/hqdefault.jpg",
+      "uploader": "연세대학교 공식 채널 (Yonsei Univ)",
+      "date": "연세대학교 공식 제작 영상",
+      "description": "연세대학교 중앙 아카펠라 동아리 YAYAN이 신촌 노천극장의 축제 ‘아카라카를 온누리에’ 대표 응원곡들을 화려한 아카펠라 하모니로 노래한 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "아카라카",
+        "YAYAN",
+        "연세대학교",
+        "응원가"
+      ]
+    },
+    {
+      "id": "apprec-song-speechless",
+      "songId": "speechless",
+      "title": "Speechless (알라딘 OST) - 디카펠라 (DCappella Official Video)",
+      "artist": "디카펠라 (DCappella)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=vGG62umYgvg",
+      "thumbnail": "https://img.youtube.com/vi/vGG62umYgvg/hqdefault.jpg",
+      "uploader": "디즈니 뮤직 (DisneyMusicVEVO)",
+      "date": "공식 MV",
+      "description": "월트 디즈니 공식 7인조 프로 아카펠라 그룹 디카펠라(DCappella)가 부른 영화 알라딘 OST ‘Speechless’ 공식 뮤직비디오입니다.",
+      "tags": [
+        "연습곡",
+        "Speechless",
+        "DCappella",
+        "디즈니",
+        "알라딘"
+      ]
+    },
+    {
+      "id": "apprec-song-in-your-arms",
+      "songId": "in-your-arms",
+      "title": "그대 내 품에 (유재하 / EXIT 편곡) - 아카펠라 힐링 콘서트 라이브",
+      "artist": "엑시트 편곡 / 아카펠라 마카",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=FGCC5aorfns",
+      "thumbnail": "https://img.youtube.com/vi/FGCC5aorfns/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙",
+      "date": "아카펠라 콘서트 라이브",
+      "description": "유재하의 불후의 명곡 ‘그대 내 품에’ 엑시트(EXIT) 편곡 버전을 아카펠라 그룹의 아름다운 5성부 하모니로 공연한 콘서트 실황입니다.",
+      "tags": [
+        "연습곡",
+        "그대 내 품에",
+        "엑시트",
+        "유재하",
+        "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-song-happy-school",
+      "songId": "happy-school",
+      "title": "교실을 빛내는 하모니 - 아카펠라 별의별 (교육부 스승의 날 응원)",
+      "artist": "별의별 (Byeol-ui-Byeol)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=s0_kbld9PB8",
+      "thumbnail": "https://img.youtube.com/vi/s0_kbld9PB8/hqdefault.jpg",
+      "uploader": "대한민국 교육부 공식",
+      "date": "교육부 공식 특별 영상",
+      "description": "현직 교사들로 구성된 한국 대표 교육 아카펠라 그룹 별의별과 교육부가 함께한 행복한 학교와 교실을 위한 따뜻한 아카펠라 영상입니다.",
+      "tags": [
+        "연습곡",
+        "행복한 학교",
+        "별의별",
+        "교육부",
+        "동요"
+      ]
+    },
+    {
+      "id": "apprec-song-go-to-school",
+      "songId": "go-to-school",
+      "title": "[별의별 1집] 학교가자 - 아카펠라 별의별 (Official MV)",
+      "artist": "별의별 (Byeol-ui-Byeol)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=nPqnsaIXWxw",
+      "thumbnail": "https://img.youtube.com/vi/nPqnsaIXWxw/hqdefault.jpg",
+      "uploader": "아카펠라 별의별",
+      "date": "공식 1집 타이틀 MV",
+      "description": "아이들의 발걸음과 학교생활의 설렘을 경쾌한 아카펠라 보컬로 표현한 아카펠라 별의별 정규 1집 타이틀곡 ‘학교가자’ 공식 뮤직비디오입니다.",
+      "tags": [
+        "연습곡",
+        "학교 가자",
+        "별의별",
+        "공식MV",
+        "동요"
+      ]
+    },
+    {
+      "id": "apprec-song-well-done-today",
+      "songId": "well-done-today",
+      "title": "옥상달빛 - 수고했어 오늘도 | 아카펠라 나린 (Narin Official Cover)",
+      "artist": "나린 (NARIN)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=w9Gf4T6Gsg0",
+      "thumbnail": "https://img.youtube.com/vi/w9Gf4T6Gsg0/hqdefault.jpg",
+      "uploader": "아카펠라 나린 (Narin Official)",
+      "date": "공식 커버 영상",
+      "description": "많은 이들에게 따뜻한 위로를 전하는 옥상달빛의 ‘수고했어 오늘도’를 아카펠라 그룹 나린(NARIN)이 청아하고 포근한 보컬 하모니로 커버한 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "수고했어 오늘도",
+        "나린",
+        "NARIN",
+        "옥상달빛"
+      ]
+    },
+    {
+      "id": "apprec-song-bohemian-rhapsody",
+      "songId": "bohemian-rhapsody",
+      "title": "Bohemian Rhapsody - 펜타토닉스 (Pentatonix Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=ojRj2JK5oCI",
+      "thumbnail": "https://img.youtube.com/vi/ojRj2JK5oCI/hqdefault.jpg",
+      "uploader": "펜타토닉스 (Pentatonix)",
+      "date": "공식 MV",
+      "description": "세계적인 아카펠라 그룹 펜타토닉스(Pentatonix)의 전설적인 퀸(Queen) ‘Bohemian Rhapsody’ 공식 뮤직비디오입니다.",
+      "tags": [
+        "연습곡",
+        "보헤미안 랩소디",
+        "Pentatonix",
+        "Queen",
+        "Official"
+      ]
+    },
+    {
+      "id": "apprec-song-daft-punk",
+      "songId": "daft-punk",
+      "title": "Daft Punk Medley - 펜타토닉스 (Pentatonix Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=3MteSlpxCpo",
+      "thumbnail": "https://img.youtube.com/vi/3MteSlpxCpo/hqdefault.jpg",
+      "uploader": "펜타토닉스 (Pentatonix)",
+      "date": "공식 MV",
+      "description": "펜타토닉스를 세계 최고로 만든 그래미 수상작 ‘Daft Punk’ 공식 뮤직비디오입니다. 연습실에서 파트별 첫음과 비트박스를 익혀보세요.",
+      "tags": [
+        "연습곡",
+        "Daft Punk",
+        "Pentatonix",
+        "그래미",
+        "Official"
+      ]
+    },
+    {
+      "id": "apprec-song-dansori",
+      "songId": "dansori",
+      "title": "Amazing Grace + 아리랑 - 국악아카펠라 토리스 (Toris)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=d1Dcf2_ICDI",
+      "thumbnail": "https://img.youtube.com/vi/d1Dcf2_ICDI/hqdefault.jpg",
+      "uploader": "KBS 국악한마당 공식",
+      "date": "KBS 국악한마당 방송 실황",
+      "description": "국내 유일의 국악 아카펠라 프로팀 토리스(Toris)가 KBS 국악한마당에서 선보인 국악과 서양 화음의 경이로운 만남 ‘Amazing Grace & 아리랑’ 무대입니다.",
+      "tags": [
+        "연습곡",
+        "단소리",
+        "토리스",
+        "국악아카펠라",
+        "KBS국악한마당"
+      ]
+    },
+    {
+      "id": "apprec-song-isnt-she-lovely",
+      "songId": "isnt-she-lovely",
+      "title": "Isn't She Lovely (스티비 원더) - 보이스밴드 엑시트 (EXIT)",
+      "artist": "엑시트 (VoiceBand EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=VCDXJbA2YjI",
+      "thumbnail": "https://img.youtube.com/vi/VCDXJbA2YjI/hqdefault.jpg",
+      "uploader": "보이스밴드 엑시트",
+      "date": "공식 커버 영상",
+      "description": "스티비 원더의 대표 명곡 ‘Isn't She Lovely’를 프로 아카펠라 그룹 엑시트(EXIT)만의 감미롭고 스윙감 넘치는 하모니로 커버한 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Isnt She Lovely",
+        "엑시트",
+        "EXIT",
+        "Stevie Wonder"
+      ]
+    },
+    {
+      "id": "apprec-song-lets-travel",
+      "songId": "lets-travel",
+      "title": "여행을 떠나요 (조용필) - 아카펠라 그룹 엑시트 (EXIT 산사음악회)",
+      "artist": "엑시트 (VoiceBand EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=bW0tcG8oLro",
+      "thumbnail": "https://img.youtube.com/vi/bW0tcG8oLro/hqdefault.jpg",
+      "uploader": "봉은사 산사음악회 라이브",
+      "date": "프로 라이브 실황",
+      "description": "조용필 원곡의 신나는 명곡 ‘여행을 떠나요’를 보이스밴드 엑시트(EXIT)가 열정적인 비트박스와 화려한 애드리브로 공연한 야외 음악회 실황입니다.",
+      "tags": [
+        "연습곡",
+        "여행을 떠나요",
+        "엑시트",
+        "EXIT",
+        "조용필"
+      ]
+    },
+    {
+      "id": "apprec-song-love-song-medley",
+      "songId": "love-song-medley",
+      "title": "디즈니 러브송 메들리 - 제니스 (ZENITH 레코드방 라이브)",
+      "artist": "제니스 (ZENITH)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=dVgzbLgkLdY",
+      "thumbnail": "https://img.youtube.com/vi/dVgzbLgkLdY/hqdefault.jpg",
+      "uploader": "서울역사박물관 레트로라이브",
+      "date": "프로 라이브 실황",
+      "description": "프로 아카펠라 그룹 제니스(Zenith)가 전하는 로맨틱한 디즈니 사랑 노래 메들리 라이브 무대입니다. 환상적인 혼성 화음을 감상해 보세요.",
+      "tags": [
+        "연습곡",
+        "러브송 메들리",
+        "제니스",
+        "ZENITH",
+        "디즈니"
+      ]
+    },
+    {
+      "id": "apprec-song-l-o-v-e",
+      "songId": "l-o-v-e",
+      "title": "L.O.V.E. (Nat King Cole) - 메이트리 (MayTree Live in Moscow)",
+      "artist": "메이트리 (MayTree)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=peiYcaL6BvQ",
+      "thumbnail": "https://img.youtube.com/vi/peiYcaL6BvQ/hqdefault.jpg",
+      "uploader": "모스크바 국제 아카펠라 페스티벌",
+      "date": "국제 페스티벌 라이브",
+      "description": "세계적인 아카펠라 그룹 메이트리(MayTree)가 모스크바 아카펠라 페스티벌 현장에서 마이크 없이 오직 목소리의 울림만으로 선사한 명품 재즈 라이브입니다.",
+      "tags": [
+        "연습곡",
+        "LOVE",
+        "메이트리",
+        "MayTree",
+        "재즈"
+      ]
+    },
+    {
+      "id": "apprec-song-old-pop-medley",
+      "songId": "old-pop-medley",
+      "title": "한국인이 사랑하는 팝 메들리 - 보이스밴드 엑시트 (EXIT)",
+      "artist": "엑시트 (VoiceBand EXIT)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=8cNuJQ6pgg8",
+      "thumbnail": "https://img.youtube.com/vi/8cNuJQ6pgg8/hqdefault.jpg",
+      "uploader": "보이스밴드 엑시트",
+      "date": "공식 메들리 영상",
+      "description": "보이스밴드 엑시트(EXIT)가 한국인이 가장 사랑하는 올드팝 명곡들을 모아 파워풀한 보컬과 비트박스로 엮어낸 풀버전 아카펠라 메들리입니다.",
+      "tags": [
+        "연습곡",
+        "올드팝 메들리",
+        "엑시트",
+        "EXIT",
+        "팝송"
+      ]
+    },
+    {
+      "id": "apprec-song-beautiful-world",
+      "songId": "beautiful-world",
+      "title": "아름다운 세상 - 보이쳐 (Voiture EBS 스페이스 공감 페스티벌)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=RPY5H6drjDk",
+      "thumbnail": "https://img.youtube.com/vi/RPY5H6drjDk/hqdefault.jpg",
+      "uploader": "EBS 스페이스 공감",
+      "date": "EBS 스페이스 공감 방송 실황 (03:22)",
+      "description": "대한민국 1세대 대표 혼성 프로 아카펠라 그룹 보이쳐(Voiture)가 EBS 스페이스 공감 아카펠라 페스티벌에서 부른 감동적인 ‘아름다운 세상’ 라이브입니다.",
+      "tags": [
+        "연습곡",
+        "아름다운 세상",
+        "보이쳐",
+        "Voiture",
+        "EBS공감"
+      ]
+    },
+    {
+      "id": "apprec-song-butterfly",
+      "songId": "butterfly",
+      "title": "영화 국가대표 OST 'Butterfly' (러브홀릭스 by MayTree 편곡)",
+      "artist": "메이트리 편곡 / 아카펠라 하모니",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=8lubcsg8lA8",
+      "thumbnail": "https://img.youtube.com/vi/8lubcsg8lA8/hqdefault.jpg",
+      "uploader": "아카펠라 하모니 라이브",
+      "date": "아카펠라 라이브 실황",
+      "description": "메이트리(MayTree)의 시그니처 편곡으로 재탄생한 영화 국가대표 OST ‘Butterfly’의 웅장하고 희망찬 아카펠라 합창 실황 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Butterfly",
+        "국가대표",
+        "메이트리",
+        "러브홀릭스"
+      ]
+    },
+    {
+      "id": "apprec-song-cherry-blossom-ending",
+      "songId": "cherry-blossom-ending",
+      "title": "벚꽃엔딩 (아카펠라) - 제니스 (ZENITH Official)",
+      "artist": "제니스 (ZENITH)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=Q0QkJQ3RYeo",
+      "thumbnail": "https://img.youtube.com/vi/Q0QkJQ3RYeo/hqdefault.jpg",
+      "uploader": "제니스 (ZENITH Official)",
+      "date": "공식 아카펠라 영상",
+      "description": "국내 최정상 혼성 프로 아카펠라 그룹 제니스(ZENITH)가 봄의 대표곡 버스커 버스커 ‘벚꽃 엔딩’을 섬세한 5성부 하모니로 노래한 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "벚꽃엔딩",
+        "제니스",
+        "ZENITH",
+        "버스커버스커"
+      ]
+    },
+    {
+      "id": "apprec-song-love-love",
+      "songId": "love-love",
+      "title": "다이아 (D.I.A) - 사랑해 사랑해 (Official Music Video)",
+      "artist": "다이아 (D.I.A)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=abd9ioW3u_E",
+      "thumbnail": "https://img.youtube.com/vi/abd9ioW3u_E/hqdefault.jpg",
+      "uploader": "스톤뮤직 (Stone Music Ent.)",
+      "date": "공식 MV / 음원",
+      "description": "국내 1세대 대표 아카펠라 그룹 다이아(D.I.A)의 메가 히트 축가이자 경쾌한 스윙 보사노바 하모니가 돋보이는 ‘사랑해 사랑해’ 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "사랑해 사랑해",
+        "다이아",
+        "DIA",
+        "축가"
+      ]
+    },
+    {
+      "id": "apprec-song-carol-medley",
+      "songId": "carol-medley",
+      "title": "Carol of the Bells - 펜타토닉스 (Pentatonix Official Video)",
+      "artist": "펜타토닉스 (Pentatonix)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=WSUFzC6_fp8",
+      "thumbnail": "https://img.youtube.com/vi/WSUFzC6_fp8/hqdefault.jpg",
+      "uploader": "펜타토닉스 (PentatonixVEVO)",
+      "date": "공식 MV (조회수 2억뷰)",
+      "description": "유튜브 2억 조회수를 기록한 펜타토닉스의 상징적인 크리스마스 아카펠라 명작 ‘Carol of the Bells’ 공식 뮤직비디오입니다.",
+      "tags": [
+        "연습곡",
+        "캐롤 메들리",
+        "Pentatonix",
+        "펜타토닉스",
+        "Carol of the Bells"
+      ]
+    },
+    {
+      "id": "apprec-song-same-place",
+      "songId": "same-place",
+      "title": "같은 곳에서 (프로듀스 101) - 메이트리 (MayTree) X I.O.I",
+      "artist": "메이트리 (MayTree)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=kY1TMDiNSq0",
+      "thumbnail": "https://img.youtube.com/vi/kY1TMDiNSq0/hqdefault.jpg",
+      "uploader": "Mnet 방송 무대",
+      "date": "너목보3 방송 무대",
+      "description": "Mnet 너의 목소리가 보여 시즌3에서 I.O.I와 메이트리(MayTree)가 선보인 환상적인 ‘같은 곳에서’ 아카펠라 콜라보레이션 무대입니다.",
+      "tags": [
+        "연습곡",
+        "같은 곳에서",
+        "메이트리",
+        "MayTree",
+        "IOI"
+      ]
+    },
+    {
+      "id": "apprec-song-would-be-good",
+      "songId": "would-be-good",
+      "title": "스윗소로우 (Sweet Sorrow) - 좋겠다 (Official Music Video)",
+      "artist": "스윗소로우 (Sweet Sorrow)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=CziTqWTKIHw",
+      "thumbnail": "https://img.youtube.com/vi/CziTqWTKIHw/hqdefault.jpg",
+      "uploader": "젬 컬처스 (Gem Cultures)",
+      "date": "공식 MV",
+      "description": "대한민국 대표 4인조 보컬 하모니 그룹 스윗소로우(Sweet Sorrow)가 부른 달콤하고 설레는 국민 축가 ‘좋겠다’ 공식 뮤직비디오입니다.",
+      "tags": [
+        "연습곡",
+        "좋겠다",
+        "스윗소로우",
+        "성시경",
+        "축가"
+      ]
+    },
+    {
+      "id": "apprec-song-ditto",
+      "songId": "ditto",
+      "title": "뉴진스 - Ditto | 오직 목소리로 (NewJeans - Ditto by Acapella)",
+      "artist": "오직목소리 (구 두왑사운즈)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=u4SWcpt08VE",
+      "thumbnail": "https://img.youtube.com/vi/u4SWcpt08VE/hqdefault.jpg",
+      "uploader": "오직목소리 (구 두왑사운즈)",
+      "date": "공식 커버 영상",
+      "description": "프로 아카펠라 그룹 오직목소리(구 두왑사운즈)가 뉴진스(NewJeans)의 몽환적인 명곡 ‘Ditto’를 100% 목소리 화음만으로 재해석한 공식 영상입니다.",
+      "tags": [
+        "연습곡",
+        "Ditto",
+        "뉴진스",
+        "오직목소리",
+        "두왑사운즈"
       ]
     }
   ]

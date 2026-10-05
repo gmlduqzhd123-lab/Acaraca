@@ -99,7 +99,7 @@ const state = {
   scoreFilters: {query: '', category: '', songId: '', year: ''},
   educationFilters: {query: '', category: '', target: ''},
   practiceVideoFilters: {query: '', part: '', songId: '', sourceType: ''},
-  appreciationFilters: {query: '', category: '', artist: ''},
+  appreciationFilters: {query: '', category: '', artist: '', sortBy: 'latest'},
   memoryFilters: {category: ''},
   route: readRoute(),
   random: null,
@@ -2930,7 +2930,33 @@ function openUploadAppreciationModal() {
 
 function renderAppreciation() {
   const categoryOptions = ['전체', '연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상'];
-  const artistOptions = ['전체 아티스트', '아카라카', '메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스', '제니스', '더 리얼 그룹', '기타 그룹'];
+  const artistOptions = [
+    '전체 아티스트',
+    '메이트리',
+    '나린',
+    '보이스밴드 엑시트',
+    '다이아',
+    '제니스',
+    '오직목소리',
+    '하모나이즈',
+    '보이쳐',
+    '아카시아',
+    '솔리스츠',
+    '스노우시티',
+    '토리스',
+    '스윗소로우',
+    '펜타토닉스',
+    '보이스플레이',
+    '더 리얼 그룹',
+    '비트펠라 하우스',
+    '아카라카',
+    '기타 그룹'
+  ];
+  const sortOptions = [
+    { value: 'latest', label: '최신 영상순' },
+    { value: 'title', label: '곡명순 (가나다)' },
+    { value: 'artist', label: '아티스트순' }
+  ];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
@@ -2965,6 +2991,16 @@ function renderAppreciation() {
     }, `chip${(state.appreciationFilters.category === cat || (!state.appreciationFilters.category && cat === '전체')) ? ' active' : ''}`))
   );
 
+  const sortSelect = el('select', {
+    id: 'apprec-sort-select',
+    class: 'search-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
+    onchange: (e) => {
+      state.appreciationFilters.sortBy = e.target.value;
+      updateApprecList();
+    }
+  }, sortOptions.map(opt => el('option', { value: opt.value, selected: (state.appreciationFilters.sortBy || 'latest') === opt.value }, opt.label)));
+
   const artistSelect = el('select', {
     class: 'search-select',
     style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
@@ -2978,9 +3014,15 @@ function renderAppreciation() {
 
   const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 16px;'},
     categoryChips,
-    el('div', {style: 'display: flex; align-items: center; gap: 8px;'},
-      el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '그룹별:'),
-      artistSelect
+    el('div', {style: 'display: flex; align-items: center; gap: 12px; flex-wrap: wrap;'},
+      el('div', {style: 'display: flex; align-items: center; gap: 6px;'},
+        el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '정렬:'),
+        sortSelect
+      ),
+      el('div', {style: 'display: flex; align-items: center; gap: 6px;'},
+        el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '그룹별:'),
+        artistSelect
+      )
     )
   );
 
@@ -2995,13 +3037,23 @@ function renderAppreciation() {
     const q = (state.appreciationFilters.query || '').trim().toLowerCase();
     const cat = state.appreciationFilters.category || '';
     const art = state.appreciationFilters.artist || '';
+    const sortBy = state.appreciationFilters.sortBy || 'latest';
 
-    return state.appreciation.filter(item => {
+    const filtered = state.appreciation.filter(item => {
       if (cat && item.category !== cat) return false;
       if (art) {
         if (art === '기타 그룹') {
-          const mainGroups = ['메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스', '제니스', '더 리얼 그룹'];
+          const mainGroups = [
+            '메이트리', '나린', '엑시트', '다이아', '제니스', '오직목소리',
+            '두왑사운즈', '하모나이즈', '보이쳐', '아카시아', '솔리스츠',
+            '스노우시티', '토리스', '스윗소로우', '펜타토닉스', '보이스플레이',
+            '더 리얼 그룹', '비트펠라 하우스', '아카라카'
+          ];
           if (mainGroups.some(g => item.artist?.includes(g))) return false;
+        } else if (art === '보이스밴드 엑시트') {
+          if (!item.artist?.includes('엑시트') && !item.artist?.includes('EXIT')) return false;
+        } else if (art === '오직목소리') {
+          if (!item.artist?.includes('오직목소리') && !item.artist?.includes('두왑사운즈')) return false;
         } else if (!item.artist?.includes(art)) {
           return false;
         }
@@ -3016,17 +3068,33 @@ function renderAppreciation() {
       }
       return true;
     });
+
+    if (sortBy === 'title') {
+      return [...filtered].sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ko'));
+    }
+    if (sortBy === 'artist') {
+      return [...filtered].sort((a, b) => (a.artist || '').localeCompare(b.artist || '', 'ko'));
+    }
+    // 'latest': default order (newest custom videos first, then newest curated Korean videos, then original library)
+    return filtered;
   }
 
   function updateApprecList() {
     const filtered = getFilteredAppreciation();
     const totalCount = state.appreciation.length;
+    const isFiltered = Boolean(
+      state.appreciationFilters.query ||
+      state.appreciationFilters.category ||
+      state.appreciationFilters.artist ||
+      (state.appreciationFilters.sortBy && state.appreciationFilters.sortBy !== 'latest')
+    );
     countSummary.replaceChildren(
       el('span', {}, el('strong', {style: 'color: var(--primary); font-size: 13px;'}, String(filtered.length)), `개의 아카펠라 영상 (전체 ${totalCount}개)`),
-      (state.appreciationFilters.query || state.appreciationFilters.category || state.appreciationFilters.artist) ? button('필터 초기화', () => {
-        state.appreciationFilters = {query: '', category: '', artist: ''};
+      isFiltered ? button('필터 초기화', () => {
+        state.appreciationFilters = {query: '', category: '', artist: '', sortBy: 'latest'};
         searchInput.value = '';
         artistSelect.value = '전체 아티스트';
+        sortSelect.value = 'latest';
         for (const btn of categoryChips.querySelectorAll('button')) {
           btn.classList.toggle('active', btn.textContent.trim() === '전체');
         }
@@ -3037,9 +3105,10 @@ function renderAppreciation() {
     if (!filtered.length) {
       gridContainer.replaceChildren(
         emptyState('조건에 맞는 감상 영상이 없습니다', '검색어를 바꾸거나 필터를 초기화해 보세요.', button('전체 영상 보기', () => {
-          state.appreciationFilters = {query: '', category: '', artist: ''};
+          state.appreciationFilters = {query: '', category: '', artist: '', sortBy: 'latest'};
           searchInput.value = '';
           artistSelect.value = '전체 아티스트';
+          sortSelect.value = 'latest';
           for (const btn of categoryChips.querySelectorAll('button')) {
             btn.classList.toggle('active', btn.textContent.trim() === '전체');
           }
