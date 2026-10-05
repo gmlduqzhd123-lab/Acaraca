@@ -7,7 +7,7 @@ const songIds = new Set(JSON.parse(fs.readFileSync('data/songs.json', 'utf8')).s
 console.log('Total appreciation videos:', apprec.length);
 
 let errors = 0;
-const validCategories = new Set(['연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상']);
+const validCategories = new Set(['연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST']);
 
 apprec.forEach((v, i) => {
   if (!v.id) {

@@ -2929,7 +2929,7 @@ function openUploadAppreciationModal() {
 }
 
 function renderAppreciation() {
-  const categoryOptions = ['전체', '연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST', '자유 감상'];
+  const categoryOptions = ['전체', '연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST'];
   const artistOptions = [
     '전체 아티스트',
     '메이트리',

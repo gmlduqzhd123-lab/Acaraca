@@ -231,6 +231,10 @@ export function runCoreTests() {
     check('감상 영상 최신 추가 100곡(apprec-kr) 최신순 기본 상단 배치 검증', () => {
       return apprecRaw.videos[0].id === 'apprec-kr-001' && apprecRaw.videos[99].id === 'apprec-kr-100';
     });
+    check('자유 감상 카테고리 완전 제거 및 6개 정규 카테고리 무결성 검증', () => {
+      const validCats = new Set(['연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST']);
+      return apprecRaw.videos.every(v => validCats.has(v.category)) && !apprecRaw.videos.some(v => v.category === '자유 감상');
+    });
 
     const eduRaw = JSON.parse(nodeFs.readFileSync('./data/education.json', 'utf8'));
     check('education.json 41개 전문 교육 자료 로드 검증 (교재 11개 + 교육 영상 30개)', () => Array.isArray(eduRaw.resources) && eduRaw.resources.length === 41 && eduRaw.resources.filter(r => r.format === 'video').length === 30);
