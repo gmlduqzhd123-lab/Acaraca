@@ -87,6 +87,102 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   const screen = document.createElement('div');
   screen.className = 'player-screen';
   shell.append(screen);
+
+  let isLandscapeExpanded = false;
+  let rotateAngle = 90;
+
+  const expandBtn = document.createElement('button');
+  expandBtn.type = 'button';
+  expandBtn.className = 'player-expand-btn';
+  expandBtn.setAttribute('aria-label', '가로로 확대해서 큰 화면으로 보기');
+  expandBtn.innerHTML = '<span class="expand-icon" aria-hidden="true">⛶</span><span>가로 확대</span>';
+
+  const exitBtn = document.createElement('button');
+  exitBtn.type = 'button';
+  exitBtn.className = 'theater-exit-btn';
+  exitBtn.setAttribute('aria-label', '세로 화면으로 돌아가기');
+  exitBtn.innerHTML = '<span>✕ 화면 복귀</span>';
+
+  const rotateBtn = document.createElement('button');
+  rotateBtn.type = 'button';
+  rotateBtn.className = 'theater-rotate-btn';
+  rotateBtn.setAttribute('aria-label', '화면 회전 방향 전환 (180도)');
+  rotateBtn.innerHTML = '<span>🔄 회전</span>';
+
+  async function toggleLandscapeExpanded(forceState) {
+    if (destroyed) return;
+    isLandscapeExpanded = (typeof forceState === 'boolean') ? forceState : !isLandscapeExpanded;
+    screen.classList.toggle('theater-landscape', isLandscapeExpanded);
+    if (typeof document !== 'undefined') {
+      document.body?.classList.toggle('has-landscape-player', isLandscapeExpanded);
+    }
+
+    if (isLandscapeExpanded) {
+      if (!iframe) {
+        mountFrame(currentTime);
+      }
+      try {
+        if (screen.requestFullscreen) {
+          await screen.requestFullscreen();
+        } else if (screen.webkitRequestFullscreen) {
+          await screen.webkitRequestFullscreen();
+        }
+      } catch (e) {}
+
+      try {
+        if (typeof screen !== 'undefined' && screen.orientation?.lock) {
+          await screen.orientation.lock('landscape');
+        }
+      } catch (e) {}
+    } else {
+      try {
+        if (typeof document !== 'undefined') {
+          if (document.fullscreenElement && document.exitFullscreen) {
+            await document.exitFullscreen();
+          } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+            await document.webkitExitFullscreen();
+          }
+        }
+      } catch (e) {}
+
+      try {
+        if (typeof screen !== 'undefined' && screen.orientation?.unlock) {
+          screen.orientation.unlock();
+        }
+      } catch (e) {}
+    }
+  }
+
+  expandBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleLandscapeExpanded(true);
+  });
+  exitBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleLandscapeExpanded(false);
+  });
+  rotateBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    rotateAngle = rotateAngle === 90 ? 270 : 90;
+    screen.style.setProperty('--theater-rotate-angle', `${rotateAngle}deg`);
+  });
+
+  function handleFullscreenChange() {
+    if (typeof document !== 'undefined' && !document.fullscreenElement && !document.webkitFullscreenElement && isLandscapeExpanded) {
+      toggleLandscapeExpanded(false);
+    }
+  }
+  function handleKeyDown(e) {
+    if (e.key === 'Escape' && isLandscapeExpanded) {
+      toggleLandscapeExpanded(false);
+    }
+  }
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('keydown', handleKeyDown);
+  }
+
   let destroyed = false;
   let iframe = null;
   let isPlaying = false;
@@ -160,7 +256,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.allowFullscreen = true;
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    screen.replaceChildren(iframe);
+    screen.replaceChildren(iframe, expandBtn, exitBtn, rotateBtn);
     isPlaying = true;
     notifyChange();
 
@@ -214,7 +310,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     label.textContent = parsed.type === 'playlist' ? '재생목록 재생' : '영상 재생';
     play.append(icon, label);
     play.addEventListener('click', () => mountFrame(0));
-    screen.append(play);
+    screen.append(play, expandBtn, exitBtn, rotateBtn);
     const link = document.createElement('a');
     link.className = 'button secondary player-external';
     link.href = parsed.originalUrl;
@@ -320,8 +416,18 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       stateListeners.push(cb);
       cb({ isPlaying, currentTime, currentRate, mounted: Boolean(iframe) });
     },
+    toggleLandscape(force) { return toggleLandscapeExpanded(force); },
+    isLandscape() { return isLandscapeExpanded; },
     destroy() {
       destroyed = true;
+      if (isLandscapeExpanded) {
+        toggleLandscapeExpanded(false);
+      }
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        document.removeEventListener('keydown', handleKeyDown);
+        document.body?.classList.remove('has-landscape-player');
+      }
       if (ticker) clearInterval(ticker);
       if (typeof window !== 'undefined') {
         window.removeEventListener('message', handleMessage);

@@ -327,7 +327,17 @@ export function runCoreTests() {
     check('iframe에 안전한 텍스트 title', () => container.querySelector('iframe').title === '<script>안전한 영상명</script>');
     player.restart();
     check('다시 보기 시 iframe 중복 없음', () => container.querySelectorAll('iframe').length === 1);
-    check('플레이어 컨트롤러 인터페이스 제공', () => typeof player.seekRelative === 'function' && typeof player.setRate === 'function' && typeof player.togglePlay === 'function');
+    check('플레이어 컨트롤러 인터페이스 제공', () =>
+      typeof player.seekRelative === 'function' &&
+      typeof player.setRate === 'function' &&
+      typeof player.togglePlay === 'function' &&
+      typeof player.toggleLandscape === 'function' &&
+      typeof player.isLandscape === 'function'
+    );
+    player.toggleLandscape(true);
+    check('플레이어 가로 확대 모드 활성화 확인', () => player.isLandscape() === true);
+    player.toggleLandscape(false);
+    check('플레이어 가로 확대 모드 비활성화 확인', () => player.isLandscape() === false);
     player.destroy();
     check('destroy 시 플레이어 제거', () => container.childElementCount === 0);
 

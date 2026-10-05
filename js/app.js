@@ -3390,8 +3390,10 @@ function renderPlayerController(player, song, part) {
     })
   );
 
+  const landscapeBtn = button('가로 확대', () => player.toggleLandscape?.(), 'text-button practice-pitch-btn', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'});
   const pitchBtn = button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'text-button practice-pitch-btn', 'music');
-  const subrow = el('div', {class: 'practice-subrow'}, speedGroup, pitchBtn);
+  const subrowRight = el('div', {style: 'display: flex; gap: 8px; align-items: center; flex-wrap: wrap;'}, landscapeBtn, pitchBtn);
+  const subrow = el('div', {class: 'practice-subrow'}, speedGroup, subrowRight);
 
   // --- A-B Section Loop (구간 반복 연습) ---
   const loopStatusBadge = el('span', {class: 'loop-status-badge', text: '구간 미설정'});
@@ -3759,6 +3761,7 @@ function renderPractice(song, part, record = true) {
 
   const actions = el('div', {class: 'player-actions'},
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
+    button('가로 확대', () => state.player?.toggleLandscape?.(), 'button secondary', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'}),
     button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
     songScores.length ? button(`악보 창고 (${songScores.length})`, () => {

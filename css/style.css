@@ -400,6 +400,154 @@ dialog::backdrop { background: rgba(17,38,28,.35); backdrop-filter: blur(3px); }
 .player-external { margin-top: 13px; }
 .player-help { margin: 8px 0 16px; font-size: 10px; color: var(--muted); }
 .player-empty, .player-error { display: flex; align-items: center; justify-content: center; padding: 30px; color: #bbcbbb; font-size: 13px; text-align: center; }
+
+/* --- 모바일 가로 확대 / 전체 화면 시어터 모드 (Landscape Theater) --- */
+.player-expand-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  background: rgba(22, 54, 44, 0.88);
+  color: #f1f8f3;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+  user-select: none;
+}
+.player-expand-btn:hover {
+  background: rgba(35, 77, 60, 0.96);
+  color: #fff;
+  transform: scale(1.04);
+}
+.player-expand-btn:active {
+  transform: scale(0.97);
+}
+.player-expand-btn .expand-icon {
+  font-size: 12px;
+}
+
+.theater-exit-btn,
+.theater-rotate-btn {
+  display: none;
+}
+
+body.has-landscape-player {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+.player-screen.theater-landscape {
+  position: fixed !important;
+  z-index: 9999999 !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: #000000 !important;
+  aspect-ratio: auto !important;
+  width: 100vh !important;
+  height: 100vw !important;
+  width: 100dvh !important;
+  height: 100dvw !important;
+  transform: translate(-50%, -50%) rotate(var(--theater-rotate-angle, 90deg)) !important;
+  transform-origin: center center !important;
+  box-shadow: none !important;
+}
+
+.player-screen.theater-landscape .player-frame {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.player-screen.theater-landscape .player-expand-btn {
+  display: none !important;
+}
+
+.player-screen.theater-landscape .theater-exit-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10000000;
+  background: rgba(15, 25, 20, 0.85);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+  transition: background 0.18s, transform 0.15s;
+  user-select: none;
+}
+
+.player-screen.theater-landscape .theater-rotate-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10000000;
+  background: rgba(15, 25, 20, 0.85);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+  transition: background 0.18s, transform 0.15s;
+  user-select: none;
+}
+
+.player-screen.theater-landscape .theater-exit-btn:hover,
+.player-screen.theater-landscape .theater-rotate-btn:hover {
+  background: rgba(30, 58, 44, 0.95);
+  transform: scale(1.05);
+}
+
+.player-screen.theater-landscape .theater-exit-btn:active,
+.player-screen.theater-landscape .theater-rotate-btn:active {
+  transform: scale(0.96);
+}
+
+@media (orientation: landscape) {
+  .player-screen.theater-landscape {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    transform: none !important;
+  }
+  .player-screen.theater-landscape .theater-rotate-btn {
+    display: none !important;
+  }
+}
 .player-actions { justify-content: flex-start; margin-top: 0; }
 .player-actions .favorite-button { margin-left: auto; }
 .part-switcher { display: flex; align-items: center; justify-content: space-between; gap: 15px; border-top: 1px solid var(--border); margin: 21px 0 24px; padding-top: 18px; }
