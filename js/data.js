@@ -1,10 +1,10 @@
 import { parseYouTube } from './player.js';
 
 export const PARTS = Object.freeze({
-  lead: 'LEAD', soprano: 'SOP', alto: 'ALTO', tenor: 'TENOR',
-  baritone: 'BARI', bass: 'BASS', vp: 'VP',
   part1: '1번 파트', part2: '2번 파트', part3: '3번 파트',
   part4: '4번 파트', part5: '5번 파트', part6: '6번 파트', part7: '7번 파트',
+  lead: 'LEAD', soprano: 'SOP', alto: 'ALTO', tenor: 'TENOR',
+  baritone: 'BARI', bass: 'BASS', vp: 'VP',
   full: 'FULL',
 });
 

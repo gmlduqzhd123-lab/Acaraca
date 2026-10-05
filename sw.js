@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v37';
+const CACHE_NAME = 'acaroom-cache-v38';
 const CORE_ASSETS = [
   './',
   './index.html',
