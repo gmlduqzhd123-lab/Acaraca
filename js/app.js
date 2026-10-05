@@ -1,4 +1,4 @@
-import {loadSongs, PARTS, CHECKLIST, availableParts, preferredPart} from './data.js';
+import {loadSongs, PARTS, availableParts, preferredPart} from './data.js';
 import {parseYouTube, createPlayer} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -337,15 +337,6 @@ function searchBar(home = false, update = null) {
   const form = el('form', {class: 'search-bar', role: 'search', onsubmit: event => { event.preventDefault(); clearTimeout(debounce); state.filters.query = input.value; if (home) navigate({tab: 'songs'}); else update?.(); }}, icon('search'), input,
     button('검색', () => { state.filters.query = input.value; if (home) navigate({tab: 'songs'}); else update?.(); }, 'search-submit'));
   return form;
-}
-function progressChecks(songId, part) { return object(object(state.progress[songId])[part]); }
-function percentage(songId, part) {
-  const checks = progressChecks(songId, part);
-  return Math.round(CHECKLIST.filter(check => checks[check.id] === true).length / CHECKLIST.length * 100);
-}
-function progressBar(percent, label = '연습 진행도') {
-  return el('div', {class: 'progress-panel'}, el('div', {class: 'progress-label'}, el('span', {text: label}), el('strong', {text: `${percent}%`})),
-    el('div', {class: 'progress-track', role: 'progressbar', 'aria-label': label, 'aria-valuenow': percent, 'aria-valuemin': 0, 'aria-valuemax': 100}, el('div', {class: 'progress-fill', style: `width: ${percent}%`})));
 }
 function validRecent() {
   return state.recent.filter(record => state.songs.some(song => song.id === record.songId && availableParts(song).includes(record.part))).slice(0, 10);
@@ -3332,8 +3323,7 @@ function renderDetail(song) {
         }, 'button secondary', 'document') : null,
         songPerformances.length ? button(`무대 영상 (${songPerformances.length})`, () => navigate({tab: 'stage'}), 'button secondary', 'stage') : null,
         songRehearsals.length ? button(`연습 일지 & 피드백 (${songRehearsals.length})`, () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes') : null
-      ),
-      preferred && progressBar(percentage(song.id, preferred), `${PARTS[preferred]} 연습 진행도`)
+      )
     )
   );
   app.append(detail);
@@ -3466,58 +3456,7 @@ function renderPractice(song, part, record = true) {
   
   if (abSwitcher) app.append(abSwitcher);
   app.append(startingPitchPanel, playerLayout, controller, actions, switches);
-  const progressHost = el('div'); const updateProgress = () => progressHost.replaceChildren(progressBar(percentage(song.id, part)));
-  updateProgress();
-  const checklist = el('section', {class: 'checklist-panel'}, el('p', {class: 'eyebrow', text: 'ONE STEP AT A TIME'}), el('h2', {text: '오늘의 연습 체크'}), el('p', {text: '작은 반복이 우리의 소리를 완성해요.'}), progressHost);
-  for (const check of CHECKLIST) {
-    const input = el('input', {type: 'checkbox', checked: progressChecks(song.id, part)[check.id] === true, onchange: event => {
-      const songProgress = {...object(state.progress[song.id])};
-      songProgress[part] = {...progressChecks(song.id, part), [check.id]: event.target.checked};
-      // defineProperty keeps arbitrary JSON song IDs (including __proto__) as ordinary own keys.
-      Object.defineProperty(state.progress, song.id, {value: songProgress, enumerable: true, configurable: true, writable: true});
-      write('progress', state.progress); updateProgress();
-    }});
-    checklist.append(el('label', {class: 'check-item'}, input, el('span', {text: check.label})));
-  }
-  app.append(el('div', {class: 'practice-content'}, checklist, renderTimer()));
 }
-
-const duration = 10 * 60 * 1000;
-const savedTimer = object(read('timer', {}));
-const timer = {
-  running: savedTimer.running === true && Number.isFinite(savedTimer.endAt),
-  endAt: Number.isFinite(savedTimer.endAt) ? savedTimer.endAt : null,
-  remainingMs: Number.isFinite(savedTimer.remainingMs) ? Math.max(0, Math.min(duration, savedTimer.remainingMs)) : duration,
-  completed: savedTimer.completed === true
-};
-let timerNodes = null;
-function timerRemaining() { return timer.running ? Math.max(0, timer.endAt - Date.now()) : timer.remainingMs; }
-function saveTimer() { write('timer', timer); }
-function tickTimer() {
-  const remaining = timerRemaining();
-  if (timer.running && remaining === 0) { timer.running = false; timer.remainingMs = 0; timer.completed = true; saveTimer(); toast('10분 집중 연습을 마쳤어요. 수고했어요!'); }
-  if (!timerNodes?.value.isConnected) return;
-  const seconds = Math.ceil(timerRemaining() / 1000);
-  timerNodes.value.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-  timerNodes.status.textContent = timer.completed ? '오늘의 집중 연습 완료!' : timer.running ? '지금, 내 목소리에 집중하는 시간' : timer.remainingMs < duration ? '잠깐 쉬어 가도 괜찮아요.' : '10분 동안 온전히 나의 목소리에';
-  timerNodes.toggle.textContent = timer.running ? '일시정지' : timer.remainingMs === duration || timer.remainingMs === 0 ? '시작' : '재개';
-}
-function renderTimer() {
-  const value = el('p', {class: 'timer-value', text: '10:00', 'aria-label': '집중 연습 남은 시간'});
-  const status = el('p', {class: 'timer-status'});
-  const toggle = button('시작', () => {
-    if (timer.running) { timer.remainingMs = timerRemaining(); timer.running = false; }
-    else { if (!timer.remainingMs) timer.remainingMs = duration; timer.endAt = Date.now() + timer.remainingMs; timer.running = true; timer.completed = false; }
-    saveTimer(); tickTimer();
-  }, 'button primary');
-  timerNodes = {value, status, toggle};
-  const panel = el('section', {class: 'timer-panel'}, icon('clock'), el('p', {class: 'eyebrow', text: 'A MOMENT FOR YOUR VOICE'}), el('h2', {text: '10분 집중 연습'}), value, status,
-    el('div', {class: 'timer-controls'}, toggle, button('초기화', () => { timer.running = false; timer.endAt = null; timer.remainingMs = duration; timer.completed = false; saveTimer(); tickTimer(); }, 'button secondary')));
-  setTimeout(tickTimer, 0); return panel;
-}
-setInterval(tickTimer, 1000);
-document.addEventListener('visibilitychange', tickTimer);
-window.addEventListener('pageshow', tickTimer);
 
 function renderSettings() {
   app.append(el('div', {class: 'page-heading'}, el('p', {class: 'eyebrow', text: 'MAKE YOURSELF AT HOME'}), el('h1', {text: '나만의 연습실'}), el('p', {text: '내 파트와 화면을 설정하고, 편안하게 연습하세요.'})));
@@ -3540,12 +3479,12 @@ function renderSettings() {
     for (const node of themePanel.querySelectorAll('[data-theme-choice]')) { node.classList.toggle('active', node.dataset.themeChoice === theme); node.setAttribute('aria-pressed', String(node.dataset.themeChoice === theme)); }
   }, `choice-button${theme === value ? ' active' : ''}`, null, {'data-theme-choice': value, 'aria-pressed': String(theme === value)}))));
   const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary', 'external'));
-  const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록'}), el('p', {text: '즐겨찾기, 최근 연습, 체크리스트는 이 브라우저에만 저장돼요. 다른 기기와 자동으로 동기화되지 않습니다.'}),
+  const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록'}), el('p', {text: '즐겨찾기와 최근 연습 기록은 이 브라우저에만 저장돼요. 다른 기기와 자동으로 동기화되지 않습니다.'}),
     !isAvailable() && el('p', {class: 'notice warning', text: '브라우저 저장소를 사용할 수 없어 현재 세션에서만 기록됩니다.'}),
     button('개인 연습 기록 초기화', () => {
-      if (!confirm('즐겨찾기, 최근 연습, 체크리스트와 타이머 기록을 모두 지울까요? 곡 자료와 내 파트 설정은 유지됩니다.')) return;
+      if (!confirm('즐겨찾기와 최근 연습 기록을 모두 지울까요? 곡 자료와 내 파트 설정은 유지됩니다.')) return;
       for (const key of ['favorites', 'recent', 'progress', 'timer']) remove(key);
-      state.favorites.clear(); state.recent = []; state.progress = {}; timer.running = false; timer.endAt = null; timer.remainingMs = duration; timer.completed = false;
+      state.favorites.clear(); state.recent = []; state.progress = {};
       toast('개인 연습 기록을 초기화했어요.');
     }, 'button secondary danger'));
   app.append(el('div', {class: 'settings-grid'}, partPanel, themePanel, dataPanel, privacyPanel));
@@ -3568,7 +3507,7 @@ function render() {
     try { a.pause(); a.src = ''; } catch {}
   }
   activeAudios.clear();
-  state.player?.destroy(); state.player = null; timerNodes = null;
+  state.player?.destroy(); state.player = null;
   app.replaceChildren(); refreshChrome();
   if (state.loading) { app.append(el('div', {class: 'loading-state', role: 'status', text: '연습실을 준비하고 있어요…'})); return; }
   if (state.loadError) {
