@@ -348,6 +348,39 @@ function searchBar(home = false, update = null) {
 function validRecent() {
   return state.recent.filter(record => state.songs.some(song => song.id === record.songId && availableParts(song).includes(record.part))).slice(0, 10);
 }
+
+function clearRecentPractice() {
+  state.recent = [];
+  remove('recent');
+  render();
+  toast('최근 연습 목록을 모두 비웠어요.');
+}
+
+function removeRecentItem(songId, part) {
+  state.recent = state.recent.filter(record => !(record.songId === songId && record.part === part));
+  write('recent', state.recent);
+  render();
+  toast('최근 연습 목록에서 제외했습니다.');
+}
+
+function confirmClearRecent() {
+  const dialog = el('dialog', {class: 'share-dialog', 'aria-labelledby': 'clear-recent-title'});
+  dialog.replaceChildren(
+    el('h2', {id: 'clear-recent-title', text: '최근 연습 목록 비우기'}),
+    el('p', {text: '최근 연습한 곡 목록을 모두 비우시겠습니까?\n파트 연습을 다시 시작하면 새로운 최근 연습 기록이 저장됩니다.'}),
+    el('div', {class: 'dialog-actions', style: 'display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;'},
+      button('취소', () => dialog.close(), 'button secondary small'),
+      button('모두 비우기', () => {
+        dialog.close();
+        clearRecentPractice();
+      }, 'button danger small')
+    )
+  );
+  document.body.append(dialog);
+  dialog.addEventListener('close', () => dialog.remove());
+  dialog.showModal();
+}
+
 function recentList(limit) {
   const records = validRecent().slice(0, limit);
   if (!records.length) return emptyState('첫 연습을 시작해 볼까요?', '파트 연습을 시작하면 여기에서 바로 이어갈 수 있어요.', button('연습곡 찾기', () => navigate({tab: 'songs'}), 'button secondary', 'arrow'));
@@ -356,10 +389,17 @@ function recentList(limit) {
     return el('article', {class: 'recent-row'}, cover(song, 'recent-art'),
       el('div', {class: 'recent-info'}, el('h3', {}, button(song.title, () => openSong(song), 'title-button')), el('p', {text: `${song.artist || '아티스트 미등록'} · ${new Date(record.timestamp).toLocaleDateString('ko-KR', {month: 'short', day: 'numeric'})}`})),
       el('span', {class: 'recent-part', text: PARTS[record.part]}),
-      button('', () => startPractice(song, record.part), 'recent-play', 'play', {'aria-label': `${song.title} ${PARTS[record.part]} 연습 이어가기`})
+      el('div', {class: 'recent-row-actions'},
+        button('', () => startPractice(song, record.part), 'recent-play', 'play', {'aria-label': `${song.title} ${PARTS[record.part]} 연습 이어가기`}),
+        button('', () => removeRecentItem(song.id, record.part), 'icon-button-tiny', 'close', {
+          title: '최근 기록에서 삭제',
+          'aria-label': `${song.title} ${PARTS[record.part]} 최근 기록 삭제`
+        })
+      )
     );
   }));
 }
+
 
 function renderHome() {
   const practicing = state.songs.filter(song => song.status === 'practice');
@@ -403,8 +443,12 @@ function renderHome() {
     el('p', {text: state.myPart ? `${PARTS[state.myPart]} 영상이 등록된 ${mine.length}곡을 바로 연습할 수 있어요.` : '기본 파트를 선택하면 내 연습 영상이 먼저 보여요.'}),
     button(state.myPart ? '내 파트 곡 보기' : '내 파트 설정하기', () => { if (!state.myPart) navigate({tab: 'settings'}); else { state.filters = {query: '', status: '', category: '', difficulty: '', part: state.myPart}; navigate({tab: 'songs'}); } }, 'button secondary', 'arrow')
   );
-  app.append(section('내 파트', '나에게 맞는 연습으로 바로 연결', myPanel));
-  app.append(section('최근 연습', '마지막으로 부르던 파트부터 이어서', recentList(5), button('모두 보기', () => navigate({tab: 'recent'}), 'text-button', 'arrow')));
+  const recentHeaderActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
+    validRecent().length ? button('최근 연습 비우기', confirmClearRecent, 'text-button danger-text', 'close', {title: '최근 연습한 곡 목록을 모두 비웁니다'}) : null,
+    button('모두 보기', () => navigate({tab: 'recent'}), 'text-button', 'arrow')
+  );
+  app.append(section('최근 연습', '마지막으로 부르던 파트부터 이어서', recentList(5), recentHeaderActions));
+
   const randomPanel = el('div', {class: 'quick-panel sand'});
   function updateRandom() {
     randomPanel.replaceChildren(el('div', {class: 'quick-panel-title'}, icon('shuffle'), el('h3', {text: '오늘은 어떤 곡을 불러볼까요?'})));
@@ -3873,7 +3917,25 @@ function render() {
     else if (state.route.tab === 'rehearsal') renderRehearsal();
     else if (state.route.tab === 'memories') renderMemories();
     else if (state.route.tab === 'favorites') renderBrowse(true);
-    else if (state.route.tab === 'recent') app.append(el('div', {class: 'page-heading'}, el('p', {class: 'eyebrow', text: 'PICK UP WHERE YOU LEFT OFF'}), el('h1', {text: '다시, 그 하모니부터'}), el('p', {text: '최근 10개의 곡과 파트를 바로 이어서 연습하세요.'})), el('h2', {class: 'sr-only', text: '최근 연습곡 목록'}), recentList(10));
+    else if (state.route.tab === 'recent') {
+      const hasRecent = validRecent().length > 0;
+      const headingActions = hasRecent ? button('최근 연습 비우기', confirmClearRecent, 'button secondary small danger', 'trash', {title: '최근 연습한 곡 목록을 모두 비웁니다'}) : null;
+      app.append(
+        el('div', {class: 'page-heading'},
+          el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
+            el('div', {},
+              el('p', {class: 'eyebrow', text: 'PICK UP WHERE YOU LEFT OFF'}),
+              el('h1', {text: '다시, 그 하모니부터'}),
+              el('p', {text: '최근 10개의 곡과 파트를 바로 이어서 연습하세요.'})
+            ),
+            headingActions
+          )
+        ),
+        el('h2', {class: 'sr-only', text: '최근 연습곡 목록'}),
+        recentList(10)
+      );
+    }
+
     else if (state.route.tab === 'settings') renderSettings();
     else renderHome();
   }

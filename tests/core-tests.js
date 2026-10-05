@@ -264,7 +264,22 @@ export function runCoreTests() {
   deleteCustomAppreciation('test-apprec-1');
   check('아카펠라 감상 영상 삭제 기능', () => !storage.read('custom_appreciation', []).some(a => a.id === 'test-apprec-1'));
 
+
+
+
+  // Test recent practice storage, item removal, and full clearing
+  storage.write('recent', [{ songId: 'bohemian-rhapsody', part: 'part3', timestamp: 123456 }, { songId: 'aloha', part: 'part4', timestamp: 123457 }]);
+  let recents = storage.read('recent', []);
+  check('최근 연습 데이터 기록 검증', () => recents.length === 2 && recents[0].songId === 'bohemian-rhapsody');
+  recents = recents.filter(r => !(r.songId === 'bohemian-rhapsody' && r.part === 'part3'));
+  storage.write('recent', recents);
+  check('최근 연습 개별 항목 삭제 검증', () => storage.read('recent', []).length === 1 && storage.read('recent', [])[0].songId === 'aloha');
+  storage.remove('recent');
+  check('최근 연습 전체 비우기 검증', () => storage.read('recent', []).length === 0);
+  check('최근 연습 비우기 UI 함수 구현 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes('clearRecentPractice') && nodeFs.readFileSync('./js/app.js', 'utf8').includes('confirmClearRecent'));
+
   const fbFallback = addFeedback({
+
     rehearsalId: 'test-reh',
     author: '   ',
     time: -10,
