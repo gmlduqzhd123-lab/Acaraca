@@ -3,6 +3,8 @@
  * Helps prevent accidental touches and provides system media controls.
  */
 
+import { read, write } from './storage.js';
+
 const SILENT_WAV_BASE64 = 'UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
 const SILENT_WAV_URI = `data:audio/wav;base64,${SILENT_WAV_BASE64}`;
 
@@ -12,6 +14,23 @@ let audioAnchor = null;
 let currentPocketOverlay = null;
 let lastTapTime = 0;
 let isAudioAnchorRunning = false;
+
+/**
+ * Get mobile background playback settings.
+ */
+export function getBackgroundSettings() {
+  return {
+    autoResume: read('bgAutoResume', true) ?? true,
+    keepAwake: read('bgKeepAwake', true) ?? true,
+  };
+}
+
+/**
+ * Update mobile background playback setting.
+ */
+export function setBackgroundSetting(key, val) {
+  return write(key, val);
+}
 
 /**
  * Request Screen Wake Lock to prevent the screen from automatically sleeping or locking.
@@ -54,7 +73,8 @@ export function isWakeLockActive() {
 
 if (typeof document !== 'undefined') {
   document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState === 'visible' && (userWantsWakeLock || currentPocketOverlay)) {
+    const keepAwake = read('bgKeepAwake', true) ?? true;
+    if (document.visibilityState === 'visible' && (userWantsWakeLock || currentPocketOverlay || keepAwake)) {
       if (typeof navigator !== 'undefined' && 'wakeLock' in navigator) {
         try {
           if (!wakeLockSentinel || wakeLockSentinel.released) {
@@ -81,7 +101,7 @@ export function startAudioAnchor() {
     audioAnchor.loop = true;
     audioAnchor.volume = 0.001; // Nearly silent carrier
   }
-  if (!isAudioAnchorRunning) {
+  if (!isAudioAnchorRunning || (audioAnchor && audioAnchor.paused)) {
     const playPromise = audioAnchor.play();
     if (playPromise && typeof playPromise.then === 'function') {
       playPromise.then(() => {

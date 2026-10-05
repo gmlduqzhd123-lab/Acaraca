@@ -4243,7 +4243,7 @@ function renderPractice(song, part, record = true) {
         }
       }
     }, 'button secondary', 'sun', {'aria-label': '연습 중 화면 꺼짐 방지 토글'}),
-    button('백그라운드 안내', () => openBackgroundGuideModal(), 'button ghost', 'sparkles', {'aria-label': '모바일 백그라운드 및 화면 잠금 안내'}),
+    button('백그라운드·절전 설정', () => navigate({tab: 'settings'}), 'button secondary', 'sparkles', {'aria-label': '모바일 백그라운드 및 절전 재생 설정으로 이동'}),
     button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
     songScores.length ? button(`악보 창고 (${songScores.length})`, () => {
@@ -4282,11 +4282,58 @@ function renderSettings() {
     theme = value; write('theme', theme); applyTheme();
     for (const node of themePanel.querySelectorAll('[data-theme-choice]')) { node.classList.toggle('active', node.dataset.themeChoice === theme); node.setAttribute('aria-pressed', String(node.dataset.themeChoice === theme)); }
   }, `choice-button${theme === value ? ' active' : ''}`, null, {'data-theme-choice': value, 'aria-pressed': String(theme === value)}))));
+  let autoResumeVal = read('bgAutoResume', true) ?? true;
+  let keepAwakeVal = read('bgKeepAwake', true) ?? true;
+
   const bgPlayPanel = el('section', {class: 'settings-panel'},
     icon('sparkles'),
-    el('h2', {text: '모바일 백그라운드 & 절전 모드'}),
-    el('p', {text: '주머니 속 터치 오작동을 방지하는 포켓 모드와 잠금 화면 미디어 컨트롤 안내를 확인하세요.'}),
-    button('백그라운드 & 절전 모드 안내', () => openBackgroundGuideModal(), 'button secondary', 'sparkles')
+    el('h2', {text: '모바일 백그라운드 & 연속 재생 설정'}),
+    el('p', {text: '스마트폰에서 다른 앱을 쓰거나 화면을 잠갔을 때 끊김 없이 편리하게 연습할 수 있는 기능들입니다.'}),
+
+    el('div', {class: 'setting-toggle-card'},
+      el('div', {class: 'setting-toggle-info'},
+        el('strong', {text: '앱 / 화면 복귀 시 자동 이어재생'}),
+        el('p', {text: '다른 앱(카카오톡, 가사 메모 등)을 보거나 화면 잠금을 풀고 돌아왔을 때, 멈춘 영상을 직전 위치에서 자동으로 즉시 다시 재생합니다.'})
+      ),
+      button(autoResumeVal ? '켜짐 (자동 재생)' : '꺼짐', (e) => {
+        autoResumeVal = !autoResumeVal;
+        write('bgAutoResume', autoResumeVal);
+        e.currentTarget.textContent = autoResumeVal ? '켜짐 (자동 재생)' : '꺼짐';
+        e.currentTarget.className = `button small ${autoResumeVal ? 'primary' : 'secondary'}`;
+        toast(autoResumeVal ? '🔄 복귀 시 자동 이어재생을 켰습니다.' : '자동 이어재생을 껐습니다.');
+      }, `button small ${autoResumeVal ? 'primary' : 'secondary'}`)
+    ),
+
+    el('div', {class: 'setting-toggle-card'},
+      el('div', {class: 'setting-toggle-info'},
+        el('strong', {text: '연습 중 화면 자동 꺼짐 방지'}),
+        el('p', {text: '파트 영상 재생 또는 악보 연습 중 스마트폰 화면이 절전 시간 초과로 저절로 꺼지지 않도록 켜짐 상태를 유지합니다.'})
+      ),
+      button(keepAwakeVal ? '켜짐 (항상 켜둠)' : '꺼짐', async (e) => {
+        keepAwakeVal = !keepAwakeVal;
+        write('bgKeepAwake', keepAwakeVal);
+        if (keepAwakeVal) {
+          await requestWakeLock();
+          toast('💡 화면 자동 꺼짐 방지를 켰습니다.');
+        } else {
+          await releaseWakeLock();
+          toast('화면 자동 꺼짐 방지를 껐습니다.');
+        }
+        e.currentTarget.textContent = keepAwakeVal ? '켜짐 (항상 켜둠)' : '꺼짐';
+        e.currentTarget.className = `button small ${keepAwakeVal ? 'primary' : 'secondary'}`;
+      }, `button small ${keepAwakeVal ? 'primary' : 'secondary'}`)
+    ),
+
+    el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;'},
+      button('🔒 지금 포켓 절전 모드 실행', () => {
+        enterPocketMode({
+          title: 'AcaRaca 포켓 절전 모드',
+          partLabel: '화면 터치 잠금 · 주머니 속 연속 재생 중'
+        });
+        toast('🔒 화면 절전 모드가 켜졌습니다. 화면을 두 번 탭하면 잠금이 해제됩니다.');
+      }, 'button secondary', 'eye'),
+      button('📖 모바일 백그라운드 완벽 사용 팁', () => openBackgroundGuideModal(), 'button ghost', 'sparkles')
+    )
   );
   const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary', 'external'));
   const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록'}), el('p', {text: '즐겨찾기와 최근 연습 기록은 이 브라우저에만 저장돼요. 다른 기기와 자동으로 동기화되지 않습니다.'}),

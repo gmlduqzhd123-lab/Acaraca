@@ -28,7 +28,9 @@ import {
   exitPocketMode,
   isPocketModeActive,
   updateMediaSession,
-  setMediaSessionPlaybackState
+  setMediaSessionPlaybackState,
+  getBackgroundSettings,
+  setBackgroundSetting
 } from '../js/backgroundPlay.js';
 
 let nodeFs = null;
@@ -546,6 +548,18 @@ export function runCoreTests() {
 
   exitPocketMode();
   check('비활성 상태에서 exitPocketMode 호출 시에도 false 유지', () => isPocketModeActive() === false);
+
+  // Test Background Play settings
+  const bgSettings = getBackgroundSettings();
+  check('getBackgroundSettings 기본값 확인 (autoResume, keepAwake)', () => {
+    return bgSettings.autoResume === true && bgSettings.keepAwake === true;
+  });
+
+  setBackgroundSetting('bgAutoResume', false);
+  check('setBackgroundSetting("bgAutoResume", false) 저장 확인', () => {
+    return getBackgroundSettings().autoResume === false;
+  });
+  setBackgroundSetting('bgAutoResume', true); // restore
 
   // Test Wake Lock API error resilience (e.g. Node env without navigator.wakeLock)
   const wakeLockPromise = requestWakeLock();

@@ -8,6 +8,7 @@ import {
   enterPocketMode,
   exitPocketMode,
 } from './backgroundPlay.js';
+import { read } from './storage.js';
 
 const YOUTUBE_HOSTS = new Set([
   'youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com',
@@ -106,7 +107,8 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   pocketBtn.type = 'button';
   pocketBtn.className = 'player-pocket-btn';
   pocketBtn.setAttribute('aria-label', '화면 끄고 계속 듣기 (포켓 절전 모드)');
-  pocketBtn.innerHTML = '<span>🔒 절전</span>';
+  pocketBtn.title = '주머니에 넣어도 터치되지 않는 절전 잠금 모드';
+  pocketBtn.innerHTML = '<span>🔒 절전·포켓</span>';
   pocketBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!iframe) {
@@ -206,9 +208,38 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     }
   }
 
+  let wasPlayingBeforeHidden = false;
+
+  function handleVisibilityChange() {
+    if (destroyed) return;
+    if (document.visibilityState === 'hidden') {
+      if (isPlaying) {
+        wasPlayingBeforeHidden = true;
+      }
+    } else if (document.visibilityState === 'visible') {
+      const autoResume = read('bgAutoResume', true) ?? true;
+      const keepAwake = read('bgKeepAwake', true) ?? true;
+      if (keepAwake) {
+        requestWakeLock();
+      }
+      if (wasPlayingBeforeHidden && autoResume && iframe) {
+        wasPlayingBeforeHidden = false;
+        sendYT('playVideo', []);
+        startAudioAnchor();
+        syncMediaSession();
+        setTimeout(() => {
+          if (!destroyed && iframe && isPlaying === false) {
+            sendYT('playVideo', []);
+          }
+        }, 350);
+      }
+    }
+  }
+
   if (typeof document !== 'undefined') {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
   }
 
   let destroyed = false;
@@ -507,6 +538,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       if (typeof document !== 'undefined') {
         document.removeEventListener('fullscreenchange', handleFullscreenChange);
         document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
         document.body?.classList.remove('has-landscape-player');
       }
       try {
