@@ -735,13 +735,15 @@
           btn.textContent = '캐시 정리 및 새로고침 중...';
           btn.disabled = true;
           try {
+            // 같은 주소의 다른 엽쌤 앱들(오프라인 준비 파일 포함)은 건드리지 않고 이 앱 것만 정리한다.
+            const appBase = new URL('./', window.location.href).href;
             if ('serviceWorker' in navigator) {
               const regs = await navigator.serviceWorker.getRegistrations();
-              for (const r of regs) await r.unregister();
+              for (const r of regs) if (r.scope.startsWith(appBase)) await r.unregister();
             }
             if ('caches' in window) {
               const keys = await caches.keys();
-              for (const k of keys) await caches.delete(k);
+              for (const k of keys) if (k.startsWith('acaroom-cache-')) await caches.delete(k);
             }
           } catch {}
           const cleanUrl = window.location.origin + window.location.pathname;
