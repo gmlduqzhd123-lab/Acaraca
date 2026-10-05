@@ -474,3 +474,26 @@ export function deleteCustomAppreciation(videoId) {
   cachedAppreciation = null;
 }
 
+let cachedLyrics = null;
+
+export async function loadLyrics(forceReload = false) {
+  if (cachedLyrics && !forceReload) return cachedLyrics;
+  let serverLyrics = [];
+  try {
+    const res = await fetch('./data/lyrics.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('가사 데이터를 불러올 수 없습니다.');
+    const json = await res.json();
+    serverLyrics = Array.isArray(json.lyrics) ? json.lyrics : [];
+  } catch (error) {
+    console.warn('loadLyrics error:', error);
+    serverLyrics = [];
+  }
+  cachedLyrics = serverLyrics;
+  return cachedLyrics;
+}
+
+export function getLyricsForSong(lyricsList, songId) {
+  if (!Array.isArray(lyricsList) || !songId) return null;
+  return lyricsList.find(item => item.songId === songId) || null;
+}
+

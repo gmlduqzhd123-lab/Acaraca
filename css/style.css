@@ -1322,6 +1322,291 @@ html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #
   }
 }
 
+/* ==========================================================================
+   Lyrics & Cue Sheet (파트별 가사 & 호흡 큐시트)
+   ========================================================================== */
+.lyrics-panel {
+  margin-top: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+}
+.lyrics-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.lyrics-title-group h2 {
+  font-size: 17px;
+  font-weight: 750;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.lyrics-title-group p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.lyrics-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lyrics-zoom-btn, .lyrics-tool-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--ink);
+  transition: all 0.15s ease;
+}
+.lyrics-zoom-btn:hover, .lyrics-tool-btn:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.lyrics-tool-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.lyrics-font-indicator {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted-strong);
+  min-width: 34px;
+  text-align: center;
+  padding: 0 4px;
+  user-select: none;
+}
+.lyrics-part-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  background: var(--surface-soft);
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+.lyrics-part-nav-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted-strong);
+  margin-right: 4px;
+}
+.lyrics-part-chip {
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 650;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted-strong);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.lyrics-part-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.lyrics-part-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(25, 77, 70, 0.25);
+}
+.lyrics-view-toggle {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--muted-strong);
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.lyrics-view-toggle:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.lyrics-section {
+  margin-bottom: 22px;
+}
+.lyrics-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-strong);
+}
+.lyrics-section-title {
+  font-size: 14px;
+  font-weight: 750;
+  color: var(--primary);
+}
+.lyrics-section-cue {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.lyrics-line-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lyrics-line {
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lyrics-line.highlight {
+  background: var(--primary-soft);
+  border-color: rgba(25, 77, 70, 0.2);
+  border-left: 5px solid var(--primary);
+}
+.lyrics-line.dimmed {
+  opacity: 0.52;
+}
+.lyrics-line-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.lyrics-time-btn {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  cursor: pointer;
+}
+.lyrics-time-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+.lyrics-time-btn.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background: var(--surface-soft, rgba(0, 0, 0, 0.04));
+  border-color: var(--border);
+  color: var(--muted-strong);
+}
+.lyrics-time-btn.disabled:hover {
+  background: var(--surface-soft, rgba(0, 0, 0, 0.04));
+  color: var(--muted-strong);
+  border-color: var(--border);
+}
+.lyrics-example-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(224, 86, 36, 0.08);
+  border: 1px solid rgba(224, 86, 36, 0.25);
+  color: #c44018;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.lyrics-part-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(25, 77, 70, 0.12);
+  color: var(--primary);
+}
+.lyrics-line.highlight .lyrics-part-badge {
+  background: var(--primary);
+  color: #fff;
+}
+.lyrics-cue-text {
+  font-size: 11px;
+  color: var(--amber);
+  font-weight: 650;
+  margin-left: auto;
+}
+.lyrics-text-content {
+  font-size: var(--lyrics-font-size, 15px);
+  line-height: 1.65;
+  color: var(--ink);
+  word-break: keep-all;
+}
+.lyrics-line.highlight .lyrics-text-content {
+  font-weight: 650;
+  color: #123d37;
+}
+.lyrics-breathe {
+  display: inline-block;
+  color: #166e5d;
+  font-weight: 800;
+  font-size: 1.1em;
+  margin: 0 4px;
+  background: rgba(22, 110, 93, 0.14);
+  padding: 0 5px;
+  border-radius: 4px;
+  user-select: none;
+  vertical-align: middle;
+}
+.lyrics-breathe.hidden {
+  display: none;
+}
+@media (max-width: 640px) {
+  .lyrics-panel {
+    padding: 16px 14px;
+  }
+  .lyrics-panel-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .lyrics-toolbar {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .lyrics-part-nav {
+    padding: 10px;
+    gap: 5px;
+  }
+  .lyrics-view-toggle {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 6px;
+    text-align: center;
+  }
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes page-enter { from { opacity: .3; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {
