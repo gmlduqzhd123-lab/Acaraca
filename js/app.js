@@ -892,6 +892,7 @@ function renderStage() {
 function renderAudioPlayer(audioData, title = '현장 녹음본') {
   const card = el('div', {class: 'audio-player-card', role: 'region', 'aria-label': `${title} 오디오 플레이어`});
   const audio = new Audio(audioData.url);
+  audio.preload = 'metadata';
   activeAudios.add(audio);
   let isPlaying = false;
   let speed = 1.0;
@@ -1014,10 +1015,15 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     element: card,
     audio,
     play() {
-      audio.play().then(() => {
-        isPlaying = true;
-        playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
-      }).catch(() => {});
+      const p = audio.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          isPlaying = true;
+          playBtn.replaceChildren(icon('pause'), document.createTextNode('일시정지'));
+        }).catch((e) => {
+          console.warn('Audio play error:', e);
+        });
+      }
     },
     pause() {
       audio.pause();
@@ -1028,10 +1034,24 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
       return audio.currentTime || 0;
     },
     seekTo(sec) {
-      const max = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : Infinity;
-      audio.currentTime = Math.max(0, Math.min(sec, max));
-      rangeInput.value = audio.currentTime;
-      updateSliderTime(audio.currentTime);
+      const applySeek = () => {
+        try {
+          const max = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : Infinity;
+          const target = Math.max(0, Math.min(sec, max));
+          audio.currentTime = target;
+          rangeInput.value = target;
+          updateSliderTime(target);
+        } catch (e) {
+          console.warn('Audio seek error:', e);
+        }
+      };
+
+      if (audio.readyState >= 1) {
+        applySeek();
+      } else {
+        audio.addEventListener('loadedmetadata', applySeek, { once: true });
+        audio.load();
+      }
     },
     isPlaying() {
       return isPlaying && !audio.paused;
@@ -1069,12 +1089,9 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
   let selectedTime = 0;
   const timeBtn = button('⏱️ 재생시간 가져오기', () => {
     let cur = 0;
-    if (audioCtrl?.isPlaying && audioCtrl.isPlaying()) {
-      cur = Math.floor(audioCtrl.getCurrentTime());
-    } else if (playerInstance?.getCurrentTime) {
-      cur = Math.floor(playerInstance.getCurrentTime());
-    } else if (audioCtrl?.getCurrentTime) {
-      cur = Math.floor(audioCtrl.getCurrentTime());
+    const targetPlayer = audioCtrl || playerInstance;
+    if (targetPlayer?.getCurrentTime) {
+      cur = Math.floor(targetPlayer.getCurrentTime());
     }
     selectedTime = cur;
     const m = String(Math.floor(cur / 60)).padStart(2, '0');
@@ -1124,25 +1141,23 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
     feedHost.replaceChildren(...feedbacks.map(fb => {
       const m = String(Math.floor((fb.time || 0) / 60)).padStart(2, '0');
       const s = String((fb.time || 0) % 60).padStart(2, '0');
-      const timeNode = fb.time ? el('button', {
+      const hasTime = typeof fb.time === 'number' && !isNaN(fb.time) && fb.time >= 0;
+      const timeNode = hasTime ? el('button', {
         type: 'button',
         class: 'feedback-time-chip',
-        title: `${m}:${s} 위치로 이동`,
+        title: `${m}:${s} 구간으로 이동하여 재생`,
         onclick: () => {
-          let jumped = false;
-          if (audioCtrl?.isPlaying && audioCtrl.isPlaying()) {
-            audioCtrl.seekTo(fb.time);
-            jumped = true;
-          } else if (playerInstance?.seekTo) {
-            playerInstance.seekTo(fb.time);
-            playerInstance.play();
-            jumped = true;
-          } else if (audioCtrl?.seekTo) {
-            audioCtrl.seekTo(fb.time);
-            audioCtrl.play();
-            jumped = true;
+          const targetPlayer = audioCtrl || playerInstance;
+          if (targetPlayer?.seekTo) {
+            targetPlayer.seekTo(fb.time);
+            if (typeof targetPlayer.play === 'function') {
+              targetPlayer.play();
+            }
+            if (targetPlayer.element?.scrollIntoView) {
+              targetPlayer.element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            toast(`▶ ${m}:${s} 녹음 구간으로 이동하여 재생합니다.`);
           }
-          if (jumped) toast(`▶ ${m}:${s} 구간으로 이동합니다.`);
         }
       }, `⏱️ ${m}:${s}`) : null;
 
@@ -1378,9 +1393,16 @@ function renderRehearsal() {
         style: 'width: 100%; border-radius: 12px; max-height: 480px; background: #000; margin-bottom: 12px;'
       });
       activePlayerInstance = {
-        play: () => videoEl.play(),
+        element: videoEl,
+        play: () => videoEl.play().catch(() => {}),
         pause: () => videoEl.pause(),
-        seekTo: (sec) => { videoEl.currentTime = sec; },
+        seekTo: (sec) => {
+          try {
+            videoEl.currentTime = sec;
+          } catch (e) {
+            videoEl.addEventListener('loadedmetadata', () => { videoEl.currentTime = sec; }, { once: true });
+          }
+        },
         getCurrentTime: () => videoEl.currentTime || 0,
         destroy: () => { videoEl.pause(); videoEl.src = ''; }
       };
