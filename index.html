@@ -28,7 +28,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=49">
+  <link rel="stylesheet" href="./css/style.css?v=50">
 
 
 </head>
@@ -568,12 +568,14 @@
       const desktopNav = document.getElementById('desktop-nav');
       if (!appEl || (desktopNav && desktopNav.children.length > 0)) return;
 
+      console.warn('Triggered emergency recovery. Reason:', reason);
+
       appEl.innerHTML = `
         <div class="error-state" role="alert" style="margin-top: 24px;">
-          <h2>새 버전 연습실 준비</h2>
+          <h2>연습실 최신 버전 준비</h2>
           <p>
-            브라우저 캐시로 인해 최신 업데이트를 불러오지 못했습니다.<br>
-            아래 버튼을 눌러 캐시를 비우고 최신 화면으로 새로고침해 주세요.
+            최신 업데이트를 안전하게 불러오는 중입니다.<br>
+            화면 연결이 지연되고 있다면 아래 버튼을 눌러 최신 화면으로 새로고침해 주세요.
           </p>
           <button type="button" class="button primary" id="cache-reset-btn">최신 버전으로 새로고침</button>
         </div>
@@ -582,7 +584,7 @@
       const btn = document.getElementById('cache-reset-btn');
       if (btn) {
         btn.onclick = async () => {
-          btn.textContent = '캐시 정리 중...';
+          btn.textContent = '캐시 정리 및 새로고침 중...';
           btn.disabled = true;
           try {
             if ('serviceWorker' in navigator) {
@@ -594,18 +596,23 @@
               for (const k of keys) await caches.delete(k);
             }
           } catch {}
-          window.location.reload();
+          const cleanUrl = window.location.origin + window.location.pathname;
+          window.location.href = cleanUrl + '?t=' + Date.now();
         };
       }
     }
 
-    window.addEventListener('error', () => {
+    window.addEventListener('error', (event) => {
       const desktopNav = document.getElementById('desktop-nav');
-      if (!desktopNav || desktopNav.children.length === 0) {
-        renderEmergencyRecovery('스크립트 오류');
+      if (desktopNav && desktopNav.children.length > 0) return;
+      if (event && event.filename && !event.filename.includes('Acaraca') && !event.filename.startsWith(location.origin)) {
+        return;
       }
+      console.error('Initial load error:', event?.error || event?.message);
+      renderEmergencyRecovery('스크립트 오류');
     });
 
+    let swRefreshing = false;
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
@@ -613,6 +620,8 @@
         }).catch(() => {});
       });
       navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (swRefreshing) return;
+        swRefreshing = true;
         window.location.reload();
       });
     }
@@ -622,19 +631,21 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=49';
+      script.src = './js/app.js?v=50';
 
-
-      script.onerror = () => renderEmergencyRecovery('스크립트 로드 실패');
+      script.onerror = (e) => {
+        console.error('Failed to load app.js:', e);
+        renderEmergencyRecovery('스크립트 로드 실패');
+      };
       document.body.append(script);
 
-      // Watchdog: If navigation hasn't rendered within 3.5s, trigger recovery
+      // Generous Watchdog: Only trigger after 12s if navigation hasn't rendered
       setTimeout(() => {
         const desktopNav = document.getElementById('desktop-nav');
         if (!desktopNav || desktopNav.children.length === 0) {
           renderEmergencyRecovery('초기 로딩 시간 초과');
         }
-      }, 3500);
+      }, 12000);
     }
   </script>
 </body>

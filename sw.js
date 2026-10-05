@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v49';
+const CACHE_NAME = 'acaroom-cache-v50';
 
 
 const CORE_ASSETS = [
@@ -44,8 +44,8 @@ const CORE_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(CORE_ASSETS);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await Promise.allSettled(CORE_ASSETS.map(url => cache.add(url)));
     }).then(() => self.skipWaiting())
   );
 });
@@ -69,7 +69,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-First for all local assets to ensure latest updates appear immediately
-  // Falls back to cache when offline
+  // Falls back to cache when offline or network drops
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
@@ -79,7 +79,7 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request, { ignoreSearch: true }))
   );
 });
 
