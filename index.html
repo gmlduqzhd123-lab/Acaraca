@@ -28,7 +28,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=52">
+  <link rel="stylesheet" href="./css/style.css?v=53">
 
 
 </head>
@@ -46,7 +46,10 @@
     </aside>
     <div class="main-shell">
       <header class="topbar">
-        <a class="mobile-brand" href="./index.html" aria-label="AcaRaca 홈"><img src="./assets/icons/logo.svg" width="32" height="32" alt=""><strong>AcaRaca<span class="brand-dot">.</span></strong></a>
+        <div class="topbar-brand-wrap">
+          <button id="mobile-settings-btn" class="icon-button mobile-settings-btn" type="button" aria-label="설정 열기"></button>
+          <a class="mobile-brand" href="./index.html" aria-label="AcaRaca 홈"><img src="./assets/icons/logo.svg" width="32" height="32" alt=""><strong>AcaRaca<span class="brand-dot">.</span></strong></a>
+        </div>
         <div class="topbar-copy"><p class="topbar-kicker">A LITTLE PRACTICE, A LITTLE HARMONY</p><p class="topbar-title">우리의 목소리가 모이는 곳</p></div>
         <div class="topbar-actions" id="topbar-actions"></div>
       </header>
@@ -767,7 +770,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=52';
+      script.src = './js/app.js?v=53';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);

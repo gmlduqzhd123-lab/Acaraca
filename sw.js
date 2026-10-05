@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v52';
+const CACHE_NAME = 'acaroom-cache-v53';
 
 
 const CORE_ASSETS = [

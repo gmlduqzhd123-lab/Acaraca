@@ -879,7 +879,9 @@ html[data-theme="dark"] .card-footer > .button:hover { background: var(--primary
   .practice-heading .eyebrow { font-size: 8px; }
 }
 /* Readable content sizes and theme-aware contrast across compact layouts. */
+.topbar-brand-wrap { display: none; }
 .mobile-brand { display: none; }
+.mobile-settings-btn { display: none; }
 .brand-caption, .brand > span .brand-caption { font-size: 12px; line-height: 1.55; letter-spacing: -.25px; }
 .sidebar-bottom > p { font-size: 12px; line-height: 1.75; }
 .my-part-mini span, .my-part-mini .text-button { font-size: 12px; }
@@ -1630,11 +1632,49 @@ html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #
   .practice-subrow { flex-direction: column; align-items: stretch; gap: 10px; }
   .practice-speed-group { justify-content: space-between; width: 100%; }
   .pitch-keyboard { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .mobile-brand { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--primary); }
+  .topbar-brand-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .mobile-settings-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted-strong);
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .mobile-settings-btn:hover {
+    background: var(--surface);
+    color: var(--primary);
+    border-color: var(--border-strong);
+  }
+  .mobile-settings-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .mobile-settings-btn .icon {
+    width: 17px;
+    height: 17px;
+  }
+  .desktop-settings-btn {
+    display: none !important;
+  }
+  .mobile-brand { display: flex; align-items: center; gap: 8px; min-height: 34px; color: var(--primary); text-decoration: none; }
   .mobile-brand img { width: 32px; height: 32px; flex-shrink: 0; }
-  .mobile-brand strong { font-size: 22px; line-height: 1; letter-spacing: -.8px; font-weight: 750; }
+  .mobile-brand strong { font-size: 20px; line-height: 1; letter-spacing: -.8px; font-weight: 750; }
   .topbar-copy { display: none; }
-  .topbar { gap: 12px; }
+  .topbar { gap: 10px; }
   .bottom-nav .nav-link { font-size: 11px; padding-left: 5px; padding-right: 5px; }
   .card-title { font-size: 14px; }
   .card-title button {
@@ -1696,10 +1736,11 @@ html[data-theme="dark"] .feedback-like-btn.liked { background: #3b2222; color: #
   .topbar-actions .button.small {
     padding: 6px 8px;
     font-size: 11px;
+    white-space: nowrap;
   }
   .topbar-actions .icon-button {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
   }
 }
 
