@@ -1574,7 +1574,7 @@ function renderScores() {
     }
   }
 
-  const categoryOptions = ['전체', '총보', '파트보', '가사/리드시트'];
+  const categoryOptions = ['전체', '남성팀', '혼성팀', '총보', '파트보'];
   const yearOptions = ['전체 연도', '2025년', '2024년', '2023년'];
 
   const heading = el('div', {class: 'page-heading'},
@@ -1594,7 +1594,7 @@ function renderScores() {
   const searchInput = el('input', {
     type: 'search',
     class: 'search-input',
-    placeholder: '악보 제목, 곡명, 편곡자, 연도 검색...',
+    placeholder: '악보 제목, 곡명, 편곡자, 팀, 연도 검색...',
     value: state.scoreFilters.query || '',
     oninput: (e) => {
       state.scoreFilters.query = e.target.value;
@@ -1659,7 +1659,13 @@ function renderScores() {
     const yr = state.scoreFilters.year || '';
 
     return state.scores.filter(sc => {
-      if (cat && sc.category !== cat) return false;
+      if (cat === '남성팀') {
+        if (sc.team !== '남성팀' && sc.category !== '남성팀' && !sc.title?.includes('남성')) return false;
+      } else if (cat === '혼성팀') {
+        if (sc.team !== '혼성팀' && sc.category !== '혼성팀' && !sc.title?.includes('혼성')) return false;
+      } else if (cat && sc.category !== cat) {
+        return false;
+      }
       if (sId && sc.songId !== sId) return false;
       if (yr && sc.year && sc.year !== yr) return false;
       if (q) {
@@ -1669,7 +1675,8 @@ function renderScores() {
         const matchArranger = (sc.arranger || '').toLowerCase().includes(q);
         const matchMemo = (sc.memo || '').toLowerCase().includes(q);
         const matchYear = (sc.year || '').toLowerCase().includes(q);
-        if (!matchTitle && !matchSong && !matchArranger && !matchMemo && !matchYear) return false;
+        const matchTeam = (sc.team || '').toLowerCase().includes(q);
+        if (!matchTitle && !matchSong && !matchArranger && !matchMemo && !matchYear && !matchTeam) return false;
       }
       return true;
     });
@@ -1688,6 +1695,15 @@ function renderScores() {
       const song = state.songs.find(s => s.id === sc.songId);
 
       const badges = el('div', {class: 'score-badges'},
+        sc.team && el('span', {
+          class: 'badge',
+          style: sc.team === '남성팀'
+            ? 'background: rgba(37, 99, 235, 0.12); color: #1d4ed8; font-weight: 700;'
+            : sc.team === '혼성팀'
+            ? 'background: rgba(219, 39, 119, 0.12); color: #be185d; font-weight: 700;'
+            : 'background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand); font-weight: 600;',
+          text: sc.team
+        }),
         sc.year && el('span', {class: 'badge', style: 'background: var(--brand-tint, rgba(25,77,70,0.08)); color: var(--brand); font-weight: 600;', text: `${sc.year}년`}),
         el('span', {class: 'badge', text: sc.category || '총보'}),
         sc.part && sc.part !== 'all' && el('span', {class: 'badge status-badge', text: PARTS[sc.part] || sc.part}),
