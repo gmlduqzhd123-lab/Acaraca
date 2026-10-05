@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "videos": [
     {
       "id": "apprec-song-bohemian-rhapsody-5",
@@ -1656,218 +1656,6 @@
       ]
     },
     {
-      "id": "apprec-065",
-      "title": "Game Content Behind the Scenes #18 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=Qrvv5GhH7CQ",
-      "thumbnail": "https://img.youtube.com/vi/Qrvv5GhH7CQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #18 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-066",
-      "title": "Hiss - Pressure (Official Video) (BEATBOX)",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=M8EKf3kaxRs",
-      "thumbnail": "https://img.youtube.com/vi/M8EKf3kaxRs/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Hiss - Pressure (Official Video) (BEATBOX)' 입니다.",
-      "tags": [
-        "비트펠라",
-        "국내 아카펠라",
-        "비트박스",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-067",
-      "title": "Hiss, Huckle - Modern Art (Official Video) (BEATBOX)",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=vdYXstgFQ2c",
-      "thumbnail": "https://img.youtube.com/vi/vdYXstgFQ2c/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Hiss, Huckle - Modern Art (Official Video) (BEATBOX)' 입니다.",
-      "tags": [
-        "비트펠라",
-        "국내 아카펠라",
-        "비트박스",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-068",
-      "title": "Hiss - All Blue (Official Video)",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=sIqvDAjL8Aw",
-      "thumbnail": "https://img.youtube.com/vi/sIqvDAjL8Aw/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Hiss - All Blue (Official Video)' 입니다.",
-      "tags": [
-        "비트펠라",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-069",
-      "title": "Game Content Behind the Scenes #17 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=BymMH78_QTY",
-      "thumbnail": "https://img.youtube.com/vi/BymMH78_QTY/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #17 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-070",
-      "title": "Game Content Behind the Scenes #16 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=jvJMsGgYICE",
-      "thumbnail": "https://img.youtube.com/vi/jvJMsGgYICE/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #16 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-071",
-      "title": "Game Content Behind the Scenes #15 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=K_dMA9TANwI",
-      "thumbnail": "https://img.youtube.com/vi/K_dMA9TANwI/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #15 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-072",
-      "title": "WING - Aventador (Official Video) (BEATBOX)",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=jpYdsQuO6PM",
-      "thumbnail": "https://img.youtube.com/vi/jpYdsQuO6PM/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'WING - Aventador (Official Video) (BEATBOX)' 입니다.",
-      "tags": [
-        "비트펠라",
-        "국내 아카펠라",
-        "비트박스",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-073",
-      "title": "Game Content Behind the Scenes #14 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=Hr8IVsurjcw",
-      "thumbnail": "https://img.youtube.com/vi/Hr8IVsurjcw/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #14 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-074",
-      "title": "BEATPELLA HOUSE - ENTER HEAVEN (GODDESS OF VICTORY: NIKKE OST COVER)",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=zvPf3vyjkd0",
-      "thumbnail": "https://img.youtube.com/vi/zvPf3vyjkd0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'BEATPELLA HOUSE - ENTER HEAVEN (GODDESS OF VICTORY: NIKKE OST COVER)' 입니다.",
-      "tags": [
-        "비트펠라",
-        "영화 / OST",
-        "OST",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-075",
-      "title": "Game Content Behind the Scenes #13 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=dyrQU4MZGog",
-      "thumbnail": "https://img.youtube.com/vi/dyrQU4MZGog/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #13 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-076",
-      "title": "WING 'NIKE' Behind-the-Scenes",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=y8DBajAwTig",
-      "thumbnail": "https://img.youtube.com/vi/y8DBajAwTig/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'WING 'NIKE' Behind-the-Scenes' 입니다.",
-      "tags": [
-        "비트펠라",
-        "국내 아카펠라",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-077",
-      "title": "Game Content Behind the Scenes #12 🎬",
-      "artist": "비트펠라 하우스 (Beatpella House)",
-      "category": "자유 감상",
-      "videoUrl": "https://www.youtube.com/watch?v=AC3k8UMCKe0",
-      "thumbnail": "https://img.youtube.com/vi/AC3k8UMCKe0/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "비트펠라 하우스 (Beatpella House)의 공식 아카펠라 영상 'Game Content Behind the Scenes #12 🎬' 입니다.",
-      "tags": [
-        "비트펠라",
-        "자유 감상",
-        "아카펠라"
-      ]
-    },
-    {
       "id": "apprec-078",
       "title": "WING - Phenomenon (Official Video) (BEATBOX)",
       "artist": "비트펠라 하우스 (Beatpella House)",
@@ -1881,22 +1669,6 @@
         "비트펠라",
         "국내 아카펠라",
         "비트박스",
-        "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-079",
-      "title": "AYAC - 두왑사운즈 (Doo-Wop Sounds) Guest",
-      "artist": "두왑사운즈 (Doowop Sounds)",
-      "category": "국내 아카펠라",
-      "videoUrl": "https://www.youtube.com/watch?v=vHzpAIfEFgA",
-      "thumbnail": "https://img.youtube.com/vi/vHzpAIfEFgA/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "2017 Asia Youth A Cappella Competition 두왑사운즈 (Doo-Wop Sounds) Guest 1. Coldplay medley 2. 손에 손잡고 3. 빨간맛 4.",
-      "tags": [
-        "두왑사운즈",
-        "국내 아카펠라",
         "아카펠라"
       ]
     },
@@ -2014,22 +1786,6 @@
       ]
     },
     {
-      "id": "apprec-087",
-      "title": "[LIVE FULL VER.] 제니스 ZENITH 18분 하이라이트 라이브｜아카펠라로 물든 무대의 순간들",
-      "artist": "제니스 (Zenith)",
-      "category": "라이브 콘서트",
-      "videoUrl": "https://www.youtube.com/watch?v=7VzGgIrrUwQ",
-      "thumbnail": "https://img.youtube.com/vi/7VzGgIrrUwQ/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "제니스 ZENITH LIVE Full ver. 공개! 제니스의 매력과 실력을 모두 담은 18분간의 몰입 무대. 재즈, 포크, 케이팝까지 다채로운 ...",
-      "tags": [
-        "제니스",
-        "라이브 콘서트",
-        "라이브"
-      ]
-    },
-    {
       "id": "apprec-088",
       "title": "[핫클립]아카펠라 그룹 제니스_보컬매직 / YTN 사이언스",
       "artist": "제니스 (Zenith)",
@@ -2075,38 +1831,6 @@
         "제니스",
         "라이브 콘서트",
         "아카펠라"
-      ]
-    },
-    {
-      "id": "apprec-091",
-      "title": "소개 및 K-POP메들리 - 제니스",
-      "artist": "제니스 (Zenith)",
-      "category": "보컬 커버",
-      "videoUrl": "https://www.youtube.com/watch?v=OzVBV_M60eI",
-      "thumbnail": "https://img.youtube.com/vi/OzVBV_M60eI/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "제니스 (Zenith)의 대표적인 공식 아카펠라 명작 영상입니다.",
-      "tags": [
-        "제니스",
-        "보컬 커버",
-        "메들리"
-      ]
-    },
-    {
-      "id": "apprec-092",
-      "title": "제니스(ZENITH) 아카펠라 커버: ‘골든’ (K-pop 데몬 헌터스 OST)",
-      "artist": "제니스 (Zenith)",
-      "category": "영화 / OST",
-      "videoUrl": "https://www.youtube.com/watch?v=CWP4mirUni8",
-      "thumbnail": "https://img.youtube.com/vi/CWP4mirUni8/hqdefault.jpg",
-      "uploader": "아카라카 명작선",
-      "date": "2023-2025",
-      "description": "케이팝 데몬헌터스 OST가 목소리만으로 재탄생했습니다. 하모니와 보컬의 조화, 풀버전으로 즐겨보세요! 구독 & 좋아요 잊지 마세요!",
-      "tags": [
-        "제니스",
-        "영화 / OST",
-        "OST"
       ]
     },
     {
@@ -2235,6 +1959,1711 @@
         "보이스플레이",
         "해외 명작",
         "아카펠라"
+      ]
+    },
+    {
+      "id": "apprec-kr-001",
+      "title": "Squid Game (acapella) - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=JYPbos1dxJw",
+      "thumbnail": "https://img.youtube.com/vi/JYPbos1dxJw/hqdefault.jpg",
+      "uploader": "Maytree - Topic",
+      "date": "공식 영상",
+      "description": "국내 최정상 아카펠라 그룹 메이트리 (MayTree)가 목소리만으로 웅장하고 섬세하게 재해석한 OST 명곡 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리",
+        "OST",
+        "사운드트랙"
+      ]
+    },
+    {
+      "id": "apprec-kr-002",
+      "title": "[아카펠라] EXO Medley cover by 보이스밴드 엑시트(Voiceband EXIT) - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=54MX2ZJ2UG8",
+      "thumbnail": "https://img.youtube.com/vi/54MX2ZJ2UG8/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "보이스밴드 엑시트 (EXIT) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드",
+        "보컬커버",
+        "K-POP",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-003",
+      "title": "ATTITUDE | IVE (아이브) Medley | Covered by Acappella DIA - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=3MZgLAvRQ4U",
+      "thumbnail": "https://img.youtube.com/vi/3MZgLAvRQ4U/hqdefault.jpg",
+      "uploader": "아카펠라 다이아_Acappella DIA",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "보컬커버",
+        "K-POP",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-004",
+      "title": "제니스 (ZENITH) - 우리가 빛이 되는 시간 (Becoming the Light) | K-Pop Live Session | K-Poppin' - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=4fQj4-9l-5Q",
+      "thumbnail": "https://img.youtube.com/vi/4fQj4-9l-5Q/hqdefault.jpg",
+      "uploader": "Arirang Radio | K-Pop, K-Culture & News from Korea",
+      "date": "공식 영상",
+      "description": "제니스 (Zenith)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-005",
+      "title": "신곡도 많관주 많사부 - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=qkefLsANYe4",
+      "thumbnail": "https://img.youtube.com/vi/qkefLsANYe4/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 오직목소리 (두왑사운즈)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리"
+      ]
+    },
+    {
+      "id": "apprec-kr-006",
+      "title": "하버드 대학교 아카펠라부에서 화제! 한국계 혼혈 학생의 압도적인 노랫소리 - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=-7S-VtmVtqc",
+      "thumbnail": "https://img.youtube.com/vi/-7S-VtmVtqc/hqdefault.jpg",
+      "uploader": "우리나기",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-007",
+      "title": "Voiture 아카펠라 - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=wF-Y9bNDaqw",
+      "thumbnail": "https://img.youtube.com/vi/wF-Y9bNDaqw/hqdefault.jpg",
+      "uploader": "Y. Bahn",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이쳐 (Voiture)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐"
+      ]
+    },
+    {
+      "id": "apprec-kr-008",
+      "title": "아카펠라 동요 '과꽃' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=zjgveCeAATo",
+      "thumbnail": "https://img.youtube.com/vi/zjgveCeAATo/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-009",
+      "title": "2019 산골짝의 등불(앵콜) - 솔리스츠(Solists) [솔리스츠 100 콘서트] - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=MDhAxmttmK8",
+      "thumbnail": "https://img.youtube.com/vi/MDhAxmttmK8/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "솔리스츠 (The Solists)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-010",
+      "title": "아카펠라..스노우시티 - MBC방송출연 (Seoul Ent.) - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=B5irpG8nPKM",
+      "thumbnail": "https://img.youtube.com/vi/B5irpG8nPKM/hqdefault.jpg",
+      "uploader": "Seoul Ent.",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티"
+      ]
+    },
+    {
+      "id": "apprec-kr-011",
+      "title": "토리스 - 창부타령 X Every Breath You Take - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=jKlSod3yx4E",
+      "thumbnail": "https://img.youtube.com/vi/jKlSod3yx4E/hqdefault.jpg",
+      "uploader": "국악아카펠라토리스",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-012",
+      "title": "Narin delivering flawless vocals acapella. Drop Top - M Countdown interview #shorts #narin #meovv - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=S7XSHcMDJeE",
+      "thumbnail": "https://img.youtube.com/vi/S7XSHcMDJeE/hqdefault.jpg",
+      "uploader": "MC",
+      "date": "공식 영상",
+      "description": "나린 (NARIN)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-013",
+      "title": "Various Artist _ Morning Dew(아침이슬) - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=sTXxCCOobFk",
+      "thumbnail": "https://img.youtube.com/vi/sTXxCCOobFk/hqdefault.jpg",
+      "uploader": "1theK (원더케이)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-014",
+      "title": "[아카펠라] Carol Medley cover by 보이스밴드 엑시트(VoiceBand EXIT) - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=0IFO5TURNfs",
+      "thumbnail": "https://img.youtube.com/vi/0IFO5TURNfs/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "보이스밴드 엑시트 (EXIT) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드",
+        "보컬커버",
+        "K-POP",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-015",
+      "title": "I AM | IVE (아이브) Medley | Covered by Acappella DIA - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=t0-3-8A4cC0",
+      "thumbnail": "https://img.youtube.com/vi/t0-3-8A4cC0/hqdefault.jpg",
+      "uploader": "아카펠라 다이아_Acappella DIA",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "보컬커버",
+        "K-POP",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-016",
+      "title": "아카펠라 공연 제니스 - 아카펠라 퍼포먼스 영상 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=h1vA9QGIg58",
+      "thumbnail": "https://img.youtube.com/vi/h1vA9QGIg58/hqdefault.jpg",
+      "uploader": "(주)더플레이 크리에이티브",
+      "date": "공식 영상",
+      "description": "제니스 (Zenith)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-017",
+      "title": "즉석으로 아카펠라 거하게 말아드림 - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=vL7ZYMp361k",
+      "thumbnail": "https://img.youtube.com/vi/vL7ZYMp361k/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 오직목소리 (두왑사운즈)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리"
+      ]
+    },
+    {
+      "id": "apprec-kr-018",
+      "title": "라이온킹 - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=3e-mnxm-xhg",
+      "thumbnail": "https://img.youtube.com/vi/3e-mnxm-xhg/hqdefault.jpg",
+      "uploader": "NMIXXFanTube",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-019",
+      "title": "2007 아름다운 세상 - 보이쳐(Voiture) [EBS 스페이스 공감 아카펠라 페스티벌] - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=Q7A27ERXYNw",
+      "thumbnail": "https://img.youtube.com/vi/Q7A27ERXYNw/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "보이쳐 (Voiture)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-020",
+      "title": "아카펠라 동요 '솜사탕' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=-XdzH1HQ93k",
+      "thumbnail": "https://img.youtube.com/vi/-XdzH1HQ93k/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-021",
+      "title": "2006 통영 개타령 - 솔리스츠(Solists) [EBS 스페이스 공감 아카펠라 페스티벌] 2부 - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=PbiF7g4raU8",
+      "thumbnail": "https://img.youtube.com/vi/PbiF7g4raU8/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "솔리스츠 (The Solists)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-022",
+      "title": "[아트엠 아티스트] 아카펠라그룹 스노우시티 - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=P1ch8OjTzvM",
+      "thumbnail": "https://img.youtube.com/vi/P1ch8OjTzvM/hqdefault.jpg",
+      "uploader": "아트엠콘서트 디지털 콘서트홀",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티"
+      ]
+    },
+    {
+      "id": "apprec-kr-023",
+      "title": "토리스 - 악뮤뱃노래 X 산아지타령 - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=RwHzaHApJ90",
+      "thumbnail": "https://img.youtube.com/vi/RwHzaHApJ90/hqdefault.jpg",
+      "uploader": "국악아카펠라토리스",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-024",
+      "title": "NARIN THE DIVA YOU ARE. | stan MEOVV !!!!! | #meovv #ddirori #kpop - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=0LXQGoQ8n8w",
+      "thumbnail": "https://img.youtube.com/vi/0LXQGoQ8n8w/hqdefault.jpg",
+      "uploader": "wonzz ",
+      "date": "공식 영상",
+      "description": "나린 (NARIN) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-025",
+      "title": "다시 여행 (Journey Again) Acapella - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=HlNiMNuJcko",
+      "thumbnail": "https://img.youtube.com/vi/HlNiMNuJcko/hqdefault.jpg",
+      "uploader": "MayTree",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-026",
+      "title": "Levitating - Dua Lipa - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=cV_gq86VXJQ",
+      "thumbnail": "https://img.youtube.com/vi/cV_gq86VXJQ/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이스밴드 엑시트 (EXIT)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드"
+      ]
+    },
+    {
+      "id": "apprec-kr-027",
+      "title": "@ 맥도널드CM 3000원_다이아 D.I.A._아카펠라그룹_202509 #아카펠라그룹다이아 #다이아D.I.A. #두잇아카펠라 #성대앞아카펠라공연장 #DoItACapella - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=nr_UxfyB31c",
+      "thumbnail": "https://img.youtube.com/vi/nr_UxfyB31c/hqdefault.jpg",
+      "uploader": "Hanleef",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-028",
+      "title": "아카펠라 | 제니스 - 고등학교 문화 행사 공연 2025 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=IyTEwnOA-6c",
+      "thumbnail": "https://img.youtube.com/vi/IyTEwnOA-6c/hqdefault.jpg",
+      "uploader": "공연기획사 더플레이 공연후기",
+      "date": "공식 영상",
+      "description": "제니스 (Zenith)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-029",
+      "title": "몸둥이대신 주둥이로 추는 Hey Mama #shorts | Acapella Cover - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=lcO8xf55CII",
+      "thumbnail": "https://img.youtube.com/vi/lcO8xf55CII/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "오직목소리 (두왑사운즈) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-030",
+      "title": "“세계가 놀란 한국 합창… 하모나이즈가 부르는 ‘Bohemian Rhapsody’ 레전드 라이브” - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=wWSJCI6Ebhw",
+      "thumbnail": "https://img.youtube.com/vi/wWSJCI6Ebhw/hqdefault.jpg",
+      "uploader": "WORLD CAT LOVER TV",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-031",
+      "title": "2007 인더하모니(In the Harmony) - 보이쳐(Voiture) [EBS 스페이스 공감 아카펠라 페스티벌] - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=iehneYo42VY",
+      "thumbnail": "https://img.youtube.com/vi/iehneYo42VY/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "보이쳐 (Voiture)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-032",
+      "title": "아카펠라 동요 '가을길' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=hNeb4KPTLH4",
+      "thumbnail": "https://img.youtube.com/vi/hNeb4KPTLH4/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-033",
+      "title": "2006 아리랑 - 솔리스츠(Solists) [EBS 스페이스 공감 아카펠라 페스티벌] 2부 - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=sslR1z5b6sM",
+      "thumbnail": "https://img.youtube.com/vi/sslR1z5b6sM/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "솔리스츠 (The Solists)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-034",
+      "title": "아카펠라..스노우시티 - 현대백화점 공연 (Seoul Ent.) - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=lHzOWBtgPBU",
+      "thumbnail": "https://img.youtube.com/vi/lHzOWBtgPBU/hqdefault.jpg",
+      "uploader": "Seoul Ent.",
+      "date": "공식 영상",
+      "description": "스노우시티 (SnowCity)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-035",
+      "title": "#서울연등회 이색공연#국악아카펠라#토리스#서울 - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=sUqiCDnL9dw",
+      "thumbnail": "https://img.youtube.com/vi/sUqiCDnL9dw/hqdefault.jpg",
+      "uploader": "하이주tv",
+      "date": "공식 영상",
+      "description": "토리스 (Toris 국악아카펠라)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-036",
+      "title": "Narin & Sooin’s FAVORITE SONG Acapella Is What Heaven Sounds Like 💖 #narin #sooin - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=srPzmtYhrEw",
+      "thumbnail": "https://img.youtube.com/vi/srPzmtYhrEw/hqdefault.jpg",
+      "uploader": "MC",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 나린 (NARIN)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린"
+      ]
+    },
+    {
+      "id": "apprec-kr-037",
+      "title": "MayTree - Analog (acapella) - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=6nWXJuvdeq8",
+      "thumbnail": "https://img.youtube.com/vi/6nWXJuvdeq8/hqdefault.jpg",
+      "uploader": "MayTree",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-038",
+      "title": "Unrequited - Solomon - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=7D0P9bEOHCs",
+      "thumbnail": "https://img.youtube.com/vi/7D0P9bEOHCs/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이스밴드 엑시트 (EXIT)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드"
+      ]
+    },
+    {
+      "id": "apprec-kr-039",
+      "title": "[아카펠라 다이아] I AM 아카펠라 커버 - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=6cMX9X_eHaI",
+      "thumbnail": "https://img.youtube.com/vi/6cMX9X_eHaI/hqdefault.jpg",
+      "uploader": "아카펠라 다이아_Acappella DIA",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-040",
+      "title": "제니스 아카펠라 공연팀 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=XANT7dnEYDM",
+      "thumbnail": "https://img.youtube.com/vi/XANT7dnEYDM/hqdefault.jpg",
+      "uploader": "(주)더플레이 크리에이티브",
+      "date": "공식 영상",
+      "description": "제니스 (Zenith)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-041",
+      "title": "Levitating - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=hL0-Daw3en8",
+      "thumbnail": "https://img.youtube.com/vi/hL0-Daw3en8/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 오직목소리 (두왑사운즈)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리"
+      ]
+    },
+    {
+      "id": "apprec-kr-042",
+      "title": "Zombie(Acappella ver.)- 하모나이즈ㅣHARMONIZE - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=mGtChAm6t2c",
+      "thumbnail": "https://img.youtube.com/vi/mGtChAm6t2c/hqdefault.jpg",
+      "uploader": "하모나이즈 Harmonize",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-043",
+      "title": "2008 보이쳐 메들리(Voiture Medley) - 보이쳐 [EBS 스페이스 공감 아카펠라 페스티벌] - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=GZJq2Mt-ygw",
+      "thumbnail": "https://img.youtube.com/vi/GZJq2Mt-ygw/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "보이쳐 (Voiture)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐",
+        "라이브",
+        "콘서트",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-044",
+      "title": "아카펠라 동요 '따오기' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=NCSX2AF4eGI",
+      "thumbnail": "https://img.youtube.com/vi/NCSX2AF4eGI/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-045",
+      "title": "추억의 그 노래의 주인공! 더 솔리스츠 '오데로 갔나' @스타킹 461회 20160809 - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=gGVl73zkafU",
+      "thumbnail": "https://img.youtube.com/vi/gGVl73zkafU/hqdefault.jpg",
+      "uploader": "SBS Entertainment",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 솔리스츠 (The Solists)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠"
+      ]
+    },
+    {
+      "id": "apprec-kr-046",
+      "title": "아카펠라-스노우시티 - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=oDCNRsVc9Sg",
+      "thumbnail": "https://img.youtube.com/vi/oDCNRsVc9Sg/hqdefault.jpg",
+      "uploader": "NO.1 공연섭외,연예인섭외,공연배급 아츠로.",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티"
+      ]
+    },
+    {
+      "id": "apprec-kr-047",
+      "title": "전무후무 국악 아카펠라 그룹 '토리스' - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=o5A_aK9AtRg",
+      "thumbnail": "https://img.youtube.com/vi/o5A_aK9AtRg/hqdefault.jpg",
+      "uploader": "KTV  다큐",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-048",
+      "title": "Golden     #acappella  #나린  #Narin  #버스킹  #KpopDemonHunters  #케데헌  #아카펠라 - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=w59S7gf7VcA",
+      "thumbnail": "https://img.youtube.com/vi/w59S7gf7VcA/hqdefault.jpg",
+      "uploader": "뮤직콜",
+      "date": "공식 영상",
+      "description": "나린 (NARIN)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-049",
+      "title": "[너의 목소리가 보여 3 Part 7] 메이트리 (May Tree) - 같은 곳에서 (At The Same Place) - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=9OT09mQHH7g",
+      "thumbnail": "https://img.youtube.com/vi/9OT09mQHH7g/hqdefault.jpg",
+      "uploader": "STONE MUSIC",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-050",
+      "title": "뉴진스 - Ditto - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=1tAEAvtl5ys",
+      "thumbnail": "https://img.youtube.com/vi/1tAEAvtl5ys/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이스밴드 엑시트 (EXIT)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드"
+      ]
+    },
+    {
+      "id": "apprec-kr-051",
+      "title": "@ 보컬퍼커션 김정훈_아카펠라그룹_다이아 D.I.A._202509 #아카펠라그룹다이아 #다이아D.I.A. #두잇아카펠라 #성대앞아카펠라공연장 #DoItACapella - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=FR15Xr4MUKc",
+      "thumbnail": "https://img.youtube.com/vi/FR15Xr4MUKc/hqdefault.jpg",
+      "uploader": "Hanleef",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-052",
+      "title": "[#밥친구] 동굴 저음부터 폭풍 고음까지..💗 아카펠라 그룹 엑시트의 소름 돋는 'DNA+IDOL' 무대 | 보컬플레이 1 회 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=cf-XEARkq-0",
+      "thumbnail": "https://img.youtube.com/vi/cf-XEARkq-0/hqdefault.jpg",
+      "uploader": "채널A WORLD",
+      "date": "공식 영상",
+      "description": "제니스 (Zenith)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-053",
+      "title": "모든 어머니는 위대하다 - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=yD05Y-ORhtI",
+      "thumbnail": "https://img.youtube.com/vi/yD05Y-ORhtI/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 오직목소리 (두왑사운즈)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리"
+      ]
+    },
+    {
+      "id": "apprec-kr-054",
+      "title": "하모나이즈의 멋진 퍼포먼스 - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=kbpo2DSJoaU",
+      "thumbnail": "https://img.youtube.com/vi/kbpo2DSJoaU/hqdefault.jpg",
+      "uploader": "환석이형(섭외의 신)",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-055",
+      "title": "2008 카펜터스 메들리(Sing+Yeaterday once more+Top of the world) & 아카펠라 즐기는 법 - 보이쳐 [EBS 스페이스 공감 아카펠라 페스티벌] - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=vmJmPkVFR5Y",
+      "thumbnail": "https://img.youtube.com/vi/vmJmPkVFR5Y/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "보이쳐 (Voiture)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐",
+        "라이브",
+        "콘서트",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-056",
+      "title": "아카펠라 동요 '노을' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=t9UooVisDU8",
+      "thumbnail": "https://img.youtube.com/vi/t9UooVisDU8/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-057",
+      "title": "A Cappella group \"Solists\" - Korea's Got Talent 2, 솔리스츠 - 코리아갓탤런트2 - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=n_JhAn9TEaU",
+      "thumbnail": "https://img.youtube.com/vi/n_JhAn9TEaU/hqdefault.jpg",
+      "uploader": "Korea's Got Talent",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 솔리스츠 (The Solists)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠"
+      ]
+    },
+    {
+      "id": "apprec-kr-058",
+      "title": "아카펠라..스노우시티 - KBS 굿모닝 대한민국 출연 (Seoul Ent.) - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=0oas_0vyjGw",
+      "thumbnail": "https://img.youtube.com/vi/0oas_0vyjGw/hqdefault.jpg",
+      "uploader": "Seoul Ent.",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티"
+      ]
+    },
+    {
+      "id": "apprec-kr-059",
+      "title": "토리스 - 장타령 X 여행을 떠나요 - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=M83En-Zt_LE",
+      "thumbnail": "https://img.youtube.com/vi/M83En-Zt_LE/hqdefault.jpg",
+      "uploader": "국악아카펠라토리스",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-060",
+      "title": "Ella, Narin & Gawon ate this acapella… until THAT happened 😂 PSICK UNIV #shorts #burningup #meovv - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=OMsV6XbGQBM",
+      "thumbnail": "https://img.youtube.com/vi/OMsV6XbGQBM/hqdefault.jpg",
+      "uploader": "MC",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 나린 (NARIN)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린"
+      ]
+    },
+    {
+      "id": "apprec-kr-061",
+      "title": "真夜中のドア~Stay with me~ - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=eN2gr5R08AI",
+      "thumbnail": "https://img.youtube.com/vi/eN2gr5R08AI/hqdefault.jpg",
+      "uploader": "Maytree - Topic",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-062",
+      "title": "#엑시트#핑탄아카펠라페스티벌#비오는날낭만의아랑훠즈#너도젖고나도젖고다젖는보이스밴드엑시트#20260829 - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=NR2vumAe27Y",
+      "thumbnail": "https://img.youtube.com/vi/NR2vumAe27Y/hqdefault.jpg",
+      "uploader": "Be The Choralian JW",
+      "date": "공식 영상",
+      "description": "보이스밴드 엑시트 (EXIT)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-063",
+      "title": "아카펠라 다이아(D.I.A) - 만화주제가 애니메이션 메들리 (animation medley) - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=ls32l6JGGKQ",
+      "thumbnail": "https://img.youtube.com/vi/ls32l6JGGKQ/hqdefault.jpg",
+      "uploader": "멋녀사랑해뽀뽀쪽",
+      "date": "공식 영상",
+      "description": "국내 최정상 아카펠라 그룹 다이아 (D.I.A)가 목소리만으로 웅장하고 섬세하게 재해석한 OST 명곡 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "OST",
+        "사운드트랙",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-064",
+      "title": "아카펠라 - 제니스 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=LgeH1h7XXJM",
+      "thumbnail": "https://img.youtube.com/vi/LgeH1h7XXJM/hqdefault.jpg",
+      "uploader": "STAR",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 제니스 (Zenith)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스"
+      ]
+    },
+    {
+      "id": "apprec-kr-065",
+      "title": "무한도전 가요제의 역사 | 를 오직목소리로 (History Of INFINITY CHALLENGE by Acapella) - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=IhS0-jEyuSY",
+      "thumbnail": "https://img.youtube.com/vi/IhS0-jEyuSY/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "오직목소리 (두왑사운즈) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-066",
+      "title": "[ENG] I can see your voice 6 [5회] (기립 박수) 세계 합창 올픽 금메달 2관왕! 하모나이즈! 라이온킹 'Circle of Life' 190215 EP.5 - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=b_BlpQWd9n8",
+      "thumbnail": "https://img.youtube.com/vi/b_BlpQWd9n8/hqdefault.jpg",
+      "uploader": "Mnet TV",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-067",
+      "title": "Voiture - I got a love affair + Introduce me a good man, 보이쳐 - 내게도 사랑이 + 좋은 - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=hOcrxAenmaI",
+      "thumbnail": "https://img.youtube.com/vi/hOcrxAenmaI/hqdefault.jpg",
+      "uploader": "MBCkpop",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이쳐 (Voiture)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐"
+      ]
+    },
+    {
+      "id": "apprec-kr-068",
+      "title": "아카펠라 동요 '둥글게 둥글게' (Round and round) ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=L0MOkzCeRTI",
+      "thumbnail": "https://img.youtube.com/vi/L0MOkzCeRTI/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-069",
+      "title": "아카펠라그룹 솔리스츠 - Hallo, Mr. Mozart_ 금요일and야기 - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=YWTBRbdTztk",
+      "thumbnail": "https://img.youtube.com/vi/YWTBRbdTztk/hqdefault.jpg",
+      "uploader": "야기 YAGI Studio",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 솔리스츠 (The Solists)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠"
+      ]
+    },
+    {
+      "id": "apprec-kr-070",
+      "title": "20140831 열린예술극장 '아카펠라그룹 스노우시티' - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=aR7MfuPz1NA",
+      "thumbnail": "https://img.youtube.com/vi/aR7MfuPz1NA/hqdefault.jpg",
+      "uploader": "대한민국역사박물관",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티"
+      ]
+    },
+    {
+      "id": "apprec-kr-071",
+      "title": "국악 아카펠라 그룹 토리스의 〈창부타령 x Every Breath You Take〉♬ 풍류대장(poongryu) 1회 | JTBC 210928 방송 - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=iKcCizd395c",
+      "thumbnail": "https://img.youtube.com/vi/iKcCizd395c/hqdefault.jpg",
+      "uploader": "JTBC Music",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-072",
+      "title": "BLACKPINK - How You Like That Acapella Cover - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=LeLSb3ECbPE",
+      "thumbnail": "https://img.youtube.com/vi/LeLSb3ECbPE/hqdefault.jpg",
+      "uploader": "아카펠라 나린_Narin",
+      "date": "공식 영상",
+      "description": "나린 (NARIN) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-073",
+      "title": "Carol of the bells - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=M6lsLrzhnSg",
+      "thumbnail": "https://img.youtube.com/vi/M6lsLrzhnSg/hqdefault.jpg",
+      "uploader": "Maytree - Topic",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-074",
+      "title": "#보이스밴드 #엑시트 #아카펠라 #exit #voice #band #공연 #축하공연 #삼성생명 #연도상 #쇼츠 #shorts - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=1kYi71LqQCs",
+      "thumbnail": "https://img.youtube.com/vi/1kYi71LqQCs/hqdefault.jpg",
+      "uploader": "권영빈YouTube",
+      "date": "공식 영상",
+      "description": "보이스밴드 엑시트 (EXIT)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-075",
+      "title": "Golden | KPop Demon Hunters | Covered by Acappella DIA - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=oXdR1r5t8kw",
+      "thumbnail": "https://img.youtube.com/vi/oXdR1r5t8kw/hqdefault.jpg",
+      "uploader": "아카펠라 다이아_Acappella DIA",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-076",
+      "title": "아츠플랜 아카펠라 제니스 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=eThQZxxxmwk",
+      "thumbnail": "https://img.youtube.com/vi/eThQZxxxmwk/hqdefault.jpg",
+      "uploader": "ARTSPLAN GLOBAL",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 제니스 (Zenith)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스"
+      ]
+    },
+    {
+      "id": "apprec-kr-077",
+      "title": "오직목소리(Acapella)로 듣는 아이유,버스커버스커,LUCY,스탠딩에그,케이윌,유주,로꼬 - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=tlBq8jgkqhE",
+      "thumbnail": "https://img.youtube.com/vi/tlBq8jgkqhE/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "오직목소리 (두왑사운즈) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-078",
+      "title": "GOLDEN- Performed by 하모나이즈(HARMONIZE) l KPop Demon Hunters l HUNTR/X - - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=r0hMqff9d0k",
+      "thumbnail": "https://img.youtube.com/vi/r0hMqff9d0k/hqdefault.jpg",
+      "uploader": "하모나이즈 Harmonize",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-079",
+      "title": "아카펠라 그룹 보이쳐 / VOITURE - 비스캣  / B.S.C.A.T - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=P_4mHxWhTFM",
+      "thumbnail": "https://img.youtube.com/vi/P_4mHxWhTFM/hqdefault.jpg",
+      "uploader": "문화예술전문 주식회사더늠",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이쳐 (Voiture)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐"
+      ]
+    },
+    {
+      "id": "apprec-kr-080",
+      "title": "아카펠라 동요 '올챙이와 개구리' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=oV7kaGdCGfE",
+      "thumbnail": "https://img.youtube.com/vi/oV7kaGdCGfE/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-081",
+      "title": "2006 솔리스츠에게 아카펠라의 매력은 & 로고송 [EBS 스페이스 공감 아카펠라 페스티벌] 2부 - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=1zHiehad5L0",
+      "thumbnail": "https://img.youtube.com/vi/1zHiehad5L0/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "솔리스츠 (The Solists)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-082",
+      "title": "스노우시티 - 그녀를 만나는 곳 100m 전[광화문 KT 올레스퀘어 드림홀 ] - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=ShhwOobmbpU",
+      "thumbnail": "https://img.youtube.com/vi/ShhwOobmbpU/hqdefault.jpg",
+      "uploader": "YSK미디어&파트너스",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티"
+      ]
+    },
+    {
+      "id": "apprec-kr-083",
+      "title": "국악아카펠라그룹  토리스 - 수궁가 중 토끼 잡아드리는 대목 | 국악한마당 | KBS전주 - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=H9FZdgk_bEg",
+      "thumbnail": "https://img.youtube.com/vi/H9FZdgk_bEg/hqdefault.jpg",
+      "uploader": "KBS전주",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-084",
+      "title": "TWICE - I CAN'T STOP ME Acapella Cover - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=G5zFelDZh6A",
+      "thumbnail": "https://img.youtube.com/vi/G5zFelDZh6A/hqdefault.jpg",
+      "uploader": "아카펠라 나린_Narin",
+      "date": "공식 영상",
+      "description": "나린 (NARIN) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-085",
+      "title": "뿜뿜 BBoom BBoom (New Acappella Version) (Prod. by 윤상 yoonsang) - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=1Jwmsc4RDzA",
+      "thumbnail": "https://img.youtube.com/vi/1Jwmsc4RDzA/hqdefault.jpg",
+      "uploader": "Maytree - Topic",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-086",
+      "title": "[아카펠라] Auld Lang Syne cover by 보이스밴드 엑시트(EXIT) - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=xtCyjK9w3Yo",
+      "thumbnail": "https://img.youtube.com/vi/xtCyjK9w3Yo/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "보이스밴드 엑시트 (EXIT) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-087",
+      "title": "acapella D.I.A - White Winter Hymnal PENTATONIX cover - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=PzylLc3ci1I",
+      "thumbnail": "https://img.youtube.com/vi/PzylLc3ci1I/hqdefault.jpg",
+      "uploader": "멋녀사랑해뽀뽀쪽",
+      "date": "공식 영상",
+      "description": "다이아 (D.I.A) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-088",
+      "title": "온가람페스티벌 #아카펠라 제니스 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=Ds7QDzV5RDg",
+      "thumbnail": "https://img.youtube.com/vi/Ds7QDzV5RDg/hqdefault.jpg",
+      "uploader": "동원미디어",
+      "date": "공식 영상",
+      "description": "제니스 (Zenith)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-089",
+      "title": "2NE1의 역사 | 를 오직목소리로 (History Of 2NE1 by Acapella) - 오직목소리 (두왑사운즈)",
+      "artist": "오직목소리 (두왑사운즈)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=LW3zwmmEPbI",
+      "thumbnail": "https://img.youtube.com/vi/LW3zwmmEPbI/hqdefault.jpg",
+      "uploader": "오직목소리=Acapella(구 두왑사운즈)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 오직목소리 (두왑사운즈)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "오직목소리"
+      ]
+    },
+    {
+      "id": "apprec-kr-090",
+      "title": "남아공 여행 중 갑자기 노래 부른 썰 푼다(feat. 하모나이즈) - 하모나이즈 (Harmonize)",
+      "artist": "하모나이즈 (Harmonize)",
+      "category": "라이브 콘서트",
+      "videoUrl": "https://www.youtube.com/watch?v=Ha8XOntG0nw",
+      "thumbnail": "https://img.youtube.com/vi/Ha8XOntG0nw/hqdefault.jpg",
+      "uploader": "여행에미치다",
+      "date": "공식 영상",
+      "description": "하모나이즈 (Harmonize)의 현장감 넘치는 생생한 라이브 아카펠라 무대 실황입니다. 관객과 호흡하는 완벽한 하모니를 감상해 보세요.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "하모나이즈",
+        "라이브",
+        "콘서트"
+      ]
+    },
+    {
+      "id": "apprec-kr-091",
+      "title": "#아리랑 #보이쳐 #아카펠라 #국민고향정선 - 보이쳐 (Voiture)",
+      "artist": "보이쳐 (Voiture)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=yHTNBPS2ALI",
+      "thumbnail": "https://img.youtube.com/vi/yHTNBPS2ALI/hqdefault.jpg",
+      "uploader": "정선웅이",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 보이쳐 (Voiture)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이쳐"
+      ]
+    },
+    {
+      "id": "apprec-kr-092",
+      "title": "아카펠라 동요 '옹달샘' ACACIA Acapella - 아카시아 (Acacia)",
+      "artist": "아카시아 (Acacia)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=vYQ0jI7X_LA",
+      "thumbnail": "https://img.youtube.com/vi/vYQ0jI7X_LA/hqdefault.jpg",
+      "uploader": "ACACIA 아카펠라그룹 아카시아",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 아카시아 (Acacia)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "아카시아"
+      ]
+    },
+    {
+      "id": "apprec-kr-093",
+      "title": "애수(솔리스츠) - 신세계 [2025 한국 아카펠라아카데미 A-Festa] - 솔리스츠 (The Solists)",
+      "artist": "솔리스츠 (The Solists)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=NRlR4wxneZ0",
+      "thumbnail": "https://img.youtube.com/vi/NRlR4wxneZ0/hqdefault.jpg",
+      "uploader": "올드앤뉴 아카펠라 아카이빙 (Old&New Acappella)",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 솔리스츠 (The Solists)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "솔리스츠"
+      ]
+    },
+    {
+      "id": "apprec-kr-094",
+      "title": "Disney Snow White #acapella #lavita #아카펠라라비타 - 스노우시티 (SnowCity)",
+      "artist": "스노우시티 (SnowCity)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=URAALwpb3ks",
+      "thumbnail": "https://img.youtube.com/vi/URAALwpb3ks/hqdefault.jpg",
+      "uploader": "아카펠라 라비타 LAVITA",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 스노우시티 (SnowCity)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "스노우시티",
+        "디즈니"
+      ]
+    },
+    {
+      "id": "apprec-kr-095",
+      "title": "[KBS전주] 국악한마당 // 국악아카펠라그룹 토리스 - 정선아리랑, 밀양아리랑, 진도아리랑 - 토리스 (Toris 국악아카펠라)",
+      "artist": "토리스 (Toris 국악아카펠라)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=tRksMEtY53Q",
+      "thumbnail": "https://img.youtube.com/vi/tRksMEtY53Q/hqdefault.jpg",
+      "uploader": "KBS전주",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 토리스 (Toris 국악아카펠라)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "토리스"
+      ]
+    },
+    {
+      "id": "apprec-kr-096",
+      "title": "IVE - I AM (Acapella Cover) - 나린 (NARIN)",
+      "artist": "나린 (NARIN)",
+      "category": "보컬 커버",
+      "videoUrl": "https://www.youtube.com/watch?v=2cEbsEgfRPk",
+      "thumbnail": "https://img.youtube.com/vi/2cEbsEgfRPk/hqdefault.jpg",
+      "uploader": "아카펠라 나린_Narin",
+      "date": "공식 영상",
+      "description": "나린 (NARIN) 특유의 감각적인 보컬 편곡과 비트박스가 돋보이는 명품 아카펠라 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "나린",
+        "보컬커버",
+        "K-POP"
+      ]
+    },
+    {
+      "id": "apprec-kr-097",
+      "title": "L.O.V.E - 메이트리 (MayTree)",
+      "artist": "메이트리 (MayTree)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=w2vfeIAu8Rc",
+      "thumbnail": "https://img.youtube.com/vi/w2vfeIAu8Rc/hqdefault.jpg",
+      "uploader": "Maytree - Topic",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 메이트리 (MayTree)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "메이트리"
+      ]
+    },
+    {
+      "id": "apprec-kr-098",
+      "title": "[아카펠라] 도깨비 OST Medley cover by 보이스밴드 엑시트(VoiceBand EXIT) - 보이스밴드 엑시트 (EXIT)",
+      "artist": "보이스밴드 엑시트 (EXIT)",
+      "category": "영화 / OST",
+      "videoUrl": "https://www.youtube.com/watch?v=vV_US3wJK2g",
+      "thumbnail": "https://img.youtube.com/vi/vV_US3wJK2g/hqdefault.jpg",
+      "uploader": "[#vbexit] VoiceBand EXIT",
+      "date": "공식 영상",
+      "description": "국내 최정상 아카펠라 그룹 보이스밴드 엑시트 (EXIT)가 목소리만으로 웅장하고 섬세하게 재해석한 OST 명곡 커버 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "보이스밴드",
+        "OST",
+        "사운드트랙",
+        "메들리"
+      ]
+    },
+    {
+      "id": "apprec-kr-099",
+      "title": "아카펠라 그룹 다이아 - 다이아 (D.I.A)",
+      "artist": "다이아 (D.I.A)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=7-RoOx8Ukn8",
+      "thumbnail": "https://img.youtube.com/vi/7-RoOx8Ukn8/hqdefault.jpg",
+      "uploader": "화성시민신문",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 다이아 (D.I.A)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "다이아"
+      ]
+    },
+    {
+      "id": "apprec-kr-100",
+      "title": "Java Jive│아카펠라│제니스(Zenith)│자바자이브│부평 뮤직트래블│Manhattan Transfer│4차 - 제니스 (Zenith)",
+      "artist": "제니스 (Zenith)",
+      "category": "국내 아카펠라",
+      "videoUrl": "https://www.youtube.com/watch?v=OpGUZ6GGGm4",
+      "thumbnail": "https://img.youtube.com/vi/OpGUZ6GGGm4/hqdefault.jpg",
+      "uploader": "부평구립도서관",
+      "date": "공식 영상",
+      "description": "한국 대표 프로 아카펠라 그룹 제니스 (Zenith)의 독창적인 보컬 하모니와 다채로운 음악성을 느낄 수 있는 대표 연주 영상입니다.",
+      "tags": [
+        "아카펠라",
+        "국내 아카펠라",
+        "제니스"
       ]
     }
   ]

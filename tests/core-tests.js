@@ -214,7 +214,7 @@ export function runCoreTests() {
     check('아카라카 공식 직인 이미지 파일 존재 검증', () => nodeFs.existsSync('./assets/images/acaraca-seal.png'));
 
     const apprecRaw = JSON.parse(nodeFs.readFileSync('./data/appreciation.json', 'utf8'));
-    check('appreciation.json 133개 감상 영상 로드 검증', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length === 133);
+    check('appreciation.json 216개 감상 영상 로드 검증 (회원전용 삭제 및 국내 아카펠라 100개 추가)', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length === 216);
     check('연습실 33곡 원곡 아카펠라 감상 영상 및 연습곡 카테고리 검증', () => apprecRaw.videos.filter(v => v.category === '연습곡').length === 33);
     check('모든 감상 영상 YouTube 파싱 유효성 검증', () => apprecRaw.videos.every(v => parseYouTube({ type: 'video', url: v.videoUrl }).ok && Boolean(v.thumbnail)));
     check('요청된 핵심 그룹(메이트리, 엑시트, 펜타토닉스, 나린, 비트펠라 하우스) 전체 포함 검증', () => {
