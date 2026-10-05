@@ -4,7 +4,7 @@ import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
 import {el, icon, button, toast, cover, emptyState} from './ui.js';
-import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying} from './pitch.js';
+import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, getCurrentSequence, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying} from './pitch.js';
 import {
   loadPerformances,
   loadRehearsals,
@@ -3744,12 +3744,15 @@ function renderStartingPitchPanel(song, currentPart = null) {
         onStep: (step) => {
           if (step.type === 'note') {
             seqStatusBadge.textContent = `🎵 [${step.index + 1}/${step.total}] ${step.label} (${step.parsed.displayNote} · ${step.parsed.koreanNote}) 울림 중...`;
+            updateActiveStates();
           } else if (step.type === 'chord') {
             seqStatusBadge.textContent = `✨ 전체 성부 화음 합창 (${step.notes.join(' · ')})! 함께 화음을 맞춰보세요.`;
+            updateActiveStates();
           } else if (step.type === 'finish') {
             seqBtn.classList.remove('playing');
             seqBtn.replaceChildren(icon('play'), document.createTextNode('차례대로 듣고 화음 🎵'));
             seqStatusBadge.style.display = 'none';
+            updateActiveStates();
           }
         }
       });
@@ -3800,15 +3803,26 @@ function renderStartingPitchPanel(song, currentPart = null) {
   function updateActiveStates() {
     const cur = getCurrentPlaying();
     const isChord = Boolean(cur?.isChord);
+    const seq = getCurrentSequence();
 
-    chordBtn.classList.toggle('playing', isChord);
+    chordBtn.classList.toggle('playing', isChord && !seq);
 
-    partItems.forEach(({ parsed }, idx) => {
+    partItems.forEach(({ partKey, parsed }, idx) => {
       const chip = grid.children[idx];
       if (!chip) return;
-      const isPitchActive = !isChord && cur && cur.semitone === parsed.semitone && cur.octave === parsed.octave;
-      const isChordActive = isChord && cur.notes?.includes(parsed.displayNote);
-      chip.classList.toggle('playing', Boolean(isPitchActive || isChordActive));
+      let isActive = false;
+      if (seq) {
+        if (seq.isChordPhase || isChord) {
+          isActive = true;
+        } else if (seq.currentItem) {
+          isActive = seq.currentItem.partKey ? seq.currentItem.partKey === partKey : (cur && cur.semitone === parsed.semitone && cur.octave === parsed.octave);
+        }
+      } else if (isChord) {
+        isActive = cur.notes?.includes(parsed.displayNote);
+      } else if (cur) {
+        isActive = cur.semitone === parsed.semitone && cur.octave === parsed.octave;
+      }
+      chip.classList.toggle('playing', Boolean(isActive));
     });
   }
 

@@ -113,29 +113,35 @@ export function getCurrentSequence() {
  * Stop any currently sounding pitch or chord.
  */
 export function stopPitch(cancelSequence = true) {
-  if (cancelSequence && sequenceTimer) {
-    clearTimeout(sequenceTimer);
-    sequenceTimer = null;
-    const prevSeq = currentSequence;
-    currentSequence = null;
-    if (prevSeq && typeof prevSeq.onStep === 'function') {
-      try { prevSeq.onStep({ type: 'finish', stoppedEarly: true }); } catch {}
+  if (cancelSequence) {
+    if (sequenceTimer) {
+      clearTimeout(sequenceTimer);
+      sequenceTimer = null;
+    }
+    if (currentSequence) {
+      const prevSeq = currentSequence;
+      currentSequence = null;
+      if (prevSeq && typeof prevSeq.onStep === 'function') {
+        try { prevSeq.onStep({ type: 'finish', stoppedEarly: true }); } catch {}
+      }
     }
   }
 
   if (currentGainNode && audioCtx) {
     try {
       const now = audioCtx.currentTime;
-      currentGainNode.gain.cancelScheduledValues(now);
-      currentGainNode.gain.setValueAtTime(currentGainNode.gain.value, now);
-      currentGainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+      const closingGain = currentGainNode;
+      const closingOscs = currentOscillators;
+      currentOscillators = [];
+      currentGainNode = null;
+      closingGain.gain.cancelScheduledValues(now);
+      closingGain.gain.setValueAtTime(closingGain.gain.value, now);
+      closingGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
       setTimeout(() => {
-        for (const osc of currentOscillators) {
+        for (const osc of closingOscs) {
           try { osc.stop(); osc.disconnect(); } catch {}
         }
-        currentOscillators = [];
-        currentGainNode = null;
-      }, 150);
+      }, 120);
     } catch {
       currentOscillators = [];
       currentGainNode = null;
@@ -155,18 +161,18 @@ export function stopPitch(cancelSequence = true) {
  * Play a specific pitch (semitone: 0~11, octave: 2~6).
  * If the exact same pitch is already playing, it will stop it (toggle behavior).
  */
-export function playPitch(semitone, octave = 4, volume = 0.5) {
+export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = true) {
   const ctx = getAudioContext();
   if (!ctx) return null;
 
   // Toggle off if clicking the currently playing note
   if (currentPlaying && !currentPlaying.isChord && currentPlaying.semitone === semitone && currentPlaying.octave === octave) {
-    stopPitch();
+    stopPitch(cancelSequence);
     return null;
   }
 
   // Stop any previous note cleanly
-  stopPitch();
+  stopPitch(cancelSequence);
 
   const noteInfo = NOTES.find((n) => n.semitone === semitone) || NOTES[0];
   const freq = getNoteFrequency(semitone, octave);
@@ -291,16 +297,16 @@ export function parseNoteString(noteStr) {
  * Play note from string (e.g. "Ab4", "Eb5", "F#3").
  * Toggles off if this note is already playing.
  */
-export function playNoteString(noteStr, volume = 0.5) {
+export function playNoteString(noteStr, volume = 0.5, cancelSequence = true) {
   const parsed = parseNoteString(noteStr);
   if (!parsed) return null;
 
   if (currentPlaying && !currentPlaying.isChord && currentPlaying.semitone === parsed.semitone && currentPlaying.octave === parsed.octave) {
-    stopPitch();
+    stopPitch(cancelSequence);
     return null;
   }
 
-  const played = playPitch(parsed.semitone, parsed.octave, volume);
+  const played = playPitch(parsed.semitone, parsed.octave, volume, cancelSequence);
   if (played) {
     played.raw = noteStr;
     played.displayNote = parsed.displayNote;
@@ -315,16 +321,16 @@ export function playNoteString(noteStr, volume = 0.5) {
  * Play all starting notes in harmony simultaneously (A cappella starting chord).
  * Toggles off if chord is already playing.
  */
-export function playChordStrings(notesList, volume = 0.38) {
+export function playChordStrings(notesList, volume = 0.38, cancelSequence = true) {
   const ctx = getAudioContext();
   if (!ctx) return null;
 
   if (currentPlaying && currentPlaying.isChord) {
-    stopPitch();
+    stopPitch(cancelSequence);
     return null;
   }
 
-  stopPitch();
+  stopPitch(cancelSequence);
 
   const parsedList = (Array.isArray(notesList) ? notesList : [])
     .map((s) => parseNoteString(s))
@@ -445,6 +451,10 @@ export function playPitchSequence(items, options = {}) {
 
   function runNext() {
     if (!currentSequence) return;
+    if (sequenceTimer) {
+      clearTimeout(sequenceTimer);
+      sequenceTimer = null;
+    }
 
     if (currentIndex < sorted.length) {
       const item = sorted[currentIndex];
@@ -452,7 +462,7 @@ export function playPitchSequence(items, options = {}) {
       currentSequence.currentItem = item;
 
       stopPitch(false);
-      const played = playPitch(item.parsed.semitone, item.parsed.octave, 0.5);
+      const played = playPitch(item.parsed.semitone, item.parsed.octave, 0.5, false);
       if (played) {
         played.raw = item.noteStr;
         played.displayNote = item.parsed.displayNote;
@@ -491,10 +501,11 @@ export function playPitchSequence(items, options = {}) {
     } else if (currentIndex === sorted.length) {
       // Step: Play Full Choral Chord
       currentSequence.isChordPhase = true;
+      currentSequence.currentItem = null;
       const allNotes = sorted.map((it) => it.noteStr);
 
       stopPitch(false);
-      playChordStrings(allNotes, 0.42);
+      playChordStrings(allNotes, 0.42, false);
 
       if (typeof onStep === 'function') {
         try {

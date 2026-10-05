@@ -2,7 +2,7 @@ import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } fro
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitchSequence, stopPitchSequence, isPitchSequencePlaying } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying } from '../js/pitch.js';
 import {
   getAllFeedbacks,
   addFeedback,
@@ -463,6 +463,20 @@ export function runCoreTests() {
     stopPitchSequence();
     check('stopPitchSequence 호출 시 isPitchSequencePlaying() false 복귀', () => {
       return isPitchSequencePlaying() === false;
+    });
+
+    check('playPitch에 cancelSequence=false 전달 시 active sequence 유지 검증 (시퀀스 연속 재생 보장)', () => {
+      let steps = [];
+      const handle = playPitchSequence(testParts, {
+        noteDuration: 100,
+        gapDuration: 20,
+        chordDuration: 100,
+        onStep: (st) => steps.push(st)
+      });
+      playPitch(0, 4, 0.5, false);
+      const stillPlaying = isPitchSequencePlaying();
+      stopPitchSequence();
+      return stillPlaying;
     });
   } finally {
     if (!hadWindow) {
