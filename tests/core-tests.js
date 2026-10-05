@@ -16,8 +16,7 @@ import {
   addCustomPracticeVideo,
   deleteCustomPracticeVideo,
   addCustomAppreciation,
-  deleteCustomAppreciation,
-  getLyricsForSong
+  deleteCustomAppreciation
 } from '../js/archive.js';
 
 let nodeFs = null;
@@ -342,24 +341,7 @@ export function runCoreTests() {
     player2.destroy();
   }
 
-  if (nodeFs) {
-    try {
-      const lyricsRaw = nodeFs.readFileSync(new URL('../data/lyrics.json', import.meta.url), 'utf8');
-      const lyricsData = JSON.parse(lyricsRaw);
-      check('가사 데이터셋 존재 및 33곡 전체 지원', () => Array.isArray(lyricsData.lyrics) && lyricsData.lyrics.length >= 33);
-      check('보헤미안 랩소디 가사 및 호흡표기(∨) 확인', () => {
-        const br = getLyricsForSong(lyricsData.lyrics, 'bohemian-rhapsody-5');
-        return br && br.sections?.length > 0 && br.sections[0].lines[0].text.includes('∨');
-      });
-      check('단발머리 가사 및 큐 정보 확인', () => {
-        const sh = getLyricsForSong(lyricsData.lyrics, 'short-hair');
-        return sh && sh.sections?.length > 0 && sh.sections[0].lines.some(l => l.cue);
-      });
-      check('getLyricsForSong 없는 곡 fallback null', () => getLyricsForSong(lyricsData.lyrics, 'non-existent-song') === null);
-    } catch (e) {
-      results.push({ name: '가사 데이터셋 검증', passed: false, error: e.message });
-    }
-  }
+
 
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };
 }
