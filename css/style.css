@@ -74,7 +74,7 @@ button, input, select, textarea { outline-offset: 4px; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 94px; padding: 21px 48px; border-bottom: 1px solid var(--border); background: var(--bg); }
 .topbar-kicker { display: block; color: var(--muted); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 2px; }
 .topbar-title { font-weight: 650; font-size: 16px; letter-spacing: -.35px; }
-.topbar-actions { display: flex; gap: 9px; align-items: center; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .topbar-actions > span { font-size: 11px; color: var(--muted); margin-right: 7px; }
 .icon-button { width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: var(--muted-strong); transition: border-color .18s, color .18s, background .18s; }
 .icon-button:hover { border-color: var(--border-strong); color: var(--primary); background: var(--surface); }

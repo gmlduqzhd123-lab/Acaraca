@@ -28,7 +28,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=50">
+  <link rel="stylesheet" href="./css/style.css?v=51">
 
 
 </head>
@@ -77,6 +77,142 @@
     <div class="dialog-actions qr-actions">
       <button type="button" class="button secondary" id="qr-copy-btn">주소 복사</button>
       <form method="dialog"><button class="button primary" autofocus>닫기</button></form>
+    </div>
+  </dialog>
+
+  <!-- App Install Dialog (앱설치) -->
+  <dialog class="share-dialog" id="install-dialog" style="width: min(520px, calc(100vw - 32px)); max-width: 520px;" aria-labelledby="install-dialog-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 22px;">📲</span>
+        <h2 id="install-dialog-title" style="margin: 0; font-size: 18px;">AcaRaca 앱 설치 안내</h2>
+      </div>
+      <button type="button" class="dialog-close-x" onclick="document.getElementById('install-dialog').close()" aria-label="닫기">✕</button>
+    </div>
+    <p style="color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 14px;">
+      스마트폰이나 PC에 AcaRaca를 앱으로 설치하면, 브라우저 주소창 없이 전체 화면으로 더 쾌적하고 빠르게 연습할 수 있습니다.
+    </p>
+
+    <!-- Direct Install Button (Shown on Chrome/Android/PC when prompt is available) -->
+    <div id="pwa-direct-box" style="margin-bottom: 14px;">
+      <button type="button" class="button primary" id="pwa-direct-install-btn" style="width: 100%; justify-content: center; font-size: 14px; padding: 12px;" hidden>
+        🚀 지금 바로 앱 설치하기
+      </button>
+    </div>
+
+    <!-- Step by Step Guides -->
+    <div class="install-guide-grid" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+      <div style="background: var(--surface-soft); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);">
+        <strong style="color: var(--ink); display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+          <span>🍏</span> iPhone / iPad (Safari)
+        </strong>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.4;">
+          1. Safari 하단 중앙의 <strong>공유 아이콘 (⎋ / ↥)</strong> 탭<br>
+          2. 메뉴를 아래로 내려 <strong>'홈 화면에 추가'</strong> 선택 후 [추가] 탭
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);">
+        <strong style="color: var(--ink); display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+          <span>🤖</span> Android (갤럭시 / Chrome / 삼성인터넷)
+        </strong>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.4;">
+          1. 브라우저 우측 상단 <strong>더보기 (⋮)</strong> 탭<br>
+          2. <strong>'앱 설치'</strong> 또는 <strong>'홈 화면에 추가'</strong> 선택
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);">
+        <strong style="color: var(--ink); display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+          <span>💻</span> PC (Windows / Mac / Chrome / Edge)
+        </strong>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.4;">
+          1. 브라우저 주소창 우측 끝의 <strong>앱 설치 아이콘 (모니터+화살표)</strong> 클릭<br>
+          2. 또는 브라우저 메뉴(⋮) &gt; <strong>'AcaRaca 설치'</strong> 클릭
+        </p>
+      </div>
+    </div>
+
+    <div class="dialog-actions" style="margin-top: 18px; display: flex; justify-content: flex-end;">
+      <form method="dialog"><button class="button secondary" autofocus>확인</button></form>
+    </div>
+  </dialog>
+
+  <!-- User Guide Dialog (설명서) -->
+  <dialog class="share-dialog" id="guide-dialog" style="width: min(620px, calc(100vw - 32px)); max-width: 620px; max-height: 85vh; overflow-y: auto;" aria-labelledby="guide-dialog-title">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 22px;">📖</span>
+        <h2 id="guide-dialog-title" style="margin: 0; font-size: 18px;">AcaRaca 연습실 사용 설명서</h2>
+      </div>
+      <button type="button" class="dialog-close-x" onclick="document.getElementById('guide-dialog').close()" aria-label="닫기">✕</button>
+    </div>
+
+    <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">
+      AcaRaca는 아카펠라 팀을 위한 맞춤형 멀티파트 연습 플랫폼입니다. 주요 기능을 확인해 보세요.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
+      <div style="background: var(--surface-soft); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;">
+          <span>🎯</span> 1. 파트별 맞춤 연습
+        </h3>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.5;">
+          곡 목록에서 원하는 곡을 선택한 후 <strong>내 파트(Soprano, Alto, Tenor, Baritone, Bass, VP)</strong>를 선택하면, 해당 파트 음정이 강조된 가이드 영상으로 집중 연습할 수 있습니다.
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;">
+          <span>🎵</span> 2. 첫 음 잡기 (피치파이프)
+        </h3>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.5;">
+          상단 바 또는 곡 상세 화면의 <strong>[첫 음 잡기]</strong> 버튼을 누르면 연습 전 내 파트 첫 음(계이름, 주파수 Hz)을 바로 들어보고 조율할 수 있습니다. 전체 파트 첫 음 화음 듣기도 지원합니다.
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;">
+          <span>🔁</span> 3. 구간 반복 연습 (A-B Loop)
+        </h3>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.5;">
+          플레이어 컨트롤러 하단에서 <strong>[📍 A 시작점]</strong>과 <strong>[🏁 B 끝점]</strong>을 캡처하여 어려운 마디를 자동으로 무한 반복 재생할 수 있습니다.<br>
+          • <strong>⚡ 5초 / 10초 / 15초</strong>: 현재 위치부터 원클릭 즉시 구간 반복<br>
+          • <strong>-1s / +1s</strong>: 1초 단위 미세조정<br>
+          • <strong>[⏮️ A로 이동]</strong>: 시작점으로 즉시 점프
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;">
+          <span>⏩</span> 4. 배속 조절 &amp; 5초 복습
+        </h3>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.5;">
+          빠른 템포의 곡은 <strong>0.75x 느리게 / 0.9x</strong> 배속으로 천천히 연습해 보세요. 놓친 소절은 <strong>[🔄 5초 복습]</strong> 버튼으로 바로 되감아 들을 수 있습니다.
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;">
+          <span>🎼</span> 5. 악보 창고 &amp; 무대 실황 &amp; 연습 일지
+        </h3>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.5;">
+          좌측 메뉴의 <strong>[악보 창고]</strong>에서 NWC/PDF 악보를 열람·다운로드할 수 있으며, <strong>[아카라카 영상]</strong>에서 무대 실황, <strong>[연습 일지]</strong>에서 우리 팀의 합주 녹음본과 피드백을 확인할 수 있습니다.
+        </p>
+      </div>
+
+      <div style="background: var(--surface-soft); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;">
+          <span>📲</span> 6. 파트 링크 공유 &amp; QR 코드
+        </h3>
+        <p style="margin: 0; color: var(--muted-strong); line-height: 1.5;">
+          연습 화면에서 <strong>[파트 공유]</strong>나 <strong>[QR 코드]</strong>를 누르면 팀원들이 바로 같은 파트 연습 화면으로 접속할 수 있습니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="dialog-actions" style="margin-top: 18px; display: flex; justify-content: flex-end;">
+      <form method="dialog"><button class="button primary" autofocus>확인</button></form>
     </div>
   </dialog>
 
@@ -631,7 +767,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=50';
+      script.src = './js/app.js?v=51';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);

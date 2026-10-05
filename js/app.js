@@ -185,6 +185,45 @@ function renderNavIcon(tab) {
   });
 }
 
+let deferredInstallPrompt = null;
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const directBtn = document.getElementById('pwa-direct-install-btn');
+    if (directBtn) directBtn.hidden = false;
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    toast('AcaRaca 앱이 성공적으로 설치되었습니다! 🎉');
+  });
+}
+
+function openInstallDialog() {
+  const dialog = document.getElementById('install-dialog');
+  if (!dialog) return;
+  const directBtn = document.getElementById('pwa-direct-install-btn');
+  if (directBtn) {
+    directBtn.hidden = !deferredInstallPrompt;
+    directBtn.onclick = async () => {
+      if (!deferredInstallPrompt) return;
+      dialog.close();
+      deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        toast('AcaRaca 앱 설치를 진행합니다.');
+      }
+      deferredInstallPrompt = null;
+    };
+  }
+  dialog.showModal();
+}
+
+function openGuideDialog() {
+  const dialog = document.getElementById('guide-dialog');
+  if (dialog) dialog.showModal();
+}
+
 function refreshChrome() {
   const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
   const desktopNav = document.getElementById('desktop-nav');
@@ -211,6 +250,8 @@ function refreshChrome() {
   );
   document.getElementById('topbar-actions').replaceChildren(
     button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
+    button('앱설치', () => openInstallDialog(), 'button secondary small', 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
+    button('설명서', () => openGuideDialog(), 'button secondary small', 'book', {'aria-label': 'AcaRaca 연습실 사용 설명서'}),
     button('+ 곡 추가', () => openAdmin('./admin.html?action=new'), 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
     button('', () => navigate({tab: 'settings'}), 'icon-button', 'settings', {'aria-label': '설정 열기'})
