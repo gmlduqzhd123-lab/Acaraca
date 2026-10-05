@@ -952,7 +952,14 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     const sec = Math.floor(val);
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
     const s = String(sec % 60).padStart(2, '0');
-    timeLabel.textContent = `${m}:${s}`;
+    const durSec = Math.floor(audio.duration || audioData.duration || 0);
+    if (durSec > 0) {
+      const dm = String(Math.floor(durSec / 60)).padStart(2, '0');
+      const ds = String(durSec % 60).padStart(2, '0');
+      timeLabel.textContent = `${m}:${s} / ${dm}:${ds}`;
+    } else {
+      timeLabel.textContent = `${m}:${s}`;
+    }
   };
 
   rangeInput.addEventListener('mousedown', () => { isScrubbing = true; });
@@ -973,6 +980,7 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   audio.addEventListener('loadedmetadata', () => {
     if (audio.duration && !isNaN(audio.duration)) {
       rangeInput.max = audio.duration;
+      updateSliderTime(audio.currentTime || 0);
     }
   });
 
@@ -1027,6 +1035,12 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
     },
     isPlaying() {
       return isPlaying && !audio.paused;
+    },
+    destroy() {
+      try {
+        audio.pause();
+        audio.src = '';
+      } catch (e) {}
     }
   };
 }
@@ -1344,56 +1358,54 @@ function renderRehearsal() {
     let audioCtrl = null;
 
     const mediaBox = el('div', {class: 'rehearsal-media-box'});
-    if (reh.video?.url) {
-      if (reh.video.type === 'local-video') {
-        const videoEl = el('video', {
-          controls: true,
-          src: reh.video.url,
-          style: 'width: 100%; border-radius: 12px; max-height: 480px; background: #000; margin-bottom: 12px;'
-        });
-        activePlayerInstance = {
-          play: () => videoEl.play(),
-          pause: () => videoEl.pause(),
-          seekTo: (sec) => { videoEl.currentTime = sec; },
-          getCurrentTime: () => videoEl.currentTime || 0,
-          destroy: () => { videoEl.pause(); videoEl.src = ''; }
-        };
-        activePlayers.push(activePlayerInstance);
-        mediaBox.append(videoEl);
-      } else {
-        const videoHost = el('div');
-        activePlayerInstance = createPlayer(videoHost, reh.video, reh.title);
-        activePlayers.push(activePlayerInstance);
-        mediaBox.append(videoHost);
-      }
-    }
+    const hasAudio = Boolean(reh.audio?.url && reh.audio.url.trim());
+    const hasLocalVideo = Boolean(reh.video?.type === 'local-video' && reh.video?.url);
 
-    if (reh.audio?.url && reh.audio.url.trim()) {
+    if (hasAudio) {
       audioCtrl = renderAudioPlayer(reh.audio, reh.title);
+      activePlayerInstance = audioCtrl;
+      activePlayers.push(audioCtrl);
       mediaBox.append(audioCtrl.element);
-    }
-
-    if (!reh.video?.url && (!reh.audio?.url || !reh.audio.url.trim())) {
       mediaBox.append(
-        el('div', {style: 'padding: 24px 16px; border: 2px dashed var(--border); border-radius: 12px; text-align: center; background: var(--surface-soft); margin-bottom: 16px;'},
-          el('div', {style: 'font-size: 28px; margin-bottom: 6px;'}, '🎙️'),
-          el('h3', {style: 'font-size: 15px; font-weight: 700; margin-bottom: 4px;'}, '연습 녹음본 또는 영상을 올려보세요'),
-          el('p', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 14px;'}, '컴퓨터의 녹음 파일(.mp3, .m4a, .wav 등)을 올리면 바로 재생하며 아래 구간별 피드백과 싱크를 맞출 수 있습니다.'),
-          button('🎙️ 내 컴퓨터에서 녹음본/영상 파일 올리기', () => openAttachMediaModal(reh), 'button primary small', 'music')
+        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+          button('📁 녹음본 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+        )
+      );
+    } else if (hasLocalVideo) {
+      const videoEl = el('video', {
+        controls: true,
+        src: reh.video.url,
+        style: 'width: 100%; border-radius: 12px; max-height: 480px; background: #000; margin-bottom: 12px;'
+      });
+      activePlayerInstance = {
+        play: () => videoEl.play(),
+        pause: () => videoEl.pause(),
+        seekTo: (sec) => { videoEl.currentTime = sec; },
+        getCurrentTime: () => videoEl.currentTime || 0,
+        destroy: () => { videoEl.pause(); videoEl.src = ''; }
+      };
+      activePlayers.push(activePlayerInstance);
+      mediaBox.append(videoEl);
+      mediaBox.append(
+        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+          button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
         )
       );
     } else {
       mediaBox.append(
-        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
-          button('📁 녹음본/영상 파일 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+        el('div', {style: 'padding: 24px 16px; border: 2px dashed var(--border); border-radius: 12px; text-align: center; background: var(--surface-soft); margin-bottom: 16px;'},
+          el('div', {style: 'font-size: 28px; margin-bottom: 6px;'}, '🎙️'),
+          el('h3', {style: 'font-size: 15px; font-weight: 700; margin-bottom: 4px;'}, '연습 녹음본을 올려보세요'),
+          el('p', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 14px;'}, '컴퓨터의 녹음 파일(.mp3, .m4a, .wav 등)을 올리면 바로 메인 음원으로 재생되며 아래 구간별 피드백과 싱크를 맞출 수 있습니다.'),
+          button('🎙️ 내 컴퓨터에서 녹음본 파일 올리기', () => openAttachMediaModal(reh), 'button primary small', 'music')
         )
       );
     }
 
-    const feedbackSection = renderFeedbackSection(reh, activePlayerInstance, audioCtrl);
+    const feedbackSection = renderFeedbackSection(reh, audioCtrl || activePlayerInstance, audioCtrl);
 
-    const topActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
-      song ? button('파트 연습실 이동', () => openSong(song), 'button primary small', 'play') : null,
+    const topActions = el('div', {style: 'display: flex; gap: 8px; align-items: center; flex-wrap: wrap;'},
+      song ? button('파트 연습실 이동 ↗', () => openSong(song), 'button primary small', 'play') : null,
       reh.isCustom ? button('삭제', async () => {
         if (confirm(`'${reh.title}' 연습 일지를 삭제할까요?`)) {
           await deleteCustomRehearsal(reh.id);
