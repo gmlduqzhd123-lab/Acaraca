@@ -3794,6 +3794,8 @@ function renderPractice(song, part, record = true) {
   const parts = availableParts(song); const index = parts.indexOf(part);
   const songRehearsals = getRehearsalsForSong(state.rehearsals, song.id);
   const songPerformances = getPerformancesForSong(state.performances, song.id);
+  const songScores = getScoresForSong(state.scores, song.id);
+  const songLyrics = getLyricsForSong(state.lyrics, song.id);
   const rehearsalAudio = songRehearsals[0]?.audio?.url ? songRehearsals[0].audio : null;
 
   app.append(button('파트 선택으로', () => openSong(song), 'text-button back-button', 'back'),
@@ -3854,6 +3856,14 @@ function renderPractice(song, part, record = true) {
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('QR 코드', () => showQR(song, part), 'button secondary', 'qr'),
     button('파트 공유', () => share(song, part), 'button secondary', 'share'),
+    button(songLyrics?.isExample ? '가사 & 큐시트 (예시)' : '가사 & 큐시트', () => {
+      const elLyrics = document.getElementById('lyrics-sheet-section');
+      if (elLyrics) elLyrics.scrollIntoView({ behavior: 'smooth' });
+    }, 'button secondary', 'notes'),
+    songScores.length ? button(`악보 창고 (${songScores.length})`, () => {
+      state.scoreFilters.songId = song.id;
+      navigate({tab: 'scores'});
+    }, 'button secondary', 'document') : null,
     button('영상 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
     songPerformances.length ? button('무대 실황', () => navigate({tab: 'stage'}), 'button secondary', 'stage', {'aria-label': '이 곡의 무대 실황 영상 보기'}) : null,
     songRehearsals.length ? button('연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null,
