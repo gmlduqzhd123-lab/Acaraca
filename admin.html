@@ -7,8 +7,8 @@
   <meta name="description" content="AcaRaca 곡과 파트별 YouTube 자료를 편집하고 songs.json 파일로 다운로드하세요.">
   <title>데이터 편집기 · AcaRaca</title>
   <link rel="icon" href="./assets/icons/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/style.css?v=36">
-  <link rel="stylesheet" href="./css/admin.css?v=36">
+  <link rel="stylesheet" href="./css/style.css?v=37">
+  <link rel="stylesheet" href="./css/admin.css?v=37">
 </head>
 <body class="admin-body">
   <a class="admin-skip" href="#editor-main">본문으로 이동</a>
@@ -100,7 +100,7 @@
       document.getElementById('document-state').textContent = 'HTTP 환경 필요';
       document.querySelectorAll('button, input, select, textarea').forEach(control => { control.disabled = true; });
     } else {
-      const script = document.createElement('script'); script.type = 'module'; script.src = './js/admin.js?v=36'; document.body.append(script);
+      const script = document.createElement('script'); script.type = 'module'; script.src = './js/admin.js?v=37'; document.body.append(script);
     }
   </script>
 </body>
