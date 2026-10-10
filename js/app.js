@@ -272,6 +272,7 @@ function refreshChrome() {
   document.getElementById('topbar-actions').replaceChildren(
     button('설명서', () => openGuideDialog(), 'button secondary small', 'book', {'aria-label': 'AcaRaca 연습실 사용 설명서'}),
     button('앱설치', () => openInstallDialog(), 'button secondary small', 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
+    button('📱 QR', () => window.YSQr?.open(), 'button secondary small', null, {'aria-label': 'QR 코드로 접속', 'data-qr-btn': ''}),
     button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
     button('+ 곡 추가', () => openAdmin('./admin.html?action=new'), 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
