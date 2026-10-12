@@ -2507,6 +2507,7 @@ body.in-pocket-mode {
   min-height: 56px;
   cursor: text;
   word-break: keep-all;
+  white-space: pre-line;
 }
 
 .stage-speech-bubble:focus {
@@ -3054,8 +3055,36 @@ body.in-pocket-mode {
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   word-break: keep-all;
+  white-space: pre-line;
   min-height: 44px;
   box-sizing: border-box;
+}
+
+.stage-overview-mc-text {
+  flex: 1;
+  min-width: 0;
+  word-break: keep-all;
+}
+
+.stage-overview-mc-refresh-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.stage-overview-mc-refresh-btn:hover {
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.15);
+  transform: rotate(45deg);
 }
 
 .stage-overview-mc-box .icon {
