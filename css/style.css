@@ -2507,6 +2507,7 @@ body.in-pocket-mode {
   min-height: 56px;
   cursor: text;
   word-break: keep-all;
+  overflow-wrap: break-word;
   white-space: pre-line;
 }
 
@@ -2634,6 +2635,7 @@ body.in-pocket-mode {
 
 .stage-history-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 4px;
@@ -2864,7 +2866,9 @@ body.in-pocket-mode {
   margin: 0;
   cursor: pointer;
   line-height: 1.35;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   transition: color 0.15s ease;
 }
 
@@ -2876,7 +2880,9 @@ body.in-pocket-mode {
   font-size: 12.5px;
   color: #94a3b8;
   margin: 0;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .stage-key-badge {
@@ -3064,6 +3070,7 @@ body.in-pocket-mode {
   flex: 1;
   min-width: 0;
   word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .stage-overview-mc-refresh-btn {
@@ -3071,14 +3078,17 @@ body.in-pocket-mode {
   border: none;
   color: #64748b;
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-left: auto;
   flex-shrink: 0;
   transition: all 0.2s ease;
+  min-width: 34px;
+  min-height: 34px;
+  touch-action: manipulation;
 }
 
 .stage-overview-mc-refresh-btn:hover {
@@ -3181,6 +3191,26 @@ body.in-pocket-mode {
   }
   .stage-header-left {
     width: 100%;
+  }
+  .stage-live-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .stage-live-mode-switch {
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    margin-top: 2px;
+  }
+  .stage-mode-btn {
+    flex: 1 1 50%;
+    text-align: center;
+    justify-content: center;
+    padding: 7px 8px;
+    font-size: 12px;
   }
   .stage-header-actions {
     display: flex;
@@ -3291,6 +3321,9 @@ body.in-pocket-mode {
   .stage-modal-body select {
     font-size: 16px !important;
   }
+  .stage-overview-card {
+    padding: 12px 14px;
+  }
   .stage-overview-card-header {
     flex-direction: column;
     align-items: stretch;
@@ -3304,11 +3337,18 @@ body.in-pocket-mode {
     margin-left: 0;
     width: 100%;
     justify-content: center;
+    min-height: 40px;
   }
   .stage-overview-pitch-bar {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
+    padding: 8px 10px;
+  }
+  .stage-overview-pitch-chip {
+    padding: 6px 10px;
+    min-height: 36px;
+    font-size: 12.5px;
   }
   .stage-overview-top-bar {
     flex-direction: column;
@@ -3319,6 +3359,18 @@ body.in-pocket-mode {
   }
   .stage-overview-top-actions .button {
     width: 100%;
+    justify-content: center;
+  }
+  .stage-history-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  .stage-history-actions {
+    flex-wrap: wrap;
+    justify-content: stretch;
+    gap: 6px;
+  }
+  .stage-history-actions .button:first-child {
+    flex: 1 1 auto;
     justify-content: center;
   }
   .stage-modal-dialog {
