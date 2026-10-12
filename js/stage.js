@@ -224,6 +224,23 @@ export function getSongStartingPitchEntries(songData) {
  */
 export const DEFAULT_STAGE_HISTORY = [
   {
+    id: 'stage-2026-yeosu',
+    eventTitle: '2026 여수 생활문화한마당',
+    date: '2026.10.16',
+    venue: '웅천친수공원',
+    notes: '2026 여수 생활문화한마당 공연 큐시트 (장소: 웅천친수공원)',
+    updatedAt: 1792144800000,
+    currentIndex: 0,
+    songs: [
+      { songId: 'love-song-medley', title: '러브송 메들리', note: '오프닝 메들리', commentTone: 'story' },
+      { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
+      { songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', note: '5부 하이라이트', commentTone: 'wit' },
+      { songId: 'in-your-arms', title: '그대 내 품에', note: '감성 발라드', commentTone: 'story' },
+      { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 그루브', commentTone: 'wit' },
+      { songId: 'lets-travel', title: '여행을 떠나요', note: '피날레 호응 유도', commentTone: 'wit' }
+    ]
+  },
+  {
     id: 'stage-2026-spring',
     eventTitle: '2026 아카라카 봄 정기공연 · 청춘 하모니',
     date: '2026.10.12',
@@ -284,7 +301,19 @@ export function getStageHistory() {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      return parsed.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      const existingIds = new Set(parsed.map(item => item.id));
+      let changed = false;
+      for (const def of DEFAULT_STAGE_HISTORY) {
+        if (!existingIds.has(def.id)) {
+          parsed.unshift(JSON.parse(JSON.stringify(def)));
+          changed = true;
+        }
+      }
+      const sorted = parsed.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      if (changed) {
+        saveStageHistory(sorted);
+      }
+      return sorted;
     }
   } catch (e) {
     console.warn('Failed to parse stage history:', e);
@@ -314,6 +343,11 @@ export function getActiveStageSession(allSongs = []) {
     const raw = localStorage.getItem(STAGE_ACTIVE_KEY);
     if (raw) {
       const session = JSON.parse(raw);
+      const yeosuSession = getStageHistory().find(h => h.id === 'stage-2026-yeosu');
+      if (yeosuSession && (session.id === 'stage-2026-spring' || session.eventTitle === '새 아카라카 공연' || session.eventTitle === '2026 아카라카 무대 큐시트' || !session.eventTitle)) {
+        saveActiveStageSession(JSON.parse(JSON.stringify(yeosuSession)));
+        return yeosuSession;
+      }
       if (session && Array.isArray(session.songs) && session.songs.length > 0) {
         return session;
       }
