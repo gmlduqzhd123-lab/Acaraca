@@ -29,7 +29,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=101">
+  <link rel="stylesheet" href="./css/style.css?v=102">
 
 
 </head>
@@ -243,6 +243,31 @@
       <div class="dialog-actions" style="margin-top: 18px; display: flex; justify-content: flex-end; gap: 8px;">
         <button type="button" class="button secondary" id="admin-auth-cancel">취소</button>
         <button type="submit" class="button primary" id="admin-auth-submit">확인</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Protected Sections (악보 창고 & 교육 자료) Authentication Modal -->
+  <dialog class="share-dialog" id="protected-auth-dialog" aria-labelledby="protected-auth-title" style="width: min(440px, calc(100vw - 32px)); max-width: 440px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span id="protected-auth-icon" style="font-size: 22px;">🔒</span>
+        <h2 id="protected-auth-title" style="margin: 0; font-size: 18px;">비밀번호 인증</h2>
+      </div>
+      <button type="button" class="dialog-close-x" id="protected-auth-close" aria-label="닫기">✕</button>
+    </div>
+    <p id="protected-auth-desc" style="margin-top: 4px; color: var(--muted); font-size: 13px; margin-bottom: 12px; line-height: 1.5;">악보 창고 및 교육 자료 열람을 위해 비밀번호를 입력해 주세요.</p>
+    <div style="background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 16px; flex-shrink: 0;">💡</span>
+      <span style="font-size: 13px; font-weight: 600; color: var(--ink);">비밀번호는 엽쌤에게 문의하세요</span>
+    </div>
+    <form id="protected-auth-form" method="dialog" style="text-align: left; margin-top: 0;">
+      <label for="protected-auth-password" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--ink);">비밀번호 (4자리)</label>
+      <input type="password" id="protected-auth-password" class="share-input" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="비밀번호 4자리" autocomplete="current-password" required style="width: 100%; box-sizing: border-box; font-size: 16px; letter-spacing: 4px; text-align: center; padding: 10px 14px;">
+      <p id="protected-auth-error" style="color: #ef4444; font-size: 12.5px; margin-top: 8px; font-weight: 600; text-align: left;" hidden>비밀번호가 일치하지 않습니다. 비밀번호는 엽쌤에게 문의하세요.</p>
+      <div class="dialog-actions" style="margin-top: 18px; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="button secondary" id="protected-auth-cancel">취소</button>
+        <button type="submit" class="button primary" id="protected-auth-submit">확인</button>
       </div>
     </form>
   </dialog>
@@ -847,7 +872,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=101';
+      script.src = './js/app.js?v=102';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);

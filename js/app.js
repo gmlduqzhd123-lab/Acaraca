@@ -196,6 +196,147 @@ function openAdmin(targetUrl = './admin.html') {
   setTimeout(() => input.focus(), 60);
 }
 
+const SECTION_AUTH_PASSWORD = '1234';
+const SECTION_AUTH_NOTICE = '비밀번호는 엽쌤에게 문의하세요';
+
+function isProtectedAuthorized(tab) {
+  try {
+    if (typeof sessionStorage === 'undefined') return false;
+    return sessionStorage.getItem('acaroom_protected_auth') === 'true'
+      || sessionStorage.getItem(`acaroom_${tab}_auth`) === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+function setProtectedAuthorized(tab) {
+  try {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('acaroom_protected_auth', 'true');
+      sessionStorage.setItem('acaroom_scores_auth', 'true');
+      sessionStorage.setItem('acaroom_education_auth', 'true');
+    }
+  } catch (e) {}
+}
+
+function openProtectedAuthDialog(tab = 'scores', onSuccess, onCancel) {
+  const isScores = tab === 'scores';
+  const sectionTitle = isScores ? '악보 창고' : '교육 자료';
+  const sectionIcon = isScores ? '🎼' : '🎓';
+
+  if (isProtectedAuthorized(tab)) {
+    if (typeof onSuccess === 'function') onSuccess();
+    else render();
+    return;
+  }
+
+  const dialog = document.getElementById('protected-auth-dialog');
+  if (!dialog) {
+    const entered = window.prompt(`${sectionTitle} 비밀번호를 입력해 주세요:\n(${SECTION_AUTH_NOTICE})`);
+    if (entered === SECTION_AUTH_PASSWORD) {
+      setProtectedAuthorized(tab);
+      toast('인증되었습니다.');
+      if (typeof onSuccess === 'function') onSuccess();
+      else render();
+    } else if (entered !== null) {
+      toast(`비밀번호가 일치하지 않습니다. ${SECTION_AUTH_NOTICE}`);
+      if (typeof onCancel === 'function') onCancel();
+    } else {
+      if (typeof onCancel === 'function') onCancel();
+    }
+    return;
+  }
+
+  const titleEl = document.getElementById('protected-auth-title');
+  const iconEl = document.getElementById('protected-auth-icon');
+  const descEl = document.getElementById('protected-auth-desc');
+  const form = document.getElementById('protected-auth-form');
+  const input = document.getElementById('protected-auth-password');
+  const errEl = document.getElementById('protected-auth-error');
+  const cancelBtn = document.getElementById('protected-auth-cancel');
+  const closeBtn = document.getElementById('protected-auth-close');
+
+  if (titleEl) titleEl.textContent = `${sectionTitle} 비밀번호 인증`;
+  if (iconEl) iconEl.textContent = sectionIcon;
+  if (descEl) descEl.textContent = `${sectionTitle} 열람을 위해 비밀번호를 입력해 주세요.`;
+
+  if (input) input.value = '';
+  if (errEl) {
+    errEl.textContent = `비밀번호가 일치하지 않습니다. ${SECTION_AUTH_NOTICE}`;
+    errEl.hidden = true;
+  }
+
+  let closedWithAuth = false;
+
+  const handleClose = () => {
+    if (dialog.open) dialog.close();
+    if (!closedWithAuth && typeof onCancel === 'function') onCancel();
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const val = input ? input.value.trim() : '';
+    if (val === SECTION_AUTH_PASSWORD) {
+      closedWithAuth = true;
+      setProtectedAuthorized(tab);
+      if (dialog.open) dialog.close();
+      toast('인증되었습니다.');
+      if (typeof onSuccess === 'function') onSuccess();
+      else render();
+    } else {
+      if (errEl) {
+        errEl.textContent = `비밀번호가 일치하지 않습니다. ${SECTION_AUTH_NOTICE}`;
+        errEl.hidden = false;
+      }
+      if (input) {
+        input.classList.add('error');
+        input.select();
+        input.focus();
+      }
+    }
+  };
+
+  if (form) form.onsubmit = onSubmit;
+  if (cancelBtn) cancelBtn.onclick = handleClose;
+  if (closeBtn) closeBtn.onclick = handleClose;
+
+  if (typeof dialog.showModal === 'function') {
+    if (!dialog.open) dialog.showModal();
+    setTimeout(() => input && input.focus(), 60);
+  }
+}
+
+function renderProtectedLockScreen(tab) {
+  const isScores = tab === 'scores';
+  const title = isScores ? '악보 창고' : '교육 자료';
+  const iconSymbol = isScores ? '🎼' : '🎓';
+  const eyebrow = isScores ? 'SECURE SCORE ARCHIVE' : 'ACAPELLA EDUCATION ARCHIVE';
+  const desc = isScores
+    ? '아카라카 및 연구회 소중한 악보 자료 보호를 위해 비밀번호 인증이 필요합니다.'
+    : '선생님과 학생을 위한 워크숍, 교재 PDF, 수업 강의 영상 보호를 위해 비밀번호 인증이 필요합니다.';
+
+  app.replaceChildren(
+    el('div', { class: 'page-heading' },
+      el('p', { class: 'eyebrow', text: eyebrow }),
+      el('h1', { text: `${iconSymbol} ${title}` }),
+      el('p', { text: desc })
+    ),
+    el('div', { class: 'protected-lock-state' },
+      el('div', { class: 'protected-lock-icon' }, '🔒'),
+      el('h2', { class: 'protected-lock-title', text: `${title} 접근 비밀번호` }),
+      el('p', { class: 'protected-lock-desc', text: `${title}는 회원 전용 공간으로 비밀번호 입력 후 이용하실 수 있습니다.` }),
+      el('div', { class: 'protected-notice-badge' },
+        el('span', {}, '💡'),
+        el('span', { text: SECTION_AUTH_NOTICE })
+      ),
+      el('div', { class: 'protected-lock-actions' },
+        button('🔑 비밀번호 입력하기', () => openProtectedAuthDialog(tab, () => isScores ? renderScores() : renderEducation()), 'button primary', 'lock'),
+        button('🏠 홈으로 돌아가기', () => navigate({ tab: 'home' }), 'button secondary', 'home')
+      )
+    )
+  );
+}
+
 function renderNavIcon(tab) {
   return el('img', {
     class: 'nav-icon-img',
@@ -2067,6 +2208,11 @@ function openOrDownloadScore(score, isDownload = false) {
 
 
 function renderScores() {
+  if (!isProtectedAuthorized('scores')) {
+    renderProtectedLockScreen('scores');
+    openProtectedAuthDialog('scores', () => renderScores());
+    return;
+  }
   const songOptions = [{ value: '', label: '전체 곡 악보 보기' }];
   for (const s of state.songs) {
     if (state.scores.some(sc => sc.songId === s.id)) {
@@ -2457,6 +2603,11 @@ function openOrDownloadEducation(edu, forceDownload = false) {
 }
 
 function renderEducation() {
+  if (!isProtectedAuthorized('education')) {
+    renderProtectedLockScreen('education');
+    openProtectedAuthDialog('education', () => renderEducation());
+    return;
+  }
   const categoryOptions = ['전체', '교재 / PDF', '발표 슬라이드 (PPT)', '강의 / 교육 영상', '발성 & 화음 지도안'];
   const targetOptions = ['전체 대상', '초등 학생용', '교사 연수용', '아카펠라 동아리', '공통'];
 

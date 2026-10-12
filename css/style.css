@@ -3633,6 +3633,74 @@ body.in-pocket-mode {
   }
 }
 
+/* Protected Sections (악보 창고 & 교육 자료) Lock Screen */
+.protected-lock-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 44px 24px;
+  text-align: center;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  max-width: 520px;
+  margin: 32px auto;
+}
+.protected-lock-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(234, 179, 8, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 18px;
+}
+.protected-lock-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.protected-lock-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 18px;
+  max-width: 420px;
+}
+.protected-notice-badge {
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.protected-lock-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+html[data-theme="dark"] .protected-notice-badge {
+  background: #373223;
+  color: #f3dfa2;
+  border-color: #554826;
+}
+html[data-theme="dark"] .protected-lock-icon {
+  background: #3a321e;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

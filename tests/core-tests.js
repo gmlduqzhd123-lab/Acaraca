@@ -698,5 +698,19 @@ export function runCoreTests() {
     else delete globalThis.document;
   }
 
+  if (nodeFs) {
+    const appJsContent = nodeFs.readFileSync('./js/app.js', 'utf8');
+    const indexHtmlContent = nodeFs.readFileSync('./index.html', 'utf8');
+    const styleCssContent = nodeFs.readFileSync('./css/style.css', 'utf8');
+
+    check('악보 창고 및 교육 자료 비밀번호 상수 1234 설정 검증', () => appJsContent.includes("const SECTION_AUTH_PASSWORD = '1234';"));
+    check('엽쌤 문의 안내 문구 포함 검증 (app.js)', () => appJsContent.includes("const SECTION_AUTH_NOTICE = '비밀번호는 엽쌤에게 문의하세요';"));
+    check('index.html protected-auth-dialog 모달 및 엽쌤 문의 문구 검증', () => indexHtmlContent.includes('id="protected-auth-dialog"') && indexHtmlContent.includes('비밀번호는 엽쌤에게 문의하세요'));
+    check('index.html 필수 모달 폼 컨트롤 존재 검증', () => indexHtmlContent.includes('id="protected-auth-password"') && indexHtmlContent.includes('id="protected-auth-form"') && indexHtmlContent.includes('id="protected-auth-error"'));
+    check('renderScores 내 미인증 시 락 스크린 및 모달 호출 가드 검증', () => appJsContent.includes("if (!isProtectedAuthorized('scores'))") && appJsContent.includes("openProtectedAuthDialog('scores'"));
+    check('renderEducation 내 미인증 시 락 스크린 및 모달 호출 가드 검증', () => appJsContent.includes("if (!isProtectedAuthorized('education'))") && appJsContent.includes("openProtectedAuthDialog('education'"));
+    check('style.css 락 스크린 및 안내 배지 스타일 클래스 정의 검증', () => styleCssContent.includes('.protected-lock-state') && styleCssContent.includes('.protected-notice-badge'));
+  }
+
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };
 }
