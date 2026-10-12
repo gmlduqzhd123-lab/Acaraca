@@ -193,4 +193,14 @@ assert(pitchJsSource.includes('PITCH_TRIGGER_SELECTORS'), 'PITCH_TRIGGER_SELECTO
 assert(stageJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "stage.js actions order must be loadBtn, cloneBtn, deleteBtn");
 assert(appJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "app.js actions order must be loadBtn, cloneBtn, deleteBtn");
 
+// 11. Test Practice Video Link Buttons & Modal
+import { openSongPracticeVideoModal } from '../js/stage.js';
+assert.strictEqual(typeof openSongPracticeVideoModal, 'function', 'openSongPracticeVideoModal must be an exported function');
+assert(stageJsSource.includes('stage-practice-video-btn'), 'stage-practice-video-btn must be present in stage.js');
+assert(stageJsSource.includes('stage-overview-video-btn'), 'stage-overview-video-btn must be present in stage.js');
+assert(stageJsSource.includes('🎬 연습실 영상'), '🎬 연습실 영상 button text must be present in stage.js');
+assert(STAGE_EXTRA_SONG_METADATA['stand-by-me'].videos?.full?.url, 'stand-by-me has full video URL');
+assert(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'].videos?.full?.url, 'the-lion-sleeps-tonight has full video URL');
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');
+

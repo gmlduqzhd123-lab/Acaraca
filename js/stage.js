@@ -21,6 +21,7 @@ import {
   getCurrentPlaying
 } from './pitch.js';
 import { requestWakeLock, releaseWakeLock, isWakeLockActive } from './backgroundPlay.js';
+import { createPlayer } from './player.js';
 
 export const STAGE_HISTORY_KEY = 'acaroom_stage_history_v2';
 export const STAGE_ACTIVE_KEY = 'acaroom_stage_active_v2';
@@ -509,6 +510,12 @@ export const STAGE_EXTRA_SONG_METADATA = {
     category: 'Pop / Soul',
     arrangement: '혼성 5부',
     musicalKey: 'A Major',
+    videos: {
+      full: {
+        type: 'video',
+        url: 'https://www.youtube.com/watch?v=BTCfQ667QUY'
+      }
+    },
     startingPitches: {
       key: 'A Major',
       pitches: {
@@ -527,6 +534,12 @@ export const STAGE_EXTRA_SONG_METADATA = {
     category: 'Pop / World',
     arrangement: '혼성 5부',
     musicalKey: 'F Major',
+    videos: {
+      full: {
+        type: 'video',
+        url: 'https://www.youtube.com/watch?v=OQlByoPdG6c'
+      }
+    },
     startingPitches: {
       key: 'F Major',
       pitches: {
@@ -1256,10 +1269,23 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       item?.note ? el('span', { class: 'stage-hero-badge', style: 'background: rgba(234, 179, 8, 0.2); color: #fde047;', text: item.note }) : null
     );
 
+    const videoBtn = button('🎬 연습실 영상', () => {
+      openSongPracticeVideoModal({
+        song: songData || item,
+        songs,
+        navigate
+      });
+    }, 'stage-practice-video-btn', null, { title: '아카라카 연습실 공식 영상 및 파트별 연습 영상 보기' });
+
+    const topRow = el('div', { class: 'stage-hero-top-row' },
+      badges,
+      videoBtn
+    );
+
     const titleEl = el('h3', { class: 'stage-hero-title', text: title });
     const artistEl = el('p', { class: 'stage-hero-artist', text: artistArrangement });
 
-    heroCard.replaceChildren(badges, titleEl, artistEl);
+    heroCard.replaceChildren(topRow, titleEl, artistEl);
   }
 
   function renderPitchCard(songData) {
@@ -1652,6 +1678,15 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         titleRow
       );
 
+      const videoBtn = button('🎬 연습실 영상', (e) => {
+        e.stopPropagation();
+        openSongPracticeVideoModal({
+          song: songData || item,
+          songs,
+          navigate
+        });
+      }, 'button secondary small stage-overview-video-btn', null, { title: `${item.title} 아카라카 연습실 영상 보기` });
+
       const focusBtn = button('🎤 1곡 집중 보기', () => {
         stopPitch(true);
         activeIndex = idx;
@@ -1662,7 +1697,12 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         renderAll();
       }, 'button secondary small stage-overview-focus-btn', null, { title: `${idx + 1}번 곡 집중 모드로 전환` });
 
-      const cardHeader = el('div', { class: 'stage-overview-card-header' }, leftWrap, focusBtn);
+      const headerActions = el('div', { class: 'stage-overview-header-actions' },
+        videoBtn,
+        focusBtn
+      );
+
+      const cardHeader = el('div', { class: 'stage-overview-card-header' }, leftWrap, headerActions);
 
       const pitchChipsWrap = el('div', { class: 'stage-overview-pitch-chips' });
       if (pitchEntries.length === 0) {
@@ -2064,4 +2104,157 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
 
   document.body.append(dialog);
   dialog.showModal();
+}
+
+/**
+ * 무대 큐시트에서 곡별 아카라카 연습실 영상 및 파트별 영상을 즉시 재생하는 팝업 모달
+ */
+export function openSongPracticeVideoModal({ song, songs, navigate }) {
+  if (!song) return;
+  const songId = song.songId || song.id || '';
+  const fullSong = resolveSongData(songs, songId, song.title || '');
+  const songTitle = fullSong.title || song.title || '곡명 미지정';
+
+  const existing = document.getElementById('stage-practice-video-dialog');
+  if (existing) {
+    existing.close();
+    existing.remove();
+  }
+
+  const dialog = el('dialog', {
+    id: 'stage-practice-video-dialog',
+    class: 'stage-modal-dialog stage-practice-video-modal',
+    'aria-labelledby': 'stage-practice-video-title'
+  });
+
+  const closeBtn = el('button', {
+    type: 'button',
+    class: 'dialog-close-x',
+    'aria-label': '닫기',
+    onclick: () => dialog.close()
+  }, '✕');
+
+  const categoryBadge = fullSong.category ? el('span', { class: 'stage-hero-badge', text: fullSong.category }) : null;
+  const keyStr = fullSong.musicalKey || fullSong.startingPitches?.key;
+  const keyBadge = keyStr ? el('span', { class: 'stage-key-badge', text: `Key: ${keyStr}` }) : null;
+
+  const header = el('div', { class: 'stage-modal-header' },
+    el('div', { style: 'flex: 1; min-width: 0;' },
+      el('div', { style: 'display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap;' },
+        el('span', { class: 'badge', style: 'background: rgba(45, 212, 191, 0.2); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.4);', text: '🎬 아카라카 연습실 영상' }),
+        categoryBadge,
+        keyBadge
+      ),
+      el('h3', { id: 'stage-practice-video-title', text: songTitle }),
+      fullSong.artist ? el('p', { style: 'margin: 4px 0 0; font-size: 13px; color: var(--muted);', text: `${fullSong.artist} · ${fullSong.arrangement || '아카펠라'}` }) : null
+    ),
+    closeBtn
+  );
+
+  const partLabels = {
+    full: '전체 합창 영상',
+    lead: '리드 (Lead)',
+    soprano: '소프라노 (Soprano)',
+    alto: '알토 (Alto)',
+    tenor: '테너 (Tenor)',
+    baritone: '바리톤 (Baritone)',
+    bass: '베이스 (Bass)',
+    vp: '보컬퍼커션 (VP)',
+    part1: '1번 파트',
+    part2: '2번 파트',
+    part3: '3번 파트',
+    part4: '4번 파트',
+    part5: '5번 파트',
+    part6: '6번 파트',
+    part7: '7번 파트'
+  };
+
+  const videoEntries = [];
+  if (fullSong && fullSong.videos && typeof fullSong.videos === 'object') {
+    for (const [key, vData] of Object.entries(fullSong.videos)) {
+      if (!vData) continue;
+      const url = typeof vData === 'string' ? vData : vData.url;
+      if (url && typeof url === 'string' && url.trim().length > 0) {
+        videoEntries.push({
+          key,
+          label: partLabels[key] || key.toUpperCase(),
+          url: url.trim()
+        });
+      }
+    }
+  }
+
+  let activePlayer = null;
+  const playerHost = el('div', { class: 'stage-practice-player-host' });
+
+  function mountActiveVideo(videoItem) {
+    if (activePlayer) {
+      try { activePlayer.destroy?.(); } catch {}
+      activePlayer = null;
+    }
+    if (videoItem && videoItem.url) {
+      activePlayer = createPlayer(playerHost, videoItem.url, `${songTitle} - ${videoItem.label}`);
+    } else {
+      const query = encodeURIComponent(`아카펠라 ${songTitle} ${fullSong?.artist || ''}`);
+      const ytSearchUrl = `https://www.youtube.com/results?search_query=${query}`;
+      playerHost.replaceChildren(
+        el('div', { class: 'stage-video-empty-state', style: 'padding: 28px 16px; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.15);' },
+          el('p', { style: 'font-size: 15px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px;', text: '등록된 공식 연습실 영상이 없습니다' }),
+          el('p', { style: 'font-size: 12.5px; color: #94a3b8; margin-bottom: 16px;', text: 'YouTube에서 해당 곡의 다양한 아카펠라 영상을 직접 검색해 보실 수 있습니다.' }),
+          el('a', {
+            href: ytSearchUrl,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            class: 'button secondary small',
+            text: 'YouTube에서 영상 검색하기 ↗'
+          })
+        )
+      );
+    }
+  }
+
+  const partSelectorBar = el('div', { class: 'stage-video-part-bar' });
+  if (videoEntries.length > 1) {
+    videoEntries.forEach((vItem, i) => {
+      const partBtn = button(vItem.label, () => {
+        mountActiveVideo(vItem);
+        partSelectorBar.querySelectorAll('.stage-video-part-chip').forEach(b => b.classList.remove('active'));
+        partBtn.classList.add('active');
+      }, `stage-video-part-chip${i === 0 ? ' active' : ''}`);
+      partSelectorBar.append(partBtn);
+    });
+  }
+
+  mountActiveVideo(videoEntries[0] || null);
+
+  const footerActions = el('div', { class: 'stage-video-modal-footer' });
+
+  const gotoPracticeRoomBtn = button('아카라카 연습실 상세 페이지로 이동 ↗', () => {
+    dialog.close();
+    if (typeof navigate === 'function' && fullSong.id) {
+      navigate({ song: fullSong.id });
+    }
+  }, 'button primary small', 'arrow', { title: '악보 창고, 가사 및 전체 파트 연습 페이지로 이동' });
+
+  const dismissBtn = button('닫기', () => dialog.close(), 'button secondary small');
+
+  footerActions.append(gotoPracticeRoomBtn, dismissBtn);
+
+  const body = el('div', { class: 'stage-modal-body' },
+    partSelectorBar.children.length ? partSelectorBar : null,
+    playerHost,
+    footerActions
+  );
+
+  dialog.append(header, body);
+  document.body.append(dialog);
+  dialog.showModal();
+
+  dialog.addEventListener('close', () => {
+    if (activePlayer) {
+      try { activePlayer.destroy?.(); } catch {}
+      activePlayer = null;
+    }
+    dialog.remove();
+  });
 }

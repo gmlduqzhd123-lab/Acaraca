@@ -2302,12 +2302,50 @@ body.in-pocket-mode {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.stage-hero-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
 .stage-hero-meta-row {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+}
+
+.stage-practice-video-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  color: #2dd4bf;
+  font-size: 12.5px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  touch-action: manipulation;
+}
+
+.stage-practice-video-btn:hover {
+  background: #2dd4bf;
+  color: #0f1614;
+  border-color: #2dd4bf;
+  box-shadow: 0 0 14px rgba(45, 212, 191, 0.5);
+  transform: translateY(-1px);
+}
+
+.stage-practice-video-btn:active {
+  transform: translateY(0);
 }
 
 .stage-hero-badge {
@@ -2924,6 +2962,26 @@ body.in-pocket-mode {
   white-space: nowrap;
 }
 
+.stage-overview-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stage-overview-video-btn {
+  white-space: nowrap;
+  border-color: rgba(45, 212, 191, 0.35);
+  color: #2dd4bf;
+  touch-action: manipulation;
+}
+
+.stage-overview-video-btn:hover {
+  border-color: #2dd4bf;
+  color: #ffffff;
+  background: rgba(45, 212, 191, 0.15);
+}
+
 .stage-overview-focus-btn {
   flex-shrink: 0;
   white-space: nowrap;
@@ -3156,6 +3214,63 @@ body.in-pocket-mode {
   gap: 12px;
 }
 
+.stage-practice-video-modal {
+  width: min(720px, calc(100vw - 28px));
+  max-width: 720px;
+}
+
+.stage-practice-player-host {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.stage-video-part-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.stage-video-part-chip {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.stage-video-part-chip:hover {
+  background: rgba(45, 212, 191, 0.18);
+  color: #ffffff;
+  border-color: #2dd4bf;
+}
+
+.stage-video-part-chip.active {
+  background: #2dd4bf;
+  color: #0f1614;
+  border-color: #2dd4bf;
+  font-weight: 750;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.4);
+}
+
+.stage-video-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
 .stage-live-shell:fullscreen,
 .stage-live-shell:-webkit-full-screen {
   max-width: 100vw;
@@ -3329,9 +3444,29 @@ body.in-pocket-mode {
     align-items: stretch;
     gap: 10px;
   }
-  .stage-overview-card-header .button {
+  .stage-overview-header-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+  .stage-overview-header-actions .button {
+    flex: 1 1 50%;
+    justify-content: center;
+    min-height: 38px;
+  }
+  .stage-practice-video-btn {
+    padding: 6px 11px;
+    font-size: 12px;
+    min-height: 34px;
+  }
+  .stage-video-modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .stage-video-modal-footer .button {
     width: 100%;
     justify-content: center;
+    min-height: 40px;
   }
   .stage-overview-chord-btn {
     margin-left: 0;
