@@ -1229,6 +1229,10 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       });
     }, 'button secondary small', null, { title: '역대 공연 셋리스트 보관함 열기' });
 
+    const archiveBtn = button('🎬 무대 영상', () => {
+      if (typeof onSwitchView === 'function') onSwitchView('list');
+    }, 'button secondary small', null, { title: '아카라카 실황 영상 아카이브로 전환' });
+
     const editBtn = button('⚙️ 셋리스트 편집', () => {
       promptStagePassword({
         actionName: '셋리스트 편집',
@@ -1250,10 +1254,6 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       });
     }, 'button secondary small', null, { title: '곡 순서 변경 및 추가/삭제' });
 
-    const archiveBtn = button('🎬 무대 영상', () => {
-      if (typeof onSwitchView === 'function') onSwitchView('list');
-    }, 'button secondary small', null, { title: '아카라카 실황 영상 아카이브로 전환' });
-
     fullscreenBtn = button('⛶', () => {
       const isFs = document.fullscreenElement || document.webkitFullscreenElement;
       if (!isFs) {
@@ -1271,7 +1271,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       }
     }, 'button secondary small icon-only', null, { title: '전체화면 전환', 'aria-label': '전체화면' });
 
-    const actions = el('div', { class: 'stage-header-actions' }, copyBtn, historyBtn, editBtn, archiveBtn, fullscreenBtn);
+    const actions = el('div', { class: 'stage-header-actions' }, copyBtn, historyBtn, archiveBtn, editBtn, fullscreenBtn);
 
     header.replaceChildren(headerLeft, actions);
   }

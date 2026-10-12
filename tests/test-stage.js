@@ -194,6 +194,7 @@ assert(stageJsSource.includes('btn.blur()'), 'Stage mode must blur buttons on st
 // 10. Test Stage History Action Buttons Order (왼쪽부터 무대 큐시트 시작, 복제, 삭제)
 assert(stageJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "stage.js actions order must be loadBtn, cloneBtn, deleteBtn");
 assert(appJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "app.js actions order must be loadBtn, cloneBtn, deleteBtn");
+assert(stageJsSource.includes("el('div', { class: 'stage-header-actions' }, copyBtn, historyBtn, archiveBtn, editBtn, fullscreenBtn)"), "stage-header-actions order must place editBtn to the right of archiveBtn");
 
 // 11. Test Practice Video Link Buttons & Modal (상세 페이지로 즉시 직접 이동)
 import { openSongPracticeVideoModal } from '../js/stage.js';
