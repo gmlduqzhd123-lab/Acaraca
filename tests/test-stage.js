@@ -153,4 +153,8 @@ assert(pitchJsSource.includes('singlePitchTimer'), 'singlePitchTimer must be pre
 assert(pitchJsSource.includes('pointerdown'), 'Blank screen pointerdown listener must be present');
 assert(pitchJsSource.includes('PITCH_TRIGGER_SELECTORS'), 'PITCH_TRIGGER_SELECTORS must be defined');
 
+// 10. Test Stage History Action Buttons Order (왼쪽부터 무대 큐시트 시작, 복제, 삭제)
+assert(stageJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "stage.js actions order must be loadBtn, cloneBtn, deleteBtn");
+assert(appJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "app.js actions order must be loadBtn, cloneBtn, deleteBtn");
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');

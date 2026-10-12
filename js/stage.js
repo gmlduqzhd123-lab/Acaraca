@@ -1610,7 +1610,7 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
         });
       }, 'button secondary small icon-only', null, { title: '공연 기록 삭제' });
 
-      const actions = el('div', { class: 'stage-history-actions' }, deleteBtn, cloneBtn, loadBtn);
+      const actions = el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn);
 
       card.append(top, songsRow, actions);
       historyContainer.append(card);
