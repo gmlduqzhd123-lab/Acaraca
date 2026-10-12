@@ -16,6 +16,7 @@ import {
   playPitchSequence,
   stopPitchSequence,
   isPitchSequencePlaying,
+  playChordStrings,
   subscribePitchState
 } from './pitch.js';
 import { requestWakeLock, releaseWakeLock, isWakeLockActive } from './backgroundPlay.js';
@@ -554,6 +555,12 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   if (activeIndex < 0) activeIndex = 0;
   if (activeIndex >= session.songs.length) activeIndex = session.songs.length - 1;
 
+  let liveMode = 'focus'; // 'focus' | 'overview'
+  try {
+    const savedMode = localStorage.getItem('acaroom_stage_live_submode');
+    if (savedMode === 'overview' || savedMode === 'focus') liveMode = savedMode;
+  } catch {}
+
   let currentTone = 'story';
   const customComments = {}; // songId -> custom edited comment
 
@@ -586,7 +593,8 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         activeIndex++;
         session.currentIndex = activeIndex;
         saveActiveStageSession(session);
-        renderCurrentSong();
+        if (liveMode === 'focus') renderCurrentSong();
+        else renderOverviewView();
       }
     } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
       e.preventDefault();
@@ -595,11 +603,12 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         activeIndex--;
         session.currentIndex = activeIndex;
         saveActiveStageSession(session);
-        renderCurrentSong();
+        if (liveMode === 'focus') renderCurrentSong();
+        else renderOverviewView();
       }
     } else if (e.key === ' ' || e.code === 'Space') {
       e.preventDefault();
-      if (playAllBtn) playAllBtn.click();
+      if (liveMode === 'focus' && playAllBtn) playAllBtn.click();
     } else if (e.key === 'Escape') {
       stopPitch(true);
     }
@@ -608,13 +617,17 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
   // Shell 컴포넌트들
   const header = el('div', { class: 'stage-live-header' });
+  const focusViewArea = el('div', { class: 'stage-focus-view-area' });
   const setlistBar = el('div', { class: 'stage-setlist-bar', role: 'tablist', 'aria-label': '곡 순서 셋리스트' });
   const heroCard = el('div', { class: 'stage-hero-card' });
   const pitchCard = el('div', { class: 'stage-pitch-card' });
   const mcCard = el('div', { class: 'stage-mc-card' });
   const navBar = el('div', { class: 'stage-nav-bar' });
+  focusViewArea.append(setlistBar, heroCard, pitchCard, mcCard, navBar);
 
-  shell.append(header, setlistBar, heroCard, pitchCard, mcCard, navBar);
+  const overviewViewArea = el('div', { class: 'stage-overview-view-area' });
+
+  shell.append(header, focusViewArea, overviewViewArea);
 
   let wakeLockBtn;
   let fullscreenBtn;
@@ -686,11 +699,33 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       }, 'text-button', null, { title: '행사명 및 셋리스트 편집' })
     );
 
+    const modeFocusBtn = button('🎤 1곡 집중', () => {
+      if (liveMode === 'focus') return;
+      stopPitch(true);
+      liveMode = 'focus';
+      try { localStorage.setItem('acaroom_stage_live_submode', 'focus'); } catch {}
+      renderAll();
+    }, `stage-mode-btn${liveMode === 'focus' ? ' active' : ''}`, null, { role: 'radio', 'aria-checked': String(liveMode === 'focus'), title: '1곡씩 크게 조율하며 진행하는 실전 무대 모드' });
+
+    const modeOverviewBtn = button('📋 전체 목록', () => {
+      if (liveMode === 'overview') return;
+      stopPitch(true);
+      liveMode = 'overview';
+      try { localStorage.setItem('acaroom_stage_live_submode', 'overview'); } catch {}
+      renderAll();
+    }, `stage-mode-btn${liveMode === 'overview' ? ' active' : ''}`, null, { role: 'radio', 'aria-checked': String(liveMode === 'overview'), title: '전체 셋리스트와 파트별 첫 음을 한눈에 보는 큐시트 목록' });
+
+    const modeSwitcher = el('div', { class: 'stage-live-mode-switch', role: 'radiogroup', 'aria-label': '큐시트 보기 방식' },
+      modeFocusBtn, modeOverviewBtn
+    );
+
     const headerLeft = el('div', { class: 'stage-header-left' },
-      el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn),
+      el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn, modeSwitcher),
       titleRow,
       metaEl
     );
+
+    const copyBtn = button('📋 셋리스트 복사', copyFullSetlist, 'button secondary small', null, { title: '단원 공지용 전체 셋리스트 텍스트 복사' });
 
     const historyBtn = button('📜 공연 히스토리', () => {
       openStageHistoryModal({
@@ -744,7 +779,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       }
     }, 'button secondary small icon-only', null, { title: '전체화면 전환', 'aria-label': '전체화면' });
 
-    const actions = el('div', { class: 'stage-header-actions' }, historyBtn, editBtn, archiveBtn, fullscreenBtn);
+    const actions = el('div', { class: 'stage-header-actions' }, copyBtn, historyBtn, editBtn, archiveBtn, fullscreenBtn);
 
     header.replaceChildren(headerLeft, actions);
   }
@@ -1108,9 +1143,215 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     renderNavBar();
   }
 
+  function copyFullSetlist() {
+    const lines = [
+      `[ACARACA 공연 큐시트]`,
+      `행사명: ${session.eventTitle || '아카라카 공연'}`,
+      `일시: ${session.date || ''} · 장소: ${session.venue || '공연장'}`,
+      `총 ${session.songs.length}곡 레퍼토리`,
+      ``,
+      ...session.songs.map((item, i) => {
+        const sd = songs.find(x => x.id === item.songId);
+        const key = sd?.musicalKey || sd?.startingPitches?.key ? ` (Key: ${sd.musicalKey || sd.startingPitches.key})` : '';
+        const note = item.note ? ` - ${item.note}` : '';
+        return `${i + 1}. ${item.title}${key}${note}`;
+      }),
+      ``,
+      `* AcaRaca 아카펠라 무대 큐시트`
+    ];
+    const text = lines.join('\n');
+    let copied = false;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        toast('전체 셋리스트가 클립보드에 복사되었습니다! (카톡 공지용)');
+      }).catch(() => {});
+      copied = true;
+    }
+    if (!copied) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('전체 셋리스트가 클립보드에 복사되었습니다! (카톡 공지용)');
+      } catch {
+        toast('클립보드 복사를 지원하지 않는 브라우저입니다.');
+      }
+    }
+  }
+
+  function renderOverviewView() {
+    overviewViewArea.replaceChildren();
+
+    const topBar = el('div', { class: 'stage-overview-top-bar' },
+      el('div', { class: 'stage-overview-top-left' },
+        el('span', { class: 'stage-hero-badge', text: `총 ${session.songs.length}곡 레퍼토리` }),
+        el('span', { class: 'stage-overview-hint-text', text: '곡을 누르면 1곡 집중 모드로 이동하며, 첫 음 배지를 누르면 조율음을 듣습니다.' })
+      ),
+      el('div', { class: 'stage-overview-top-actions' },
+        button('📋 셋리스트 텍스트 복사', copyFullSetlist, 'button secondary small', 'copy', { title: '단원 공유용 텍스트 복사' })
+      )
+    );
+
+    if (!session.songs || session.songs.length === 0) {
+      overviewViewArea.append(
+        topBar,
+        el('div', { style: 'text-align: center; color: #94a3b8; padding: 40px 20px;' },
+          el('p', { text: '등록된 셋리스트 곡이 없습니다. 상단 [⚙️ 셋리스트 편집] 버튼을 눌러 곡을 추가해 주세요.' })
+        )
+      );
+      return;
+    }
+
+    const list = el('div', { class: 'stage-overview-list' });
+
+    session.songs.forEach((item, idx) => {
+      const isCur = idx === activeIndex;
+      const songData = songs.find(s => s.id === item.songId) || {
+        id: item.songId,
+        title: item.title,
+        artist: '아카라카',
+        category: '아카펠라',
+        arrangement: '다성부',
+        startingPitches: null
+      };
+      const keyStr = songData?.musicalKey || songData?.startingPitches?.key;
+      const pitchEntries = getSongStartingPitchEntries(songData);
+
+      const savedCommentKey = `${session.id}_${item.songId}`;
+      const mcComment = item.customComment || customComments[savedCommentKey] || (STAGE_AI_COMMENTS[item.songId] && STAGE_AI_COMMENTS[item.songId][item.commentTone || 'story']) || generateDynamicMCComment(songData, item.commentTone || 'story');
+
+      const card = el('article', {
+        class: `stage-overview-card${isCur ? ' is-current' : ''}`,
+        'aria-current': isCur ? 'true' : null
+      });
+
+      const numBadge = el('div', { class: 'stage-overview-num-badge', text: String(idx + 1) });
+      const songTitle = el('h4', {
+        class: 'stage-overview-song-title',
+        text: item.title,
+        title: `${item.title} 1곡 집중 모드로 보기`,
+        onclick: () => {
+          stopPitch(true);
+          activeIndex = idx;
+          session.currentIndex = activeIndex;
+          saveActiveStageSession(session);
+          liveMode = 'focus';
+          try { localStorage.setItem('acaroom_stage_live_submode', 'focus'); } catch {}
+          renderAll();
+        }
+      });
+      const songMeta = el('p', {
+        class: 'stage-overview-song-meta',
+        text: `${songData.artist || '아카라카'} · ${songData.arrangement || '혼성 아카펠라'}`
+      });
+
+      const titleRow = el('div', { class: 'stage-overview-title-row' },
+        songTitle,
+        keyStr ? el('span', { class: 'stage-key-badge', text: `Key: ${keyStr}` }) : null,
+        item.note ? el('span', { class: 'stage-hero-badge', style: 'background: rgba(234, 179, 8, 0.2); color: #fde047;', text: item.note }) : null,
+        isCur ? el('span', { class: 'stage-current-badge', text: '현재 진행곡' }) : null
+      );
+
+      const leftWrap = el('div', { class: 'stage-overview-card-left' },
+        numBadge,
+        el('div', { class: 'stage-overview-title-wrap' }, titleRow, songMeta)
+      );
+
+      const focusBtn = button('🎤 1곡 집중 보기', () => {
+        stopPitch(true);
+        activeIndex = idx;
+        session.currentIndex = activeIndex;
+        saveActiveStageSession(session);
+        liveMode = 'focus';
+        try { localStorage.setItem('acaroom_stage_live_submode', 'focus'); } catch {}
+        renderAll();
+      }, isCur ? 'button primary small' : 'button secondary small', null, { title: `${idx + 1}번 곡 집중 모드로 전환` });
+
+      const cardHeader = el('div', { class: 'stage-overview-card-header' }, leftWrap, focusBtn);
+
+      const pitchChipsWrap = el('div', { class: 'stage-overview-pitch-chips' });
+      if (pitchEntries.length === 0) {
+        pitchChipsWrap.append(el('span', { style: 'font-size: 11.5px; color: #94a3b8;', text: '첫 음 정보 없음' }));
+      } else {
+        const shortLabels = {
+          soprano: 'S', alto: 'A', tenor: 'T', baritone: 'Bar', bass: 'B', lead: 'Lead', vp: 'VP',
+          part1: 'P1', part2: 'P2', part3: 'P3', part4: 'P4', part5: 'P5', part6: 'P6', part7: 'P7'
+        };
+
+        pitchEntries.forEach(([part, noteStr]) => {
+          const parsed = parseNoteString(noteStr);
+          const shortPart = shortLabels[part] || part.toUpperCase().slice(0, 3);
+          const displayNote = parsed ? parsed.displayNote : noteStr;
+
+          const chip = el('button', {
+            type: 'button',
+            class: 'stage-overview-pitch-chip',
+            title: `${part} 첫 음 ${displayNote} 재생`,
+            onclick: (e) => {
+              e.stopPropagation();
+              if (parsed) {
+                stopPitch(true);
+                playPitch(parsed.semitone, parsed.octave, 0.6);
+                chip.classList.add('playing');
+                setTimeout(() => chip.classList.remove('playing'), 800);
+              }
+            }
+          },
+            el('strong', { text: shortPart }),
+            document.createTextNode(` ${displayNote}`)
+          );
+          pitchChipsWrap.append(chip);
+        });
+      }
+
+      let chordBtn = null;
+      if (pitchEntries.length > 0) {
+        const notesList = pitchEntries.map(([, noteStr]) => noteStr);
+        chordBtn = button('🔊 전체 화음', (e) => {
+          e.stopPropagation();
+          const isPlaying = playChordStrings(notesList, 0.4);
+          if (chordBtn) chordBtn.classList.toggle('playing', Boolean(isPlaying));
+        }, 'stage-overview-chord-btn', null, { title: '이 곡의 전체 파트 시작 화음 동시 재생' });
+      }
+
+      const pitchBar = el('div', { class: 'stage-overview-pitch-bar' },
+        el('span', { class: 'stage-overview-pitch-label' }, icon('music'), document.createTextNode('첫 음')),
+        pitchChipsWrap,
+        chordBtn
+      );
+
+      const mcBox = el('div', { class: 'stage-overview-mc-box' },
+        icon('mic'),
+        el('span', { text: mcComment })
+      );
+
+      card.append(cardHeader, pitchBar, mcBox);
+      list.append(card);
+    });
+
+    overviewViewArea.append(topBar, list);
+  }
+
+  function updateLiveModeDisplay() {
+    const isFocus = liveMode === 'focus';
+    focusViewArea.hidden = !isFocus;
+    overviewViewArea.hidden = isFocus;
+
+    if (isFocus) {
+      renderCurrentSong();
+    } else {
+      renderOverviewView();
+    }
+  }
+
   function renderAll() {
     renderHeader();
-    renderCurrentSong();
+    updateLiveModeDisplay();
   }
 
   renderAll();
