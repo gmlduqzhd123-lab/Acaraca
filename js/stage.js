@@ -17,7 +17,8 @@ import {
   stopPitchSequence,
   isPitchSequencePlaying,
   playChordStrings,
-  subscribePitchState
+  subscribePitchState,
+  getCurrentPlaying
 } from './pitch.js';
 import { requestWakeLock, releaseWakeLock, isWakeLockActive } from './backgroundPlay.js';
 
@@ -692,6 +693,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   const unsubscribePitch = subscribePitchState((playing) => {
     currentPitchPart = playing ? playing.note : null;
     updatePitchPlayingUI(playing);
+    updateOverviewPitchUI(playing);
   });
 
   // Keyboard navigation on stage (arrow keys, space for pitch)
@@ -952,6 +954,31 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       } else {
         const isMatch = playing.displayNote === noteStr || playing.note === noteStr;
         btn.classList.toggle('active', Boolean(isMatch));
+      }
+    });
+  }
+
+  let overviewPitchItems = [];
+  let activeOverviewElement = null;
+
+  function updateOverviewPitchUI(playing) {
+    if (!overviewPitchItems || !overviewPitchItems.length) return;
+    if (!playing) {
+      activeOverviewElement = null;
+      overviewPitchItems.forEach(item => item.el.classList.remove('playing'));
+      return;
+    }
+
+    overviewPitchItems.forEach(item => {
+      if (activeOverviewElement) {
+        item.el.classList.toggle('playing', item.el === activeOverviewElement);
+      } else if (item.type === 'chord' && playing.isChord) {
+        item.el.classList.add('playing');
+      } else if (item.type === 'single' && !playing.isChord) {
+        const match = (playing.semitone === item.parsed?.semitone && playing.octave === item.parsed?.octave);
+        item.el.classList.toggle('playing', Boolean(match));
+      } else {
+        item.el.classList.remove('playing');
       }
     });
   }
@@ -1389,20 +1416,22 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
           const chip = el('button', {
             type: 'button',
             class: 'stage-overview-pitch-chip',
-            title: `${part} 첫 음 ${displayNote} 재생`,
+            'data-pitch-trigger': 'true',
+            title: `${part} 첫 음 ${displayNote} 재생 (3초 후 자동 종료, 빈 화면 터치 시 꺼짐)`,
             onclick: (e) => {
               e.stopPropagation();
               if (parsed) {
-                stopPitch(true);
-                playPitch(parsed.semitone, parsed.octave, 0.6);
-                chip.classList.add('playing');
-                setTimeout(() => chip.classList.remove('playing'), 800);
+                if (isPitchSequencePlaying()) stopPitchSequence();
+                const res = playPitch(parsed.semitone, parsed.octave, 0.6, true, 3000);
+                activeOverviewElement = res ? chip : null;
+                updateOverviewPitchUI(res);
               }
             }
           },
             el('strong', { text: shortPart }),
             document.createTextNode(` ${displayNote}`)
           );
+          overviewPitchItems.push({ type: 'single', el: chip, parsed, songIndex: idx, part });
           pitchChipsWrap.append(chip);
         });
       }
@@ -1412,9 +1441,13 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         const notesList = pitchEntries.map(([, noteStr]) => noteStr);
         chordBtn = button('🔊 전체 화음', (e) => {
           e.stopPropagation();
-          const isPlaying = playChordStrings(notesList, 0.4);
-          if (chordBtn) chordBtn.classList.toggle('playing', Boolean(isPlaying));
-        }, 'stage-overview-chord-btn', null, { title: '이 곡의 전체 파트 시작 화음 동시 재생' });
+          if (isPitchSequencePlaying()) stopPitchSequence();
+          const res = playChordStrings(notesList, 0.4, true, 3000);
+          activeOverviewElement = res ? chordBtn : null;
+          updateOverviewPitchUI(res);
+        }, 'stage-overview-chord-btn', null, { title: '이 곡의 전체 파트 시작 화음 동시 재생 (3초 후 자동 종료, 빈 화면 터치 시 꺼짐)' });
+        chordBtn.dataset.pitchTrigger = 'true';
+        overviewPitchItems.push({ type: 'chord', el: chordBtn, notesList, songIndex: idx });
       }
 
       const pitchBar = el('div', { class: 'stage-overview-pitch-bar' },
@@ -1435,6 +1468,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     });
 
     overviewViewArea.append(topBar, list);
+    updateOverviewPitchUI(getCurrentPlaying());
   }
 
   function updateLiveModeDisplay() {

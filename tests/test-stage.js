@@ -144,5 +144,13 @@ assert(stageJsSource.includes('전체 큐시트 목록') || stageJsSource.includ
 assert(stageJsSource.includes('function renderOverviewView()'), 'renderOverviewView function must be present');
 assert(stageJsSource.includes('function copyFullSetlist()'), 'copyFullSetlist function must be present');
 assert(stageJsSource.includes('playChordStrings'), 'playChordStrings must be imported and used for chords');
+assert(stageJsSource.includes('updateOverviewPitchUI'), 'updateOverviewPitchUI must synchronize overview button states');
+
+// 9. Test Pitch Audio: 3-second Auto Stop and Blank-Area Mute Listener
+const pitchJsSource = fs.readFileSync('js/pitch.js', 'utf8');
+assert(pitchJsSource.includes('export const DEFAULT_PITCH_DURATION = 3000;'), 'DEFAULT_PITCH_DURATION must be exported as 3000ms');
+assert(pitchJsSource.includes('singlePitchTimer'), 'singlePitchTimer must be present for auto-stop');
+assert(pitchJsSource.includes('pointerdown'), 'Blank screen pointerdown listener must be present');
+assert(pitchJsSource.includes('PITCH_TRIGGER_SELECTORS'), 'PITCH_TRIGGER_SELECTORS must be defined');
 
 console.log('✓ Stage Mode logic unit tests passed successfully!');

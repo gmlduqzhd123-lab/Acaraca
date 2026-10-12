@@ -109,10 +109,25 @@ export function getCurrentSequence() {
   return currentSequence;
 }
 
+export const DEFAULT_PITCH_DURATION = 3000;
+let singlePitchTimer = null;
+
+function clearSinglePitchTimer() {
+  if (singlePitchTimer) {
+    clearTimeout(singlePitchTimer);
+    singlePitchTimer = null;
+  }
+}
+
+export function isPitchPlaying() {
+  return Boolean(currentPlaying || currentSequence);
+}
+
 /**
  * Stop any currently sounding pitch or chord.
  */
 export function stopPitch(cancelSequence = true) {
+  clearSinglePitchTimer();
   if (cancelSequence) {
     if (sequenceTimer) {
       clearTimeout(sequenceTimer);
@@ -160,8 +175,9 @@ export function stopPitch(cancelSequence = true) {
 /**
  * Play a specific pitch (semitone: 0~11, octave: 2~6).
  * If the exact same pitch is already playing, it will stop it (toggle behavior).
+ * Auto-stops after `duration` ms (default 3000ms = 3초). Set duration=0 for indefinite.
  */
-export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = true) {
+export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = true, duration = DEFAULT_PITCH_DURATION) {
   const ctx = getAudioContext();
   if (!ctx) return null;
 
@@ -173,6 +189,7 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
 
   // Stop any previous note cleanly
   stopPitch(cancelSequence);
+  clearSinglePitchTimer();
 
   const noteInfo = NOTES.find((n) => n.semitone === semitone) || NOTES[0];
   const freq = getNoteFrequency(semitone, octave);
@@ -230,6 +247,13 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
     freq,
     noteInfo,
   };
+
+  if (duration > 0) {
+    singlePitchTimer = setTimeout(() => {
+      singlePitchTimer = null;
+      stopPitch(false);
+    }, duration);
+  }
 
   notifyStateChange();
   return currentPlaying;
@@ -297,7 +321,7 @@ export function parseNoteString(noteStr) {
  * Play note from string (e.g. "Ab4", "Eb5", "F#3").
  * Toggles off if this note is already playing.
  */
-export function playNoteString(noteStr, volume = 0.5, cancelSequence = true) {
+export function playNoteString(noteStr, volume = 0.5, cancelSequence = true, duration = DEFAULT_PITCH_DURATION) {
   const parsed = parseNoteString(noteStr);
   if (!parsed) return null;
 
@@ -306,7 +330,7 @@ export function playNoteString(noteStr, volume = 0.5, cancelSequence = true) {
     return null;
   }
 
-  const played = playPitch(parsed.semitone, parsed.octave, volume, cancelSequence);
+  const played = playPitch(parsed.semitone, parsed.octave, volume, cancelSequence, duration);
   if (played) {
     played.raw = noteStr;
     played.displayNote = parsed.displayNote;
@@ -320,8 +344,9 @@ export function playNoteString(noteStr, volume = 0.5, cancelSequence = true) {
 /**
  * Play all starting notes in harmony simultaneously (A cappella starting chord).
  * Toggles off if chord is already playing.
+ * Auto-stops after `duration` ms (default 3000ms = 3초). Set duration=0 for indefinite.
  */
-export function playChordStrings(notesList, volume = 0.38, cancelSequence = true) {
+export function playChordStrings(notesList, volume = 0.38, cancelSequence = true, duration = DEFAULT_PITCH_DURATION) {
   const ctx = getAudioContext();
   if (!ctx) return null;
 
@@ -331,6 +356,7 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
   }
 
   stopPitch(cancelSequence);
+  clearSinglePitchTimer();
 
   const parsedList = (Array.isArray(notesList) ? notesList : [])
     .map((s) => parseNoteString(s))
@@ -390,6 +416,13 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
     notes: uniqueNotes.map((p) => p.displayNote),
     label: `화음 (${uniqueNotes.map((p) => p.displayNote).join(' · ')})`,
   };
+
+  if (duration > 0) {
+    singlePitchTimer = setTimeout(() => {
+      singlePitchTimer = null;
+      stopPitch(false);
+    }, duration);
+  }
 
   notifyStateChange();
   return currentPlaying;
@@ -462,7 +495,7 @@ export function playPitchSequence(items, options = {}) {
       currentSequence.currentItem = item;
 
       stopPitch(false);
-      const played = playPitch(item.parsed.semitone, item.parsed.octave, 0.5, false);
+      const played = playPitch(item.parsed.semitone, item.parsed.octave, 0.5, false, 0);
       if (played) {
         played.raw = item.noteStr;
         played.displayNote = item.parsed.displayNote;
@@ -505,7 +538,7 @@ export function playPitchSequence(items, options = {}) {
       const allNotes = sorted.map((it) => it.noteStr);
 
       stopPitch(false);
-      playChordStrings(allNotes, 0.42, false);
+      playChordStrings(allNotes, 0.42, false, 0);
 
       if (typeof onStep === 'function') {
         try {
@@ -538,6 +571,44 @@ export function playPitchSequence(items, options = {}) {
 
   runNext();
   return currentSequence;
+}
+
+/**
+ * Global blank-area tap-to-mute listener
+ * Touching or clicking anywhere outside pitch buttons immediately silences any playing pitch/chord/sequence.
+ */
+const PITCH_TRIGGER_SELECTORS = [
+  '.stage-overview-pitch-chip',
+  '.stage-overview-chord-btn',
+  '.stage-part-sound-btn',
+  '.stage-pitch-play-all-btn',
+  '.part-pitch-chip',
+  '.seq-play-btn',
+  '.chord-play-btn',
+  '.stop-pitch-btn',
+  '.pitch-key',
+  '.pitch-note-btn',
+  '.pitch-chord-btn',
+  '.pitch-play-btn',
+  '.pitch-arpeggio-btn',
+  '[data-pitch-trigger]'
+].join(', ');
+
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('pointerdown', (e) => {
+    if (!currentPlaying && !currentSequence) return;
+    const targetEl = e.target && e.target.nodeType === 1
+      ? e.target
+      : (e.target ? e.target.parentElement : null);
+    const isPitchTrigger = targetEl && typeof targetEl.closest === 'function'
+      ? Boolean(targetEl.closest(PITCH_TRIGGER_SELECTORS))
+      : false;
+
+    if (!isPitchTrigger) {
+      stopPitch(true);
+      stopPitchSequence();
+    }
+  }, true);
 }
 
 

@@ -2,7 +2,7 @@ import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } fro
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, isPitchPlaying, DEFAULT_PITCH_DURATION } from '../js/pitch.js';
 import {
   getAllFeedbacks,
   addFeedback,
@@ -385,6 +385,9 @@ export function runCoreTests() {
   const unsubsPitch = subscribePitchState(() => {});
   check('피치파이프 구독 해제(unsubscribe) 함수 반환', () => typeof unsubsPitch === 'function');
   unsubsPitch();
+
+  check('DEFAULT_PITCH_DURATION 기본 3000ms (3초) 설정 검증', () => DEFAULT_PITCH_DURATION === 3000);
+  check('isPitchPlaying 기본 비재생 상태 false 검증', () => isPitchPlaying() === false);
 
   // --- Pitch Sequence (아르페지오 & 화음) Tests ---
   check('playPitchSequence 빈 배열 전달 시 null 반환', () => {
