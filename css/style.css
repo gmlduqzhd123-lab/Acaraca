@@ -32,7 +32,7 @@ html { min-width: 320px; scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.6; letter-spacing: -0.02em; word-break: keep-all; overflow-wrap: break-word; }
 button, input, select, textarea { font: inherit; letter-spacing: inherit; }
 button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
-button, select { cursor: pointer; }
+button, select { cursor: pointer; touch-action: manipulation; }
 button { color: inherit; }
 button:disabled { opacity: .5; cursor: not-allowed; }
 a { color: inherit; text-decoration: none; }
@@ -2642,16 +2642,117 @@ body.in-pocket-mode {
   gap: 4px;
 }
 
+/* Fields grid in setlist editor */
+.stage-edit-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stage-live-shell:fullscreen,
+.stage-live-shell:-webkit-full-screen {
+  max-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border-radius: 0;
+  border: 0;
+  overflow-y: auto;
+  padding: 16px env(safe-area-inset-right, 16px) calc(20px + env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 16px);
+  box-sizing: border-box;
+}
+
 @media (max-width: 600px) {
+  .page.stage-live-page {
+    padding: 8px 10px 16px;
+  }
   .stage-live-shell {
     padding: 12px;
     border-radius: 16px;
+    gap: 11px;
+    width: 100%;
+  }
+  .stage-live-header {
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+  .stage-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .stage-header-actions::-webkit-scrollbar {
+    display: none;
+  }
+  .stage-event-title {
+    font-size: 18px;
+  }
+  .stage-hero-card {
+    padding: 12px;
   }
   .stage-hero-title {
-    font-size: 20px;
+    font-size: 19px;
+    line-height: 1.25;
+  }
+  .stage-pitch-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .stage-pitch-play-all-btn {
+    padding: 10px 12px;
+    font-size: 14px;
   }
   .stage-pitch-parts-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+    gap: 6px;
+  }
+  .stage-part-sound-btn {
+    padding: 8px 4px;
+  }
+  .stage-part-note {
+    font-size: 15px;
+  }
+  .stage-mc-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .stage-speech-bubble {
+    font-size: 13.5px;
+    line-height: 1.55;
+    padding: 10px 12px;
+    min-height: 48px;
+  }
+  .stage-nav-btn {
+    padding: 12px 14px;
+    font-size: 14.5px;
+    min-height: 48px;
+  }
+  .stage-edit-fields-grid {
+    grid-template-columns: 1fr;
+  }
+  .stage-edit-fields-grid label {
+    grid-column: span 1 !important;
+  }
+  .stage-edit-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .stage-edit-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .stage-edit-actions input {
+    flex: 1;
+    min-width: 80px;
+  }
+  .stage-modal-body input,
+  .stage-modal-body select {
+    font-size: 16px !important;
   }
 }
 

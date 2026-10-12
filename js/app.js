@@ -908,6 +908,7 @@ function renderStage() {
   );
 
   if (currentView === 'live') {
+    app.classList.add('stage-live-page');
     app.append(el('div', {class: 'stage-controls-panel', style: 'margin-bottom: 16px;'}, viewTabs));
     const liveContainer = el('div', {id: 'stage-live-area'});
     app.append(liveContainer);
@@ -923,6 +924,8 @@ function renderStage() {
     });
     return;
   }
+
+  app.classList.remove('stage-live-page');
 
   if (currentView === 'history') {
     app.append(el('div', {class: 'stage-controls-panel', style: 'margin-bottom: 16px;'}, viewTabs));

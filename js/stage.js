@@ -497,10 +497,19 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     }, 'button secondary small', null, { title: '아카라카 실황 영상 아카이브로 전환' });
 
     const fullscreenBtn = button('⛶', () => {
-      if (!document.fullscreenElement) {
-        shell.requestFullscreen?.().catch(() => {});
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!isFs) {
+        if (shell.requestFullscreen) {
+          shell.requestFullscreen().catch(() => {});
+        } else if (shell.webkitRequestFullscreen) {
+          shell.webkitRequestFullscreen();
+        }
       } else {
-        document.exitFullscreen?.().catch(() => {});
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
       }
     }, 'button secondary small icon-only', null, { title: '전체화면 전환', 'aria-label': '전체화면' });
 
@@ -932,7 +941,7 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
   const dateInput = el('input', { type: 'text', class: 'search-input', value: draft.date || '', placeholder: '공연 일자 (예: 2026.10.12)' });
   const venueInput = el('input', { type: 'text', class: 'search-input', value: draft.venue || '', placeholder: '공연 장소 (예: 백양콘서트홀)' });
 
-  const fieldsGrid = el('div', { style: 'display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;' },
+  const fieldsGrid = el('div', { class: 'stage-edit-fields-grid' },
     el('label', { style: 'display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;' }, '행사 이름', titleInput),
     el('label', { style: 'display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;' }, '공연 일자', dateInput),
     el('label', { style: 'display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; grid-column: span 2;' }, '공연 장소', venueInput)
