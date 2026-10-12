@@ -966,6 +966,9 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   let currentPitchPart = null;
   const unsubscribePitch = subscribePitchState((playing) => {
     currentPitchPart = playing ? playing.note : null;
+    if (!playing) {
+      clearStagePitchAutoStop();
+    }
     updatePitchPlayingUI(playing);
     updateOverviewPitchUI(playing);
   });
@@ -1211,23 +1214,53 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
   let playAllBtn;
   let partButtons = [];
+  let stagePitchAutoStopTimer = null;
+
+  function clearStagePitchAutoStop() {
+    if (stagePitchAutoStopTimer) {
+      clearTimeout(stagePitchAutoStopTimer);
+      stagePitchAutoStopTimer = null;
+    }
+  }
+
+  function scheduleStagePitchAutoStop(duration = 3000) {
+    clearStagePitchAutoStop();
+    if (duration > 0) {
+      stagePitchAutoStopTimer = setTimeout(() => {
+        stagePitchAutoStopTimer = null;
+        stopPitch(true);
+        updatePitchPlayingUI(null);
+        updateOverviewPitchUI(null);
+      }, duration);
+    }
+  }
 
   function updatePitchPlayingUI(playing) {
-    if (!playAllBtn) return;
     const isPlaying = isPitchSequencePlaying() || Boolean(playing);
-    playAllBtn.classList.toggle('playing', isPlaying);
-    playAllBtn.textContent = isPlaying ? '⏹ 첫 음 재생 멈추기' : '▶ 첫 음 전체 듣기 (아르페지오 + 화음)';
+    if (playAllBtn) {
+      playAllBtn.classList.toggle('playing', isPlaying);
+      playAllBtn.textContent = isPlaying ? '⏹ 첫 음 재생 멈추기' : '▶ 첫 음 전체 듣기 (아르페지오 + 화음)';
+      if (!isPlaying) {
+        try { playAllBtn.blur(); } catch {}
+      }
+    }
 
-    partButtons.forEach(({ btn, part, noteStr }) => {
+    partButtons.forEach(({ btn, part, semitone, octave, noteStr }) => {
       if (!playing) {
-        btn.classList.remove('active');
+        btn.classList.remove('active', 'playing');
+        try { btn.blur(); } catch {}
       } else if (playing.isChord) {
         btn.classList.add('active');
-      } else if (playing.part) {
-        btn.classList.toggle('active', playing.part === part);
+      } else if (playing.part && playing.part === part) {
+        btn.classList.add('active');
+      } else if (typeof semitone === 'number' && typeof octave === 'number' && playing.semitone === semitone && playing.octave === octave) {
+        btn.classList.add('active');
       } else {
-        const isMatch = playing.displayNote === noteStr || playing.note === noteStr;
+        const isMatch = (playing.displayNote && playing.displayNote === noteStr) || (playing.note && playing.note === noteStr);
         btn.classList.toggle('active', Boolean(isMatch));
+        if (!isMatch) {
+          try { btn.blur(); } catch {}
+        }
       }
     });
   }
@@ -1239,20 +1272,31 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     if (!overviewPitchItems || !overviewPitchItems.length) return;
     if (!playing) {
       activeOverviewElement = null;
-      overviewPitchItems.forEach(item => item.el.classList.remove('playing'));
+      overviewPitchItems.forEach(item => {
+        item.el.classList.remove('playing', 'active');
+        try { item.el.blur(); } catch {}
+      });
       return;
     }
 
     overviewPitchItems.forEach(item => {
       if (activeOverviewElement) {
-        item.el.classList.toggle('playing', item.el === activeOverviewElement);
+        const isMatch = item.el === activeOverviewElement;
+        item.el.classList.toggle('playing', isMatch);
+        if (!isMatch) {
+          try { item.el.blur(); } catch {}
+        }
       } else if (item.type === 'chord' && playing.isChord) {
         item.el.classList.add('playing');
       } else if (item.type === 'single' && !playing.isChord) {
         const match = (playing.semitone === item.parsed?.semitone && playing.octave === item.parsed?.octave);
         item.el.classList.toggle('playing', Boolean(match));
+        if (!match) {
+          try { item.el.blur(); } catch {}
+        }
       } else {
-        item.el.classList.remove('playing');
+        item.el.classList.remove('playing', 'active');
+        try { item.el.blur(); } catch {}
       }
     });
   }
@@ -1298,12 +1342,15 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         '파트별 첫 음 조율'
       ),
       button('정지 ⏹', () => {
+        clearStagePitchAutoStop();
         stopPitch(true);
         updatePitchPlayingUI(null);
+        updateOverviewPitchUI(null);
       }, 'text-button', null, { title: '소리 즉시 멈추기' })
     );
 
     playAllBtn = button('▶ 첫 음 전체 듣기 (아르페지오 + 화음)', () => {
+      clearStagePitchAutoStop();
       if (isPitchSequencePlaying()) {
         stopPitchSequence();
         updatePitchPlayingUI(null);
@@ -1371,13 +1418,36 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         const partBtn = el('button', {
           type: 'button',
           class: 'stage-part-sound-btn',
-          'aria-label': `${partName} 파트 첫 음 ${displayNote} (${koreanNote}) 재생`,
-          onclick: () => {
+          'data-pitch-trigger': 'true',
+          'aria-label': `${partName} 파트 첫 음 ${displayNote} (${koreanNote}) 재생 (3초 후 자동 종료)`,
+          onclick: (e) => {
+            e.stopPropagation();
+            if (isPitchSequencePlaying()) {
+              stopPitchSequence();
+              updatePitchPlayingUI(null);
+              clearStagePitchAutoStop();
+              return;
+            }
             if (parsed) {
-              if (isPitchSequencePlaying()) {
-                stopPitchSequence();
+              const current = getCurrentPlaying();
+              if (current && !current.isChord && current.semitone === parsed.semitone && current.octave === parsed.octave) {
+                // 이미 재생 중인 음을 다시 누르면 즉시 멈춤 및 초기화 (토글)
+                clearStagePitchAutoStop();
+                stopPitch(true);
+                updatePitchPlayingUI(null);
+                try { partBtn.blur(); } catch {}
+                return;
               }
-              playPitch(parsed.semitone, parsed.octave, 0.6);
+              clearStagePitchAutoStop();
+              const res = playPitch(parsed.semitone, parsed.octave, 0.6, true, 3000, { part, displayNote });
+              if (res) {
+                res.part = part;
+                res.displayNote = displayNote;
+                updatePitchPlayingUI(res);
+                scheduleStagePitchAutoStop(3000);
+              } else {
+                updatePitchPlayingUI(null);
+              }
             }
           }
         },
@@ -1386,12 +1456,19 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
           koreanNote ? el('span', { style: 'font-size: 11px; opacity: 0.85;', text: koreanNote }) : null
         );
 
-        partButtons.push({ btn: partBtn, part, noteStr: displayNote });
+        partButtons.push({
+          btn: partBtn,
+          part,
+          semitone: parsed ? parsed.semitone : null,
+          octave: parsed ? parsed.octave : null,
+          noteStr: displayNote
+        });
         grid.append(partBtn);
       });
     }
 
     pitchCard.replaceChildren(header, playAllBtn, grid);
+    updatePitchPlayingUI(getCurrentPlaying());
   }
 
   function renderMCCard(songData) {
@@ -1725,11 +1802,29 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
             title: `${part} 첫 음 ${displayNote} 재생 (3초 후 자동 종료, 빈 화면 터치 시 꺼짐)`,
             onclick: (e) => {
               e.stopPropagation();
+              if (isPitchSequencePlaying()) {
+                stopPitchSequence();
+                updateOverviewPitchUI(null);
+                clearStagePitchAutoStop();
+                return;
+              }
               if (parsed) {
-                if (isPitchSequencePlaying()) stopPitchSequence();
-                const res = playPitch(parsed.semitone, parsed.octave, 0.6, true, 3000);
+                const current = getCurrentPlaying();
+                if (current && !current.isChord && current.semitone === parsed.semitone && current.octave === parsed.octave) {
+                  clearStagePitchAutoStop();
+                  stopPitch(true);
+                  activeOverviewElement = null;
+                  updateOverviewPitchUI(null);
+                  try { chip.blur(); } catch {}
+                  return;
+                }
+                clearStagePitchAutoStop();
+                const res = playPitch(parsed.semitone, parsed.octave, 0.6, true, 3000, { part, displayNote });
                 activeOverviewElement = res ? chip : null;
                 updateOverviewPitchUI(res);
+                if (res) {
+                  scheduleStagePitchAutoStop(3000);
+                }
               }
             }
           },
@@ -1746,10 +1841,28 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         const notesList = pitchEntries.map(([, noteStr]) => noteStr);
         chordBtn = button('🔊 전체 화음', (e) => {
           e.stopPropagation();
-          if (isPitchSequencePlaying()) stopPitchSequence();
+          if (isPitchSequencePlaying()) {
+            stopPitchSequence();
+            updateOverviewPitchUI(null);
+            clearStagePitchAutoStop();
+            return;
+          }
+          const current = getCurrentPlaying();
+          if (current && current.isChord) {
+            clearStagePitchAutoStop();
+            stopPitch(true);
+            activeOverviewElement = null;
+            updateOverviewPitchUI(null);
+            try { chordBtn.blur(); } catch {}
+            return;
+          }
+          clearStagePitchAutoStop();
           const res = playChordStrings(notesList, 0.4, true, 3000);
           activeOverviewElement = res ? chordBtn : null;
           updateOverviewPitchUI(res);
+          if (res) {
+            scheduleStagePitchAutoStop(3000);
+          }
         }, 'stage-overview-chord-btn', null, { title: '이 곡의 전체 파트 시작 화음 동시 재생 (3초 후 자동 종료, 빈 화면 터치 시 꺼짐)' });
         chordBtn.dataset.pitchTrigger = 'true';
         overviewPitchItems.push({ type: 'chord', el: chordBtn, notesList, songIndex: idx });
@@ -1817,6 +1930,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   renderAll();
 
   activeStageLiveCleanup = () => {
+    clearStagePitchAutoStop();
     unsubscribePitch();
     stopPitch(true);
     releaseWakeLock();

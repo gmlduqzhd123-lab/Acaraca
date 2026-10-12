@@ -413,12 +413,14 @@ export function runCoreTests() {
       gain: {
         value: 1,
         setValueAtTime: () => {},
+        linearRampToValueAtTime: () => {},
         exponentialRampToValueAtTime: () => {},
         cancelScheduledValues: () => {}
       },
       frequency: {
         value: 440,
         setValueAtTime: () => {},
+        linearRampToValueAtTime: () => {},
         exponentialRampToValueAtTime: () => {}
       }
     });

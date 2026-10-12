@@ -2445,14 +2445,24 @@ body.in-pocket-mode {
   color: #ffffff;
   cursor: pointer;
   transition: all 0.15s ease;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.stage-part-sound-btn:hover {
-  background: rgba(45, 212, 191, 0.15);
-  border-color: #2dd4bf;
+@media (hover: hover) {
+  .stage-part-sound-btn:hover {
+    background: rgba(45, 212, 191, 0.15);
+    border-color: #2dd4bf;
+  }
 }
 
-.stage-part-sound-btn.active {
+.stage-part-sound-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.stage-part-sound-btn.active,
+.stage-part-sound-btn.playing {
   background: #2dd4bf;
   color: #0f1614;
   border-color: #2dd4bf;
@@ -2467,7 +2477,8 @@ body.in-pocket-mode {
   color: #94a3b8;
 }
 
-.stage-part-sound-btn.active .stage-part-name {
+.stage-part-sound-btn.active .stage-part-name,
+.stage-part-sound-btn.playing .stage-part-name {
   color: #0f1614;
 }
 
@@ -3049,6 +3060,8 @@ body.in-pocket-mode {
   cursor: pointer;
   transition: all 0.15s ease;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
 }
 
@@ -3058,11 +3071,17 @@ body.in-pocket-mode {
   font-size: 11px;
 }
 
-.stage-overview-pitch-chip:hover {
-  background: rgba(45, 212, 191, 0.2);
-  border-color: #2dd4bf;
-  color: #ffffff;
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .stage-overview-pitch-chip:hover {
+    background: rgba(45, 212, 191, 0.2);
+    border-color: #2dd4bf;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+}
+
+.stage-overview-pitch-chip:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .stage-overview-pitch-chip:active,

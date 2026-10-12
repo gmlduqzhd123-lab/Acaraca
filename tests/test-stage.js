@@ -188,6 +188,8 @@ assert(pitchJsSource.includes('export const DEFAULT_PITCH_DURATION = 3000;'), 'D
 assert(pitchJsSource.includes('singlePitchTimer'), 'singlePitchTimer must be present for auto-stop');
 assert(pitchJsSource.includes('pointerdown'), 'Blank screen pointerdown listener must be present');
 assert(pitchJsSource.includes('PITCH_TRIGGER_SELECTORS'), 'PITCH_TRIGGER_SELECTORS must be defined');
+assert(stageJsSource.includes('scheduleStagePitchAutoStop(3000)'), 'Stage mode must schedule 3000ms auto-stop');
+assert(stageJsSource.includes('btn.blur()'), 'Stage mode must blur buttons on stop to clear focus/hover state');
 
 // 10. Test Stage History Action Buttons Order (왼쪽부터 무대 큐시트 시작, 복제, 삭제)
 assert(stageJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "stage.js actions order must be loadBtn, cloneBtn, deleteBtn");

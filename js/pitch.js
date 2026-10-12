@@ -85,6 +85,25 @@ function notifyStateChange() {
   }
 }
 
+function safeRampToValue(gainParam, targetValue, targetTime) {
+  if (!gainParam) return;
+  if (typeof gainParam.linearRampToValueAtTime === 'function') {
+    gainParam.linearRampToValueAtTime(targetValue, targetTime);
+  } else if (typeof gainParam.exponentialRampToValueAtTime === 'function' && targetValue > 0) {
+    try {
+      gainParam.exponentialRampToValueAtTime(targetValue, targetTime);
+    } catch {
+      if (typeof gainParam.setValueAtTime === 'function') {
+        gainParam.setValueAtTime(targetValue, targetTime);
+      }
+    }
+  } else if (typeof gainParam.setValueAtTime === 'function') {
+    gainParam.setValueAtTime(targetValue, targetTime);
+  } else {
+    gainParam.value = targetValue;
+  }
+}
+
 let sequenceTimer = null;
 let currentSequence = null;
 
@@ -143,24 +162,33 @@ export function stopPitch(cancelSequence = true) {
   }
 
   if (currentGainNode && audioCtx) {
+    const closingGain = currentGainNode;
+    const closingOscs = [...currentOscillators];
+    currentOscillators = [];
+    currentGainNode = null;
     try {
       const now = audioCtx.currentTime;
-      const closingGain = currentGainNode;
-      const closingOscs = currentOscillators;
-      currentOscillators = [];
-      currentGainNode = null;
-      closingGain.gain.cancelScheduledValues(now);
-      closingGain.gain.setValueAtTime(closingGain.gain.value, now);
-      closingGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
-      setTimeout(() => {
-        for (const osc of closingOscs) {
-          try { osc.stop(); osc.disconnect(); } catch {}
-        }
-      }, 120);
-    } catch {
-      currentOscillators = [];
-      currentGainNode = null;
+      if (typeof closingGain.gain.cancelScheduledValues === 'function') {
+        closingGain.gain.cancelScheduledValues(now);
+      }
+      const curVal = Math.max(0.0001, closingGain.gain.value || 0.5);
+      if (typeof closingGain.gain.setValueAtTime === 'function') {
+        closingGain.gain.setValueAtTime(curVal, now);
+      }
+      safeRampToValue(closingGain.gain, 0, now + 0.08);
+      for (const osc of closingOscs) {
+        try { osc.stop(now + 0.09); } catch { try { osc.stop(); } catch {} }
+      }
+    } catch (e) {
+      for (const osc of closingOscs) {
+        try { osc.stop(); } catch {}
+      }
     }
+    setTimeout(() => {
+      for (const osc of closingOscs) {
+        try { osc.disconnect(); } catch {}
+      }
+    }, 150);
   } else {
     for (const osc of currentOscillators) {
       try { osc.stop(); osc.disconnect(); } catch {}
@@ -177,7 +205,7 @@ export function stopPitch(cancelSequence = true) {
  * If the exact same pitch is already playing, it will stop it (toggle behavior).
  * Auto-stops after `duration` ms (default 3000ms = 3초). Set duration=0 for indefinite.
  */
-export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = true, duration = DEFAULT_PITCH_DURATION) {
+export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = true, duration = DEFAULT_PITCH_DURATION, meta = null) {
   const ctx = getAudioContext();
   if (!ctx) return null;
 
@@ -196,9 +224,11 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
 
   const now = ctx.currentTime;
   const masterGain = ctx.createGain();
-  masterGain.gain.setValueAtTime(0.0001, now);
+  if (typeof masterGain.gain.setValueAtTime === 'function') {
+    masterGain.gain.setValueAtTime(0.0001, now);
+  }
   // Gentle attack to avoid clicking
-  masterGain.gain.exponentialRampToValueAtTime(Math.max(0.05, Math.min(1.0, volume)), now + 0.05);
+  safeRampToValue(masterGain.gain, Math.max(0.05, Math.min(1.0, volume)), now + 0.05);
 
   // Warm acoustic vocal-pipe timbre using fundamental + harmonics + gentle lowpass
   const osc1 = ctx.createOscillator();
@@ -246,6 +276,7 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
     label: `${noteInfo.note}${noteInfo.alt ? `/${noteInfo.alt}` : ''} (${noteInfo.korean})`,
     freq,
     noteInfo,
+    ...(meta && typeof meta === 'object' ? meta : {})
   };
 
   if (duration > 0) {
@@ -377,9 +408,11 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
 
   const now = ctx.currentTime;
   const masterGain = ctx.createGain();
-  masterGain.gain.setValueAtTime(0.0001, now);
+  if (typeof masterGain.gain.setValueAtTime === 'function') {
+    masterGain.gain.setValueAtTime(0.0001, now);
+  }
   const scaledVol = Math.min(0.55, volume / Math.sqrt(uniqueNotes.length));
-  masterGain.gain.exponentialRampToValueAtTime(scaledVol, now + 0.08);
+  safeRampToValue(masterGain.gain, scaledVol, now + 0.08);
 
   const filter = ctx.createBiquadFilter();
   filter.type = 'lowpass';
