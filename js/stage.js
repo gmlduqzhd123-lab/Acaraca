@@ -1342,7 +1342,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
           renderAll();
         }
       });
-      const songMeta = el('p', {
+      const songMeta = el('span', {
         class: 'stage-overview-song-meta',
         text: `${songData.artist || '아카라카'} · ${songData.arrangement || '혼성 아카펠라'}`
       });
@@ -1350,13 +1350,14 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       const titleRow = el('div', { class: 'stage-overview-title-row' },
         songTitle,
         keyStr ? el('span', { class: 'stage-key-badge', text: `Key: ${keyStr}` }) : null,
-        item.note ? el('span', { class: 'stage-hero-badge', style: 'background: rgba(234, 179, 8, 0.2); color: #fde047;', text: item.note }) : null,
-        isCur ? el('span', { class: 'stage-current-badge', text: '현재 진행곡' }) : null
+        item.note ? el('span', { class: 'stage-note-badge', text: item.note }) : null,
+        isCur ? el('span', { class: 'stage-current-badge', text: '현재 진행곡' }) : null,
+        songMeta
       );
 
       const leftWrap = el('div', { class: 'stage-overview-card-left' },
         numBadge,
-        el('div', { class: 'stage-overview-title-wrap' }, titleRow, songMeta)
+        titleRow
       );
 
       const focusBtn = button('🎤 1곡 집중 보기', () => {
@@ -1367,7 +1368,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         liveMode = 'focus';
         try { localStorage.setItem('acaroom_stage_live_submode', 'focus'); } catch {}
         renderAll();
-      }, isCur ? 'button primary small' : 'button secondary small', null, { title: `${idx + 1}번 곡 집중 모드로 전환` });
+      }, 'button secondary small stage-overview-focus-btn', null, { title: `${idx + 1}번 곡 집중 모드로 전환` });
 
       const cardHeader = el('div', { class: 'stage-overview-card-header' }, leftWrap, focusBtn);
 
@@ -1427,7 +1428,9 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         el('span', { text: mcComment })
       );
 
-      card.append(cardHeader, pitchBar, mcBox);
+      const cardBody = el('div', { class: 'stage-overview-card-body' }, pitchBar, mcBox);
+
+      card.append(cardHeader, cardBody);
       list.append(card);
     });
 

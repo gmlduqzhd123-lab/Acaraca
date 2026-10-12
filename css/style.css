@@ -2789,7 +2789,7 @@ body.in-pocket-mode {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 16px;
-  padding: 16px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -2803,37 +2803,40 @@ body.in-pocket-mode {
 }
 
 .stage-overview-card.is-current {
-  border-color: rgba(45, 212, 191, 0.6);
+  border-color: rgba(45, 212, 191, 0.7);
+  border-left: 5px solid #2dd4bf;
   background: rgba(45, 212, 191, 0.06);
-  box-shadow: 0 0 20px rgba(45, 212, 191, 0.12);
+  box-shadow: 0 0 24px rgba(45, 212, 191, 0.12);
 }
 
+/* 1행: 상단 곡 정보 밴드 (순번, 곡명, Key뱃지, 메모, 상태, 1곡 집중 버튼) */
 .stage-overview-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .stage-overview-card-left {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex: 1;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .stage-overview-num-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
   background: rgba(45, 212, 191, 0.15);
   color: #2dd4bf;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 800;
   flex-shrink: 0;
   border: 1px solid rgba(45, 212, 191, 0.3);
@@ -2845,18 +2848,12 @@ body.in-pocket-mode {
   box-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
 }
 
-.stage-overview-title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
 .stage-overview-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .stage-overview-song-title {
@@ -2866,6 +2863,7 @@ body.in-pocket-mode {
   margin: 0;
   cursor: pointer;
   line-height: 1.35;
+  white-space: nowrap;
   transition: color 0.15s ease;
 }
 
@@ -2874,33 +2872,63 @@ body.in-pocket-mode {
 }
 
 .stage-overview-song-meta {
-  font-size: 12px;
+  font-size: 12.5px;
   color: #94a3b8;
   margin: 0;
+  white-space: nowrap;
 }
 
 .stage-key-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 3px 9px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   background: rgba(59, 130, 246, 0.2);
   color: #93c5fd;
   border: 1px solid rgba(59, 130, 246, 0.35);
+  white-space: nowrap;
+}
+
+.stage-note-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: rgba(234, 179, 8, 0.2);
+  color: #fde047;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  white-space: nowrap;
 }
 
 .stage-current-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 3px 9px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   background: rgba(239, 68, 68, 0.2);
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.4);
+  white-space: nowrap;
+}
+
+.stage-overview-focus-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* 2행: 하단 무대 컨트롤 밴드 (좌측: 조율음 바 / 우측: MC 멘트) */
+.stage-overview-card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
 }
 
 .stage-overview-pitch-bar {
@@ -2912,10 +2940,12 @@ body.in-pocket-mode {
   background: rgba(0, 0, 0, 0.28);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .stage-overview-pitch-label {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #94a3b8;
   margin-right: 2px;
@@ -2924,6 +2954,7 @@ body.in-pocket-mode {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
 }
 
 .stage-overview-pitch-label .icon {
@@ -2953,6 +2984,7 @@ body.in-pocket-mode {
   cursor: pointer;
   transition: all 0.15s ease;
   touch-action: manipulation;
+  white-space: nowrap;
 }
 
 .stage-overview-pitch-chip strong {
@@ -2993,6 +3025,8 @@ body.in-pocket-mode {
   cursor: pointer;
   transition: all 0.15s ease;
   margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .stage-overview-chord-btn:hover {
@@ -3011,12 +3045,17 @@ body.in-pocket-mode {
   gap: 8px;
   font-size: 12.5px;
   color: #cbd5e1;
-  line-height: 1.5;
-  background: rgba(0, 0, 0, 0.18);
+  line-height: 1.55;
+  background: rgba(0, 0, 0, 0.22);
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   border-left: 3px solid #2dd4bf;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   word-break: keep-all;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .stage-overview-mc-box .icon {
@@ -3027,29 +3066,10 @@ body.in-pocket-mode {
   margin-top: 2px;
 }
 
-@media (min-width: 820px) {
-  .stage-overview-card {
-    display: grid;
-    grid-template-columns: minmax(200px, 1.3fr) minmax(260px, 2fr) minmax(180px, 1.4fr);
-    align-items: center;
-    gap: 16px;
-    padding: 14px 18px;
-  }
-  .stage-overview-card-header {
-    flex-wrap: nowrap;
-  }
-  .stage-overview-pitch-bar {
-    background: rgba(0, 0, 0, 0.22);
-    padding: 6px 12px;
-  }
-  .stage-overview-mc-box {
-    margin: 0;
-    font-size: 12px;
-    max-height: 48px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+@media (max-width: 860px) {
+  .stage-overview-card-body {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 }
 
