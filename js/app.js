@@ -134,6 +134,11 @@ function navigate(route, {replace = false, focus = true} = {}) {
   state.route = route; writeRoute(route, {replace}); render(); window.scrollTo({top: 0, behavior: 'instant'});
   if (focus) app.focus({preventScroll: true});
 }
+function switchStageSubView(view) {
+  state.stageView = view;
+  write('stageView', view);
+  navigate({tab: 'stage', view}, {replace: true});
+}
 function openSong(song) { navigate({song: song.id}); }
 function startPractice(song, part = preferredPart(song, state.myPart)) {
   if (part) navigate({song: song.id, part});
@@ -804,9 +809,7 @@ function renderStageHistoryPage(container) {
         actionName: '새 공연 셋리스트 생성',
         onSuccess: () => {
           const newSession = createNewStageSession('새 아카라카 공연');
-          state.stageView = 'live';
-          writeRoute({tab: 'stage', view: 'live'}, {replace: true});
-          render();
+          switchStageSubView('live');
         }
       });
     }, 'button primary small')
@@ -840,9 +843,7 @@ function renderStageHistoryPage(container) {
 
       const loadBtn = button('무대 큐시트 시작', () => {
         saveActiveStageSession(item);
-        state.stageView = 'live';
-        writeRoute({tab: 'stage', view: 'live'}, {replace: true});
-        render();
+        switchStageSubView('live');
       }, 'button primary small', 'play');
 
       const cloneBtn = button('📋 복제', () => {
@@ -889,6 +890,8 @@ function renderStage() {
   if (state.route.view && ['live', 'history', 'list', 'cards', 'archive'].includes(state.route.view)) {
     if (state.route.view === 'archive') state.stageView = 'list';
     else state.stageView = state.route.view;
+  } else {
+    state.route.view = state.stageView || 'live';
   }
 
   const currentView = state.stageView || 'live';
@@ -905,19 +908,13 @@ function renderStage() {
   // 1. View Mode Switcher Tabs (3대 핵심 서브뷰)
   const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '공연 아카이브 서브 메뉴'},
     button('🎤 무대 큐시트', () => {
-      state.stageView = 'live';
-      writeRoute({tab: 'stage', view: 'live'}, {replace: true});
-      render();
+      switchStageSubView('live');
     }, `stage-tab-btn${currentView === 'live' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'live')}),
     button('📜 공연 히스토리', () => {
-      state.stageView = 'history';
-      writeRoute({tab: 'stage', view: 'history'}, {replace: true});
-      render();
+      switchStageSubView('history');
     }, `stage-tab-btn${currentView === 'history' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'history')}),
     button('🎬 실황 무대 영상', () => {
-      state.stageView = 'list';
-      writeRoute({tab: 'stage', view: 'list'}, {replace: true});
-      render();
+      switchStageSubView('list');
     }, `stage-tab-btn${isVideoView ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(isVideoView)})
   );
 
@@ -931,9 +928,7 @@ function renderStage() {
       songs: state.songs,
       navigate,
       onSwitchView: (v) => {
-        state.stageView = v;
-        writeRoute({tab: 'stage', view: v}, {replace: true});
-        render();
+        switchStageSubView(v);
       }
     });
     return;
@@ -984,12 +979,16 @@ function renderStage() {
   const viewModeToggle = el('div', {class: 'stage-view-mode-toggle', style: 'display: inline-flex; gap: 4px;'},
     button('📋 목록', () => {
       state.stageView = 'list';
-      writeRoute({tab: 'stage', view: 'list'}, {replace: true});
+      write('stageView', 'list');
+      state.route = {tab: 'stage', view: 'list'};
+      writeRoute(state.route, {replace: true});
       updateStageContent();
     }, `stage-sub-toggle-btn${state.stageView !== 'cards' ? ' active' : ''}`, null, {title: '목록형 보기'}),
     button('🎴 카드', () => {
       state.stageView = 'cards';
-      writeRoute({tab: 'stage', view: 'cards'}, {replace: true});
+      write('stageView', 'cards');
+      state.route = {tab: 'stage', view: 'cards'};
+      writeRoute(state.route, {replace: true});
       updateStageContent();
     }, `stage-sub-toggle-btn${state.stageView === 'cards' ? ' active' : ''}`, null, {title: '카드형 그리드 보기'})
   );

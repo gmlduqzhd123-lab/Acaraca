@@ -82,4 +82,11 @@ assert.doesNotThrow(() => {
 assert.strictEqual(STAGE_ADMIN_PASSWORD, '1234', 'Stage admin password must be 1234');
 assert.strictEqual(typeof promptStagePassword, 'function', 'promptStagePassword must be an exported function');
 
+// 7. Test Stage Sub-view switching logic in app.js
+const appJsSource = fs.readFileSync('js/app.js', 'utf8');
+assert(appJsSource.includes('function switchStageSubView(view)'), 'switchStageSubView helper must be defined');
+assert(appJsSource.includes("switchStageSubView('live')"), "switchStageSubView('live') must be wired");
+assert(appJsSource.includes("switchStageSubView('history')"), "switchStageSubView('history') must be wired");
+assert(appJsSource.includes("switchStageSubView('list')"), "switchStageSubView('list') must be wired");
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');
