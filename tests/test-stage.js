@@ -221,6 +221,7 @@ assert(gyowonIdx < jeonnamIdx, 'Gyowon (10.23) must come before Jeonnam (10.24)'
 assert(stageJsSource.includes('stage-perf-nav-wrap'), 'stage.js must include stage-perf-nav-wrap');
 assert(stageJsSource.includes('◀ 그 전 공연'), 'stage.js must include ◀ 그 전 공연 button');
 assert(stageJsSource.includes('그 후 공연 ▶'), 'stage.js must include 그 후 공연 ▶ button');
+assert(stageJsSource.includes('Ctrl+ArrowLeft / Ctrl+ArrowRight'), 'stage.js must support Ctrl+Arrow keyboard navigation for performances');
 
 console.log('✓ Stage Mode logic unit tests passed successfully!');
 

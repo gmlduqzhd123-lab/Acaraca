@@ -990,9 +990,43 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     updateOverviewPitchUI(playing);
   });
 
-  // Keyboard navigation on stage (arrow keys, space for pitch)
+  function navigateToPerformance(target) {
+    if (!target) return;
+    clearStagePitchAutoStop();
+    stopPitch(true);
+    if (typeof activeStageLiveCleanup === 'function') {
+      activeStageLiveCleanup();
+    }
+    saveActiveStageSession(target);
+    renderStageLiveView({ container, songs, navigate, onSwitchView });
+    toast(`[${target.eventTitle}] 큐시트로 이동했습니다.`);
+  }
+
+  // Keyboard navigation on stage (arrow keys, space for pitch, Ctrl+Arrow for performance switch)
   function handleKeyDown(e) {
     if (e.target && e.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+
+    // Ctrl+ArrowLeft / Ctrl+ArrowRight: 그 전 공연 / 그 후 공연 전환
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowLeft' || e.key === 'PageUp')) {
+      const perfList = getChronologicalPerformanceList();
+      const curIdx = perfList.findIndex(p => p.id === session.id);
+      const resIdx = curIdx >= 0 ? curIdx : perfList.findIndex(p => p.eventTitle === session.eventTitle);
+      if (resIdx > 0) {
+        e.preventDefault();
+        navigateToPerformance(perfList[resIdx - 1]);
+        return;
+      }
+    } else if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowRight' || e.key === 'PageDown')) {
+      const perfList = getChronologicalPerformanceList();
+      const curIdx = perfList.findIndex(p => p.id === session.id);
+      const resIdx = curIdx >= 0 ? curIdx : perfList.findIndex(p => p.eventTitle === session.eventTitle);
+      if (resIdx >= 0 && resIdx < perfList.length - 1) {
+        e.preventDefault();
+        navigateToPerformance(perfList[resIdx + 1]);
+        return;
+      }
+    }
+
     if (e.key === 'ArrowRight' || e.key === 'PageDown') {
       e.preventDefault();
       if (activeIndex < session.songs.length - 1) {
@@ -1017,7 +1051,10 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       e.preventDefault();
       if (liveMode === 'focus' && playAllBtn) playAllBtn.click();
     } else if (e.key === 'Escape') {
+      clearStagePitchAutoStop();
       stopPitch(true);
+      updatePitchPlayingUI(null);
+      updateOverviewPitchUI(null);
     }
   }
   window.addEventListener('keydown', handleKeyDown);
@@ -1087,17 +1124,6 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     const resolvedPerfIdx = curPerfIdx >= 0 ? curPerfIdx : perfList.findIndex(p => p.eventTitle === session.eventTitle);
     const prevPerf = resolvedPerfIdx > 0 ? perfList[resolvedPerfIdx - 1] : null;
     const nextPerf = (resolvedPerfIdx >= 0 && resolvedPerfIdx < perfList.length - 1) ? perfList[resolvedPerfIdx + 1] : null;
-
-    function navigateToPerformance(target) {
-      if (!target) return;
-      stopPitch(true);
-      if (typeof activeStageLiveCleanup === 'function') {
-        activeStageLiveCleanup();
-      }
-      saveActiveStageSession(target);
-      renderStageLiveView({ container, songs, navigate, onSwitchView });
-      toast(`[${target.eventTitle}] 큐시트로 이동했습니다.`);
-    }
 
     const prevPerfBtn = button('◀ 그 전 공연', () => {
       if (prevPerf) navigateToPerformance(prevPerf);
