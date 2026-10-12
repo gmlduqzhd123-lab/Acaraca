@@ -4,6 +4,8 @@ import {
   STAGE_AI_COMMENTS,
   generateDynamicMCComment,
   DEFAULT_STAGE_HISTORY,
+  DUMMY_STAGE_IDS,
+  isDummyStage,
   getSongStartingPitchEntries,
   cleanupStageLive,
   STAGE_ADMIN_PASSWORD,
@@ -29,14 +31,13 @@ assert(genWit.includes('아카라카 찬가'), 'Dynamic wit includes song title'
 assert(genStory.includes('아카라카 찬가'), 'Dynamic story includes song title');
 assert(genBrief.includes('아카라카 찬가'), 'Dynamic brief includes song title');
 
-// 3. Test Default Stage History ordering (newest first)
+// 3. Test Stage History (Only user entered performances, zero dummy items)
 assert(Array.isArray(DEFAULT_STAGE_HISTORY), 'DEFAULT_STAGE_HISTORY must be an array');
-assert(DEFAULT_STAGE_HISTORY.length >= 4, 'At least 4 default performances');
-for (let i = 0; i < DEFAULT_STAGE_HISTORY.length - 1; i++) {
-  assert(
-    DEFAULT_STAGE_HISTORY[i].updatedAt >= DEFAULT_STAGE_HISTORY[i + 1].updatedAt,
-    `Stage history must be sorted newest first! (${DEFAULT_STAGE_HISTORY[i].eventTitle} vs ${DEFAULT_STAGE_HISTORY[i+1].eventTitle})`
-  );
+assert(DEFAULT_STAGE_HISTORY.length === 1, 'Only user-entered Yeosu performance in DEFAULT_STAGE_HISTORY');
+assert(DEFAULT_STAGE_HISTORY.every(h => !isDummyStage(h)), 'No dummy performances in DEFAULT_STAGE_HISTORY');
+for (const dummyId of ['stage-2026-spring', 'stage-2025-busking', 'stage-2024-suncheon']) {
+  assert(DUMMY_STAGE_IDS.has(dummyId), `DUMMY_STAGE_IDS must track ${dummyId}`);
+  assert(!DEFAULT_STAGE_HISTORY.some(h => h.id === dummyId), `Dummy ${dummyId} must not be in default history`);
 }
 
 // 3-1. Verify 2026 여수 생활문화한마당 performance

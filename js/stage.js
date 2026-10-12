@@ -23,6 +23,7 @@ import { requestWakeLock, releaseWakeLock, isWakeLockActive } from './background
 
 export const STAGE_HISTORY_KEY = 'acaroom_stage_history_v2';
 export const STAGE_ACTIVE_KEY = 'acaroom_stage_active_v2';
+export const STAGE_DELETED_KEY = 'acaroom_stage_deleted_ids_v1';
 
 /**
  * 33개 전 곡에 대한 고품질 AI 추천 멘트 데이터베이스 (유쾌/위트, 감성/스토리, 초간단)
@@ -221,7 +222,8 @@ export function getSongStartingPitchEntries(songData) {
 }
 
 /**
- * 초기 시드용 대표 공연 기록들 (최신순 3개 기본 탑재)
+ * 사용자 직접 입력 공연 셋리스트 (2026 여수 생활문화한마당)
+ * 사용자가 직접 입력하지 않은 임의 더미 공연은 기본 히스토리에 포함하지 않음
  */
 export const DEFAULT_STAGE_HISTORY = [
   {
@@ -240,77 +242,71 @@ export const DEFAULT_STAGE_HISTORY = [
       { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 그루브', commentTone: 'wit' },
       { songId: 'lets-travel', title: '여행을 떠나요', note: '피날레 호응 유도', commentTone: 'wit' }
     ]
-  },
-  {
-    id: 'stage-2026-spring',
-    eventTitle: '2026 아카라카 봄 정기공연 · 청춘 하모니',
-    date: '2026.10.12',
-    venue: '연세대학교 백양콘서트홀',
-    notes: '메인 무대 큐시트 (정기공연)',
-    updatedAt: 1791811200000,
-    currentIndex: 0,
-    songs: [
-      { songId: 'butterfly', title: 'Butterfly', note: '오프닝 곡', commentTone: 'story' },
-      { songId: 'beautiful-world', title: '아름다운 세상', note: '합창 분위기', commentTone: 'story' },
-      { songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', note: '하이라이트', commentTone: 'wit' },
-      { songId: 'speechless', title: 'Speechless', note: '파워풀 보컬', commentTone: 'story' },
-      { songId: 'mujogeon', title: '무조건', note: '관객 호응 유도', commentTone: 'wit' },
-      { songId: 'aloha', title: '아로하', note: '앙코르 피날레', commentTone: 'brief' }
-    ]
-  },
-  {
-    id: 'stage-2025-busking',
-    eventTitle: '2025 아카라카 봄맞이 캠퍼스 버스킹',
-    date: '2025.05.20',
-    venue: '학생회관 앞 야외 버스킹 무대',
-    notes: '야외 버스킹 셋리스트',
-    updatedAt: 1747700000000,
-    currentIndex: 0,
-    songs: [
-      { songId: 'cherry-blossom-ending', title: '벚꽃 엔딩', note: '봄 감성 오프닝', commentTone: 'wit' },
-      { songId: 'short-hair', title: '단발머리', note: '경쾌한 비트', commentTone: 'wit' },
-      { songId: 'first-impression', title: '첫인상', note: '재즈 그루브', commentTone: 'story' },
-      { songId: 'lets-travel', title: '여행을 떠나요', note: '단체 박수 유도', commentTone: 'wit' }
-    ]
-  },
-  {
-    id: 'stage-2024-suncheon',
-    eventTitle: '2024 순천만국가정원 아고라순천 무대',
-    date: '2024.10.15',
-    venue: '순천만국가정원 남문 스페이스허브광장',
-    notes: '초청 야외공연',
-    updatedAt: 1729000000000,
-    currentIndex: 0,
-    songs: [
-      { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
-      { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 보컬', commentTone: 'story' },
-      { songId: 'l-o-v-e', title: 'L.O.V.E.', note: '스윙 재즈', commentTone: 'brief' },
-      { songId: 'tobacco-shop-girl', title: '담배가게 아가씨', note: '뮤지컬 피날레', commentTone: 'wit' }
-    ]
   }
 ];
 
 /**
+ * 사용자가 직접 입력하지 않은 과거 임시/샘플 더미 공연 ID 목록 (발견 즉시 히스토리에서 영구 삭제)
+ */
+export const DUMMY_STAGE_IDS = new Set([
+  'stage-2026-spring',
+  'stage-2025-busking',
+  'stage-2024-suncheon',
+  'stage-2024-winter'
+]);
+
+/**
+ * 미입력 더미 공연 판별 헬퍼
+ */
+export function isDummyStage(item) {
+  if (!item) return false;
+  if (DUMMY_STAGE_IDS.has(item.id)) return true;
+  const title = item.eventTitle || '';
+  if (
+    title.includes('청춘 하모니') ||
+    title.includes('봄맞이 캠퍼스 버스킹') ||
+    title.includes('아고라순천')
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * 저장소에서 공연 히스토리 가져오기 (항상 최신순 정렬)
+ * - 사용자가 직접 입력하지 않은 샘플/더미 공연은 영구 배제
  */
 export function getStageHistory() {
   try {
+    let deletedIds = new Set();
+    try {
+      const dRaw = localStorage.getItem(STAGE_DELETED_KEY);
+      if (dRaw) deletedIds = new Set(JSON.parse(dRaw));
+    } catch (_) {}
+
     const raw = localStorage.getItem(STAGE_HISTORY_KEY);
     if (raw === null) {
-      saveStageHistory(DEFAULT_STAGE_HISTORY);
-      return DEFAULT_STAGE_HISTORY;
+      const initial = DEFAULT_STAGE_HISTORY.filter(item => !isDummyStage(item) && !deletedIds.has(item.id));
+      saveStageHistory(initial);
+      return initial;
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      const existingIds = new Set(parsed.map(item => item.id));
-      let changed = false;
-      for (const def of DEFAULT_STAGE_HISTORY) {
-        if (!existingIds.has(def.id)) {
-          parsed.unshift(JSON.parse(JSON.stringify(def)));
+      // 1. 기존에 저장되어 있던 미입력 더미/샘플 공연 영구 배제 및 삭제된 ID 배제
+      const cleaned = parsed.filter(item => !isDummyStage(item) && !deletedIds.has(item.id));
+      let changed = cleaned.length !== parsed.length;
+
+      // 2. 사용자가 직접 추가를 요청한 여수 공연이 누락되어 있고 삭제하지 않았다면 기본 추가
+      const hasYeosu = cleaned.some(item => item.id === 'stage-2026-yeosu');
+      if (!hasYeosu && !deletedIds.has('stage-2026-yeosu')) {
+        const yeosuDef = DEFAULT_STAGE_HISTORY.find(d => d.id === 'stage-2026-yeosu');
+        if (yeosuDef) {
+          cleaned.unshift(JSON.parse(JSON.stringify(yeosuDef)));
           changed = true;
         }
       }
-      const sorted = parsed.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+      const sorted = cleaned.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
       if (changed) {
         saveStageHistory(sorted);
       }
@@ -319,7 +315,7 @@ export function getStageHistory() {
   } catch (e) {
     console.warn('Failed to parse stage history:', e);
   }
-  return DEFAULT_STAGE_HISTORY;
+  return DEFAULT_STAGE_HISTORY.filter(item => !isDummyStage(item));
 }
 
 /**
@@ -344,10 +340,12 @@ export function getActiveStageSession(allSongs = []) {
     const raw = localStorage.getItem(STAGE_ACTIVE_KEY);
     if (raw) {
       const session = JSON.parse(raw);
-      const yeosuSession = getStageHistory().find(h => h.id === 'stage-2026-yeosu');
-      if (yeosuSession && (session.id === 'stage-2026-spring' || session.eventTitle === '새 아카라카 공연' || session.eventTitle === '2026 아카라카 무대 큐시트' || !session.eventTitle)) {
-        saveActiveStageSession(JSON.parse(JSON.stringify(yeosuSession)));
-        return yeosuSession;
+      // 만약 활성 세션이 미입력 더미 공연이거나 기본 템플릿이면 히스토리 최신(여수 등)으로 즉시 교체
+      if (isDummyStage(session) || session.eventTitle === '새 아카라카 공연' || session.eventTitle === '2026 아카라카 무대 큐시트' || !session.eventTitle) {
+        const history = getStageHistory();
+        const fallback = history[0] || DEFAULT_STAGE_HISTORY[0];
+        saveActiveStageSession(JSON.parse(JSON.stringify(fallback)));
+        return fallback;
       }
       if (session && Array.isArray(session.songs) && session.songs.length > 0) {
         return session;
@@ -368,18 +366,13 @@ export function getActiveStageSession(allSongs = []) {
   // 그것도 없으면 기본 세션 생성
   const defaultSession = {
     id: `stage-${Date.now()}`,
-    eventTitle: '2026 아카라카 무대 큐시트',
-    date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-    venue: '공연장',
-    notes: '무대 큐시트',
+    eventTitle: '2026 여수 생활문화한마당',
+    date: '2026.10.16',
+    venue: '웅천친수공원',
+    notes: '2026 여수 생활문화한마당 공연 큐시트 (장소: 웅천친수공원)',
     updatedAt: Date.now(),
     currentIndex: 0,
-    songs: (allSongs.slice(0, 5) || []).map(s => ({
-      songId: s.id,
-      title: s.title,
-      note: '',
-      commentTone: 'story'
-    }))
+    songs: (DEFAULT_STAGE_HISTORY[0]?.songs || []).map(s => ({ ...s }))
   };
   saveActiveStageSession(defaultSession);
   return defaultSession;
@@ -429,9 +422,18 @@ export function createNewStageSession(title = '새로운 아카라카 공연') {
 }
 
 /**
- * 공연 히스토리 항목 삭제
+ * 공연 히스토리 항목 삭제 (삭제 기록 영구 보존)
  */
 export function deleteStageHistoryItem(id) {
+  try {
+    const deletedRaw = localStorage.getItem(STAGE_DELETED_KEY);
+    const deletedSet = new Set(deletedRaw ? JSON.parse(deletedRaw) : []);
+    deletedSet.add(id);
+    localStorage.setItem(STAGE_DELETED_KEY, JSON.stringify([...deletedSet]));
+  } catch (e) {
+    console.warn('Failed to track deleted stage id:', e);
+  }
+
   const history = getStageHistory().filter(item => item.id !== id);
   saveStageHistory(history);
   const active = getActiveStageSession();
@@ -439,7 +441,7 @@ export function deleteStageHistoryItem(id) {
     if (history.length > 0) {
       saveActiveStageSession(JSON.parse(JSON.stringify(history[0])));
     } else {
-      createNewStageSession();
+      createNewStageSession('새 아카라카 공연');
     }
   }
 }
