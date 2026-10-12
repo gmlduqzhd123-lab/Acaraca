@@ -1436,10 +1436,14 @@ html[data-theme="dark"] .chord-play-btn.playing {
 /* Stage Performances Tab & List View */
 .stage-controls-panel { margin-bottom: 24px; }
 .stage-tabs-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-.stage-view-tabs { display: inline-flex; background: var(--surface-soft); padding: 4px; border-radius: 12px; border: 1px solid var(--border); gap: 4px; }
-.stage-tab-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 0; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s ease; }
+.stage-view-tabs { display: inline-flex; align-items: center; background: var(--surface-soft); padding: 4px; border-radius: 12px; border: 1px solid var(--border); gap: 4px; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.stage-view-tabs::-webkit-scrollbar { display: none; }
+.stage-tab-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 0; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all .15s ease; }
 .stage-tab-btn:hover { color: var(--ink); background: rgba(0,0,0,.04); }
 .stage-tab-btn.active { background: var(--surface); color: var(--primary); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.stage-sub-toggle-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all .15s ease; }
+.stage-sub-toggle-btn:hover { color: var(--ink); background: var(--surface-soft); }
+.stage-sub-toggle-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
 .stage-summary-text { font-size: 13px; font-weight: 650; color: var(--muted); }
 
 /* Stage List */

@@ -58,9 +58,9 @@ import {
 const app = document.getElementById('app');
 const labels = {
   home: '홈',
+  stage: '공연 아카이브', // 구 stage: '아카라카 영상'
   songs: '아카라카 연습실',
   appreciation: '아카펠라 감상',
-  stage: '아카라카 영상',
   scores: '악보 창고',
   memories: '우리들의 기록',
   rehearsal: '연습 일지',
@@ -72,9 +72,9 @@ const labels = {
 };
 const navIcons = {
   home: 'home',
+  stage: 'stage',
   songs: 'library',
   appreciation: 'sparkles',
-  stage: 'stage',
   scores: 'document',
   memories: 'camera',
   rehearsal: 'notes',
@@ -540,7 +540,7 @@ function renderHome() {
     el('p', {text: `감상 영상 ${state.appreciation.length}건, 아카라카 영상 ${state.performances.length}편, 악보 ${state.scores.length}건, 우리들의 기록 ${state.memories.length}건, 연습 일지 ${state.rehearsals.length}건이 보관되어 있습니다.`}),
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;'},
       button('✨ 아카펠라 감상', () => navigate({tab: 'appreciation'}), 'button secondary small', 'sparkles'),
-      button('🎬 아카라카 영상 & 목록', () => navigate({tab: 'stage', view: 'list'}), 'button secondary small', 'stage'),
+      button('🎬 공연 아카이브', () => navigate({tab: 'stage', view: 'live'}), 'button secondary small', 'stage'),
       button('🎼 악보 창고', () => navigate({tab: 'scores'}), 'button secondary small', 'document'),
       button('📷 우리들의 기록', () => navigate({tab: 'memories'}), 'button secondary small', 'camera'),
       button('🎙️ 연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary small', 'notes'),
@@ -870,23 +870,25 @@ function renderStageHistoryPage(container) {
 }
 
 function renderStage() {
-  if (state.route.view && ['live', 'history', 'list', 'cards'].includes(state.route.view)) {
-    state.stageView = state.route.view;
+  if (state.route.view && ['live', 'history', 'list', 'cards', 'archive'].includes(state.route.view)) {
+    if (state.route.view === 'archive') state.stageView = 'list';
+    else state.stageView = state.route.view;
   }
 
   const currentView = state.stageView || 'live';
+  const isVideoView = currentView === 'list' || currentView === 'cards';
 
   app.append(
     el('div', {class: 'page-heading'},
-      el('p', {class: 'eyebrow', text: 'OUR STAGE ARCHIVE'}),
-      el('h1', {text: '아카라카 영상'}),
-      el('p', {text: '정기 공연, 버스킹, 축제 등 관객과 함께 호흡한 아카라카의 소중한 무대 영상을 모아봅니다.'})
+      el('p', {class: 'eyebrow', text: 'ACARACA STAGE & ARCHIVE'}),
+      el('h1', {text: '공연 아카이브'}),
+      el('p', {text: '실시간 무대 큐시트, 역대 공연 셋리스트 보관함, 감동의 실황 무대 영상을 한곳에서 모아봅니다.'})
     )
   );
 
-  // 1. View Mode Switcher Tabs
-  const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '아카라카 영상 보기 방식'},
-    button('🎤 무대 큐시트 (LIVE)', () => {
+  // 1. View Mode Switcher Tabs (3대 핵심 서브뷰)
+  const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '공연 아카이브 서브 메뉴'},
+    button('🎤 무대 큐시트', () => {
       state.stageView = 'live';
       writeRoute({tab: 'stage', view: 'live'}, {replace: true});
       render();
@@ -896,16 +898,11 @@ function renderStage() {
       writeRoute({tab: 'stage', view: 'history'}, {replace: true});
       render();
     }, `stage-tab-btn${currentView === 'history' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'history')}),
-    button('📋 목록으로 보기', () => {
+    button('🎬 실황 무대 영상', () => {
       state.stageView = 'list';
       writeRoute({tab: 'stage', view: 'list'}, {replace: true});
       render();
-    }, `stage-tab-btn${currentView === 'list' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'list')}),
-    button('🎬 영상 카드로 보기', () => {
-      state.stageView = 'cards';
-      writeRoute({tab: 'stage', view: 'cards'}, {replace: true});
-      render();
-    }, `stage-tab-btn${currentView === 'cards' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'cards')})
+    }, `stage-tab-btn${isVideoView ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(isVideoView)})
   );
 
   if (currentView === 'live') {
@@ -968,10 +965,26 @@ function renderStage() {
     }
   });
 
+  const viewModeToggle = el('div', {class: 'stage-view-mode-toggle', style: 'display: inline-flex; gap: 4px;'},
+    button('📋 목록', () => {
+      state.stageView = 'list';
+      writeRoute({tab: 'stage', view: 'list'}, {replace: true});
+      updateStageContent();
+    }, `stage-sub-toggle-btn${state.stageView !== 'cards' ? ' active' : ''}`, null, {title: '목록형 보기'}),
+    button('🎴 카드', () => {
+      state.stageView = 'cards';
+      writeRoute({tab: 'stage', view: 'cards'}, {replace: true});
+      updateStageContent();
+    }, `stage-sub-toggle-btn${state.stageView === 'cards' ? ' active' : ''}`, null, {title: '카드형 그리드 보기'})
+  );
+
   const topControls = el('div', {class: 'stage-controls-panel'},
     el('div', {class: 'stage-tabs-row'},
       viewTabs,
-      el('div', {class: 'stage-summary-text', id: 'stage-summary-count'})
+      el('div', {style: 'display: flex; align-items: center; gap: 10px;'},
+        viewModeToggle,
+        el('div', {class: 'stage-summary-text', id: 'stage-summary-count'})
+      )
     ),
     el('div', {class: 'search-box'},
       el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
@@ -1018,10 +1031,17 @@ function renderStage() {
       btn.classList.toggle('active', isActive);
     }
 
+    // Update view mode toggle active states
+    for (const btn of viewModeToggle.querySelectorAll('button')) {
+      const isCard = btn.textContent.includes('카드');
+      const shouldActive = isCard ? state.stageView === 'cards' : state.stageView !== 'cards';
+      btn.classList.toggle('active', shouldActive);
+    }
+
     contentArea.replaceChildren();
 
     if (!filtered.length) {
-      contentArea.append(emptyState('검색된 아카라카 영상이 없습니다', '다른 검색어를 입력하거나 카테고리 필터를 변경해 보세요.'));
+      contentArea.append(emptyState('검색된 공연 영상이 없습니다', '다른 검색어를 입력하거나 카테고리 필터를 변경해 보세요.'));
       return;
     }
 
