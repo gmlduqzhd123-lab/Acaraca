@@ -463,12 +463,19 @@ export function getSongStartingPitchEntries(songData) {
     ? songData.startingPitches.pitches
     : songData.startingPitches;
 
+  const numberedParts = Object.keys(rawPitches).filter(k => k.startsWith('part') && rawPitches[k]);
   const namedKeys = ['bass', 'baritone', 'tenor', 'alto', 'soprano', 'lead', 'vp'];
-  const hasNamed = namedKeys.some(k => Boolean(rawPitches[k]));
+  const namedParts = namedKeys.filter(k => Boolean(rawPitches[k]));
+
+  // 6부 이상이거나 파트 번호 개수가 명명된 성부 개수보다 많은 경우, 모든 단원의 음이 누락 없이 표시되도록 numbered 파트 우선
+  const useNumbered = numberedParts.length > 5 || (numberedParts.length > namedParts.length);
 
   const entries = Object.entries(rawPitches).filter(([part, noteStr]) => {
     if (!noteStr || typeof noteStr !== 'string' || part === 'full') return false;
-    if (hasNamed) {
+    if (useNumbered && numberedParts.length > 0) {
+      return part.startsWith('part');
+    }
+    if (namedParts.length > 0) {
       return !part.startsWith('part');
     }
     return true;

@@ -32,6 +32,18 @@ songs.forEach(song => {
       errors++;
     }
   }
+
+  // Harmony sanity check: Bass must be lower than Soprano
+  const bassStr = song.startingPitches.bass || song.startingPitches.part5 || song.startingPitches.part4;
+  const sopStr = song.startingPitches.soprano || song.startingPitches.part1;
+  if (bassStr && sopStr && song.startingPitches.bass && song.startingPitches.soprano) {
+    const b = parseNoteString(song.startingPitches.bass);
+    const s = parseNoteString(song.startingPitches.soprano);
+    if (b && s && b.freq >= s.freq) {
+      console.error(`✗ Inverted bass harmony for song ${song.id}: Bass (${song.startingPitches.bass}) >= Soprano (${song.startingPitches.soprano})`);
+      errors++;
+    }
+  }
 });
 
 if (errors === 0) {
@@ -40,3 +52,4 @@ if (errors === 0) {
   console.error('✗ Total pitch errors:', errors);
   process.exit(1);
 }
+
