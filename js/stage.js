@@ -662,6 +662,9 @@ export function isDummyStage(item) {
  * - 사용자가 직접 입력하지 않은 샘플/더미 공연은 영구 배제
  */
 export function getStageHistory() {
+  if (typeof localStorage === 'undefined') {
+    return DEFAULT_STAGE_HISTORY.filter(item => !isDummyStage(item));
+  }
   try {
     let deletedIds = new Set();
     try {
@@ -706,6 +709,7 @@ export function getStageHistory() {
  * 공연 히스토리 저장
  */
 export function saveStageHistory(history) {
+  if (typeof localStorage === 'undefined') return history;
   try {
     const sorted = [...history].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
     localStorage.setItem(STAGE_HISTORY_KEY, JSON.stringify(sorted));
@@ -714,6 +718,19 @@ export function saveStageHistory(history) {
     console.error('Failed to save stage history:', e);
     return history;
   }
+}
+
+/**
+ * 역대 공연 셋리스트를 날짜순(오래된 순 -> 최신 순)으로 정렬하여 반환
+ */
+export function getChronologicalPerformanceList() {
+  const history = getStageHistory();
+  return [...history].sort((a, b) => {
+    const dateA = a.date || '';
+    const dateB = b.date || '';
+    if (dateA !== dateB) return dateA.localeCompare(dateB);
+    return (a.updatedAt || 0) - (b.updatedAt || 0);
+  });
 }
 
 /**
@@ -1065,6 +1082,58 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     const titleEl = el('h2', { class: 'stage-event-title', text: session.eventTitle || '2026 아카라카 공연' });
     const metaEl = el('div', { class: 'stage-event-meta', text: `📅 ${session.date || ''} · 📍 ${session.venue || '공연 무대'}` });
 
+    const perfList = getChronologicalPerformanceList();
+    const curPerfIdx = perfList.findIndex(p => p.id === session.id);
+    const resolvedPerfIdx = curPerfIdx >= 0 ? curPerfIdx : perfList.findIndex(p => p.eventTitle === session.eventTitle);
+    const prevPerf = resolvedPerfIdx > 0 ? perfList[resolvedPerfIdx - 1] : null;
+    const nextPerf = (resolvedPerfIdx >= 0 && resolvedPerfIdx < perfList.length - 1) ? perfList[resolvedPerfIdx + 1] : null;
+
+    function navigateToPerformance(target) {
+      if (!target) return;
+      stopPitch(true);
+      if (typeof activeStageLiveCleanup === 'function') {
+        activeStageLiveCleanup();
+      }
+      saveActiveStageSession(target);
+      renderStageLiveView({ container, songs, navigate, onSwitchView });
+      toast(`[${target.eventTitle}] 큐시트로 이동했습니다.`);
+    }
+
+    const prevPerfBtn = button('◀ 그 전 공연', () => {
+      if (prevPerf) navigateToPerformance(prevPerf);
+    }, 'stage-perf-nav-btn prev', null, {
+      disabled: !prevPerf,
+      title: prevPerf ? `그 전 공연으로 이동: ${prevPerf.eventTitle} (${prevPerf.date || ''})` : '그 전 공연이 없습니다 (첫 번째 공연)'
+    });
+
+    const perfCountBadge = el('button', {
+      type: 'button',
+      class: 'stage-perf-nav-count-btn',
+      title: `현재 공연: ${session.eventTitle} (${(resolvedPerfIdx >= 0 ? resolvedPerfIdx + 1 : 1)}/${perfList.length || 1}) · 클릭 시 전체 공연 목록 열기`,
+      onclick: () => {
+        openStageHistoryModal({
+          songs,
+          onSelectSession: (selected) => {
+            saveActiveStageSession(selected);
+            renderStageLiveView({ container, songs, navigate, onSwitchView });
+          }
+        });
+      }
+    }, `${resolvedPerfIdx >= 0 ? resolvedPerfIdx + 1 : 1} / ${perfList.length || 1}`);
+
+    const nextPerfBtn = button('그 후 공연 ▶', () => {
+      if (nextPerf) navigateToPerformance(nextPerf);
+    }, 'stage-perf-nav-btn next', null, {
+      disabled: !nextPerf,
+      title: nextPerf ? `그 후 공연으로 이동: ${nextPerf.eventTitle} (${nextPerf.date || ''})` : '그 후 공연이 없습니다 (마지막 공연)'
+    });
+
+    const perfNavWrap = el('div', { class: 'stage-perf-nav-wrap', role: 'group', 'aria-label': '공연 목록 이동' },
+      prevPerfBtn,
+      perfCountBadge,
+      nextPerfBtn
+    );
+
     const titleRow = el('div', { class: 'stage-event-title-wrap' },
       titleEl,
       button('✏️', () => {
@@ -1086,7 +1155,8 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
             });
           }
         });
-      }, 'text-button', null, { title: '행사명 및 셋리스트 편집' })
+      }, 'text-button', null, { title: '행사명 및 셋리스트 편집' }),
+      perfNavWrap
     );
 
     const modeFocusBtn = button('🎤 1곡 집중', () => {

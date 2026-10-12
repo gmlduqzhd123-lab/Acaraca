@@ -204,5 +204,23 @@ assert(stageJsSource.includes('🎬 연습실 영상'), '🎬 연습실 영상 b
 assert(STAGE_EXTRA_SONG_METADATA['stand-by-me'].videos?.full?.url, 'stand-by-me has full video URL');
 assert(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'].videos?.full?.url, 'the-lion-sleeps-tonight has full video URL');
 
+// 12. Test Previous / Next Performance Navigation Buttons
+import { getChronologicalPerformanceList } from '../js/stage.js';
+assert.strictEqual(typeof getChronologicalPerformanceList, 'function', 'getChronologicalPerformanceList must be an exported function');
+const chronologicalList = getChronologicalPerformanceList();
+assert(Array.isArray(chronologicalList), 'getChronologicalPerformanceList must return an array');
+assert(chronologicalList.length >= 3, 'Must contain at least the 3 default performances');
+// Check chronological order (10.16 여수 -> 10.23 교원 -> 10.24 전남)
+const yeosuIdx = chronologicalList.findIndex(p => p.id === 'stage-2026-yeosu');
+const gyowonIdx = chronologicalList.findIndex(p => p.id === 'stage-2026-gyowon');
+const jeonnamIdx = chronologicalList.findIndex(p => p.id === 'stage-2026-jeonnam');
+assert(yeosuIdx !== -1 && gyowonIdx !== -1 && jeonnamIdx !== -1, 'All 3 default performances must be present');
+assert(yeosuIdx < gyowonIdx, 'Yeosu (10.16) must come before Gyowon (10.23)');
+assert(gyowonIdx < jeonnamIdx, 'Gyowon (10.23) must come before Jeonnam (10.24)');
+
+assert(stageJsSource.includes('stage-perf-nav-wrap'), 'stage.js must include stage-perf-nav-wrap');
+assert(stageJsSource.includes('◀ 그 전 공연'), 'stage.js must include ◀ 그 전 공연 button');
+assert(stageJsSource.includes('그 후 공연 ▶'), 'stage.js must include 그 후 공연 ▶ button');
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');
 

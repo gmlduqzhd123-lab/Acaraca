@@ -2182,6 +2182,81 @@ body.in-pocket-mode {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stage-perf-nav-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 3px 6px;
+  margin-left: 6px;
+}
+
+.stage-perf-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+@media (hover: hover) {
+  .stage-perf-nav-btn:hover:not(:disabled) {
+    background: rgba(45, 212, 191, 0.18);
+    color: #2dd4bf;
+    border-color: rgba(45, 212, 191, 0.35);
+  }
+}
+
+.stage-perf-nav-btn:active:not(:disabled) {
+  background: #2dd4bf;
+  color: #0f1614;
+}
+
+.stage-perf-nav-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+  color: #64748b;
+}
+
+.stage-perf-nav-count-btn {
+  font-size: 11px;
+  font-weight: 750;
+  color: #2dd4bf;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.28);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+@media (hover: hover) {
+  .stage-perf-nav-count-btn:hover {
+    background: rgba(45, 212, 191, 0.25);
+    color: #ffffff;
+    border-color: #2dd4bf;
+  }
+}
+
+.stage-perf-nav-count-btn:focus:not(:focus-visible),
+.stage-perf-nav-btn:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .stage-event-title {
@@ -3398,6 +3473,18 @@ body.in-pocket-mode {
   }
   .stage-event-title {
     font-size: 18px;
+  }
+  .stage-perf-nav-wrap {
+    margin-left: 0;
+    margin-top: 2px;
+  }
+  .stage-perf-nav-btn {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  .stage-perf-nav-count-btn {
+    padding: 2px 6px;
+    font-size: 10.5px;
   }
   .stage-hero-card {
     padding: 12px;
