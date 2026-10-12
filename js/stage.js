@@ -1191,13 +1191,13 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       perfNavWrap
     );
 
-    const modeFocusBtn = button('🎤 1곡 집중', () => {
+    const modeFocusBtn = button('🎤 1곡 보기', () => {
       if (liveMode === 'focus') return;
       stopPitch(true);
       liveMode = 'focus';
       try { localStorage.setItem('acaroom_stage_live_submode', 'focus'); } catch {}
       renderAll();
-    }, `stage-mode-btn${liveMode === 'focus' ? ' active' : ''}`, null, { role: 'radio', 'aria-checked': String(liveMode === 'focus'), title: '1곡씩 크게 조율하며 진행하는 실전 무대 모드' });
+    }, `stage-mode-btn${liveMode === 'focus' ? ' active' : ''}`, null, { role: 'radio', 'aria-checked': String(liveMode === 'focus'), title: '1곡씩 크게 조율하며 진행하는 실전 1곡 보기 모드' });
 
     const modeOverviewBtn = button('📋 전체 큐시트 목록', () => {
       if (liveMode === 'overview') return;
@@ -1794,7 +1794,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     const topBar = el('div', { class: 'stage-overview-top-bar' },
       el('div', { class: 'stage-overview-top-left' },
         el('span', { class: 'stage-hero-badge', text: `총 ${session.songs.length}곡 레퍼토리` }),
-        el('span', { class: 'stage-overview-hint-text', text: '곡을 누르면 1곡 집중 모드로 이동하며, 첫 음 배지를 누르면 조율음을 듣습니다.' })
+        el('span', { class: 'stage-overview-hint-text', text: '곡을 누르면 1곡 보기 모드로 이동하며, 첫 음 배지를 누르면 조율음을 듣습니다.' })
       ),
       el('div', { class: 'stage-overview-top-actions' },
         button('📋 셋리스트 텍스트 복사', copyFullSetlist, 'button secondary small', 'copy', { title: '단원 공유용 텍스트 복사' })
@@ -1833,7 +1833,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       const songTitle = el('h4', {
         class: 'stage-overview-song-title',
         text: item.title,
-        title: `${item.title} 1곡 집중 모드로 보기`,
+        title: `${item.title} 1곡 보기 모드로 이동`,
         onclick: () => {
           stopPitch(true);
           activeIndex = idx;
@@ -1876,7 +1876,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         }
       }, 'button secondary small stage-overview-video-btn', null, { title: `${item.title} 아카라카 연습실 상세 페이지로 바로 이동` });
 
-      const focusBtn = button('🎤 1곡 집중 보기', () => {
+      const focusBtn = button('🎤 1곡 보기', () => {
         stopPitch(true);
         activeIndex = idx;
         session.currentIndex = activeIndex;
@@ -1884,7 +1884,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         liveMode = 'focus';
         try { localStorage.setItem('acaroom_stage_live_submode', 'focus'); } catch {}
         renderAll();
-      }, 'button secondary small stage-overview-focus-btn', null, { title: `${idx + 1}번 곡 집중 모드로 전환` });
+      }, 'button secondary small stage-overview-focus-btn', null, { title: `${idx + 1}번 곡 1곡 보기 모드로 전환` });
 
       const headerActions = el('div', { class: 'stage-overview-header-actions' },
         videoBtn,

@@ -172,10 +172,10 @@ assert(appJsSource.includes("switchStageSubView('live')"), "switchStageSubView('
 assert(appJsSource.includes("switchStageSubView('history')"), "switchStageSubView('history') must be wired");
 assert(appJsSource.includes("switchStageSubView('list')"), "switchStageSubView('list') must be wired");
 
-// 8. Test Live Mode Switcher (1곡 집중 vs 전체 큐시트 목록) & Overview renderer in stage.js
+// 8. Test Live Mode Switcher (1곡 보기 vs 전체 큐시트 목록) & Overview renderer in stage.js
 const stageJsSource = fs.readFileSync('js/stage.js', 'utf8');
 assert(stageJsSource.includes('stage-live-mode-switch'), 'stage-live-mode-switch container must be present in stage.js');
-assert(stageJsSource.includes('1곡 집중'), '1곡 집중 button must be present');
+assert(stageJsSource.includes('1곡 보기'), '1곡 보기 button must be present');
 assert(stageJsSource.includes('전체 큐시트 목록') || stageJsSource.includes('전체 목록'), '전체 큐시트 목록 button must be present');
 assert(stageJsSource.includes('function renderOverviewView()'), 'renderOverviewView function must be present');
 assert(stageJsSource.includes('function copyFullSetlist()'), 'copyFullSetlist function must be present');
