@@ -43,6 +43,16 @@ import {
   updateMediaSession,
   setMediaSessionPlaybackState
 } from './backgroundPlay.js';
+import {
+  renderStageLiveView,
+  openStageHistoryModal,
+  openSetlistEditModal,
+  getStageHistory,
+  saveActiveStageSession,
+  createNewStageSession,
+  deleteStageHistoryItem,
+  saveStageHistory
+} from './stage.js';
 
 const app = document.getElementById('app');
 const labels = {
@@ -94,7 +104,7 @@ const state = {
   myPart: Object.keys(PARTS).filter(part => part !== 'full').includes(read('myPart', '')) ? read('myPart', '') : '',
   progress: object(read('progress', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
-  stageView: 'list',
+  stageView: read('stageView', 'live'),
   stageFilters: {query: '', category: ''},
   scoreFilters: {query: '', category: '', songId: '', year: ''},
   educationFilters: {query: '', category: '', target: ''},
@@ -258,6 +268,7 @@ function refreshChrome() {
     }, renderNavIcon(tab), el('span', {text: labels[tab]}))));
   }
   document.getElementById('sidebar-bottom').replaceChildren(
+    button('🎤 무대 전용 큐시트', () => navigate({tab: 'stage', view: 'live'}), 'button primary small', 'stage', {style: 'width: 100%; margin-bottom: 8px; font-weight: 700;'}),
     button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
     el('div', {class: 'my-part-mini'}, icon('mic'), el('div', {}, el('span', {text: '나의 목소리'}), el('strong', {text: state.myPart ? PARTS[state.myPart] : '내 파트를 선택해 주세요'})),
       button('변경', () => navigate({tab: 'settings'}), 'text-button')),
@@ -273,6 +284,7 @@ function refreshChrome() {
     // 📲 앱설치 · 📱 QR은 맨 앞에 두어 휴대폰에서도 첫 줄에 함께 보이게
     button('앱설치', () => openInstallDialog(), 'button secondary small', 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
     button('📱 QR', () => window.YSQr?.open(), 'button secondary small', null, {'aria-label': 'QR 코드로 접속', 'data-qr-btn': ''}),
+    button('🎤 무대', () => navigate({tab: 'stage', view: 'live'}), 'button secondary small stage-top-btn', 'stage', {'aria-label': '무대 전용 큐시트 모드'}),
     button('설명서', () => openGuideDialog(), 'button secondary small', 'book', {'aria-label': 'AcaRaca 연습실 사용 설명서'}),
     button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
     button('+ 곡 추가', () => openAdmin('./admin.html?action=new'), 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
@@ -779,10 +791,89 @@ function renderStageCards(performances, container) {
   container.append(grid);
 }
 
+function renderStageHistoryPage(container) {
+  const topBar = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;' },
+    el('div', {},
+      el('h2', { style: 'font-size: 18px; font-weight: 800; margin: 0;', text: '📜 공연 히스토리 & 셋리스트 보관함' }),
+      el('p', { style: 'font-size: 13px; color: var(--muted); margin: 2px 0 0;', text: '최신 공연이 항상 상단에 표시됩니다. 과거 공연 셋리스트를 불러와 무대를 바로 시작할 수 있습니다.' })
+    ),
+    button('+ 새 공연 만들기', () => {
+      const newSession = createNewStageSession('새 아카라카 공연');
+      state.stageView = 'live';
+      writeRoute({tab: 'stage', view: 'live'}, {replace: true});
+      render();
+    }, 'button primary small')
+  );
+
+  const listArea = el('div', { class: 'stage-history-list' });
+
+  function renderCards() {
+    listArea.replaceChildren();
+    const history = getStageHistory();
+
+    if (!history.length) {
+      listArea.append(el('p', { style: 'text-align: center; color: var(--muted); padding: 40px;', text: '저장된 공연 히스토리가 없습니다.' }));
+      return;
+    }
+
+    history.forEach((item) => {
+      const card = el('article', { class: 'stage-history-card' });
+
+      const top = el('div', { class: 'stage-history-top' },
+        el('div', {},
+          el('h4', { class: 'stage-history-title', text: item.eventTitle || '아카라카 공연' }),
+          el('div', { class: 'stage-history-date', text: `📅 ${item.date || ''} · 📍 ${item.venue || '공연장'}` })
+        ),
+        el('span', { class: 'stage-hero-badge', text: `${item.songs?.length || 0}곡` })
+      );
+
+      const songsRow = el('div', { class: 'stage-history-songs-row' },
+        (item.songs || []).map((s, i) => el('span', { class: 'stage-history-song-tag', text: `${i + 1}. ${s.title}` }))
+      );
+
+      const loadBtn = button('🎤 무대 큐시트 시작', () => {
+        saveActiveStageSession(item);
+        state.stageView = 'live';
+        writeRoute({tab: 'stage', view: 'live'}, {replace: true});
+        render();
+      }, 'button primary small', 'play');
+
+      const cloneBtn = button('📋 복제', () => {
+        const cloned = JSON.parse(JSON.stringify(item));
+        cloned.id = `stage-${Date.now()}`;
+        cloned.eventTitle = `${item.eventTitle} (복사본)`;
+        cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+        cloned.updatedAt = Date.now();
+        saveStageHistory([cloned, ...getStageHistory()]);
+        toast('셋리스트가 복제되었습니다.');
+        renderCards();
+      }, 'button secondary small');
+
+      const deleteBtn = button('🗑️', () => {
+        if (confirm(`'${item.eventTitle}' 공연 기록을 삭제하시겠습니까?`)) {
+          deleteStageHistoryItem(item.id);
+          toast('공연 기록이 삭제되었습니다.');
+          renderCards();
+        }
+      }, 'button secondary small icon-only', null, { title: '공연 기록 삭제' });
+
+      const actions = el('div', { class: 'stage-history-actions' }, deleteBtn, cloneBtn, loadBtn);
+
+      card.append(top, songsRow, actions);
+      listArea.append(card);
+    });
+  }
+
+  renderCards();
+  container.append(topBar, listArea);
+}
+
 function renderStage() {
-  if (state.route.view && (state.route.view === 'list' || state.route.view === 'cards')) {
+  if (state.route.view && ['live', 'history', 'list', 'cards'].includes(state.route.view)) {
     state.stageView = state.route.view;
   }
+
+  const currentView = state.stageView || 'live';
 
   app.append(
     el('div', {class: 'page-heading'},
@@ -792,14 +883,18 @@ function renderStage() {
     )
   );
 
-  if (!state.performances.length) {
-    app.append(emptyState('등록된 아카라카 영상이 아직 없어요', '새로운 무대 실황 영상이 곧 등록됩니다.'));
-    return;
-  }
-
   // 1. View Mode Switcher Tabs
-  const currentView = state.stageView || 'list';
   const viewTabs = el('div', {class: 'stage-view-tabs', role: 'tablist', 'aria-label': '아카라카 영상 보기 방식'},
+    button('🎤 무대 큐시트 (LIVE)', () => {
+      state.stageView = 'live';
+      writeRoute({tab: 'stage', view: 'live'}, {replace: true});
+      render();
+    }, `stage-tab-btn${currentView === 'live' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'live')}),
+    button('📜 공연 히스토리', () => {
+      state.stageView = 'history';
+      writeRoute({tab: 'stage', view: 'history'}, {replace: true});
+      render();
+    }, `stage-tab-btn${currentView === 'history' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'history')}),
     button('📋 목록으로 보기', () => {
       state.stageView = 'list';
       writeRoute({tab: 'stage', view: 'list'}, {replace: true});
@@ -811,6 +906,36 @@ function renderStage() {
       render();
     }, `stage-tab-btn${currentView === 'cards' ? ' active' : ''}`, null, {role: 'tab', 'aria-selected': String(currentView === 'cards')})
   );
+
+  if (currentView === 'live') {
+    app.append(el('div', {class: 'stage-controls-panel', style: 'margin-bottom: 16px;'}, viewTabs));
+    const liveContainer = el('div', {id: 'stage-live-area'});
+    app.append(liveContainer);
+    renderStageLiveView({
+      container: liveContainer,
+      songs: state.songs,
+      navigate,
+      onSwitchView: (v) => {
+        state.stageView = v;
+        writeRoute({tab: 'stage', view: v}, {replace: true});
+        render();
+      }
+    });
+    return;
+  }
+
+  if (currentView === 'history') {
+    app.append(el('div', {class: 'stage-controls-panel', style: 'margin-bottom: 16px;'}, viewTabs));
+    const historyPageArea = el('div', {id: 'stage-history-area'});
+    app.append(historyPageArea);
+    renderStageHistoryPage(historyPageArea);
+    return;
+  }
+
+  if (!state.performances.length) {
+    app.append(emptyState('등록된 아카라카 영상이 아직 없어요', '새로운 무대 실황 영상이 곧 등록됩니다.'));
+    return;
+  }
 
   // 2. Category options
   const allCategories = ['전체', ...new Set(state.performances.map(p => p.category).filter(Boolean))];
