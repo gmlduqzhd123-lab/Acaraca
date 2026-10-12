@@ -175,6 +175,51 @@ export function generateDynamicMCComment(song, tone = 'story') {
 }
 
 /**
+ * 곡의 startingPitches 데이터로부터 재생 가능한 파트별 첫 음 목록을 최적 순서로 추출
+ */
+export function getSongStartingPitchEntries(songData) {
+  if (!songData?.startingPitches) return [];
+  const rawPitches = (typeof songData.startingPitches.pitches === 'object')
+    ? songData.startingPitches.pitches
+    : songData.startingPitches;
+
+  const namedKeys = ['bass', 'baritone', 'tenor', 'alto', 'soprano', 'lead', 'vp'];
+  const hasNamed = namedKeys.some(k => Boolean(rawPitches[k]));
+
+  const entries = Object.entries(rawPitches).filter(([part, noteStr]) => {
+    if (!noteStr || typeof noteStr !== 'string' || part === 'full') return false;
+    if (hasNamed) {
+      return !part.startsWith('part');
+    }
+    return true;
+  });
+
+  const orderMap = {
+    bass: 1,
+    part5: 1,
+    baritone: 3,
+    part4: 3,
+    tenor: 5,
+    part3: 5,
+    alto: 7,
+    part2: 7,
+    soprano: 9,
+    part1: 9,
+    lead: 11,
+    vp: 12,
+    part6: 13,
+    part7: 14
+  };
+
+  return entries.sort((a, b) => {
+    const pA = parseNoteString(a[1]);
+    const pB = parseNoteString(b[1]);
+    if (pA && pB && pA.freq !== pB.freq) return pA.freq - pB.freq;
+    return (orderMap[a[0]] || 99) - (orderMap[b[0]] || 99);
+  });
+}
+
+/**
  * 초기 시드용 대표 공연 기록들 (최신순 3개 기본 탑재)
  */
 export const DEFAULT_STAGE_HISTORY = [
@@ -233,12 +278,12 @@ export const DEFAULT_STAGE_HISTORY = [
 export function getStageHistory() {
   try {
     const raw = localStorage.getItem(STAGE_HISTORY_KEY);
-    if (!raw) {
+    if (raw === null) {
       saveStageHistory(DEFAULT_STAGE_HISTORY);
       return DEFAULT_STAGE_HISTORY;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
     }
   } catch (e) {
@@ -364,10 +409,17 @@ export function deleteStageHistoryItem(id) {
   }
 }
 
+let activeStageLiveCleanup = null;
+
 /**
  * 무대 전용 큐시트 화면 렌더러 (한 화면 집중 UI)
  */
 export function renderStageLiveView({ container, songs, navigate, onSwitchView }) {
+  if (typeof activeStageLiveCleanup === 'function') {
+    activeStageLiveCleanup();
+    activeStageLiveCleanup = null;
+  }
+
   const session = getActiveStageSession(songs);
   if (!session.songs || session.songs.length === 0) {
     session.songs = (songs.slice(0, 5) || []).map(s => ({
@@ -405,6 +457,36 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     updatePitchPlayingUI(playing);
   });
 
+  // Keyboard navigation on stage (arrow keys, space for pitch)
+  function handleKeyDown(e) {
+    if (e.target && e.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      e.preventDefault();
+      if (activeIndex < session.songs.length - 1) {
+        stopPitch(true);
+        activeIndex++;
+        session.currentIndex = activeIndex;
+        saveActiveStageSession(session);
+        renderCurrentSong();
+      }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      if (activeIndex > 0) {
+        stopPitch(true);
+        activeIndex--;
+        session.currentIndex = activeIndex;
+        saveActiveStageSession(session);
+        renderCurrentSong();
+      }
+    } else if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      if (playAllBtn) playAllBtn.click();
+    } else if (e.key === 'Escape') {
+      stopPitch(true);
+    }
+  }
+  window.addEventListener('keydown', handleKeyDown);
+
   // Shell 컴포넌트들
   const header = el('div', { class: 'stage-live-header' });
   const setlistBar = el('div', { class: 'stage-setlist-bar', role: 'tablist', 'aria-label': '곡 순서 셋리스트' });
@@ -416,6 +498,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   shell.append(header, setlistBar, heroCard, pitchCard, mcCard, navBar);
 
   let wakeLockBtn;
+  let fullscreenBtn;
 
   function updateWakeLockBtnState() {
     if (!wakeLockBtn) return;
@@ -424,6 +507,15 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     wakeLockBtn.className = `stage-wake-pill${active ? '' : ' inactive'}`;
     wakeLockBtn.setAttribute('aria-pressed', String(active));
   }
+
+  function updateFsBtn() {
+    if (!fullscreenBtn) return;
+    const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+    fullscreenBtn.textContent = isFs ? '🗗' : '⛶';
+    fullscreenBtn.title = isFs ? '전체화면 나가기' : '전체화면 전환';
+  }
+  document.addEventListener('fullscreenchange', updateFsBtn);
+  document.addEventListener('webkitfullscreenchange', updateFsBtn);
 
   function renderHeader() {
     wakeLockBtn = button(
@@ -458,7 +550,12 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
           session,
           songs,
           onSaveSession: (updated) => {
-            saveActiveStageSession(updated);
+            Object.assign(session, updated);
+            saveActiveStageSession(session);
+            if (activeIndex >= session.songs.length) {
+              activeIndex = Math.max(0, session.songs.length - 1);
+              session.currentIndex = activeIndex;
+            }
             renderAll();
           }
         });
@@ -486,7 +583,12 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         session,
         songs,
         onSaveSession: (updated) => {
-          saveActiveStageSession(updated);
+          Object.assign(session, updated);
+          saveActiveStageSession(session);
+          if (activeIndex >= session.songs.length) {
+            activeIndex = Math.max(0, session.songs.length - 1);
+            session.currentIndex = activeIndex;
+          }
           renderAll();
         }
       });
@@ -496,7 +598,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       if (typeof onSwitchView === 'function') onSwitchView('list');
     }, 'button secondary small', null, { title: '아카라카 실황 영상 아카이브로 전환' });
 
-    const fullscreenBtn = button('⛶', () => {
+    fullscreenBtn = button('⛶', () => {
       const isFs = document.fullscreenElement || document.webkitFullscreenElement;
       if (!isFs) {
         if (shell.requestFullscreen) {
@@ -572,11 +674,13 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     playAllBtn.classList.toggle('playing', isPlaying);
     playAllBtn.textContent = isPlaying ? '⏹ 첫 음 재생 멈추기' : '▶ 첫 음 전체 듣기 (아르페지오 + 화음)';
 
-    partButtons.forEach(({ btn, noteStr }) => {
+    partButtons.forEach(({ btn, part, noteStr }) => {
       if (!playing) {
         btn.classList.remove('active');
       } else if (playing.isChord) {
         btn.classList.add('active');
+      } else if (playing.part) {
+        btn.classList.toggle('active', playing.part === part);
       } else {
         const isMatch = playing.displayNote === noteStr || playing.note === noteStr;
         btn.classList.toggle('active', Boolean(isMatch));
@@ -585,14 +689,15 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   }
 
   function renderHero(songData, item) {
-    const title = `${activeIndex + 1}. ${songData ? songData.title : item.title}`;
+    const keyStr = songData?.musicalKey || songData?.startingPitches?.key;
+    const title = `${activeIndex + 1}. ${songData ? songData.title : (item?.title || '곡명 미지정')}`;
     const artistArrangement = `${songData?.artist || '아카라카'} · ${songData?.arrangement || '혼성 아카펠라'}`;
 
     const badges = el('div', { class: 'stage-hero-meta-row' },
       el('span', { class: 'stage-hero-badge', text: `진행: ${activeIndex + 1} / ${session.songs.length} 곡` }),
       songData?.category ? el('span', { class: 'stage-hero-badge', text: songData.category }) : null,
-      songData?.startingPitches?.key ? el('span', { class: 'stage-hero-badge', text: `조성: ${songData.startingPitches.key}` }) : null,
-      item.note ? el('span', { class: 'stage-hero-badge', style: 'background: rgba(234, 179, 8, 0.2); color: #fde047;', text: item.note }) : null
+      keyStr ? el('span', { class: 'stage-hero-badge', text: `조성: ${keyStr}` }) : null,
+      item?.note ? el('span', { class: 'stage-hero-badge', style: 'background: rgba(234, 179, 8, 0.2); color: #fde047;', text: item.note }) : null
     );
 
     const titleEl = el('h3', { class: 'stage-hero-title', text: title });
@@ -603,10 +708,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
   function renderPitchCard(songData) {
     partButtons = [];
-    const pitches = songData?.startingPitches?.pitches || {};
-    const pitchEntries = Object.entries(pitches).filter(([part, noteStr]) => {
-      return noteStr && typeof noteStr === 'string' && part !== 'full';
-    });
+    const pitchEntries = getSongStartingPitchEntries(songData);
 
     const header = el('div', { class: 'stage-pitch-header' },
       el('div', { class: 'stage-pitch-title' },
@@ -645,7 +747,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         chordDuration: 2800,
         onStep: (step) => {
           if (step.type === 'note' && step.item) {
-            updatePitchPlayingUI(step.item.parsed);
+            updatePitchPlayingUI({ ...step.item.parsed, part: step.item.part });
           } else if (step.type === 'chord') {
             updatePitchPlayingUI({ isChord: true });
           } else if (step.type === 'finish') {
@@ -661,13 +763,26 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     if (pitchEntries.length === 0) {
       grid.append(el('p', { style: 'color: #94a3b8; font-size: 13px;', text: '등록된 첫 음이 없습니다.' }));
     } else {
-      // 우선순위 정렬: BASS -> BARI -> TENOR -> ALTO -> SOP -> LEAD -> VP 순
-      const orderMap = { bass: 1, part5: 2, baritone: 3, part4: 4, tenor: 5, part3: 6, alto: 7, part2: 8, soprano: 9, part1: 10, lead: 11, vp: 12, part6: 13 };
-      const sortedEntries = [...pitchEntries].sort((a, b) => (orderMap[a[0]] || 99) - (orderMap[b[0]] || 99));
+      const partLabels = {
+        soprano: 'SOPRANO',
+        alto: 'ALTO',
+        tenor: 'TENOR',
+        baritone: 'BARITONE',
+        bass: 'BASS',
+        lead: 'LEAD',
+        vp: 'VP',
+        part1: '1번 파트',
+        part2: '2번 파트',
+        part3: '3번 파트',
+        part4: '4번 파트',
+        part5: '5번 파트',
+        part6: '6번 파트',
+        part7: '7번 파트'
+      };
 
-      sortedEntries.forEach(([part, noteStr]) => {
+      pitchEntries.forEach(([part, noteStr]) => {
         const parsed = parseNoteString(noteStr);
-        const partName = part.toUpperCase();
+        const partName = partLabels[part] || part.toUpperCase();
         const displayNote = parsed ? parsed.displayNote : noteStr;
         const koreanNote = parsed ? parsed.koreanNote : '';
 
@@ -677,13 +792,16 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
           'aria-label': `${partName} 파트 첫 음 ${displayNote} (${koreanNote}) 재생`,
           onclick: () => {
             if (parsed) {
+              if (isPitchSequencePlaying()) {
+                stopPitchSequence();
+              }
               playPitch(parsed.semitone, parsed.octave, 0.6);
             }
           }
         },
           el('span', { class: 'stage-part-name', text: partName }),
           el('span', { class: 'stage-part-note', text: displayNote }),
-          koreanNote ? el('span', { style: 'font-size: 11px; opacity: 0.8;', text: koreanNote }) : null
+          koreanNote ? el('span', { style: 'font-size: 11px; opacity: 0.85;', text: koreanNote }) : null
         );
 
         partButtons.push({ btn: partBtn, part, noteStr: displayNote });
@@ -701,6 +819,11 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       'AI 곡소개 멘트 추천'
     );
 
+    const item = session.songs[activeIndex];
+    if (item && item.commentTone) {
+      currentTone = item.commentTone;
+    }
+
     const toneBtns = [
       ['wit', '💡 유쾌/위트'],
       ['story', '✨ 감성/스토리'],
@@ -708,6 +831,10 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     ].map(([toneKey, label]) => {
       return button(label, () => {
         currentTone = toneKey;
+        if (item) {
+          item.commentTone = toneKey;
+          saveActiveStageSession(session);
+        }
         renderMCCard(songData);
       }, `stage-tone-btn${currentTone === toneKey ? ' active' : ''}`);
     });
@@ -716,7 +843,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     header.append(title, toneTabs);
 
     const savedCommentKey = `${songData?.id || activeIndex}_${currentTone}`;
-    const commentText = customComments[savedCommentKey] || generateDynamicMCComment(songData, currentTone);
+    const commentText = (item && item.customComment) || customComments[savedCommentKey] || generateDynamicMCComment(songData, currentTone);
 
     const bubble = el('div', {
       class: 'stage-speech-bubble',
@@ -724,17 +851,38 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       spellcheck: 'false',
       title: '클릭하여 직접 멘트를 수정할 수 있습니다',
       oninput: (e) => {
-        customComments[savedCommentKey] = e.target.textContent;
+        const val = e.target.textContent;
+        customComments[savedCommentKey] = val;
+        if (item) {
+          item.customComment = val;
+          saveActiveStageSession(session);
+        }
       }
     }, commentText);
 
-    const copyBtn = button('📋 멘트 복사', () => {
+    const copyBtn = button('📋 멘트 복사', async () => {
       const text = bubble.textContent.trim();
-      navigator.clipboard.writeText(text).then(() => {
-        toast('곡소개 멘트가 복사되었습니다!');
-      }).catch(() => {
-        toast('복사되었습니다.');
-      });
+      let copied = false;
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        } catch {}
+      }
+      if (!copied) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          copied = true;
+        } catch {}
+      }
+      toast(copied ? '곡소개 멘트가 복사되었습니다!' : '멘트 복사를 지원하지 않는 브라우저입니다.');
     }, 'button secondary small', null, { title: '클립보드에 복사' });
 
     const regenerateBtn = button('🔄 다른 추천', () => {
@@ -747,6 +895,10 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       const next = variations.find(v => v !== cur) || variations[0];
       bubble.textContent = next;
       customComments[savedCommentKey] = next;
+      if (item) {
+        item.customComment = next;
+        saveActiveStageSession(session);
+      }
       toast('새로운 추천 멘트로 변경되었습니다.');
     }, 'button secondary small', null, { title: '다른 멘트 제안' });
 
@@ -791,7 +943,29 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   }
 
   function renderCurrentSong() {
-    const item = session.songs[activeIndex];
+    if (!session.songs || session.songs.length === 0) {
+      setlistBar.replaceChildren();
+      heroCard.replaceChildren(
+        el('h3', { class: 'stage-hero-title', text: '등록된 셋리스트 곡이 없습니다' }),
+        el('p', { class: 'stage-hero-artist', text: '상단의 [⚙️ 셋리스트 편집] 버튼을 눌러 공연 곡들을 추가해 주세요.' })
+      );
+      pitchCard.replaceChildren();
+      mcCard.replaceChildren();
+      navBar.replaceChildren(
+        button('⚙️ 셋리스트 편집하기', () => {
+          openSetlistEditModal({
+            session,
+            songs,
+            onSaveSession: (updated) => {
+              saveActiveStageSession(updated);
+              renderAll();
+            }
+          });
+        }, 'stage-nav-btn next')
+      );
+      return;
+    }
+    const item = session.songs[activeIndex] || session.songs[0];
     const songData = getCurrentSongData();
     renderSetlistBar();
     renderHero(songData, item);
@@ -807,10 +981,26 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
   renderAll();
 
-  return () => {
+  activeStageLiveCleanup = () => {
     unsubscribePitch();
     stopPitch(true);
+    releaseWakeLock();
+    window.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('fullscreenchange', updateFsBtn);
+    document.removeEventListener('webkitfullscreenchange', updateFsBtn);
   };
+
+  return activeStageLiveCleanup;
+}
+
+/**
+ * 활성 무대 뷰의 리스너 및 오디오 정지 정리
+ */
+export function cleanupStageLive() {
+  if (typeof activeStageLiveCleanup === 'function') {
+    activeStageLiveCleanup();
+    activeStageLiveCleanup = null;
+  }
 }
 
 /**
@@ -871,7 +1061,7 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
         (item.songs || []).map((s, i) => el('span', { class: 'stage-history-song-tag', text: `${i + 1}. ${s.title}` }))
       );
 
-      const loadBtn = button('🎤 무대 큐시트 시작', () => {
+      const loadBtn = button('무대 큐시트 시작', () => {
         dialog.close();
         if (typeof onSelectSession === 'function') onSelectSession(item);
       }, 'button primary small', 'play');
@@ -937,9 +1127,10 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
   );
 
   // Form Fields
-  const titleInput = el('input', { type: 'text', class: 'search-input', value: draft.eventTitle || '', placeholder: '공연/행사 이름' });
-  const dateInput = el('input', { type: 'text', class: 'search-input', value: draft.date || '', placeholder: '공연 일자 (예: 2026.10.12)' });
-  const venueInput = el('input', { type: 'text', class: 'search-input', value: draft.venue || '', placeholder: '공연 장소 (예: 백양콘서트홀)' });
+  const preventEnter = (e) => { if (e.key === 'Enter') e.preventDefault(); };
+  const titleInput = el('input', { type: 'text', class: 'search-input', value: draft.eventTitle || '', placeholder: '공연/행사 이름', onkeydown: preventEnter });
+  const dateInput = el('input', { type: 'text', class: 'search-input', value: draft.date || '', placeholder: '공연 일자 (예: 2026.10.12)', onkeydown: preventEnter });
+  const venueInput = el('input', { type: 'text', class: 'search-input', value: draft.venue || '', placeholder: '공연 장소 (예: 백양콘서트홀)', onkeydown: preventEnter });
 
   const fieldsGrid = el('div', { class: 'stage-edit-fields-grid' },
     el('label', { style: 'display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;' }, '행사 이름', titleInput),
@@ -1033,6 +1224,7 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
       draft.eventTitle = titleInput.value.trim() || '아카라카 공연';
       draft.date = dateInput.value.trim();
       draft.venue = venueInput.value.trim();
+      draft.currentIndex = Math.max(0, Math.min(draft.currentIndex || 0, Math.max(0, draft.songs.length - 1)));
       dialog.close();
       if (typeof onSaveSession === 'function') onSaveSession(draft);
       toast('셋리스트가 저장되었습니다.');

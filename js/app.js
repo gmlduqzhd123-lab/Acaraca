@@ -51,7 +51,8 @@ import {
   saveActiveStageSession,
   createNewStageSession,
   deleteStageHistoryItem,
-  saveStageHistory
+  saveStageHistory,
+  cleanupStageLive
 } from './stage.js';
 
 const app = document.getElementById('app');
@@ -831,7 +832,7 @@ function renderStageHistoryPage(container) {
         (item.songs || []).map((s, i) => el('span', { class: 'stage-history-song-tag', text: `${i + 1}. ${s.title}` }))
       );
 
-      const loadBtn = button('🎤 무대 큐시트 시작', () => {
+      const loadBtn = button('무대 큐시트 시작', () => {
         saveActiveStageSession(item);
         state.stageView = 'live';
         writeRoute({tab: 'stage', view: 'live'}, {replace: true});
@@ -4577,6 +4578,9 @@ function render() {
     try { a.pause(); a.src = ''; } catch {}
   }
   activeAudios.clear();
+  cleanupStageLive();
+  stopPitch(true);
+  app.classList.remove('stage-live-page');
   state.player?.destroy(); state.player = null;
   app.replaceChildren(); refreshChrome();
   if (state.loading) { app.append(el('div', {class: 'loading-state', role: 'status', text: '연습실을 준비하고 있어요…'})); return; }
@@ -4658,7 +4662,14 @@ async function initialize() {
   } catch (error) { state.loadError = `${error.message || '자료를 확인할 수 없습니다.'} data/songs.json 파일과 HTTP 연결을 확인해 주세요.`; }
   state.loading = false; render();
 }
-window.addEventListener('popstate', () => { state.route = readRoute(); render(); app.focus({preventScroll: true}); });
+window.addEventListener('popstate', () => {
+  cleanupStageLive();
+  stopPitch(true);
+  app.classList.remove('stage-live-page');
+  state.route = readRoute();
+  render();
+  app.focus({preventScroll: true});
+});
 
 // Close dialogs when clicking outside (on backdrop)
 document.addEventListener('click', (e) => {
