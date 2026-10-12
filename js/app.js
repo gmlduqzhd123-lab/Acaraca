@@ -52,7 +52,8 @@ import {
   createNewStageSession,
   deleteStageHistoryItem,
   saveStageHistory,
-  cleanupStageLive
+  cleanupStageLive,
+  promptStagePassword
 } from './stage.js';
 
 const app = document.getElementById('app');
@@ -799,10 +800,15 @@ function renderStageHistoryPage(container) {
       el('p', { style: 'font-size: 13px; color: var(--muted); margin: 2px 0 0;', text: '최신 공연이 항상 상단에 표시됩니다. 과거 공연 셋리스트를 불러와 무대를 바로 시작할 수 있습니다.' })
     ),
     button('+ 새 공연 만들기', () => {
-      const newSession = createNewStageSession('새 아카라카 공연');
-      state.stageView = 'live';
-      writeRoute({tab: 'stage', view: 'live'}, {replace: true});
-      render();
+      promptStagePassword({
+        actionName: '새 공연 셋리스트 생성',
+        onSuccess: () => {
+          const newSession = createNewStageSession('새 아카라카 공연');
+          state.stageView = 'live';
+          writeRoute({tab: 'stage', view: 'live'}, {replace: true});
+          render();
+        }
+      });
     }, 'button primary small')
   );
 
@@ -840,22 +846,32 @@ function renderStageHistoryPage(container) {
       }, 'button primary small', 'play');
 
       const cloneBtn = button('📋 복제', () => {
-        const cloned = JSON.parse(JSON.stringify(item));
-        cloned.id = `stage-${Date.now()}`;
-        cloned.eventTitle = `${item.eventTitle} (복사본)`;
-        cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
-        cloned.updatedAt = Date.now();
-        saveStageHistory([cloned, ...getStageHistory()]);
-        toast('셋리스트가 복제되었습니다.');
-        renderCards();
+        promptStagePassword({
+          actionName: `'${item.eventTitle}' 셋리스트 복제`,
+          onSuccess: () => {
+            const cloned = JSON.parse(JSON.stringify(item));
+            cloned.id = `stage-${Date.now()}`;
+            cloned.eventTitle = `${item.eventTitle} (복사본)`;
+            cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+            cloned.updatedAt = Date.now();
+            saveStageHistory([cloned, ...getStageHistory()]);
+            toast('셋리스트가 복제되었습니다.');
+            renderCards();
+          }
+        });
       }, 'button secondary small');
 
       const deleteBtn = button('🗑️', () => {
-        if (confirm(`'${item.eventTitle}' 공연 기록을 삭제하시겠습니까?`)) {
-          deleteStageHistoryItem(item.id);
-          toast('공연 기록이 삭제되었습니다.');
-          renderCards();
-        }
+        promptStagePassword({
+          actionName: `'${item.eventTitle}' 공연 기록 삭제`,
+          onSuccess: () => {
+            if (confirm(`'${item.eventTitle}' 공연 기록을 완전히 삭제하시겠습니까?`)) {
+              deleteStageHistoryItem(item.id);
+              toast('공연 기록이 삭제되었습니다.');
+              renderCards();
+            }
+          }
+        });
       }, 'button secondary small icon-only', null, { title: '공연 기록 삭제' });
 
       const actions = el('div', { class: 'stage-history-actions' }, deleteBtn, cloneBtn, loadBtn);

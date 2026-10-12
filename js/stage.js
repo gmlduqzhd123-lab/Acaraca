@@ -443,6 +443,91 @@ export function deleteStageHistoryItem(id) {
   }
 }
 
+export const STAGE_ADMIN_PASSWORD = '1234';
+
+/**
+ * 셋리스트 편집, 복제, 삭제 등 편집 기능 실행 전 비밀번호 확인 모달
+ */
+export function promptStagePassword({ actionName = '편집', onSuccess, onCancel }) {
+  const existing = document.getElementById('stage-auth-dialog');
+  if (existing) existing.remove();
+
+  const dialog = el('dialog', {
+    id: 'stage-auth-dialog',
+    class: 'stage-modal-dialog stage-auth-dialog',
+    'aria-labelledby': 'stage-auth-title'
+  });
+
+  const header = el('div', { class: 'stage-modal-header' },
+    el('h3', { id: 'stage-auth-title', text: '🔒 관리자 비밀번호 확인' }),
+    button('✕', () => dialog.close(), 'icon-button', null, { 'aria-label': '닫기' })
+  );
+
+  const desc = el('p', {
+    style: 'font-size: 13.5px; color: var(--muted); margin: 0 0 16px; line-height: 1.5;',
+    text: `${actionName} 작업을 진행하려면 비밀번호를 입력해 주세요.`
+  });
+
+  const input = el('input', {
+    type: 'password',
+    inputmode: 'numeric',
+    pattern: '[0-9]*',
+    maxlength: '10',
+    placeholder: '비밀번호 4자리',
+    autocomplete: 'current-password',
+    style: 'width: 100%; box-sizing: border-box; padding: 12px 14px; font-size: 20px; letter-spacing: 6px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); text-align: center;'
+  });
+
+  const errEl = el('div', {
+    style: 'color: #ef4444; font-size: 12.5px; margin-top: 8px; font-weight: 600; display: none;',
+    text: '비밀번호가 일치하지 않습니다.'
+  });
+
+  function submit() {
+    const val = input.value.trim();
+    if (val === STAGE_ADMIN_PASSWORD) {
+      dialog.close();
+      if (typeof onSuccess === 'function') onSuccess();
+    } else {
+      errEl.style.display = 'block';
+      errEl.textContent = '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.';
+      input.classList.add('error');
+      input.select();
+      input.focus();
+    }
+  }
+
+  const confirmBtn = button('확인', () => submit(), 'button primary', null, { style: 'flex: 1;' });
+  const cancelBtn = button('취소', () => dialog.close(), 'button secondary', null, { style: 'flex: 1;' });
+
+  const actions = el('div', { style: 'display: flex; gap: 8px; margin-top: 18px;' }, cancelBtn, confirmBtn);
+
+  const body = el('div', { class: 'stage-modal-body', style: 'padding-top: 6px;' },
+    desc,
+    input,
+    errEl,
+    actions
+  );
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submit();
+    }
+  });
+
+  dialog.append(header, body);
+
+  dialog.addEventListener('close', () => {
+    dialog.remove();
+    if (typeof onCancel === 'function') onCancel();
+  });
+
+  document.body.append(dialog);
+  dialog.showModal();
+  setTimeout(() => input.focus(), 60);
+}
+
 let activeStageLiveCleanup = null;
 
 /**
@@ -580,17 +665,22 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     const titleRow = el('div', { class: 'stage-event-title-wrap' },
       titleEl,
       button('✏️', () => {
-        openSetlistEditModal({
-          session,
-          songs,
-          onSaveSession: (updated) => {
-            Object.assign(session, updated);
-            saveActiveStageSession(session);
-            if (activeIndex >= session.songs.length) {
-              activeIndex = Math.max(0, session.songs.length - 1);
-              session.currentIndex = activeIndex;
-            }
-            renderAll();
+        promptStagePassword({
+          actionName: '행사명 및 셋리스트 편집',
+          onSuccess: () => {
+            openSetlistEditModal({
+              session,
+              songs,
+              onSaveSession: (updated) => {
+                Object.assign(session, updated);
+                saveActiveStageSession(session);
+                if (activeIndex >= session.songs.length) {
+                  activeIndex = Math.max(0, session.songs.length - 1);
+                  session.currentIndex = activeIndex;
+                }
+                renderAll();
+              }
+            });
           }
         });
       }, 'text-button', null, { title: '행사명 및 셋리스트 편집' })
@@ -613,17 +703,22 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     }, 'button secondary small', null, { title: '역대 공연 셋리스트 보관함 열기' });
 
     const editBtn = button('⚙️ 셋리스트 편집', () => {
-      openSetlistEditModal({
-        session,
-        songs,
-        onSaveSession: (updated) => {
-          Object.assign(session, updated);
-          saveActiveStageSession(session);
-          if (activeIndex >= session.songs.length) {
-            activeIndex = Math.max(0, session.songs.length - 1);
-            session.currentIndex = activeIndex;
-          }
-          renderAll();
+      promptStagePassword({
+        actionName: '셋리스트 편집',
+        onSuccess: () => {
+          openSetlistEditModal({
+            session,
+            songs,
+            onSaveSession: (updated) => {
+              Object.assign(session, updated);
+              saveActiveStageSession(session);
+              if (activeIndex >= session.songs.length) {
+                activeIndex = Math.max(0, session.songs.length - 1);
+                session.currentIndex = activeIndex;
+              }
+              renderAll();
+            }
+          });
         }
       });
     }, 'button secondary small', null, { title: '곡 순서 변경 및 추가/삭제' });
@@ -987,12 +1082,17 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       mcCard.replaceChildren();
       navBar.replaceChildren(
         button('⚙️ 셋리스트 편집하기', () => {
-          openSetlistEditModal({
-            session,
-            songs,
-            onSaveSession: (updated) => {
-              saveActiveStageSession(updated);
-              renderAll();
+          promptStagePassword({
+            actionName: '셋리스트 편집',
+            onSuccess: () => {
+              openSetlistEditModal({
+                session,
+                songs,
+                onSaveSession: (updated) => {
+                  saveActiveStageSession(updated);
+                  renderAll();
+                }
+              });
             }
           });
         }, 'stage-nav-btn next')
@@ -1059,9 +1159,14 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
   );
 
   const newBtn = button('+ 새 공연 셋리스트 만들기', () => {
-    const newSession = createNewStageSession('새 아카라카 공연');
-    dialog.close();
-    if (typeof onSelectSession === 'function') onSelectSession(newSession);
+    promptStagePassword({
+      actionName: '새 공연 셋리스트 생성',
+      onSuccess: () => {
+        const newSession = createNewStageSession('새 아카라카 공연');
+        dialog.close();
+        if (typeof onSelectSession === 'function') onSelectSession(newSession);
+      }
+    });
   }, 'button primary small');
 
   const topBar = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;' },
@@ -1101,23 +1206,33 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
       }, 'button primary small', 'play');
 
       const cloneBtn = button('📋 복제', () => {
-        const cloned = JSON.parse(JSON.stringify(item));
-        cloned.id = `stage-${Date.now()}`;
-        cloned.eventTitle = `${item.eventTitle} (복사본)`;
-        cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
-        cloned.updatedAt = Date.now();
-        const currentHist = getStageHistory();
-        saveStageHistory([cloned, ...currentHist]);
-        toast('셋리스트가 복제되었습니다.');
-        renderHistoryCards();
+        promptStagePassword({
+          actionName: `'${item.eventTitle}' 셋리스트 복제`,
+          onSuccess: () => {
+            const cloned = JSON.parse(JSON.stringify(item));
+            cloned.id = `stage-${Date.now()}`;
+            cloned.eventTitle = `${item.eventTitle} (복사본)`;
+            cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+            cloned.updatedAt = Date.now();
+            const currentHist = getStageHistory();
+            saveStageHistory([cloned, ...currentHist]);
+            toast('셋리스트가 복제되었습니다.');
+            renderHistoryCards();
+          }
+        });
       }, 'button secondary small');
 
       const deleteBtn = button('🗑️', () => {
-        if (confirm(`'${item.eventTitle}' 공연 기록을 삭제하시겠습니까?`)) {
-          deleteStageHistoryItem(item.id);
-          toast('공연 기록이 삭제되었습니다.');
-          renderHistoryCards();
-        }
+        promptStagePassword({
+          actionName: `'${item.eventTitle}' 공연 기록 삭제`,
+          onSuccess: () => {
+            if (confirm(`'${item.eventTitle}' 공연 기록을 완전히 삭제하시겠습니까?`)) {
+              deleteStageHistoryItem(item.id);
+              toast('공연 기록이 삭제되었습니다.');
+              renderHistoryCards();
+            }
+          }
+        });
       }, 'button secondary small icon-only', null, { title: '공연 기록 삭제' });
 
       const actions = el('div', { class: 'stage-history-actions' }, deleteBtn, cloneBtn, loadBtn);

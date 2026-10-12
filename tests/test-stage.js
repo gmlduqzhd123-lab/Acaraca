@@ -5,7 +5,9 @@ import {
   generateDynamicMCComment,
   DEFAULT_STAGE_HISTORY,
   getSongStartingPitchEntries,
-  cleanupStageLive
+  cleanupStageLive,
+  STAGE_ADMIN_PASSWORD,
+  promptStagePassword
 } from '../js/stage.js';
 
 console.log('Testing Stage Mode Logic...');
@@ -75,5 +77,9 @@ songs.forEach((song) => {
 assert.doesNotThrow(() => {
   cleanupStageLive();
 }, 'cleanupStageLive must not throw');
+
+// 6. Test Stage Admin Password
+assert.strictEqual(STAGE_ADMIN_PASSWORD, '1234', 'Stage admin password must be 1234');
+assert.strictEqual(typeof promptStagePassword, 'function', 'promptStagePassword must be an exported function');
 
 console.log('✓ Stage Mode logic unit tests passed successfully!');
