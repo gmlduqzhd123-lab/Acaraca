@@ -2104,11 +2104,19 @@ body.in-pocket-mode {
 .stage-live-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stage-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .stage-live-badge-row {
@@ -2193,13 +2201,45 @@ body.in-pocket-mode {
   flex-wrap: wrap;
 }
 
+.stage-header-actions .button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  min-height: 38px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  transition: all 0.18s ease;
+}
+
+.stage-header-actions .button:hover,
+.stage-header-actions .button:active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.stage-header-actions .button.icon-only {
+  padding: 6px 12px;
+  font-size: 15px;
+}
+
 /* Setlist Bar */
 .stage-setlist-bar {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 2px 8px;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 2px 10px;
+  margin-top: 2px;
+  width: 100%;
+  box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: rgba(45, 212, 191, 0.3) transparent;
 }
@@ -2217,16 +2257,19 @@ body.in-pocket-mode {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.07);
   color: #cbd5e1;
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+  flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
   transition: all 0.2s ease;
   cursor: pointer;
+  min-height: 38px;
+  touch-action: manipulation;
 }
 
 .stage-chip-btn:hover {
@@ -2714,23 +2757,64 @@ body.in-pocket-mode {
   .stage-live-shell {
     padding: 12px;
     border-radius: 16px;
-    gap: 11px;
+    gap: 12px;
     width: 100%;
+    box-sizing: border-box;
   }
   .stage-live-header {
-    gap: 8px;
-    padding-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    width: 100%;
+  }
+  .stage-header-left {
+    width: 100%;
   }
   .stage-header-actions {
-    width: 100%;
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: 100%;
     overflow-x: auto;
-    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 1px 6px;
     scrollbar-width: none;
   }
   .stage-header-actions::-webkit-scrollbar {
     display: none;
+  }
+  .stage-header-actions .button {
+    min-height: 38px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    flex-shrink: 0;
+  }
+  .stage-setlist-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 1px 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .stage-setlist-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .stage-chip-btn {
+    min-height: 38px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    flex-shrink: 0;
   }
   .stage-event-title {
     font-size: 18px;

@@ -562,7 +562,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       }, 'text-button', null, { title: '행사명 및 셋리스트 편집' })
     );
 
-    const headerLeft = el('div', {},
+    const headerLeft = el('div', { class: 'stage-header-left' },
       el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn),
       titleRow,
       metaEl
