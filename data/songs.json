@@ -1,17 +1,4 @@
 {
-  "version": 1,
-  "source_note": {
-    "extractedAt": "2026-10-01",
-    "source": "사용자 제공 Padlet PDF export (아카라카 연습실, 67쪽)",
-    "boardUrl": "https://padlet.com/gmlduqzhd12/padlet-qbvozon2f0zwvy8e",
-    "realSongCount": 29,
-    "demoSongCount": 1,
-    "extraction": "29개 곡/편성과 직접 YouTube URL 2개를 추출했습니다. Butterfly ALTO만 성부가 명확하여 연결했습니다. 보헤미안 랩소디 번호 파트 URL은 source.unknownPartUrls와 메모에 보존합니다. 다른 카드에는 Padlet 게시물 주소만 남아 있어 직접 YouTube URL은 빈 값입니다. 원 게시판은 추출 시 HTTP 403 응답이었습니다.",
-    "initialClassification": "장르, 난이도, 상태는 앱 사용을 위한 초기 관리값이며 팀의 실제 분류나 연습 상태가 아닙니다. 관리자가 수정해 주세요. 아티스트는 PDF에 표시된 공연자/원곡자/편곡 표기를 그대로 사용하고 확인되지 않은 값은 비워 두었습니다.",
-    "numberedParts": "번호만 있는 파트는 특정 성부로 추정 배정하지 않았습니다. source.numberedParts 및 메모를 확인해 성부를 배정해 주세요.",
-    "artwork": "앱과 함께 만든 추상 SVG 커버입니다. 원곡 앨범 아트나 아티스트 사진이 아닙니다.",
-    "runtime": "이 앱은 Padlet 링크에 의존하지 않고 이 JSON만 읽습니다."
-  },
   "songs": [
     {
       "id": "bohemian-rhapsody-5",
@@ -76,12 +63,12 @@
       "startingPitches": {
         "part1": "Ab4",
         "part2": "F4",
-        "part3": "Eb5",
+        "part3": "Eb4",
         "part4": "C4",
         "part5": "F3",
         "soprano": "Ab4",
         "alto": "F4",
-        "tenor": "Eb5",
+        "tenor": "Eb4",
         "baritone": "C4",
         "bass": "F3",
         "full": "Bb3"
@@ -152,13 +139,13 @@
       "startingPitches": {
         "part1": "Ab4",
         "part2": "F4",
-        "part3": "Eb5",
+        "part3": "Eb4",
         "part4": "C4",
         "part5": "F3",
         "part6": "Bb2",
         "soprano": "Ab4",
         "alto": "F4",
-        "tenor": "Eb5",
+        "tenor": "Eb4",
         "baritone": "C4",
         "bass": "F3",
         "vp": "Bb2",
@@ -378,15 +365,15 @@
       "startingPitches": {
         "part1": "C4",
         "part2": "A3",
-        "part3": "F4",
-        "part4": "C4",
-        "part5": "G4",
+        "part3": "F3",
+        "part4": "C3",
+        "part5": "G3",
         "part6": "F2",
         "part7": "C3",
-        "soprano": "F4",
-        "alto": "C4",
-        "tenor": "A3",
-        "baritone": "G4",
+        "soprano": "C4",
+        "alto": "A3",
+        "tenor": "F3",
+        "baritone": "G3",
         "bass": "F2",
         "vp": "C3",
         "full": "F3"
@@ -463,14 +450,14 @@
       "startingPitches": {
         "part1": "C4",
         "part2": "A3",
-        "part3": "F4",
-        "part4": "C4",
-        "part5": "G4",
+        "part3": "F3",
+        "part4": "C3",
+        "part5": "G3",
         "part6": "F2",
-        "soprano": "F4",
-        "alto": "C4",
-        "tenor": "A3",
-        "baritone": "G4",
+        "soprano": "C4",
+        "alto": "A3",
+        "tenor": "F3",
+        "baritone": "G3",
         "bass": "F2",
         "full": "F3"
       },
@@ -602,8 +589,8 @@
         ]
       },
       "startingPitches": {
-        "part1": "D4",
-        "part2": "F4",
+        "part1": "F4",
+        "part2": "D4",
         "part3": "A3",
         "part4": "D3",
         "soprano": "F4",
@@ -672,12 +659,12 @@
       },
       "startingPitches": {
         "part1": "F#4",
-        "part2": "A4",
-        "part3": "A4",
+        "part2": "A3",
+        "part3": "A3",
         "part4": "D3",
         "soprano": "F#4",
-        "alto": "A4",
-        "tenor": "A4",
+        "alto": "A3",
+        "tenor": "A3",
         "bass": "D3",
         "full": "D4"
       },
@@ -740,13 +727,13 @@
         ]
       },
       "startingPitches": {
-        "part1": "Eb4",
-        "part2": "C5",
+        "part1": "C5",
+        "part2": "Eb4",
         "part3": "G4",
         "part4": "Db2",
         "soprano": "C5",
-        "alto": "G4",
-        "tenor": "Eb4",
+        "alto": "Eb4",
+        "tenor": "G4",
         "bass": "Db2",
         "full": "Db3"
       },
@@ -896,9 +883,9 @@
         "part5": "A4",
         "part6": "A2",
         "soprano": "C#5",
-        "alto": "G#4",
-        "tenor": "E4",
-        "baritone": "A4",
+        "alto": "A4",
+        "tenor": "G#4",
+        "baritone": "E4",
         "bass": "A2",
         "full": "E4"
       },
@@ -1371,12 +1358,12 @@
       "startingPitches": {
         "part1": "Ab4",
         "part2": "F4",
-        "part3": "Eb5",
+        "part3": "Eb4",
         "part4": "C4",
         "part5": "F3",
         "soprano": "Ab4",
         "alto": "F4",
-        "tenor": "Eb5",
+        "tenor": "Eb4",
         "baritone": "C4",
         "bass": "F3",
         "full": "Bb3"
@@ -1436,8 +1423,8 @@
         ]
       },
       "startingPitches": {
-        "part1": "C#4",
-        "part2": "A4",
+        "part1": "A4",
+        "part2": "C#4",
         "part3": "F#3",
         "part4": "F#2",
         "soprano": "A4",
@@ -1734,9 +1721,9 @@
         "part2": "C#4",
         "part3": "F#4",
         "part4": "F#2",
-        "soprano": "F#4",
-        "alto": "A#4",
-        "tenor": "C#4",
+        "soprano": "A#4",
+        "alto": "C#4",
+        "tenor": "F#4",
         "bass": "F#2",
         "full": "F#3"
       },
@@ -2393,14 +2380,14 @@
         }
       },
       "startingPitches": {
-        "part1": "C5",
-        "part2": "Eb5",
-        "part3": "Ab4",
-        "part4": "Ab3",
+        "part1": "Eb5",
+        "part2": "C5",
+        "part3": "Ab3",
+        "part4": "Ab2",
         "soprano": "Eb5",
         "alto": "C5",
-        "tenor": "Ab4",
-        "bass": "Ab3",
+        "tenor": "Ab3",
+        "bass": "Ab2",
         "full": "Ab3"
       },
       "musicalKey": "Ab Major"

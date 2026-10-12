@@ -1,23 +1,22 @@
-import fs from 'fs';
-
-// Accurate starting pitches for all 33 songs in AcaRaca
+// Generated starting pitches dictionary for all 33 practice songs
 // Derived from NWC score files in assets/scores/ and vocal arrangement analysis
-export const SONG_STARTING_PITCHES = {
+
+export const STARTING_PITCHES = {
   // 1. 보헤미안 랩소디 · 5인용 (Queen)
   "bohemian-rhapsody-5": {
     "key": "Bb Major",
     "pitches": {
-          "part1": "Ab4",
-          "part2": "F4",
-          "part3": "Eb5",
-          "part4": "C4",
-          "part5": "F3",
-          "soprano": "Ab4",
-          "alto": "F4",
-          "tenor": "Eb5",
-          "baritone": "C4",
-          "bass": "F3",
-          "full": "Bb3"
+              "part1": "Ab4",
+              "part2": "F4",
+              "part3": "Eb4",
+              "part4": "C4",
+              "part5": "F3",
+              "soprano": "Ab4",
+              "alto": "F4",
+              "tenor": "Eb4",
+              "baritone": "C4",
+              "bass": "F3",
+              "full": "Bb3"
     }
   },
 
@@ -25,19 +24,19 @@ export const SONG_STARTING_PITCHES = {
   "bohemian-rhapsody-6": {
     "key": "Bb Major",
     "pitches": {
-          "part1": "Ab4",
-          "part2": "F4",
-          "part3": "Eb5",
-          "part4": "C4",
-          "part5": "F3",
-          "part6": "Bb2",
-          "soprano": "Ab4",
-          "alto": "F4",
-          "tenor": "Eb5",
-          "baritone": "C4",
-          "bass": "F3",
-          "vp": "Bb2",
-          "full": "Bb3"
+              "part1": "Ab4",
+              "part2": "F4",
+              "part3": "Eb4",
+              "part4": "C4",
+              "part5": "F3",
+              "part6": "Bb2",
+              "soprano": "Ab4",
+              "alto": "F4",
+              "tenor": "Eb4",
+              "baritone": "C4",
+              "bass": "F3",
+              "vp": "Bb2",
+              "full": "Bb3"
     }
   },
 
@@ -45,15 +44,15 @@ export const SONG_STARTING_PITCHES = {
   "mujogeon": {
     "key": "Eb Major",
     "pitches": {
-          "part1": "G4",
-          "part2": "Eb4",
-          "part3": "Bb3",
-          "part4": "Eb3",
-          "soprano": "G4",
-          "alto": "Eb4",
-          "tenor": "Bb3",
-          "bass": "Eb3",
-          "full": "Eb4"
+              "part1": "G4",
+              "part2": "Eb4",
+              "part3": "Bb3",
+              "part4": "Eb3",
+              "soprano": "G4",
+              "alto": "Eb4",
+              "tenor": "Bb3",
+              "bass": "Eb3",
+              "full": "Eb4"
     }
   },
 
@@ -61,15 +60,15 @@ export const SONG_STARTING_PITCHES = {
   "short-hair": {
     "key": "A Minor",
     "pitches": {
-          "part1": "E4",
-          "part2": "C4",
-          "part3": "A3",
-          "part4": "A2",
-          "soprano": "E4",
-          "alto": "C4",
-          "tenor": "A3",
-          "bass": "A2",
-          "full": "A3"
+              "part1": "E4",
+              "part2": "C4",
+              "part3": "A3",
+              "part4": "A2",
+              "soprano": "E4",
+              "alto": "C4",
+              "tenor": "A3",
+              "bass": "A2",
+              "full": "A3"
     }
   },
 
@@ -77,20 +76,20 @@ export const SONG_STARTING_PITCHES = {
   "disney-medley-7": {
     "key": "F Major",
     "pitches": {
-          "part1": "C4",
-          "part2": "A3",
-          "part3": "F4",
-          "part4": "C4",
-          "part5": "G4",
-          "part6": "F2",
-          "part7": "C3",
-          "soprano": "F4",
-          "alto": "C4",
-          "tenor": "A3",
-          "baritone": "G4",
-          "bass": "F2",
-          "vp": "C3",
-          "full": "F3"
+              "part1": "C4",
+              "part2": "A3",
+              "part3": "F3",
+              "part4": "C3",
+              "part5": "G3",
+              "part6": "F2",
+              "part7": "C3",
+              "soprano": "C4",
+              "alto": "A3",
+              "tenor": "F3",
+              "baritone": "G3",
+              "bass": "F2",
+              "vp": "C3",
+              "full": "F3"
     }
   },
 
@@ -98,18 +97,18 @@ export const SONG_STARTING_PITCHES = {
   "disney-medley": {
     "key": "F Major",
     "pitches": {
-          "part1": "C4",
-          "part2": "A3",
-          "part3": "F4",
-          "part4": "C4",
-          "part5": "G4",
-          "part6": "F2",
-          "soprano": "F4",
-          "alto": "C4",
-          "tenor": "A3",
-          "baritone": "G4",
-          "bass": "F2",
-          "full": "F3"
+              "part1": "C4",
+              "part2": "A3",
+              "part3": "F3",
+              "part4": "C3",
+              "part5": "G3",
+              "part6": "F2",
+              "soprano": "C4",
+              "alto": "A3",
+              "tenor": "F3",
+              "baritone": "G3",
+              "bass": "F2",
+              "full": "F3"
     }
   },
 
@@ -117,15 +116,15 @@ export const SONG_STARTING_PITCHES = {
   "first-impression": {
     "key": "F# Minor",
     "pitches": {
-          "part1": "C#5",
-          "part2": "A4",
-          "part3": "F#4",
-          "part4": "F#2",
-          "soprano": "C#5",
-          "alto": "A4",
-          "tenor": "F#4",
-          "bass": "F#2",
-          "full": "F#3"
+              "part1": "C#5",
+              "part2": "A4",
+              "part3": "F#4",
+              "part4": "F#2",
+              "soprano": "C#5",
+              "alto": "A4",
+              "tenor": "F#4",
+              "bass": "F#2",
+              "full": "F#3"
     }
   },
 
@@ -133,15 +132,15 @@ export const SONG_STARTING_PITCHES = {
   "tobacco-shop-girl": {
     "key": "D Minor",
     "pitches": {
-          "part1": "D4",
-          "part2": "F4",
-          "part3": "A3",
-          "part4": "D3",
-          "soprano": "F4",
-          "alto": "D4",
-          "tenor": "A3",
-          "bass": "D3",
-          "full": "D3"
+              "part1": "F4",
+              "part2": "D4",
+              "part3": "A3",
+              "part4": "D3",
+              "soprano": "F4",
+              "alto": "D4",
+              "tenor": "A3",
+              "bass": "D3",
+              "full": "D3"
     }
   },
 
@@ -149,15 +148,15 @@ export const SONG_STARTING_PITCHES = {
   "aloha": {
     "key": "D Major",
     "pitches": {
-          "part1": "F#4",
-          "part2": "A4",
-          "part3": "A4",
-          "part4": "D3",
-          "soprano": "F#4",
-          "alto": "A4",
-          "tenor": "A4",
-          "bass": "D3",
-          "full": "D4"
+              "part1": "F#4",
+              "part2": "A3",
+              "part3": "A3",
+              "part4": "D3",
+              "soprano": "F#4",
+              "alto": "A3",
+              "tenor": "A3",
+              "bass": "D3",
+              "full": "D4"
     }
   },
 
@@ -165,15 +164,15 @@ export const SONG_STARTING_PITCHES = {
   "tayo-pororo": {
     "key": "Db Major",
     "pitches": {
-          "part1": "Eb4",
-          "part2": "C5",
-          "part3": "G4",
-          "part4": "Db2",
-          "soprano": "C5",
-          "alto": "G4",
-          "tenor": "Eb4",
-          "bass": "Db2",
-          "full": "Db3"
+              "part1": "C5",
+              "part2": "Eb4",
+              "part3": "G4",
+              "part4": "Db2",
+              "soprano": "C5",
+              "alto": "Eb4",
+              "tenor": "G4",
+              "bass": "Db2",
+              "full": "Db3"
     }
   },
 
@@ -181,15 +180,15 @@ export const SONG_STARTING_PITCHES = {
   "run-the-sky": {
     "key": "E Major",
     "pitches": {
-          "part1": "B4",
-          "part2": "G#4",
-          "part3": "E4",
-          "part4": "E3",
-          "soprano": "B4",
-          "alto": "G#4",
-          "tenor": "E4",
-          "bass": "E3",
-          "full": "E4"
+              "part1": "B4",
+              "part2": "G#4",
+              "part3": "E4",
+              "part4": "E3",
+              "soprano": "B4",
+              "alto": "G#4",
+              "tenor": "E4",
+              "bass": "E3",
+              "full": "E4"
     }
   },
 
@@ -197,18 +196,18 @@ export const SONG_STARTING_PITCHES = {
   "acaroom-opening": {
     "key": "E Major / C# Minor",
     "pitches": {
-          "part1": "G#4",
-          "part2": "G#4",
-          "part3": "E4",
-          "part4": "C#5",
-          "part5": "A4",
-          "part6": "A2",
-          "soprano": "C#5",
-          "alto": "G#4",
-          "tenor": "E4",
-          "baritone": "A4",
-          "bass": "A2",
-          "full": "E4"
+              "part1": "G#4",
+              "part2": "G#4",
+              "part3": "E4",
+              "part4": "C#5",
+              "part5": "A4",
+              "part6": "A2",
+              "soprano": "C#5",
+              "alto": "A4",
+              "tenor": "G#4",
+              "baritone": "E4",
+              "bass": "A2",
+              "full": "E4"
     }
   },
 
@@ -216,19 +215,19 @@ export const SONG_STARTING_PITCHES = {
   "speechless": {
     "key": "D Major",
     "pitches": {
-          "part1": "A3",
-          "part2": "F#3",
-          "part3": "F#3",
-          "part4": "C#5",
-          "part5": "A4",
-          "part6": "D2",
-          "soprano": "A4",
-          "alto": "A3",
-          "tenor": "F#3",
-          "baritone": "F#3",
-          "bass": "D2",
-          "full": "D3",
-          "lead": "C#5"
+              "part1": "A3",
+              "part2": "F#3",
+              "part3": "F#3",
+              "part4": "C#5",
+              "part5": "A4",
+              "part6": "D2",
+              "soprano": "A4",
+              "alto": "A3",
+              "tenor": "F#3",
+              "baritone": "F#3",
+              "bass": "D2",
+              "full": "D3",
+              "lead": "C#5"
     }
   },
 
@@ -236,17 +235,17 @@ export const SONG_STARTING_PITCHES = {
   "in-your-arms": {
     "key": "C# Minor",
     "pitches": {
-          "part1": "E4",
-          "part2": "G#4",
-          "part3": "D#4",
-          "part4": "C#4",
-          "part5": "C#3",
-          "soprano": "E4",
-          "alto": "G#4",
-          "tenor": "D#4",
-          "baritone": "C#4",
-          "bass": "C#3",
-          "full": "C#3"
+              "part1": "E4",
+              "part2": "G#4",
+              "part3": "D#4",
+              "part4": "C#4",
+              "part5": "C#3",
+              "soprano": "E4",
+              "alto": "G#4",
+              "tenor": "D#4",
+              "baritone": "C#4",
+              "bass": "C#3",
+              "full": "C#3"
     }
   },
 
@@ -254,17 +253,17 @@ export const SONG_STARTING_PITCHES = {
   "happy-school": {
     "key": "F Major",
     "pitches": {
-          "part1": "A4",
-          "part2": "F4",
-          "part3": "C4",
-          "part4": "A3",
-          "part5": "F3",
-          "soprano": "A4",
-          "alto": "F4",
-          "tenor": "C4",
-          "baritone": "A3",
-          "bass": "F3",
-          "full": "F4"
+              "part1": "A4",
+              "part2": "F4",
+              "part3": "C4",
+              "part4": "A3",
+              "part5": "F3",
+              "soprano": "A4",
+              "alto": "F4",
+              "tenor": "C4",
+              "baritone": "A3",
+              "bass": "F3",
+              "full": "F4"
     }
   },
 
@@ -272,17 +271,17 @@ export const SONG_STARTING_PITCHES = {
   "go-to-school": {
     "key": "G Major",
     "pitches": {
-          "part1": "B4",
-          "part2": "G4",
-          "part3": "D4",
-          "part4": "B3",
-          "part5": "G2",
-          "soprano": "B4",
-          "alto": "G4",
-          "tenor": "D4",
-          "baritone": "B3",
-          "bass": "G2",
-          "full": "G4"
+              "part1": "B4",
+              "part2": "G4",
+              "part3": "D4",
+              "part4": "B3",
+              "part5": "G2",
+              "soprano": "B4",
+              "alto": "G4",
+              "tenor": "D4",
+              "baritone": "B3",
+              "bass": "G2",
+              "full": "G4"
     }
   },
 
@@ -290,18 +289,18 @@ export const SONG_STARTING_PITCHES = {
   "well-done-today": {
     "key": "Bb Major",
     "pitches": {
-          "part1": "D5",
-          "part2": "Bb4",
-          "part3": "F4",
-          "part4": "D4",
-          "part5": "Bb3",
-          "part6": "Bb2",
-          "soprano": "D5",
-          "alto": "F4",
-          "tenor": "D4",
-          "baritone": "Bb3",
-          "bass": "Bb2",
-          "full": "Bb3"
+              "part1": "D5",
+              "part2": "Bb4",
+              "part3": "F4",
+              "part4": "D4",
+              "part5": "Bb3",
+              "part6": "Bb2",
+              "soprano": "D5",
+              "alto": "F4",
+              "tenor": "D4",
+              "baritone": "Bb3",
+              "bass": "Bb2",
+              "full": "Bb3"
     }
   },
 
@@ -309,17 +308,17 @@ export const SONG_STARTING_PITCHES = {
   "bohemian-rhapsody": {
     "key": "Bb Major",
     "pitches": {
-          "part1": "Ab4",
-          "part2": "F4",
-          "part3": "Eb5",
-          "part4": "C4",
-          "part5": "F3",
-          "soprano": "Ab4",
-          "alto": "F4",
-          "tenor": "Eb5",
-          "baritone": "C4",
-          "bass": "F3",
-          "full": "Bb3"
+              "part1": "Ab4",
+              "part2": "F4",
+              "part3": "Eb4",
+              "part4": "C4",
+              "part5": "F3",
+              "soprano": "Ab4",
+              "alto": "F4",
+              "tenor": "Eb4",
+              "baritone": "C4",
+              "bass": "F3",
+              "full": "Bb3"
     }
   },
 
@@ -327,15 +326,15 @@ export const SONG_STARTING_PITCHES = {
   "daft-punk": {
     "key": "F# Minor",
     "pitches": {
-          "part1": "C#4",
-          "part2": "A4",
-          "part3": "F#3",
-          "part4": "F#2",
-          "soprano": "A4",
-          "alto": "C#4",
-          "tenor": "F#3",
-          "bass": "F#2",
-          "full": "F#3"
+              "part1": "A4",
+              "part2": "C#4",
+              "part3": "F#3",
+              "part4": "F#2",
+              "soprano": "A4",
+              "alto": "C#4",
+              "tenor": "F#3",
+              "bass": "F#2",
+              "full": "F#3"
     }
   },
 
@@ -343,15 +342,15 @@ export const SONG_STARTING_PITCHES = {
   "dansori": {
     "key": "G Major",
     "pitches": {
-          "part1": "D5",
-          "part2": "B4",
-          "part3": "G4",
-          "part4": "G3",
-          "soprano": "D5",
-          "alto": "B4",
-          "tenor": "G4",
-          "bass": "G3",
-          "full": "G4"
+              "part1": "D5",
+              "part2": "B4",
+              "part3": "G4",
+              "part4": "G3",
+              "soprano": "D5",
+              "alto": "B4",
+              "tenor": "G4",
+              "bass": "G3",
+              "full": "G4"
     }
   },
 
@@ -359,15 +358,15 @@ export const SONG_STARTING_PITCHES = {
   "isnt-she-lovely": {
     "key": "E Major",
     "pitches": {
-          "part1": "B4",
-          "part2": "G#4",
-          "part3": "E4",
-          "part4": "E3",
-          "soprano": "B4",
-          "alto": "G#4",
-          "tenor": "E4",
-          "bass": "E3",
-          "full": "E4"
+              "part1": "B4",
+              "part2": "G#4",
+              "part3": "E4",
+              "part4": "E3",
+              "soprano": "B4",
+              "alto": "G#4",
+              "tenor": "E4",
+              "bass": "E3",
+              "full": "E4"
     }
   },
 
@@ -375,15 +374,15 @@ export const SONG_STARTING_PITCHES = {
   "lets-travel": {
     "key": "Eb Major",
     "pitches": {
-          "part1": "G4",
-          "part2": "Eb4",
-          "part3": "Eb4",
-          "part4": "Eb3",
-          "soprano": "G4",
-          "alto": "Eb4",
-          "tenor": "Eb4",
-          "bass": "Eb3",
-          "full": "Eb4"
+              "part1": "G4",
+              "part2": "Eb4",
+              "part3": "Eb4",
+              "part4": "Eb3",
+              "soprano": "G4",
+              "alto": "Eb4",
+              "tenor": "Eb4",
+              "bass": "Eb3",
+              "full": "Eb4"
     }
   },
 
@@ -391,15 +390,15 @@ export const SONG_STARTING_PITCHES = {
   "love-song-medley": {
     "key": "F# Major",
     "pitches": {
-          "part1": "A#4",
-          "part2": "C#4",
-          "part3": "F#4",
-          "part4": "F#2",
-          "soprano": "F#4",
-          "alto": "A#4",
-          "tenor": "C#4",
-          "bass": "F#2",
-          "full": "F#3"
+              "part1": "A#4",
+              "part2": "C#4",
+              "part3": "F#4",
+              "part4": "F#2",
+              "soprano": "A#4",
+              "alto": "C#4",
+              "tenor": "F#4",
+              "bass": "F#2",
+              "full": "F#3"
     }
   },
 
@@ -407,17 +406,17 @@ export const SONG_STARTING_PITCHES = {
   "l-o-v-e": {
     "key": "G Major",
     "pitches": {
-          "part1": "B4",
-          "part2": "D4",
-          "part3": "B3",
-          "part4": "G3",
-          "part5": "G2",
-          "soprano": "B4",
-          "alto": "D4",
-          "tenor": "B3",
-          "baritone": "G3",
-          "bass": "G2",
-          "full": "G3"
+              "part1": "B4",
+              "part2": "D4",
+              "part3": "B3",
+              "part4": "G3",
+              "part5": "G2",
+              "soprano": "B4",
+              "alto": "D4",
+              "tenor": "B3",
+              "baritone": "G3",
+              "bass": "G2",
+              "full": "G3"
     }
   },
 
@@ -425,15 +424,15 @@ export const SONG_STARTING_PITCHES = {
   "old-pop-medley": {
     "key": "E Major / C# Minor",
     "pitches": {
-          "part1": "B4",
-          "part2": "G#4",
-          "part3": "B3",
-          "part4": "E3",
-          "soprano": "B4",
-          "alto": "G#4",
-          "tenor": "B3",
-          "bass": "E3",
-          "full": "E4"
+              "part1": "B4",
+              "part2": "G#4",
+              "part3": "B3",
+              "part4": "E3",
+              "soprano": "B4",
+              "alto": "G#4",
+              "tenor": "B3",
+              "bass": "E3",
+              "full": "E4"
     }
   },
 
@@ -441,17 +440,17 @@ export const SONG_STARTING_PITCHES = {
   "beautiful-world": {
     "key": "Ab Major",
     "pitches": {
-          "part1": "Ab4",
-          "part2": "Eb4",
-          "part3": "C4",
-          "part4": "Bb3",
-          "part5": "Ab2",
-          "soprano": "Ab4",
-          "alto": "Eb4",
-          "tenor": "C4",
-          "baritone": "Bb3",
-          "bass": "Ab2",
-          "full": "Ab3"
+              "part1": "Ab4",
+              "part2": "Eb4",
+              "part3": "C4",
+              "part4": "Bb3",
+              "part5": "Ab2",
+              "soprano": "Ab4",
+              "alto": "Eb4",
+              "tenor": "C4",
+              "baritone": "Bb3",
+              "bass": "Ab2",
+              "full": "Ab3"
     }
   },
 
@@ -459,17 +458,17 @@ export const SONG_STARTING_PITCHES = {
   "butterfly": {
     "key": "Eb Major",
     "pitches": {
-          "part1": "Ab4",
-          "part2": "Ab4",
-          "part3": "Ab3",
-          "part4": "Ab3",
-          "part5": "Ab3",
-          "soprano": "Ab4",
-          "alto": "Ab4",
-          "tenor": "Ab3",
-          "baritone": "Ab3",
-          "bass": "Ab3",
-          "full": "Ab3"
+              "part1": "Ab4",
+              "part2": "Ab4",
+              "part3": "Ab3",
+              "part4": "Ab3",
+              "part5": "Ab3",
+              "soprano": "Ab4",
+              "alto": "Ab4",
+              "tenor": "Ab3",
+              "baritone": "Ab3",
+              "bass": "Ab3",
+              "full": "Ab3"
     }
   },
 
@@ -477,17 +476,17 @@ export const SONG_STARTING_PITCHES = {
   "cherry-blossom-ending": {
     "key": "D Major",
     "pitches": {
-          "part1": "A4",
-          "part2": "F#4",
-          "part3": "D4",
-          "part4": "B3",
-          "part5": "A2",
-          "soprano": "A4",
-          "alto": "F#4",
-          "tenor": "D4",
-          "baritone": "B3",
-          "bass": "A2",
-          "full": "D3"
+              "part1": "A4",
+              "part2": "F#4",
+              "part3": "D4",
+              "part4": "B3",
+              "part5": "A2",
+              "soprano": "A4",
+              "alto": "F#4",
+              "tenor": "D4",
+              "baritone": "B3",
+              "bass": "A2",
+              "full": "D3"
     }
   },
 
@@ -495,17 +494,17 @@ export const SONG_STARTING_PITCHES = {
   "love-love": {
     "key": "F# Major",
     "pitches": {
-          "part1": "G#4",
-          "part2": "F#4",
-          "part3": "C#4",
-          "part4": "A#3",
-          "part5": "F#2",
-          "soprano": "G#4",
-          "alto": "F#4",
-          "tenor": "C#4",
-          "baritone": "A#3",
-          "bass": "F#2",
-          "full": "F#3"
+              "part1": "G#4",
+              "part2": "F#4",
+              "part3": "C#4",
+              "part4": "A#3",
+              "part5": "F#2",
+              "soprano": "G#4",
+              "alto": "F#4",
+              "tenor": "C#4",
+              "baritone": "A#3",
+              "bass": "F#2",
+              "full": "F#3"
     }
   },
 
@@ -513,15 +512,15 @@ export const SONG_STARTING_PITCHES = {
   "carol-medley": {
     "key": "B Major",
     "pitches": {
-          "part1": "E4",
-          "part2": "E4",
-          "part3": "E4",
-          "part4": "E3",
-          "soprano": "E4",
-          "alto": "E4",
-          "tenor": "E4",
-          "bass": "E3",
-          "full": "E4"
+              "part1": "E4",
+              "part2": "E4",
+              "part3": "E4",
+              "part4": "E3",
+              "soprano": "E4",
+              "alto": "E4",
+              "tenor": "E4",
+              "bass": "E3",
+              "full": "E4"
     }
   },
 
@@ -529,15 +528,15 @@ export const SONG_STARTING_PITCHES = {
   "same-place": {
     "key": "G Major",
     "pitches": {
-          "part1": "B4",
-          "part2": "G4",
-          "part3": "E4",
-          "part4": "E3",
-          "soprano": "B4",
-          "alto": "G4",
-          "tenor": "E4",
-          "bass": "E3",
-          "full": "G4"
+              "part1": "B4",
+              "part2": "G4",
+              "part3": "E4",
+              "part4": "E3",
+              "soprano": "B4",
+              "alto": "G4",
+              "tenor": "E4",
+              "bass": "E3",
+              "full": "G4"
     }
   },
 
@@ -545,15 +544,15 @@ export const SONG_STARTING_PITCHES = {
   "would-be-good": {
     "key": "Ab Major",
     "pitches": {
-          "part1": "C5",
-          "part2": "Eb5",
-          "part3": "Ab4",
-          "part4": "Ab3",
-          "soprano": "Eb5",
-          "alto": "C5",
-          "tenor": "Ab4",
-          "bass": "Ab3",
-          "full": "Ab3"
+              "part1": "Eb5",
+              "part2": "C5",
+              "part3": "Ab3",
+              "part4": "Ab2",
+              "soprano": "Eb5",
+              "alto": "C5",
+              "tenor": "Ab3",
+              "bass": "Ab2",
+              "full": "Ab3"
     }
   },
 
@@ -561,30 +560,15 @@ export const SONG_STARTING_PITCHES = {
   "ditto": {
     "key": "F# Minor",
     "pitches": {
-          "part1": "C#5",
-          "part2": "A4",
-          "part3": "F#4",
-          "part5": "F#2",
-          "soprano": "C#5",
-          "alto": "A4",
-          "tenor": "F#4",
-          "bass": "F#2",
-          "full": "F#3"
+              "part1": "C#5",
+              "part2": "A4",
+              "part3": "F#4",
+              "part5": "F#2",
+              "soprano": "C#5",
+              "alto": "A4",
+              "tenor": "F#4",
+              "bass": "F#2",
+              "full": "F#3"
     }
   }
-
 };
-
-// Check against data/songs.json
-const currentData = JSON.parse(fs.readFileSync('data/songs.json', 'utf8'));
-let updatedCount = 0;
-currentData.songs.forEach(song => {
-  const match = SONG_STARTING_PITCHES[song.id];
-  if (match) {
-    song.startingPitches = match.pitches;
-    song.musicalKey = match.key;
-    updatedCount++;
-  }
-});
-fs.writeFileSync('data/songs.json', JSON.stringify(currentData, null, 2), 'utf8');
-console.log(`Verified starting pitches for ${updatedCount} / ${currentData.songs.length} songs in data/songs.json`);
