@@ -707,7 +707,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       renderAll();
     }, `stage-mode-btn${liveMode === 'focus' ? ' active' : ''}`, null, { role: 'radio', 'aria-checked': String(liveMode === 'focus'), title: '1곡씩 크게 조율하며 진행하는 실전 무대 모드' });
 
-    const modeOverviewBtn = button('📋 전체 목록', () => {
+    const modeOverviewBtn = button('📋 전체 큐시트 목록', () => {
       if (liveMode === 'overview') return;
       stopPitch(true);
       liveMode = 'overview';

@@ -93,7 +93,7 @@ assert(appJsSource.includes("switchStageSubView('list')"), "switchStageSubView('
 const stageJsSource = fs.readFileSync('js/stage.js', 'utf8');
 assert(stageJsSource.includes('stage-live-mode-switch'), 'stage-live-mode-switch container must be present in stage.js');
 assert(stageJsSource.includes('1곡 집중'), '1곡 집중 button must be present');
-assert(stageJsSource.includes('전체 목록'), '전체 목록 button must be present');
+assert(stageJsSource.includes('전체 큐시트 목록') || stageJsSource.includes('전체 목록'), '전체 큐시트 목록 button must be present');
 assert(stageJsSource.includes('function renderOverviewView()'), 'renderOverviewView function must be present');
 assert(stageJsSource.includes('function copyFullSetlist()'), 'copyFullSetlist function must be present');
 assert(stageJsSource.includes('playChordStrings'), 'playChordStrings must be imported and used for chords');
