@@ -3303,6 +3303,13 @@ body.in-pocket-mode {
   box-sizing: border-box;
 }
 
+@media (max-width: 860px) {
+  .stage-overview-card-body {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
 @media (max-width: 600px) {
   .page.stage-live-page {
     padding: 8px 10px 16px;
@@ -3457,6 +3464,10 @@ body.in-pocket-mode {
   }
   .stage-overview-card {
     padding: 12px 14px;
+  }
+  .stage-overview-card-body {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   .stage-overview-card-header {
     flex-direction: column;
