@@ -4,6 +4,8 @@ import {
   STAGE_AI_COMMENTS,
   generateDynamicMCComment,
   DEFAULT_STAGE_HISTORY,
+  STAGE_EXTRA_SONG_METADATA,
+  resolveSongData,
   DUMMY_STAGE_IDS,
   isDummyStage,
   getSongStartingPitchEntries,
@@ -21,6 +23,17 @@ assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'].wit.includes('퀸'), 'wit commen
 assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'].story.includes('보헤미안 랩소디'), 'story comment matches');
 assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'].brief.length > 5, 'brief comment exists');
 
+// 1-1. Check Extra songs comments (Stand By Me, The Lion Sleeps Tonight)
+assert(STAGE_AI_COMMENTS['stand-by-me'], 'stand-by-me comments exist');
+assert(STAGE_AI_COMMENTS['stand-by-me'].wit.length > 10, 'stand-by-me wit comment exists');
+assert(STAGE_AI_COMMENTS['stand-by-me'].story.length > 10, 'stand-by-me story comment exists');
+assert(STAGE_AI_COMMENTS['stand-by-me'].brief.length > 5, 'stand-by-me brief comment exists');
+
+assert(STAGE_AI_COMMENTS['the-lion-sleeps-tonight'], 'the-lion-sleeps-tonight comments exist');
+assert(STAGE_AI_COMMENTS['the-lion-sleeps-tonight'].wit.includes('위모웨'), 'the-lion-sleeps-tonight wit matches');
+assert(STAGE_AI_COMMENTS['the-lion-sleeps-tonight'].story.length > 10, 'the-lion-sleeps-tonight story exists');
+assert(STAGE_AI_COMMENTS['the-lion-sleeps-tonight'].brief.length > 5, 'the-lion-sleeps-tonight brief exists');
+
 // 2. Test Dynamic Generator Fallback
 const dummySong = { id: 'dummy-song', title: '아카라카 찬가', artist: '아카라카', category: '응원가', arrangement: '4부' };
 const genWit = generateDynamicMCComment(dummySong, 'wit');
@@ -33,16 +46,40 @@ assert(genBrief.includes('아카라카 찬가'), 'Dynamic brief includes song ti
 
 // 3. Test Stage History (Only user entered performances, zero dummy items)
 assert(Array.isArray(DEFAULT_STAGE_HISTORY), 'DEFAULT_STAGE_HISTORY must be an array');
-assert(DEFAULT_STAGE_HISTORY.length === 1, 'Only user-entered Yeosu performance in DEFAULT_STAGE_HISTORY');
+assert(DEFAULT_STAGE_HISTORY.length === 3, 'Exactly 3 user-entered performances in DEFAULT_STAGE_HISTORY');
 assert(DEFAULT_STAGE_HISTORY.every(h => !isDummyStage(h)), 'No dummy performances in DEFAULT_STAGE_HISTORY');
 for (const dummyId of ['stage-2026-spring', 'stage-2025-busking', 'stage-2024-suncheon']) {
   assert(DUMMY_STAGE_IDS.has(dummyId), `DUMMY_STAGE_IDS must track ${dummyId}`);
   assert(!DEFAULT_STAGE_HISTORY.some(h => h.id === dummyId), `Dummy ${dummyId} must not be in default history`);
 }
 
-// 3-1. Verify 2026 여수 생활문화한마당 performance
+// 3-0. Verify chronological sorting (newest first: 10.24 > 10.23 > 10.16)
+assert.strictEqual(DEFAULT_STAGE_HISTORY[0].id, 'stage-2026-jeonnam', '1st should be 10.24 Jeonnam');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[0].date, '2026.10.24', '1st date matches');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[0].venue, '광주교육연수원', '1st venue matches');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[0].songs.length, 8, 'Jeonnam performance must have 8 songs');
+const expectedJeonnamSongIds = [
+  'in-your-arms',
+  'old-pop-medley',
+  'love-song-medley',
+  'isnt-she-lovely',
+  'lets-travel',
+  'short-hair',
+  'stand-by-me',
+  'the-lion-sleeps-tonight'
+];
+assert.deepStrictEqual(DEFAULT_STAGE_HISTORY[0].songs.map(s => s.songId), expectedJeonnamSongIds);
+
+assert.strictEqual(DEFAULT_STAGE_HISTORY[1].id, 'stage-2026-gyowon', '2nd should be 10.23 Gyowon');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[1].date, '2026.10.23', '2nd date matches');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[1].venue, '장흥문화예술회관', '2nd venue matches');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs.length, 1, 'Gyowon performance must have 1 song');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs[0].songId, 'bohemian-rhapsody-5');
+
+// 3-1. Verify 2026 여수 생활문화한마당 performance (3rd)
 const yeosu = DEFAULT_STAGE_HISTORY.find(h => h.id === 'stage-2026-yeosu');
 assert(yeosu, 'stage-2026-yeosu must exist in DEFAULT_STAGE_HISTORY');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[2].id, 'stage-2026-yeosu', '3rd should be 10.16 Yeosu');
 assert.strictEqual(yeosu.eventTitle, '2026 여수 생활문화한마당', 'Yeosu eventTitle matches');
 assert.strictEqual(yeosu.date, '2026.10.16', 'Yeosu date matches');
 assert.strictEqual(yeosu.venue, '웅천친수공원', 'Yeosu venue matches');
@@ -60,6 +97,15 @@ assert.deepStrictEqual(
   expectedYeosuSongIds,
   'Yeosu cue sheet song IDs and order must match'
 );
+
+// 3-2. Verify Extra Song Metadata and starting pitches
+assert(STAGE_EXTRA_SONG_METADATA['stand-by-me'], 'stand-by-me metadata exists');
+assert(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'], 'the-lion-sleeps-tonight metadata exists');
+
+const standByMePitches = getSongStartingPitchEntries(STAGE_EXTRA_SONG_METADATA['stand-by-me']);
+assert(standByMePitches.length === 5, 'stand-by-me has 5 pitch entries');
+const lionPitches = getSongStartingPitchEntries(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight']);
+assert(lionPitches.length === 5, 'the-lion-sleeps-tonight has 5 pitch entries');
 
 // 4. Test Starting Pitch Extraction across all 33 songs
 const songs = JSON.parse(fs.readFileSync('data/songs.json', 'utf8')).songs;

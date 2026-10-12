@@ -148,6 +148,21 @@ export const STAGE_AI_COMMENTS = {
     wit: `“뉴진스의 힙한 감성을 아카펠라로? EXIT 스타일로 해석한 신비롭고 몽환적인 비트를 기대해 주세요!”`,
     story: `“뉴진스의 글로벌 히트곡 'Ditto'를 그룹 EXIT의 감각적인 편곡으로 노래합니다. 몽환적인 코러스와 섬세한 그루브가 돋보입니다.”`,
     brief: `“몽환적인 레트로 감성과 감각적인 보컬 앙상블, 'Ditto' 아카펠라 버전입니다.”`
+  },
+  'stand-by-me': {
+    wit: `“친구가 필요할 때 언제나 곁을 지켜주는 든든한 노래! 베이스 라인에 맞춰 박수 준비되셨나요? 'Stand by Me' 출발합니다!”`,
+    story: `“시대와 국경을 넘어 전 세계인의 마음에 깊은 위로를 건네온 소울의 명곡, 벤 E. 킹의 'Stand by Me'입니다. 서로를 지탱해 주는 따뜻한 화음을 들려드립니다.”`,
+    brief: `“마음을 울리는 따뜻한 위로의 멜로디, 'Stand by Me'입니다.”`
+  },
+  'the-lion-sleeps-tonight': {
+    wit: `“아~위모웨 위모웨 위모웨! 오늘 밤 정글의 사자는 잠들었지만, 우리 무대의 열정은 잠들지 않습니다! 신나게 외쳐볼까요?”`,
+    story: `“영화 <라이언 킹>의 흥겨운 명곡으로도 친숙한 'The Lion Sleeps Tonight'입니다. 통통 튀는 아프리칸 리듬과 매력적인 하이 테너의 팔세토 앙상블을 즐겨보세요.”`,
+    brief: `“경쾌하고 이국적인 리듬이 매력적인 'The Lion Sleeps Tonight'입니다.”`
+  },
+  'lion-sleeps-tonight': {
+    wit: `“아~위모웨 위모웨 위모웨! 오늘 밤 정글의 사자는 잠들었지만, 우리 무대의 열정은 잠들지 않습니다! 신나게 외쳐볼까요?”`,
+    story: `“영화 <라이언 킹>의 흥겨운 명곡으로도 친숙한 'The Lion Sleeps Tonight'입니다. 통통 튀는 아프리칸 리듬과 매력적인 하이 테너의 팔세토 앙상블을 즐겨보세요.”`,
+    brief: `“경쾌하고 이국적인 리듬이 매력적인 'The Lion Sleeps Tonight'입니다.”`
   }
 };
 
@@ -222,10 +237,105 @@ export function getSongStartingPitchEntries(songData) {
 }
 
 /**
- * 사용자 직접 입력 공연 셋리스트 (2026 여수 생활문화한마당)
+ * 메인 33곡 외 무대 큐시트에 등록된 특별 레퍼토리 메타데이터 (첫 음 및 곡 정보)
+ */
+export const STAGE_EXTRA_SONG_METADATA = {
+  'stand-by-me': {
+    id: 'stand-by-me',
+    title: 'Stand By Me (스탠바이미)',
+    artist: 'Ben E. King',
+    category: 'Pop / Soul',
+    arrangement: '혼성 5부',
+    musicalKey: 'A Major',
+    startingPitches: {
+      key: 'A Major',
+      pitches: {
+        bass: 'A2',
+        baritone: 'C#3',
+        tenor: 'E3',
+        alto: 'A3',
+        soprano: 'C#4'
+      }
+    }
+  },
+  'the-lion-sleeps-tonight': {
+    id: 'the-lion-sleeps-tonight',
+    title: 'The Lion Sleeps Tonight',
+    artist: 'The Tokens',
+    category: 'Pop / World',
+    arrangement: '혼성 5부',
+    musicalKey: 'F Major',
+    startingPitches: {
+      key: 'F Major',
+      pitches: {
+        bass: 'F2',
+        baritone: 'A2',
+        tenor: 'C3',
+        alto: 'F3',
+        soprano: 'C4'
+      }
+    }
+  }
+};
+STAGE_EXTRA_SONG_METADATA['lion-sleeps-tonight'] = STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'];
+
+/**
+ * 곡 ID를 통해 메인 songs 및 추가 무대 레퍼토리에서 메타데이터 검색
+ */
+export function resolveSongData(songs, songId, fallbackTitle = '') {
+  if (Array.isArray(songs)) {
+    const found = songs.find(s => s.id === songId);
+    if (found) return found;
+  }
+  if (STAGE_EXTRA_SONG_METADATA[songId]) {
+    return STAGE_EXTRA_SONG_METADATA[songId];
+  }
+  return {
+    id: songId,
+    title: fallbackTitle || songId,
+    artist: '아카라카',
+    category: '아카펠라',
+    arrangement: '다성부',
+    startingPitches: null
+  };
+}
+
+/**
+ * 사용자 직접 입력 공연 셋리스트 (최신순 3건 정렬)
  * 사용자가 직접 입력하지 않은 임의 더미 공연은 기본 히스토리에 포함하지 않음
  */
 export const DEFAULT_STAGE_HISTORY = [
+  {
+    id: 'stage-2026-jeonnam',
+    eventTitle: '2026 전교조 전남지부 참교육실천대회 찬조 공연',
+    date: '2026.10.24',
+    venue: '광주교육연수원',
+    notes: '2026 전교조 전남지부 참교육실천대회 찬조 공연 큐시트 (장소: 광주교육연수원)',
+    updatedAt: 1792836000000,
+    currentIndex: 0,
+    songs: [
+      { songId: 'in-your-arms', title: '그대 내 품에', note: '감성 발라드', commentTone: 'story' },
+      { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
+      { songId: 'love-song-medley', title: '러브송 메들리', note: '로맨틱 앙상블', commentTone: 'story' },
+      { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 그루브', commentTone: 'wit' },
+      { songId: 'lets-travel', title: '여행을 떠나요', note: '신나는 에너지', commentTone: 'wit' },
+      { songId: 'short-hair', title: '단발머리', note: '경쾌한 비트', commentTone: 'wit' },
+      { songId: 'stand-by-me', title: 'Stand By Me (스탠바이미)', note: '따뜻한 위로', commentTone: 'story' },
+      { songId: 'the-lion-sleeps-tonight', title: 'The Lion Sleeps Tonight', note: '위모웨 피날레', commentTone: 'wit' }
+    ]
+  },
+  {
+    id: 'stage-2026-gyowon',
+    eventTitle: '2026 제19회 교원예술제',
+    date: '2026.10.23',
+    venue: '장흥문화예술회관',
+    notes: '2026 제19회 교원예술제 무대 큐시트 (장소: 장흥문화예술회관)',
+    updatedAt: 1792749600000,
+    currentIndex: 0,
+    songs: [
+      { songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', note: '퀸 오페라 하이라이트', commentTone: 'wit' }
+    ]
+  },
   {
     id: 'stage-2026-yeosu',
     eventTitle: '2026 여수 생활문화한마당',
@@ -296,12 +406,11 @@ export function getStageHistory() {
       const cleaned = parsed.filter(item => !isDummyStage(item) && !deletedIds.has(item.id));
       let changed = cleaned.length !== parsed.length;
 
-      // 2. 사용자가 직접 추가를 요청한 여수 공연이 누락되어 있고 삭제하지 않았다면 기본 추가
-      const hasYeosu = cleaned.some(item => item.id === 'stage-2026-yeosu');
-      if (!hasYeosu && !deletedIds.has('stage-2026-yeosu')) {
-        const yeosuDef = DEFAULT_STAGE_HISTORY.find(d => d.id === 'stage-2026-yeosu');
-        if (yeosuDef) {
-          cleaned.unshift(JSON.parse(JSON.stringify(yeosuDef)));
+      // 2. 사용자가 직접 추가를 요청한 기본 공연(참교육실천대회, 교원예술제, 여수 등)이 누락되어 있고 삭제하지 않았다면 반영
+      const existingIds = new Set(cleaned.map(item => item.id));
+      for (const def of DEFAULT_STAGE_HISTORY) {
+        if (!existingIds.has(def.id) && !deletedIds.has(def.id) && !isDummyStage(def)) {
+          cleaned.push(JSON.parse(JSON.stringify(def)));
           changed = true;
         }
       }
@@ -821,14 +930,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
   function getCurrentSongData() {
     const item = session.songs[activeIndex];
     if (!item) return null;
-    return songs.find(s => s.id === item.songId) || {
-      id: item.songId,
-      title: item.title,
-      artist: '아카라카',
-      category: '아카펠라',
-      arrangement: '다성부',
-      startingPitches: null
-    };
+    return resolveSongData(songs, item.songId, item.title);
   }
 
   let playAllBtn;
@@ -1153,7 +1255,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       `총 ${session.songs.length}곡 레퍼토리`,
       ``,
       ...session.songs.map((item, i) => {
-        const sd = songs.find(x => x.id === item.songId);
+        const sd = resolveSongData(songs, item.songId, item.title);
         const key = sd?.musicalKey || sd?.startingPitches?.key ? ` (Key: ${sd.musicalKey || sd.startingPitches.key})` : '';
         const note = item.note ? ` - ${item.note}` : '';
         return `${i + 1}. ${item.title}${key}${note}`;
@@ -1213,14 +1315,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
     session.songs.forEach((item, idx) => {
       const isCur = idx === activeIndex;
-      const songData = songs.find(s => s.id === item.songId) || {
-        id: item.songId,
-        title: item.title,
-        artist: '아카라카',
-        category: '아카펠라',
-        arrangement: '다성부',
-        startingPitches: null
-      };
+      const songData = resolveSongData(songs, item.songId, item.title);
       const keyStr = songData?.musicalKey || songData?.startingPitches?.key;
       const pitchEntries = getSongStartingPitchEntries(songData);
 
@@ -1530,14 +1625,21 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
     el('label', { style: 'display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; grid-column: span 2;' }, '공연 장소', venueInput)
   );
 
+  const allAvailableSongs = [...songs];
+  for (const extra of Object.values(STAGE_EXTRA_SONG_METADATA)) {
+    if (!allAvailableSongs.some(s => s.id === extra.id)) {
+      allAvailableSongs.push(extra);
+    }
+  }
+
   // Song Adder Dropdown
   const songSelect = el('select', { class: 'search-input', style: 'flex: 1;' },
-    songs.map(s => el('option', { value: s.id, text: `${s.title} (${s.arrangement || s.category || ''})` }))
+    allAvailableSongs.map(s => el('option', { value: s.id, text: `${s.title} (${s.arrangement || s.category || ''})` }))
   );
 
   const addSongBtn = button('+ 곡 추가', () => {
     const selectedId = songSelect.value;
-    const selectedSong = songs.find(s => s.id === selectedId);
+    const selectedSong = allAvailableSongs.find(s => s.id === selectedId);
     if (selectedSong) {
       draft.songs.push({
         songId: selectedSong.id,
