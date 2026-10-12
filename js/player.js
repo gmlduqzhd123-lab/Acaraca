@@ -19,8 +19,12 @@ const PLAYLIST_ID = /^[A-Za-z0-9_-]{10,150}$/;
 
 /** Parse a media record without accepting executable schemes or look-alike hosts. */
 export function parseYouTube(media) {
-  const type = media && typeof media === 'object' ? media.type : '';
-  const rawURL = media && typeof media.url === 'string' ? media.url.trim() : '';
+  let mediaObj = media;
+  if (typeof media === 'string') {
+    mediaObj = { type: 'video', url: media };
+  }
+  const type = mediaObj && typeof mediaObj === 'object' ? (mediaObj.type || 'video') : '';
+  const rawURL = mediaObj && typeof mediaObj.url === 'string' ? mediaObj.url.trim() : '';
   const result = {
     ok: false,
     empty: !rawURL,

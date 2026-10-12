@@ -53,7 +53,8 @@ import {
   deleteStageHistoryItem,
   saveStageHistory,
   cleanupStageLive,
-  promptStagePassword
+  promptStagePassword,
+  resolveSongData
 } from './stage.js';
 
 const app = document.getElementById('app');
@@ -4598,9 +4599,9 @@ function renderSettings() {
 
 function normalizeRoute() {
   if (!state.route.song) return;
-  const song = state.songs.find(song => song.id === state.route.song);
-  if (!song) { state.route = {tab: 'home'}; writeRoute(state.route, {replace: true}); toast('찾을 수 없는 곡입니다. 홈으로 이동했어요.'); return; }
-  if (state.route.part && (!Object.hasOwn(PARTS, state.route.part) || !song.videos[state.route.part]?.url?.trim())) {
+  const song = state.songs.find(song => song.id === state.route.song) || resolveSongData(state.songs, state.route.song);
+  if (!song || !song.title) { state.route = {tab: 'home'}; writeRoute(state.route, {replace: true}); toast('찾을 수 없는 곡입니다. 홈으로 이동했어요.'); return; }
+  if (state.route.part && (!Object.hasOwn(PARTS, state.route.part) || !song.videos?.[state.route.part]?.url?.trim())) {
     state.route = {song: song.id}; writeRoute(state.route, {replace: true}); toast('등록되지 않은 파트입니다. 곡에서 다른 파트를 선택해 주세요.');
   }
 }
@@ -4623,7 +4624,7 @@ function render() {
     app.append(el('div', {class: 'error-state', role: 'alert'}, el('h1', {text: '연습 자료를 불러오지 못했어요'}), el('p', {text: state.loadError}), button('다시 시도', initialize, 'button primary'), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary'))); return;
   }
   normalizeRoute(); refreshChrome();
-  const song = state.route.song && state.songs.find(song => song.id === state.route.song);
+  const song = state.route.song && (state.songs.find(song => song.id === state.route.song) || resolveSongData(state.songs, state.route.song));
   document.title = song ? `${song.title}${state.route.part ? ` · ${PARTS[state.route.part]}` : ''} | AcaRaca` : `${labels[state.route.tab || 'home']} | AcaRaca`;
   if (song && state.route.part) {
     const key = `${song.id}\u0000${state.route.part}`;

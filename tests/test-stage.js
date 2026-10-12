@@ -195,14 +195,24 @@ assert(stageJsSource.includes('btn.blur()'), 'Stage mode must blur buttons on st
 assert(stageJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "stage.js actions order must be loadBtn, cloneBtn, deleteBtn");
 assert(appJsSource.includes("el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn)"), "app.js actions order must be loadBtn, cloneBtn, deleteBtn");
 
-// 11. Test Practice Video Link Buttons & Modal
+// 11. Test Practice Video Link Buttons & Modal (상세 페이지로 즉시 직접 이동)
 import { openSongPracticeVideoModal } from '../js/stage.js';
 assert.strictEqual(typeof openSongPracticeVideoModal, 'function', 'openSongPracticeVideoModal must be an exported function');
 assert(stageJsSource.includes('stage-practice-video-btn'), 'stage-practice-video-btn must be present in stage.js');
 assert(stageJsSource.includes('stage-overview-video-btn'), 'stage-overview-video-btn must be present in stage.js');
 assert(stageJsSource.includes('🎬 연습실 영상'), '🎬 연습실 영상 button text must be present in stage.js');
+assert(stageJsSource.includes('navigate({ song: targetSongId })'), 'Stage mode practice button must navigate directly to song detail page');
 assert(STAGE_EXTRA_SONG_METADATA['stand-by-me'].videos?.full?.url, 'stand-by-me has full video URL');
 assert(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'].videos?.full?.url, 'the-lion-sleeps-tonight has full video URL');
+
+const songsData = JSON.parse(fs.readFileSync('./data/songs.json', 'utf8'));
+let navigatedSong = null;
+openSongPracticeVideoModal({
+  song: { songId: 'old-pop-medley' },
+  songs: songsData.songs,
+  navigate: (route) => { navigatedSong = route.song; }
+});
+assert.strictEqual(navigatedSong, 'old-pop-medley', 'openSongPracticeVideoModal must immediately navigate to song detail page');
 
 // 12. Test Previous / Next Performance Navigation Buttons
 import { getChronologicalPerformanceList } from '../js/stage.js';

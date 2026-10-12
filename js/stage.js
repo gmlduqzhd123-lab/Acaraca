@@ -510,6 +510,9 @@ export const STAGE_EXTRA_SONG_METADATA = {
     category: 'Pop / Soul',
     arrangement: '혼성 5부',
     musicalKey: 'A Major',
+    difficulty: 2,
+    status: 'practice',
+    tags: ['무대 레퍼토리', '소울', '명곡'],
     videos: {
       full: {
         type: 'video',
@@ -534,6 +537,9 @@ export const STAGE_EXTRA_SONG_METADATA = {
     category: 'Pop / World',
     arrangement: '혼성 5부',
     musicalKey: 'F Major',
+    difficulty: 2,
+    status: 'practice',
+    tags: ['무대 레퍼토리', '아카펠라', '라이온킹'],
     videos: {
       full: {
         type: 'video',
@@ -1409,13 +1415,18 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       item?.note ? el('span', { class: 'stage-hero-badge', style: 'background: rgba(234, 179, 8, 0.2); color: #fde047;', text: item.note }) : null
     );
 
+    const resolvedSong = songData || resolveSongData(songs, item?.songId || item?.id, item?.title);
+    const targetSongId = resolvedSong?.id || item?.songId || item?.id;
+
     const videoBtn = button('🎬 연습실 영상', () => {
-      openSongPracticeVideoModal({
-        song: songData || item,
-        songs,
-        navigate
-      });
-    }, 'stage-practice-video-btn', null, { title: '아카라카 연습실 공식 영상 및 파트별 연습 영상 보기' });
+      stopPitch(true);
+      cleanupStageLive();
+      if (typeof navigate === 'function' && targetSongId) {
+        navigate({ song: targetSongId });
+      } else if (typeof navigate === 'function') {
+        navigate({ tab: 'songs' });
+      }
+    }, 'stage-practice-video-btn', null, { title: `${resolvedSong?.title || item?.title || '해당 곡'} 아카라카 연습실 상세 페이지로 바로 이동` });
 
     const topRow = el('div', { class: 'stage-hero-top-row' },
       badges,
@@ -1851,14 +1862,19 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         titleRow
       );
 
+      const resolvedSong = songData || resolveSongData(songs, item?.songId || item?.id, item?.title);
+      const targetSongId = resolvedSong?.id || item?.songId || item?.id;
+
       const videoBtn = button('🎬 연습실 영상', (e) => {
         e.stopPropagation();
-        openSongPracticeVideoModal({
-          song: songData || item,
-          songs,
-          navigate
-        });
-      }, 'button secondary small stage-overview-video-btn', null, { title: `${item.title} 아카라카 연습실 영상 보기` });
+        stopPitch(true);
+        cleanupStageLive();
+        if (typeof navigate === 'function' && targetSongId) {
+          navigate({ song: targetSongId });
+        } else if (typeof navigate === 'function') {
+          navigate({ tab: 'songs' });
+        }
+      }, 'button secondary small stage-overview-video-btn', null, { title: `${item.title} 아카라카 연습실 상세 페이지로 바로 이동` });
 
       const focusBtn = button('🎤 1곡 집중 보기', () => {
         stopPitch(true);
@@ -2323,6 +2339,16 @@ export function openSongPracticeVideoModal({ song, songs, navigate }) {
   if (!song) return;
   const songId = song.songId || song.id || '';
   const fullSong = resolveSongData(songs, songId, song.title || '');
+  const targetId = fullSong?.id || songId;
+
+  // 상세 페이지로 바로 이동 (사용자 요구사항 반영)
+  if (typeof navigate === 'function' && targetId) {
+    stopPitch(true);
+    cleanupStageLive();
+    navigate({ song: targetId });
+    return;
+  }
+
   const songTitle = fullSong.title || song.title || '곡명 미지정';
 
   const existing = document.getElementById('stage-practice-video-dialog');
