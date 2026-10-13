@@ -1612,7 +1612,13 @@
         "part3",
         "part4",
         "part1"
-      ]
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
+      }
     },
     {
       "id": "dansori",
