@@ -515,7 +515,7 @@ export const STAGE_EXTRA_SONG_METADATA = {
     videos: {
       full: {
         type: 'video',
-        url: 'https://www.youtube.com/watch?v=BTCfQ667QUY'
+        url: 'https://www.youtube.com/watch?v=hwZNL7QVJjE'
       }
     },
     // 혼성5부 교육용 악보(arr 김승호) 기준: 솔로 1마디 → 소프라노 5마디 → 알토·바리톤·베이스 9마디
