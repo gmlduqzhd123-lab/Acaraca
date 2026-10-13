@@ -624,13 +624,14 @@ export const DEFAULT_STAGE_HISTORY = [
     venue: '웅천친수공원',
     notes: '2026 여수 생활문화한마당 공연 큐시트 (장소: 웅천친수공원)',
     updatedAt: 1792144800000,
+    // 기본 셋리스트를 고치면 revision을 올려 이미 저장된 기기에도 반영
+    revision: 2,
     currentIndex: 0,
     songs: [
       { songId: 'love-song-medley', title: '러브송 메들리', note: '오프닝 메들리', commentTone: 'story' },
-      { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
       { songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', note: '5부 하이라이트', commentTone: 'wit' },
       { songId: 'in-your-arms', title: '그대 내 품에', note: '감성 발라드', commentTone: 'story' },
-      { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 그루브', commentTone: 'wit' },
+      { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
       { songId: 'lets-travel', title: '여행을 떠나요', note: '피날레 호응 유도', commentTone: 'wit' }
     ]
   }
@@ -691,6 +692,15 @@ export function getStageHistory() {
       let changed = cleaned.length !== parsed.length;
 
       // 2. 사용자가 직접 추가를 요청한 기본 공연(참교육실천대회, 교원예술제, 여수 등)이 누락되어 있고 삭제하지 않았다면 반영
+      // 기본 공연의 revision이 저장본보다 높으면 기본 셋리스트로 갱신
+      for (const def of DEFAULT_STAGE_HISTORY) {
+        if (!def.revision) continue;
+        const idx = cleaned.findIndex(item => item.id === def.id);
+        if (idx >= 0 && (cleaned[idx].revision || 1) < def.revision) {
+          cleaned[idx] = JSON.parse(JSON.stringify(def));
+          changed = true;
+        }
+      }
       const existingIds = new Set(cleaned.map(item => item.id));
       for (const def of DEFAULT_STAGE_HISTORY) {
         if (!existingIds.has(def.id) && !deletedIds.has(def.id) && !isDummyStage(def)) {

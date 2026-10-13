@@ -119,13 +119,12 @@ assert.strictEqual(DEFAULT_STAGE_HISTORY[2].id, 'stage-2026-yeosu', '3rd should 
 assert.strictEqual(yeosu.eventTitle, '2026 여수 생활문화한마당', 'Yeosu eventTitle matches');
 assert.strictEqual(yeosu.date, '2026.10.16', 'Yeosu date matches');
 assert.strictEqual(yeosu.venue, '웅천친수공원', 'Yeosu venue matches');
-assert.strictEqual(yeosu.songs.length, 6, 'Yeosu must have 6 songs');
+assert.strictEqual(yeosu.songs.length, 5, 'Yeosu must have 5 songs');
 const expectedYeosuSongIds = [
   'love-song-medley',
-  'old-pop-medley',
   'bohemian-rhapsody-5',
   'in-your-arms',
-  'isnt-she-lovely',
+  'old-pop-medley',
   'lets-travel'
 ];
 assert.deepStrictEqual(
