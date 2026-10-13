@@ -478,8 +478,13 @@ export function getSongStartingPitchEntries(songData) {
   }
 
   const orderMap = { bass: 1, baritone: 3, tenor: 5, alto: 7, soprano: 9, lead: 11, vp: 12 };
-  return Object.entries(rawPitches)
-    .filter(([part, noteStr]) => part !== 'full' && part !== 'key' && isPlayable(noteStr))
+  const named = Object.entries(rawPitches)
+    .filter(([part, noteStr]) => part !== 'full' && part !== 'key' && isPlayable(noteStr));
+  if (Array.isArray(songData.entryOrder) && songData.entryOrder.length) {
+    const rank = (k) => { const i = songData.entryOrder.indexOf(k); return i === -1 ? 99 + (orderMap[k] || 0) : i; };
+    return named.sort((a, b) => rank(a[0]) - rank(b[0]));
+  }
+  return named
     .sort((a, b) => {
       const pA = parseNoteString(a[1]);
       const pB = parseNoteString(b[1]);
@@ -503,7 +508,7 @@ export const STAGE_EXTRA_SONG_METADATA = {
     artist: 'Ben E. King',
     category: 'Pop / Soul',
     arrangement: '혼성 5부',
-    musicalKey: 'A Major',
+    musicalKey: 'E Major',
     difficulty: 2,
     status: 'practice',
     tags: ['무대 레퍼토리', '소울', '명곡'],
@@ -513,14 +518,16 @@ export const STAGE_EXTRA_SONG_METADATA = {
         url: 'https://www.youtube.com/watch?v=BTCfQ667QUY'
       }
     },
+    // 혼성5부 교육용 악보(arr 김승호) 기준: 솔로 1마디 → 소프라노 5마디 → 알토·바리톤·베이스 9마디
+    entryOrder: ['lead', 'soprano', 'alto', 'baritone', 'bass'],
     startingPitches: {
-      key: 'A Major',
+      key: 'E Major',
       pitches: {
-        bass: 'A2',
-        baritone: 'C#3',
-        tenor: 'E3',
-        alto: 'A3',
-        soprano: 'C#4'
+        lead: 'E4',
+        soprano: 'G#4',
+        alto: 'E4',
+        baritone: 'B3',
+        bass: 'E2'
       }
     }
   },
@@ -530,7 +537,7 @@ export const STAGE_EXTRA_SONG_METADATA = {
     artist: 'The Tokens',
     category: 'Pop / World',
     arrangement: '혼성 5부',
-    musicalKey: 'F Major',
+    musicalKey: 'A Major',
     difficulty: 2,
     status: 'practice',
     tags: ['무대 레퍼토리', '아카펠라', '라이온킹'],
@@ -540,14 +547,13 @@ export const STAGE_EXTRA_SONG_METADATA = {
         url: 'https://www.youtube.com/watch?v=OQlByoPdG6c'
       }
     },
+    // 악보 화면 기준: 솔로 1마디(E4) → 소프라노 5마디(G#4). 알토·베이스는 6마디 이후 등장(첫 음 미확인)
+    entryOrder: ['lead', 'soprano'],
     startingPitches: {
-      key: 'F Major',
+      key: 'A Major',
       pitches: {
-        bass: 'F2',
-        baritone: 'A2',
-        tenor: 'C3',
-        alto: 'F3',
-        soprano: 'C4'
+        lead: 'E4',
+        soprano: 'G#4'
       }
     }
   }
@@ -1500,7 +1506,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         tenor: 'TENOR',
         baritone: 'BARITONE',
         bass: 'BASS',
-        lead: 'LEAD',
+        lead: 'SOLO',
         vp: 'VP',
         part1: '1번 파트',
         part2: '2번 파트',
@@ -1895,7 +1901,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         pitchChipsWrap.append(el('span', { style: 'font-size: 11.5px; color: #94a3b8;', text: '첫 음 정보 없음' }));
       } else {
         const shortLabels = {
-          soprano: 'S', alto: 'A', tenor: 'T', baritone: 'Bar', bass: 'B', lead: 'Lead', vp: 'VP',
+          soprano: 'S', alto: 'A', tenor: 'T', baritone: 'Bar', bass: 'B', lead: 'Solo', vp: 'VP',
           part1: 'P1', part2: 'P2', part3: 'P3', part4: 'P4', part5: 'P5', part6: 'P6', part7: 'P7'
         };
 
