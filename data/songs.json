@@ -1632,22 +1632,22 @@
         ]
       },
       "startingPitches": {
-        "part1": "B4",
-        "part2": "G#4",
-        "part3": "E4",
-        "part4": "E3",
-        "soprano": "B4",
-        "alto": "G#4",
-        "tenor": "E4",
-        "bass": "E3",
+        "part1": "G#4",
+        "part2": "E4",
+        "part3": "B3",
+        "part4": "C#3",
+        "soprano": "G#4",
+        "alto": "E4",
+        "tenor": "B3",
+        "bass": "C#3",
         "full": "E4"
       },
       "musicalKey": "E Major",
       "entryOrder": [
-        "part4",
         "part2",
         "part1",
-        "part3"
+        "part3",
+        "part4"
       ]
     },
     {
