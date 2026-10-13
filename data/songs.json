@@ -2021,7 +2021,7 @@
       "category": "POP",
       "difficulty": 2,
       "status": "practice",
-      "arrangement": "4 Parts",
+      "arrangement": "5 Parts",
       "tags": [
         "Padlet 자료"
       ],
@@ -2079,15 +2079,24 @@
         "alto": "G#4",
         "tenor": "B3",
         "bass": "E3",
-        "full": "E4"
+        "full": "E4",
+        "part5": "F#2"
       },
       "musicalKey": "E Major / C# Minor",
       "entryOrder": [
         "part4",
         "part1",
         "part2",
-        "part3"
-      ]
+        "part3",
+        "part5"
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우",
+        "part5": "휘소"
+      }
     },
     {
       "id": "beautiful-world",

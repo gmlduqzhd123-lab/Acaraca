@@ -3968,7 +3968,11 @@ function renderStartingPitchPanel(song, currentPart = null) {
   let partKeys = [];
 
   if (availParts.length) {
-    partKeys = availParts;
+    // 영상이 없는 번호 파트도 첫 음이 등록되어 있으면 함께 표시
+    const extraNumbered = Object.keys(song.startingPitches)
+      .filter(k => /^part\d+$/.test(k) && !availParts.includes(k))
+      .sort((a, b) => parseInt(a.slice(4), 10) - parseInt(b.slice(4), 10));
+    partKeys = availParts.every(k => /^part\d+$/.test(k)) ? [...availParts, ...extraNumbered] : availParts;
   } else {
     // If no individual video is uploaded yet, display parts from startingPitches
     const allStartingKeys = Object.keys(song.startingPitches).filter(k => k !== 'full' && k !== 'vp');
