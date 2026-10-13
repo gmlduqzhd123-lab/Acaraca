@@ -502,8 +502,10 @@ export function playPitchSequence(items, options = {}) {
 
   if (!validItems.length) return null;
 
-  // Sort ascending by frequency (Low bass -> high soprano arpeggio)
-  const sorted = [...validItems].sort((a, b) => a.parsed.freq - b.parsed.freq);
+  // Keep caller order when requested; otherwise sort ascending by frequency (low -> high)
+  const sorted = options.keepOrder
+    ? [...validItems]
+    : [...validItems].sort((a, b) => a.parsed.freq - b.parsed.freq);
 
   currentSequence = {
     isPlaying: true,

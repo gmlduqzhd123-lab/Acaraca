@@ -73,7 +73,21 @@
         "bass": "F3",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ],
+      "partNames": {
+        "part1": "YS",
+        "part2": "SY",
+        "part3": "HY",
+        "part4": "JW",
+        "part5": "HS"
+      }
     },
     {
       "id": "bohemian-rhapsody-6",
@@ -151,7 +165,22 @@
         "vp": "Bb2",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5",
+        "part6"
+      ],
+      "partNames": {
+        "part1": "YS",
+        "part2": "SY",
+        "part3": "HY",
+        "part4": "MH",
+        "part5": "JW"
+      }
     },
     {
       "id": "mujogeon",
@@ -210,17 +239,23 @@
         ]
       },
       "startingPitches": {
-        "part1": "G4",
-        "part2": "Eb4",
-        "part3": "Bb3",
-        "part4": "Eb3",
-        "soprano": "G4",
-        "alto": "Eb4",
-        "tenor": "Bb3",
-        "bass": "Eb3",
+        "part1": "F#4",
+        "part2": "F#4",
+        "part3": "F#3",
+        "part4": "F#3",
+        "soprano": "F#4",
+        "alto": "F#4",
+        "tenor": "F#3",
+        "bass": "F#3",
         "full": "Eb4"
       },
-      "musicalKey": "Eb Major"
+      "musicalKey": "G Major",
+      "partNames": {
+        "part1": "선영",
+        "part2": "용석",
+        "part3": "희엽",
+        "part4": "재우"
+      }
     },
     {
       "id": "short-hair",
@@ -278,17 +313,29 @@
         ]
       },
       "startingPitches": {
-        "part1": "E4",
-        "part2": "C4",
-        "part3": "A3",
-        "part4": "A2",
-        "soprano": "E4",
-        "alto": "C4",
-        "tenor": "A3",
-        "bass": "A2",
+        "part1": "G4",
+        "part2": "D4",
+        "part3": "B3",
+        "part4": "G2",
+        "soprano": "G4",
+        "alto": "D4",
+        "tenor": "B3",
+        "bass": "G2",
         "full": "A3"
       },
-      "musicalKey": "A Minor"
+      "musicalKey": "G Major",
+      "entryOrder": [
+        "part2",
+        "part1",
+        "part3",
+        "part4"
+      ],
+      "partNames": {
+        "part1": "용",
+        "part2": "영",
+        "part3": "엽",
+        "part4": "우"
+      }
     },
     {
       "id": "disney-medley-7",
@@ -364,12 +411,12 @@
       },
       "startingPitches": {
         "part1": "C4",
-        "part2": "A3",
-        "part3": "F3",
-        "part4": "C3",
-        "part5": "G3",
-        "part6": "F2",
-        "part7": "C3",
+        "part2": "C4",
+        "part3": "A3",
+        "part4": "F3",
+        "part5": "C3",
+        "part6": "G3",
+        "part7": "F2",
         "soprano": "C4",
         "alto": "A3",
         "tenor": "F3",
@@ -378,7 +425,25 @@
         "vp": "C3",
         "full": "F3"
       },
-      "musicalKey": "F Major"
+      "musicalKey": "F Major",
+      "entryOrder": [
+        "part4",
+        "part1",
+        "part3",
+        "part5",
+        "part6",
+        "part7",
+        "part2"
+      ],
+      "partNames": {
+        "part1": "종미",
+        "part2": "혜령",
+        "part3": "수희",
+        "part4": "선영",
+        "part5": "현",
+        "part6": "명현",
+        "part7": "용석"
+      }
     },
     {
       "id": "disney-medley",
@@ -520,17 +585,23 @@
         ]
       },
       "startingPitches": {
-        "part1": "C#5",
-        "part2": "A4",
-        "part3": "F#4",
-        "part4": "F#2",
-        "soprano": "C#5",
-        "alto": "A4",
-        "tenor": "F#4",
-        "bass": "F#2",
+        "part1": "A3",
+        "part2": "A3",
+        "part3": "A3",
+        "part4": "A2",
+        "soprano": "A3",
+        "alto": "A3",
+        "tenor": "A3",
+        "bass": "A2",
         "full": "F#3"
       },
-      "musicalKey": "F# Minor"
+      "musicalKey": "D Major",
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
+      }
     },
     {
       "id": "tobacco-shop-girl",
@@ -589,17 +660,17 @@
         ]
       },
       "startingPitches": {
-        "part1": "F4",
-        "part2": "D4",
-        "part3": "A3",
-        "part4": "D3",
-        "soprano": "F4",
-        "alto": "D4",
-        "tenor": "A3",
-        "bass": "D3",
+        "part1": "B4",
+        "part2": "F#4",
+        "part3": "D#4",
+        "part4": "G#2",
+        "soprano": "B4",
+        "alto": "F#4",
+        "tenor": "D#4",
+        "bass": "G#2",
         "full": "D3"
       },
-      "musicalKey": "D Minor"
+      "musicalKey": "E Major"
     },
     {
       "id": "aloha",
@@ -668,7 +739,13 @@
         "bass": "D3",
         "full": "D4"
       },
-      "musicalKey": "D Major"
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part3",
+        "part2",
+        "part4",
+        "part1"
+      ]
     },
     {
       "id": "tayo-pororo",
@@ -727,17 +804,26 @@
         ]
       },
       "startingPitches": {
-        "part1": "C5",
-        "part2": "Eb4",
-        "part3": "G4",
-        "part4": "Db2",
-        "soprano": "C5",
-        "alto": "Eb4",
-        "tenor": "G4",
-        "bass": "Db2",
+        "part1": "C4",
+        "part2": "E3",
+        "part3": "G3",
+        "part4": "D2",
+        "soprano": "C4",
+        "alto": "E3",
+        "tenor": "G3",
+        "bass": "D2",
         "full": "Db3"
       },
-      "musicalKey": "Db Major"
+      "musicalKey": "G Major",
+      "entryOrder": [
+        "part4",
+        "part2",
+        "part1",
+        "part3"
+      ],
+      "partNames": {
+        "part1": "용석"
+      }
     },
     {
       "id": "run-the-sky",
@@ -797,17 +883,29 @@
         ]
       },
       "startingPitches": {
-        "part1": "B4",
-        "part2": "G#4",
-        "part3": "E4",
-        "part4": "E3",
-        "soprano": "B4",
-        "alto": "G#4",
-        "tenor": "E4",
-        "bass": "E3",
-        "full": "E4"
+        "part1": "Eb4",
+        "part2": "G3",
+        "part3": "C4",
+        "part4": "G3",
+        "soprano": "Eb4",
+        "alto": "G3",
+        "tenor": "C4",
+        "bass": "G3",
+        "full": "C4"
       },
-      "musicalKey": "E Major"
+      "musicalKey": "Eb Major / C Minor",
+      "entryOrder": [
+        "part1",
+        "part3",
+        "part4",
+        "part2"
+      ],
+      "partNames": {
+        "part1": "YS",
+        "part2": "SY",
+        "part3": "HY",
+        "part4": "JW"
+      }
     },
     {
       "id": "acaroom-opening",
@@ -889,7 +987,15 @@
         "bass": "A2",
         "full": "E4"
       },
-      "musicalKey": "E Major / C# Minor"
+      "musicalKey": "E Major / C# Minor",
+      "entryOrder": [
+        "part6",
+        "part5",
+        "part2",
+        "part1",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "speechless",
@@ -962,8 +1068,8 @@
         "part1": "A3",
         "part2": "F#3",
         "part3": "F#3",
-        "part4": "C#5",
-        "part5": "A4",
+        "part4": "C#4",
+        "part5": "A3",
         "part6": "D2",
         "soprano": "A4",
         "alto": "A3",
@@ -971,9 +1077,25 @@
         "baritone": "F#3",
         "bass": "D2",
         "full": "D3",
-        "lead": "C#5"
+        "lead": "C#4"
       },
-      "musicalKey": "D Major"
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part2",
+        "part3",
+        "part1",
+        "part4",
+        "part5",
+        "part6"
+      ],
+      "partNames": {
+        "part1": "종미",
+        "part2": "혜령",
+        "part3": "수희",
+        "part4": "현",
+        "part5": "명현",
+        "part6": "용석"
+      }
     },
     {
       "id": "in-your-arms",
@@ -1038,19 +1160,33 @@
         ]
       },
       "startingPitches": {
-        "part1": "E4",
+        "part1": "E#4",
         "part2": "G#4",
         "part3": "D#4",
-        "part4": "C#4",
-        "part5": "C#3",
-        "soprano": "E4",
+        "part4": "C#3",
+        "part5": "C#4",
+        "soprano": "E#4",
         "alto": "G#4",
         "tenor": "D#4",
         "baritone": "C#4",
         "bass": "C#3",
         "full": "C#3"
       },
-      "musicalKey": "C# Minor"
+      "musicalKey": "C# Minor",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part3",
+        "part5",
+        "part1"
+      ],
+      "partNames": {
+        "part1": "선영",
+        "part2": "용석",
+        "part3": "희엽",
+        "part4": "재우",
+        "part5": "휘소"
+      }
     },
     {
       "id": "happy-school",
@@ -1201,7 +1337,14 @@
         "bass": "G2",
         "full": "G4"
       },
-      "musicalKey": "G Major"
+      "musicalKey": "G Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ]
     },
     {
       "id": "well-done-today",
@@ -1271,20 +1414,36 @@
         ]
       },
       "startingPitches": {
-        "part1": "D5",
-        "part2": "Bb4",
-        "part3": "F4",
-        "part4": "D4",
-        "part5": "Bb3",
-        "part6": "Bb2",
-        "soprano": "D5",
-        "alto": "F4",
-        "tenor": "D4",
-        "baritone": "Bb3",
-        "bass": "Bb2",
-        "full": "Bb3"
+        "part1": "C#4",
+        "part2": "C#4",
+        "part3": "A3",
+        "part4": "A3",
+        "part5": "G3",
+        "part6": "A2",
+        "soprano": "C#4",
+        "alto": "A3",
+        "tenor": "A3",
+        "baritone": "G3",
+        "bass": "A2",
+        "full": "A3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "A Major",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part4",
+        "part3",
+        "part5",
+        "part6"
+      ],
+      "partNames": {
+        "part1": "종미",
+        "part2": "혜령",
+        "part3": "수희",
+        "part4": "현",
+        "part5": "명현",
+        "part6": "용석"
+      }
     },
     {
       "id": "bohemian-rhapsody",
@@ -1368,7 +1527,21 @@
         "bass": "F3",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ],
+      "partNames": {
+        "part1": "YS",
+        "part2": "SY",
+        "part3": "HY",
+        "part4": "JW",
+        "part5": "HS"
+      }
     },
     {
       "id": "daft-punk",
@@ -1423,17 +1596,29 @@
         ]
       },
       "startingPitches": {
-        "part1": "A4",
-        "part2": "C#4",
-        "part3": "F#3",
-        "part4": "F#2",
-        "soprano": "A4",
-        "alto": "C#4",
-        "tenor": "F#3",
-        "bass": "F#2",
-        "full": "F#3"
+        "part1": "F#4",
+        "part2": "D4",
+        "part3": "G3",
+        "part4": "B2",
+        "soprano": "F#4",
+        "alto": "D4",
+        "tenor": "G3",
+        "bass": "B2",
+        "full": "B3"
       },
-      "musicalKey": "F# Minor"
+      "musicalKey": "D Major / B Minor",
+      "entryOrder": [
+        "part2",
+        "part3",
+        "part4",
+        "part1"
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
+      }
     },
     {
       "id": "dansori",
@@ -1561,17 +1746,29 @@
         ]
       },
       "startingPitches": {
-        "part1": "B4",
-        "part2": "G#4",
-        "part3": "E4",
-        "part4": "E3",
-        "soprano": "B4",
-        "alto": "G#4",
-        "tenor": "E4",
-        "bass": "E3",
+        "part1": "G#4",
+        "part2": "E4",
+        "part3": "B3",
+        "part4": "C#3",
+        "soprano": "G#4",
+        "alto": "E4",
+        "tenor": "B3",
+        "bass": "C#3",
         "full": "E4"
       },
-      "musicalKey": "E Major"
+      "musicalKey": "E Major",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
+      }
     },
     {
       "id": "lets-travel",
@@ -1658,7 +1855,13 @@
         "bass": "Eb3",
         "full": "Eb4"
       },
-      "musicalKey": "Eb Major"
+      "musicalKey": "Eb Major",
+      "entryOrder": [
+        "part3",
+        "part2",
+        "part4",
+        "part1"
+      ]
     },
     {
       "id": "love-song-medley",
@@ -1727,7 +1930,13 @@
         "bass": "F#2",
         "full": "F#3"
       },
-      "musicalKey": "F# Major"
+      "musicalKey": "F# Major",
+      "partNames": {
+        "part1": "YS",
+        "part2": "SY",
+        "part3": "HY",
+        "part4": "JW"
+      }
     },
     {
       "id": "l-o-v-e",
@@ -1872,7 +2081,13 @@
         "bass": "E3",
         "full": "E4"
       },
-      "musicalKey": "E Major / C# Minor"
+      "musicalKey": "E Major / C# Minor",
+      "entryOrder": [
+        "part4",
+        "part1",
+        "part2",
+        "part3"
+      ]
     },
     {
       "id": "beautiful-world",
@@ -1971,7 +2186,20 @@
         "bass": "Ab2",
         "full": "Ab3"
       },
-      "musicalKey": "Ab Major"
+      "musicalKey": "Ab Major",
+      "entryOrder": [
+        "part2",
+        "part1",
+        "part3",
+        "part5",
+        "part4"
+      ],
+      "partNames": {
+        "part2": "유진",
+        "part3": "우성",
+        "part4": "지웅",
+        "part5": "태영"
+      }
     },
     {
       "id": "butterfly",
@@ -2149,7 +2377,14 @@
         "bass": "A2",
         "full": "D3"
       },
-      "musicalKey": "D Major"
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ]
     },
     {
       "id": "love-love",
@@ -2247,7 +2482,14 @@
         "bass": "F#2",
         "full": "F#3"
       },
-      "musicalKey": "F# Major"
+      "musicalKey": "F# Major",
+      "entryOrder": [
+        "part4",
+        "part5",
+        "part3",
+        "part1",
+        "part2"
+      ]
     },
     {
       "id": "carol-medley",

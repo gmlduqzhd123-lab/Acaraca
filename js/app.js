@@ -4038,7 +4038,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
   const seqBtn = el('button', {
     type: 'button',
     class: 'button primary small seq-play-btn',
-    title: '베이스부터 소프라노까지 차례대로 음을 잡은 후 화음으로 울려줍니다.',
+    title: '악보에서 먼저 시작하는 파트 순서로 음을 잡은 후 화음으로 울려줍니다.',
     onclick: () => {
       if (isPitchSequencePlaying()) {
         stopPitchSequence();
@@ -4049,13 +4049,25 @@ function renderStartingPitchPanel(song, currentPart = null) {
         return;
       }
 
-      toast('🎶 베이스부터 소프라노까지 차례대로 음을 맞춘 후 전체 화음을 울려줍니다.');
+      toast('🎶 악보에서 먼저 시작하는 파트 순서로 음을 맞춘 후 전체 화음을 울려줍니다.');
       seqBtn.classList.add('playing');
       seqBtn.replaceChildren(icon('pause'), document.createTextNode('순차 재생 중지'));
       seqStatusBadge.style.display = 'flex';
       seqStatusBadge.textContent = '🎶 전 파트 시작음 시퀀스를 준비 중...';
 
-      playPitchSequence(partItems, {
+      // 재생 순서: 악보에서 먼저 시작하는 파트 순(song.entryOrder), 없으면 2번 → 4번 → 1번 → 3번 파트
+      const seqOrder = Array.isArray(song.entryOrder) && song.entryOrder.length
+        ? song.entryOrder
+        : ['part2', 'part4', 'part1', 'part3'];
+      const voiceToPartKey = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
+      const rank = (item) => {
+        const idx = seqOrder.indexOf(voiceToPartKey[item.partKey] || item.partKey);
+        return idx === -1 ? seqOrder.length : idx;
+      };
+      const orderedItems = [...partItems].sort((a, b) => rank(a) - rank(b));
+
+      playPitchSequence(orderedItems, {
+        keepOrder: true,
         noteDuration: 900,
         gapDuration: 150,
         chordDuration: 2800,
@@ -4145,6 +4157,8 @@ function renderStartingPitchPanel(song, currentPart = null) {
   }
 
   partItems.forEach(({ partKey, label, noteStr, parsed }) => {
+    const voiceToPartKey = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
+    const singer = song.partNames?.[partKey] || song.partNames?.[voiceToPartKey[partKey]] || '';
     const isCur = currentPart && (
       currentPart === partKey ||
       (currentPart === 'soprano' && partKey === 'part1') ||
@@ -4162,7 +4176,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
     const chip = el('button', {
       type: 'button',
       class: `part-pitch-chip${isCur ? ' current-part' : ''}`,
-      'aria-label': `${label} 첫 음 ${parsed.displayNote} (${parsed.koreanNote}) ${Math.round(parsed.freq)}Hz`,
+      'aria-label': `${label}${singer ? ` ${singer}` : ''} 첫 음 ${parsed.displayNote} (${parsed.koreanNote}) ${Math.round(parsed.freq)}Hz`,
       onclick: () => {
         const played = playNoteString(noteStr);
         if (played) {
@@ -4172,6 +4186,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
     },
       isCur ? el('span', {class: 'current-part-pill', text: '내 파트'}) : null,
       el('span', {class: 'part-pitch-role', text: label}),
+      singer ? el('span', {class: 'part-pitch-singer', text: singer}) : null,
       el('span', {class: 'part-pitch-note', text: parsed.displayNote}),
       el('span', {class: 'part-pitch-solfege', text: parsed.koreanNote}),
       el('span', {class: 'part-pitch-freq', text: `${Math.round(parsed.freq)}Hz`})
