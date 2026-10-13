@@ -1516,17 +1516,23 @@
         ]
       },
       "startingPitches": {
-        "part1": "A4",
-        "part2": "C#4",
-        "part3": "F#3",
-        "part4": "F#2",
-        "soprano": "A4",
-        "alto": "C#4",
-        "tenor": "F#3",
-        "bass": "F#2",
-        "full": "F#3"
+        "part1": "F#4",
+        "part2": "D4",
+        "part3": "G3",
+        "part4": "B2",
+        "soprano": "F#4",
+        "alto": "D4",
+        "tenor": "G3",
+        "bass": "B2",
+        "full": "B3"
       },
-      "musicalKey": "F# Minor"
+      "musicalKey": "D Major / B Minor",
+      "entryOrder": [
+        "part2",
+        "part3",
+        "part4",
+        "part1"
+      ]
     },
     {
       "id": "dansori",
