@@ -3883,3 +3883,11 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
   .big-bar-btn .icon { width: 22px; height: 22px; }
   body.big-practice-on { padding-bottom: 84px; }
 }
+
+/* 셋리스트 곡별 첫 음 전체 화음 버튼 */
+.setlist-row { display: flex; align-items: stretch; gap: 6px; min-width: 0; }
+.setlist-row .setlist-item { flex: 1; min-width: 0; }
+.setlist-chord-btn { flex: none; width: 52px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.setlist-chord-btn .icon { width: 22px; height: 22px; }
+.setlist-chord-btn.playing { background: var(--primary); color: #fff; border-color: var(--primary); }
+.setlist-chord-btn { flex-direction: column; gap: 2px; font-size: 11px; font-weight: 700; }

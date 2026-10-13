@@ -693,11 +693,24 @@ function renderUpcomingStageCard() {
     const song = state.songs.find(s => s.id === id);
     const part = song ? songMyPart(song) : '';
     const name = song?.partNames?.[part];
-    return button([
+    const practiceBtn = button([
       el('span', {class: 'setlist-num', text: String(i + 1)}),
       el('span', {class: 'setlist-title', text: song?.title || item.title || id}),
       el('span', {class: 'setlist-part', text: song ? (part ? `${PARTS[part] || part}${name ? ` · ${name}` : ''}` : '파트 선택') : '무대 전용'})
     ], () => startSetlistPractice(stage, i), 'setlist-item', null, {'aria-label': `${i + 1}번째 곡 ${song?.title || item.title || id} 연습`});
+    // 곡별 첫 음 전체 화음 (공연 직전 빠르게 음 잡기)
+    const chordNotes = song ? Object.entries(song.startingPitches || {}).filter(([k, v]) => /^part\d+$/.test(k) && parseNoteString(v)).map(([, v]) => v) : [];
+    const chordBtn = chordNotes.length ? button([icon('music'), el('span', {text: '화음'})], () => {
+      const current = getCurrentPlaying();
+      if (current?.isChord && chordBtn.classList.contains('playing')) { stopPitch(true); return; }
+      document.querySelectorAll('.setlist-chord-btn.playing').forEach(n => n.classList.remove('playing'));
+      if (playChordStrings(chordNotes)) {
+        chordBtn.classList.add('playing');
+        toast(`🎶 ${song.title} 첫 음 화음 (${chordNotes.map(n => parseNoteString(n).displayNote).join(' · ')})`);
+        setTimeout(() => chordBtn.classList.remove('playing'), 3000);
+      }
+    }, 'setlist-chord-btn', null, {'aria-label': `${song.title} 첫 음 전체 화음 듣기`, title: '첫 음 전체 화음'}) : null;
+    return el('div', {class: 'setlist-row'}, practiceBtn, chordBtn);
   });
   return el('section', {class: 'upcoming-stage', 'aria-label': '다가오는 공연 연습'},
     el('div', {class: 'upcoming-stage-head'},
