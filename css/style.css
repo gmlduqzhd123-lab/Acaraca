@@ -1367,6 +1367,15 @@ html[data-theme="dark"] .part-pitch-chip.playing {
   opacity: .8;
   margin-bottom: 3px;
 }
+.part-pitch-singer {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 8px;
+  margin-bottom: 4px;
+  border-radius: 999px;
+  background: rgba(45,133,94,.12);
+  color: inherit;
+}
 .part-pitch-note {
   font-size: 19px;
   font-weight: 800;
@@ -1384,6 +1393,7 @@ html[data-theme="dark"] .part-pitch-chip.playing {
   margin-top: 1px;
 }
 .part-pitch-chip.playing .part-pitch-role,
+.part-pitch-chip.playing .part-pitch-singer,
 .part-pitch-chip.playing .part-pitch-note,
 .part-pitch-chip.playing .part-pitch-solfege,
 .part-pitch-chip.playing .part-pitch-freq {

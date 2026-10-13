@@ -102,6 +102,9 @@ export function validateData(raw, { warn = true } = {}) {
       if (item.thumbnail && !song.thumbnail) report('warnings', `${label}: 안전하지 않거나 잘못된 썸네일 주소를 무시합니다.`);
       song.startingPitches = isObject(item.startingPitches) ? { ...item.startingPitches } : {};
       song.musicalKey = text(item.musicalKey);
+      if (isObject(item.partNames)) {
+        song.partNames = Object.fromEntries(Object.entries(item.partNames).filter(([, name]) => typeof name === 'string' && name.trim()).map(([key, name]) => [key, name.trim()]));
+      }
       if (Array.isArray(item.entryOrder)) song.entryOrder = item.entryOrder.filter((key) => typeof key === 'string');
       if (isObject(item.source)) song.source = item.source;
       result.songs.push(song);

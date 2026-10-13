@@ -4157,6 +4157,8 @@ function renderStartingPitchPanel(song, currentPart = null) {
   }
 
   partItems.forEach(({ partKey, label, noteStr, parsed }) => {
+    const voiceToPartKey = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
+    const singer = song.partNames?.[partKey] || song.partNames?.[voiceToPartKey[partKey]] || '';
     const isCur = currentPart && (
       currentPart === partKey ||
       (currentPart === 'soprano' && partKey === 'part1') ||
@@ -4174,7 +4176,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
     const chip = el('button', {
       type: 'button',
       class: `part-pitch-chip${isCur ? ' current-part' : ''}`,
-      'aria-label': `${label} 첫 음 ${parsed.displayNote} (${parsed.koreanNote}) ${Math.round(parsed.freq)}Hz`,
+      'aria-label': `${label}${singer ? ` ${singer}` : ''} 첫 음 ${parsed.displayNote} (${parsed.koreanNote}) ${Math.round(parsed.freq)}Hz`,
       onclick: () => {
         const played = playNoteString(noteStr);
         if (played) {
@@ -4184,6 +4186,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
     },
       isCur ? el('span', {class: 'current-part-pill', text: '내 파트'}) : null,
       el('span', {class: 'part-pitch-role', text: label}),
+      singer ? el('span', {class: 'part-pitch-singer', text: singer}) : null,
       el('span', {class: 'part-pitch-note', text: parsed.displayNote}),
       el('span', {class: 'part-pitch-solfege', text: parsed.koreanNote}),
       el('span', {class: 'part-pitch-freq', text: `${Math.round(parsed.freq)}Hz`})
