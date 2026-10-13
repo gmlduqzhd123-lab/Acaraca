@@ -82,10 +82,10 @@
         "part5"
       ],
       "partNames": {
-        "part1": "YS",
-        "part2": "SY",
-        "part3": "HY",
-        "part4": "JW",
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우",
         "part5": "HS"
       }
     },
@@ -175,11 +175,11 @@
         "part6"
       ],
       "partNames": {
-        "part1": "YS",
-        "part2": "SY",
-        "part3": "HY",
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
         "part4": "MH",
-        "part5": "JW"
+        "part5": "재우"
       }
     },
     {
@@ -331,10 +331,10 @@
         "part4"
       ],
       "partNames": {
-        "part1": "용",
-        "part2": "영",
-        "part3": "엽",
-        "part4": "우"
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
       }
     },
     {
@@ -901,10 +901,10 @@
         "part2"
       ],
       "partNames": {
-        "part1": "YS",
-        "part2": "SY",
-        "part3": "HY",
-        "part4": "JW"
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
       }
     },
     {
@@ -1536,10 +1536,10 @@
         "part5"
       ],
       "partNames": {
-        "part1": "YS",
-        "part2": "SY",
-        "part3": "HY",
-        "part4": "JW",
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우",
         "part5": "HS"
       }
     },
@@ -1932,10 +1932,10 @@
       },
       "musicalKey": "F# Major",
       "partNames": {
-        "part1": "YS",
-        "part2": "SY",
-        "part3": "HY",
-        "part4": "JW"
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
       }
     },
     {
