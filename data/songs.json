@@ -937,7 +937,15 @@
         "bass": "A2",
         "full": "E4"
       },
-      "musicalKey": "E Major / C# Minor"
+      "musicalKey": "E Major / C# Minor",
+      "entryOrder": [
+        "part6",
+        "part5",
+        "part2",
+        "part1",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "speechless",
@@ -1354,7 +1362,15 @@
         "bass": "Bb2",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part4",
+        "part3",
+        "part5",
+        "part6"
+      ]
     },
     {
       "id": "bohemian-rhapsody",
