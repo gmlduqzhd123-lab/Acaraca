@@ -3819,3 +3819,53 @@ html[data-theme="dark"] .protected-lock-icon {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* ===== 다가오는 공연 카드 (홈) ===== */
+.upcoming-stage { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; margin: 4px 0 22px; box-shadow: var(--shadow); }
+.upcoming-stage-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.upcoming-stage-head h2 { font-size: 18px; font-weight: 700; margin: 2px 0 4px; line-height: 1.4; }
+.upcoming-stage-meta { font-size: 12px; color: var(--muted); }
+.dday-badge { flex: none; background: var(--primary); color: #fff; font-weight: 800; font-size: 14px; border-radius: 999px; padding: 6px 12px; }
+.setlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-top: 14px; }
+.setlist-item { display: grid; min-height: 0; grid-template-columns: 26px 1fr; grid-template-rows: auto auto; column-gap: 8px; text-align: left; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--primary-soft); cursor: pointer; color: inherit; font: inherit; }
+.setlist-item:hover { border-color: var(--primary); }
+.setlist-num { grid-row: span 2; align-self: center; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+.setlist-title { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.setlist-part { font-size: 11px; color: var(--muted); }
+.upcoming-stage-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.setlist-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 14px; padding: 10px 12px; border-radius: 12px; background: var(--primary-soft); }
+.setlist-nav-label { font-size: 12px; font-weight: 700; text-align: center; flex: 1; min-width: 0; }
+
+/* ===== 파트 선택 카드: 이름·첫 음 ===== */
+.part-button .part-singer { font-size: 12px; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: rgba(45,133,94,.12); }
+.part-button .part-first-note { font-size: 11px; font-weight: 700; color: var(--muted-strong, var(--muted)); }
+.name-options .choice-button { min-width: 72px; justify-content: center; }
+
+/* ===== 큰 버튼 연습 모드 ===== */
+.big-mode-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.big-mode-toggle.active { background: var(--primary); color: #fff; }
+.big-practice-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; display: grid; grid-template-columns: repeat(4, 1fr) 44px; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(16, 32, 29, .96); box-shadow: 0 -6px 20px rgba(0,0,0,.25); }
+.big-practice-bar[hidden] { display: none; }
+.big-bar-btn { min-height: 64px; border-radius: 14px; border: 0; background: rgba(255,255,255,.12); color: #fff; font: inherit; font-size: 14px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+.big-bar-btn .icon { width: 24px; height: 24px; }
+.big-bar-btn.primary { background: #2dd4bf; color: #06201c; }
+.big-bar-btn.active { outline: 3px solid #2dd4bf; }
+.big-bar-btn:disabled { opacity: .4; }
+.big-bar-close { border: 0; border-radius: 12px; background: transparent; color: #cbd5e1; cursor: pointer; }
+body.big-practice-on { padding-bottom: 96px; }
+body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: none !important; }
+
+/* ===== 상단 더보기 메뉴 ===== */
+.topbar-more-btn { display: none; }
+.topbar-more-menu { position: absolute; right: 12px; top: calc(100% + 6px); z-index: 950; display: flex; flex-direction: column; gap: 6px; min-width: 170px; padding: 10px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.topbar-more-menu[hidden] { display: none; }
+.topbar-more-menu .button { width: 100%; justify-content: flex-start; }
+@media (max-width: 767px) {
+  .topbar-actions .topbar-extra { display: none !important; }
+  .topbar-more-btn { display: inline-flex; }
+  #topbar-actions { position: relative; }
+  .upcoming-stage { padding: 14px; }
+  .setlist-grid { grid-template-columns: 1fr; gap: 6px; }
+  .setlist-item { padding: 8px 10px; }
+  .setlist-nav .button { padding: 8px 10px; }
+}
