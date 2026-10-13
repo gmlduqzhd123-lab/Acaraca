@@ -142,6 +142,17 @@ function switchStageSubView(view) {
   write('stageView', view);
   navigate({tab: 'stage', view}, {replace: true});
 }
+// 모바일에서 대화상자가 화면보다 길면 포커스된 아래쪽 버튼으로 스크롤되어 제목이 가려지므로 열 때 맨 위로
+if (typeof HTMLDialogElement !== 'undefined' && !HTMLDialogElement.prototype.__acaTopFix) {
+  const originalShowModal = HTMLDialogElement.prototype.showModal;
+  HTMLDialogElement.prototype.showModal = function (...args) {
+    const result = originalShowModal.apply(this, args);
+    this.scrollTop = 0;
+    requestAnimationFrame(() => { this.scrollTop = 0; });
+    return result;
+  };
+  HTMLDialogElement.prototype.__acaTopFix = true;
+}
 function openSong(song) { navigate({song: song.id}); }
 // 이름(나는 누구?)이 설정되어 있으면 곡마다 그 사람이 맡은 파트를, 없으면 기본 파트를 내 파트로 사용
 function songMyPart(song) {

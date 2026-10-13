@@ -3869,3 +3869,17 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
   .setlist-item { padding: 8px 10px; }
   .setlist-nav .button { padding: 8px 10px; }
 }
+
+/* ===== 모바일 점검 보정 ===== */
+/* 곡 카드 제목: 한 줄 말줄임 대신 두 줄까지 표시 (태블릿 2열 카드에서 제목 잘림 방지) */
+.card-title, .card-title button, button.card-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.35; word-break: keep-all; }
+@media (pointer: coarse), (max-width: 767px) {
+  /* 터치 대상 최소 크기 */
+  .icon-button-tiny { min-width: 36px; min-height: 36px; }
+}
+@media (max-width: 400px) {
+  .big-practice-bar { gap: 6px; padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); grid-template-columns: repeat(4, 1fr) 36px; }
+  .big-bar-btn { min-height: 58px; font-size: 12px; white-space: nowrap; border-radius: 12px; }
+  .big-bar-btn .icon { width: 22px; height: 22px; }
+  body.big-practice-on { padding-bottom: 84px; }
+}
