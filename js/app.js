@@ -105,6 +105,8 @@ const state = {
   favorites: new Set(favoriteIds),
   recent: array(read('recent', [])).filter(value => value && typeof value.songId === 'string' && typeof value.part === 'string' && Number.isFinite(value.timestamp)),
   myPart: Object.keys(PARTS).filter(part => part !== 'full').includes(read('myPart', '')) ? read('myPart', '') : '',
+  myName: typeof read('myName', '') === 'string' ? read('myName', '') : '',
+  setlist: null,
   progress: object(read('progress', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
   stageView: read('stageView', 'live'),
@@ -141,7 +143,24 @@ function switchStageSubView(view) {
   navigate({tab: 'stage', view}, {replace: true});
 }
 function openSong(song) { navigate({song: song.id}); }
-function startPractice(song, part = preferredPart(song, state.myPart)) {
+// 이름(나는 누구?)이 설정되어 있으면 곡마다 그 사람이 맡은 파트를, 없으면 기본 파트를 내 파트로 사용
+function songMyPart(song) {
+  if (state.myName && song?.partNames) {
+    const hit = Object.entries(song.partNames).find(([, name]) => name === state.myName);
+    if (hit) return hit[0];
+  }
+  return state.myPart;
+}
+function allMemberNames() {
+  const count = new Map();
+  for (const song of state.songs) for (const name of Object.values(song.partNames || {})) count.set(name, (count.get(name) || 0) + 1);
+  return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko')).map(([name]) => name);
+}
+function myVoiceLabel() {
+  if (state.myName) return state.myPart ? `${state.myName} · 그 외 ${PARTS[state.myPart]}` : state.myName;
+  return state.myPart ? PARTS[state.myPart] : '';
+}
+function startPractice(song, part = preferredPart(song, songMyPart(song))) {
   if (part) navigate({song: song.id, part});
   else { openSong(song); toast('아직 등록된 연습 영상이 없습니다.'); }
 }
@@ -419,7 +438,7 @@ function refreshChrome() {
   document.getElementById('sidebar-bottom').replaceChildren(
     button('🎤 무대 전용 큐시트', () => navigate({tab: 'stage', view: 'live'}), 'button primary small', 'stage', {style: 'width: 100%; margin-bottom: 8px; font-weight: 700;'}),
     button('첫 음 잡기 (피치파이프)', () => openPitchPipe(), 'button secondary small', 'music', {style: 'width: 100%; margin-bottom: 12px;'}),
-    el('div', {class: 'my-part-mini'}, icon('mic'), el('div', {}, el('span', {text: '나의 목소리'}), el('strong', {text: state.myPart ? PARTS[state.myPart] : '내 파트를 선택해 주세요'})),
+    el('div', {class: 'my-part-mini'}, icon('mic'), el('div', {}, el('span', {text: '나의 목소리'}), el('strong', {text: myVoiceLabel() || '내 이름·파트를 선택해 주세요'})),
       button('변경', () => navigate({tab: 'settings'}), 'text-button')),
     el('p', {class: 'sidebar-tip', text: '서로 다른 목소리, 하나의 하모니.'})
   );
@@ -429,16 +448,30 @@ function refreshChrome() {
     mobileSettingsBtn.classList.toggle('active', activeTab === 'settings');
     mobileSettingsBtn.onclick = () => navigate({tab: 'settings'});
   }
+  // 휴대폰에서는 자주 쓰는 버튼(첫 음 잡기·검색)만 보이고 나머지는 ⋯ 메뉴로 묶음
+  const moreMenu = el('div', {class: 'topbar-more-menu', hidden: true, role: 'menu'});
+  const closeMore = () => { moreMenu.hidden = true; moreBtn.setAttribute('aria-expanded', 'false'); };
+  const extra = (label, action, iconName, attrs = {}) => button(label, () => { closeMore(); action(); }, 'button secondary small topbar-extra', iconName, attrs);
+  const extras = [
+    extra('앱설치', () => openInstallDialog(), 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
+    extra('📱 QR', () => window.YSQr?.open(), null, {'aria-label': 'QR 코드로 접속', 'data-qr-btn': ''}),
+    extra('🎤 무대', () => navigate({tab: 'stage', view: 'live'}), 'stage', {'aria-label': '무대 전용 큐시트 모드'}),
+    extra('설명서', () => openGuideDialog(), 'book', {'aria-label': 'AcaRaca 연습실 사용 설명서'}),
+    extra('+ 곡 추가', () => openAdmin('./admin.html?action=new'), null, {'aria-label': '새 곡 및 영상 추가'})
+  ];
+  const moreBtn = button('', () => {
+    const open = moreMenu.hidden;
+    if (open) moreMenu.replaceChildren(...extras.map(b => { const c = b.cloneNode(true); c.onclick = () => { closeMore(); b.click(); }; c.classList.remove('topbar-extra'); return c; }));
+    moreMenu.hidden = !open; moreBtn.setAttribute('aria-expanded', String(open));
+  }, 'icon-button topbar-more-btn', 'more', {'aria-label': '더보기 메뉴', 'aria-expanded': 'false', 'aria-haspopup': 'menu'});
+  document.addEventListener('click', (e) => { if (!moreMenu.hidden && !moreMenu.contains(e.target) && !moreBtn.contains(e.target)) closeMore(); });
   document.getElementById('topbar-actions').replaceChildren(
-    // 📲 앱설치 · 📱 QR은 맨 앞에 두어 휴대폰에서도 첫 줄에 함께 보이게
-    button('앱설치', () => openInstallDialog(), 'button secondary small', 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
-    button('📱 QR', () => window.YSQr?.open(), 'button secondary small', null, {'aria-label': 'QR 코드로 접속', 'data-qr-btn': ''}),
-    button('🎤 무대', () => navigate({tab: 'stage', view: 'live'}), 'button secondary small stage-top-btn', 'stage', {'aria-label': '무대 전용 큐시트 모드'}),
-    button('설명서', () => openGuideDialog(), 'button secondary small', 'book', {'aria-label': 'AcaRaca 연습실 사용 설명서'}),
+    extras[0], extras[1], extras[2], extras[3],
     button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
-    button('+ 곡 추가', () => openAdmin('./admin.html?action=new'), 'button secondary small', null, {'aria-label': '새 곡 및 영상 추가'}),
+    extras[4],
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
-    button('', () => navigate({tab: 'settings'}), 'icon-button desktop-settings-btn', 'settings', {'aria-label': '설정 열기'})
+    button('', () => navigate({tab: 'settings'}), 'icon-button desktop-settings-btn', 'settings', {'aria-label': '설정 열기'}),
+    moreBtn, moreMenu
   );
 }
 
@@ -534,7 +567,7 @@ function songCard(song, options = {}) {
       el('p', {class: 'card-artist', text: song.artist || '아티스트 미등록'}),
       el('div', {class: 'card-meta'}, el('span', {class: 'badge', text: song.category || '기타'}), el('span', {text: levels[song.difficulty]}), song.arrangement && el('span', {text: song.arrangement})),
       el('div', {class: 'card-footer'},
-        el('div', {class: 'part-preview'}, parts.length ? parts.slice(0, 3).map(part => el('span', {class: `part-pill${part === state.myPart ? ' mine' : ''}`, text: PARTS[part]})) : el('span', {class: 'part-empty', text: '영상 등록 예정'}), parts.length > 3 && el('span', {class: 'part-more', text: `+${parts.length - 3}`})),
+        el('div', {class: 'part-preview'}, parts.length ? parts.slice(0, 3).map(part => el('span', {class: `part-pill${part === songMyPart(song) ? ' mine' : ''}`, text: PARTS[part]})) : el('span', {class: 'part-empty', text: '영상 등록 예정'}), parts.length > 3 && el('span', {class: 'part-more', text: `+${parts.length - 3}`})),
         button('연습 시작', () => openSong(song), 'button primary small', 'play')
       )
     )
@@ -620,10 +653,64 @@ function recentList(limit) {
 }
 
 
+function parseStageDate(value) {
+  const m = String(value || '').match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+}
+function upcomingStage() {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return getStageHistory()
+    .map(stage => ({stage, date: parseStageDate(stage.date)}))
+    .filter(({stage, date}) => date && date >= today && Array.isArray(stage.songs) && stage.songs.length)
+    .sort((a, b) => a.date - b.date)[0] || null;
+}
+function startSetlistPractice(stage, index) {
+  const ids = stage.songs.map(item => item.songId || item.id);
+  state.setlist = {title: stage.eventTitle, ids};
+  const song = state.songs.find(s => s.id === ids[index]);
+  if (song) startPractice(song);
+  else toast('이 곡은 연습실에 등록되지 않은 무대 레퍼토리예요.');
+}
+function renderUpcomingStageCard() {
+  const next = upcomingStage();
+  if (!next) return null;
+  const {stage, date} = next;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const dday = Math.round((date - today) / 86400000);
+  const items = stage.songs.map((item, i) => {
+    const id = item.songId || item.id;
+    const song = state.songs.find(s => s.id === id);
+    const part = song ? songMyPart(song) : '';
+    const name = song?.partNames?.[part];
+    return button([
+      el('span', {class: 'setlist-num', text: String(i + 1)}),
+      el('span', {class: 'setlist-title', text: song?.title || item.title || id}),
+      el('span', {class: 'setlist-part', text: song ? (part ? `${PARTS[part] || part}${name ? ` · ${name}` : ''}` : '파트 선택') : '무대 전용'})
+    ], () => startSetlistPractice(stage, i), 'setlist-item', null, {'aria-label': `${i + 1}번째 곡 ${song?.title || item.title || id} 연습`});
+  });
+  return el('section', {class: 'upcoming-stage', 'aria-label': '다가오는 공연 연습'},
+    el('div', {class: 'upcoming-stage-head'},
+      el('div', {},
+        el('p', {class: 'eyebrow', text: 'NEXT STAGE'}),
+        el('h2', {text: stage.eventTitle}),
+        el('p', {class: 'upcoming-stage-meta', text: `${stage.date}${stage.venue ? ` · ${stage.venue}` : ''} · ${stage.songs.length}곡`})
+      ),
+      el('span', {class: 'dday-badge', text: dday === 0 ? 'D-DAY' : `D-${dday}`})
+    ),
+    el('div', {class: 'setlist-grid'}, items),
+    el('div', {class: 'upcoming-stage-actions'},
+      button('셋리스트 순서대로 연습 시작', () => startSetlistPractice(stage, 0), 'button primary small', 'play'),
+      button('무대 큐시트 보기', () => navigate({tab: 'stage', view: 'live'}), 'button secondary small', 'stage')
+    )
+  );
+}
 function renderHome() {
   const practicing = state.songs.filter(song => song.status === 'practice');
   const intro = el('div', {class: 'home-intro'}, el('div', {}, el('p', {class: 'eyebrow', text: 'WELCOME TO YOUR PRACTICE ROOM'}), el('h1', {}, '오늘도, 우리의 ', el('span', {text: '하모니를.'})), el('p', {text: '한 곡씩, 한 파트씩. 함께 만드는 더 좋은 소리.'})), el('span', {class: 'intro-date', text: new Date().toLocaleDateString('ko-KR', {month: 'long', day: 'numeric', weekday: 'long'})}));
-  app.append(intro, searchBar(true));
+  app.append(intro);
+  const upcoming = renderUpcomingStageCard();
+  if (upcoming) app.append(upcoming);
+  app.append(searchBar(true));
   if (state.songs.length && state.songs.every(song => (song.tags || []).includes('demo'))) app.append(el('p', {class: 'demo-banner', text: '데모 라이브러리입니다. 실제 팀 연습 자료는 데이터 편집기에서 등록해 주세요.'}));
   const pendingMedia = state.songs.filter(song => !availableParts(song).length).length;
   if (pendingMedia) app.append(el('p', {class: 'notice', text: `${pendingMedia}곡의 연습 영상이 아직 등록되지 않았어요. 영상이 등록된 파트부터 연습을 시작해 보세요.`}));
@@ -657,7 +744,7 @@ function renderHome() {
     app.append(section('지금 연습 중', `${practicing.length}곡의 하모니를 완성해 가고 있어요`, hero, practiceHeaderActions));
     if (practicing.length > 1) app.append(songGrid(practicing.slice(1, 5)));
   }
-  const mine = state.myPart ? state.songs.filter(song => availableParts(song).includes(state.myPart)) : [];
+  const mine = (state.myName || state.myPart) ? state.songs.filter(song => availableParts(song).includes(songMyPart(song))) : [];
   const myPanel = el('div', {class: 'quick-panel sage'}, el('div', {class: 'quick-panel-title'}, icon('mic'), el('h3', {text: state.myPart ? `내 파트 · ${PARTS[state.myPart]}` : '내 목소리를 찾아보세요'})),
     el('p', {text: state.myPart ? `${PARTS[state.myPart]} 영상이 등록된 ${mine.length}곡을 바로 연습할 수 있어요.` : '기본 파트를 선택하면 내 연습 영상이 먼저 보여요.'}),
     button(state.myPart ? '내 파트 곡 보기' : '내 파트 설정하기', () => { if (!state.myPart) navigate({tab: 'settings'}); else { state.filters = {query: '', status: '', category: '', difficulty: '', part: state.myPart}; navigate({tab: 'songs'}); } }, 'button secondary', 'arrow')
@@ -675,7 +762,7 @@ function renderHome() {
       randomPanel.append(el('div', {class: 'random-result'}, cover(state.random, 'recent-art'), el('div', {}, el('strong', {text: state.random.title}), el('p', {text: state.random.artist}))), button('파트 선택 및 연습', () => openSong(state.random), 'button primary', 'play'));
     } else randomPanel.append(el('p', {text: '익숙한 곡도, 새로운 곡도. 가볍게 한 곡 골라보세요.'}));
     randomPanel.append(button(state.random ? '다른 곡 뽑기' : '랜덤 곡 선택', () => {
-      const candidates = state.songs.filter(song => state.myPart ? availableParts(song).includes(state.myPart) : availableParts(song).length);
+      const candidates = state.songs.filter(song => songMyPart(song) ? availableParts(song).includes(songMyPart(song)) : availableParts(song).length);
       if (!candidates.length) { toast(state.myPart ? '내 파트 영상이 등록된 곡이 없습니다.' : '아직 등록된 연습 영상이 없습니다.'); return; }
       state.random = candidates[Math.floor(Math.random() * candidates.length)]; updateRandom();
     }, 'button secondary', 'shuffle'));
@@ -4470,14 +4557,43 @@ function renderPlayerController(player, song, part) {
     )
   );
 
-  const panel = el('div', {class: 'practice-controller-panel', role: 'region', 'aria-label': '연습 플레이어 컨트롤러'},
-    controlRow, subrow, loopPanel
+  // 큰 버튼 모드: 악보를 보며 한 손으로 조작할 수 있게 핵심 버튼 4개를 화면 아래에 고정
+  const myFirst = song.startingPitches?.[part];
+  const bigPlayBtn = button('재생', () => player.togglePlay(), 'big-bar-btn primary', 'play', {'aria-label': '재생 또는 일시정지'});
+  const bigLoopBtn = button('구간 반복', () => { loopToggleBtn.click(); bigLoopBtn.classList.toggle('active', Boolean(looper.getState().isLooping)); }, 'big-bar-btn', 'repeat', {'aria-label': '구간 반복 켜기/끄기'});
+  const bigBar = el('div', {class: 'big-practice-bar', role: 'toolbar', 'aria-label': '큰 버튼 연습 모드', hidden: true},
+    button('5초 뒤로', () => { player.seekRelative(-5); }, 'big-bar-btn', 'rewind', {'aria-label': '5초 뒤로'}),
+    bigPlayBtn,
+    bigLoopBtn,
+    button('첫 음', () => { if (myFirst && playNoteString(myFirst)) toast(`🎵 ${PARTS[part]} 첫 음 ${parseNoteString(myFirst)?.displayNote || myFirst}`); else toast('등록된 첫 음이 없습니다.'); }, 'big-bar-btn', 'music', {'aria-label': '내 파트 첫 음 듣기', disabled: !myFirst}),
+    button('', () => setBigMode(false), 'big-bar-close', 'close', {'aria-label': '큰 버튼 모드 끄기'})
   );
+  async function setBigMode(on) {
+    bigBar.hidden = !on;
+    document.body.classList.toggle('big-practice-on', on);
+    bigModeBtn.classList.toggle('active', on);
+    bigModeBtn.setAttribute('aria-pressed', String(on));
+    write('bigPracticeMode', on);
+    if (on && !isWakeLockActive()) await requestWakeLock();
+  }
+  const bigModeBtn = button('큰 버튼 모드', () => setBigMode(bigBar.hidden), 'button secondary small big-mode-toggle', 'presentation', {'aria-pressed': 'false', 'aria-label': '큰 버튼 연습 모드 (화면 켜짐 유지)'});
+
+  const panel = el('div', {class: 'practice-controller-panel', role: 'region', 'aria-label': '연습 플레이어 컨트롤러'},
+    el('div', {class: 'big-mode-row'}, bigModeBtn), controlRow, subrow, loopPanel
+  );
+  // 고정 바는 body에 붙여야 부모 transform 영향 없이 화면 하단에 고정됨
+  document.querySelectorAll('.big-practice-bar').forEach(n => n.remove());
+  document.body.append(bigBar);
+  if (read('bigPracticeMode', false) === true) setTimeout(() => { if (panel.isConnected) setBigMode(true); }, 0);
+  const bodyObserver = new MutationObserver(() => { if (!panel.isConnected) { document.body.classList.remove('big-practice-on'); bigBar.remove(); bodyObserver.disconnect(); } });
+  bodyObserver.observe(document.getElementById('app') || document.body, {childList: true});
 
   player.onStateChange(st => {
     isPlaying = st.isPlaying;
     currentRate = st.currentRate;
     playBtn.replaceChildren(icon(isPlaying ? 'pause' : 'play'), document.createTextNode(isPlaying ? '일시정지' : '재생'));
+    bigPlayBtn.replaceChildren(icon(isPlaying ? 'pause' : 'play'), el('span', {text: isPlaying ? '일시정지' : '재생'}));
+    bigLoopBtn.classList.toggle('active', Boolean(looper.getState().isLooping));
     looper.checkTick();
     if (!panel.isConnected) {
       looper.destroy();
@@ -4515,16 +4631,28 @@ function renderDetail(song) {
     )
   );
   app.append(detail);
-  if (state.myPart && parts.includes(state.myPart)) app.append(el('section', {class: 'my-part-callout'}, el('p', {class: 'eyebrow', text: 'MY PART'}), button(`${PARTS[state.myPart]} 바로 연습`, () => startPractice(song, state.myPart), 'button primary', 'play')));
-  const partsSection = section('파트를 선택해 주세요', '내 목소리를 하나씩 쌓아가요', parts.length ? el('div', {class: 'part-grid'}, parts.map(part => button(
-    [el('strong', {text: PARTS[part]}), el('span', {class: 'part-subtitle', text: part === state.myPart ? 'MY PART · 바로 연습' : part === 'full' ? '모든 목소리를 함께' : '파트별 연습'}), icon('play')],
-    () => startPractice(song, part), `part-button${part === state.myPart ? ' my-part' : ''}`,
-    null, {'aria-label': `${PARTS[part]} ${part === state.myPart ? '내 파트 ' : ''}연습 시작`}
-  ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', button('영상 등록하기', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary')),
+  const myPartHere = songMyPart(song);
+  if (myPartHere && parts.includes(myPartHere)) app.append(el('section', {class: 'my-part-callout'}, el('p', {class: 'eyebrow', text: 'MY PART'}), button(`${PARTS[myPartHere]}${song.partNames?.[myPartHere] ? ` · ${song.partNames[myPartHere]}` : ''} 바로 연습`, () => startPractice(song, myPartHere), 'button primary', 'play')));
+  // 내 파트를 맨 앞에, 카드마다 담당자 이름과 첫 음 표시
+  const orderedParts = myPartHere && parts.includes(myPartHere) ? [myPartHere, ...parts.filter(p => p !== myPartHere)] : parts;
+  const partsSection = section('파트를 선택해 주세요', '내 목소리를 하나씩 쌓아가요', parts.length ? el('div', {class: 'part-grid'}, orderedParts.map(part => {
+    const singer = song.partNames?.[part];
+    const first = part === 'full' ? null : parseNoteString(song.startingPitches?.[part] || '');
+    const isMine = part === myPartHere;
+    return button(
+      [el('strong', {text: PARTS[part]}),
+        singer ? el('span', {class: 'part-singer', text: singer}) : null,
+        el('span', {class: 'part-subtitle', text: isMine ? 'MY PART · 바로 연습' : part === 'full' ? '모든 목소리를 함께' : '파트별 연습'}),
+        first ? el('span', {class: 'part-first-note', text: `첫 음 ${first.displayNote}`}) : null,
+        icon('play')],
+      () => startPractice(song, part), `part-button${isMine ? ' my-part' : ''}`,
+      null, {'aria-label': `${PARTS[part]}${singer ? ` ${singer}` : ''} ${isMine ? '내 파트 ' : ''}연습 시작${first ? `, 첫 음 ${first.displayNote}` : ''}`}
+    );
+  })) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', button('영상 등록하기', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary')),
   button('+ 영상 추가 / 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'text-button', 'external'));
   app.append(partsSection);
   // 파트 선택 바로 아래에 파트별 첫 음
-  app.append(renderStartingPitchPanel(song, state.myPart || preferredPart(song, state.myPart)));
+  app.append(renderStartingPitchPanel(song, myPartHere || preferredPart(song, myPartHere)));
 
   if (songScores.length) {
     app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
@@ -4677,13 +4805,38 @@ function renderPractice(song, part, record = true) {
   const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => startPractice(song, parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
     el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => startPractice(song, parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
   
+  let setlistNav = null;
+  const setIdx = state.setlist ? state.setlist.ids.indexOf(song.id) : -1;
+  if (setIdx >= 0) {
+    const go = (step) => {
+      for (let i = setIdx + step; i >= 0 && i < state.setlist.ids.length; i += step) {
+        const target = state.songs.find(s => s.id === state.setlist.ids[i]);
+        if (target && availableParts(target).length) { startPractice(target); return; }
+      }
+    };
+    setlistNav = el('div', {class: 'setlist-nav', 'aria-label': '공연 셋리스트 이동'},
+      button('이전 곡', () => go(-1), 'button secondary', 'back', {disabled: setIdx <= 0}),
+      el('span', {class: 'setlist-nav-label', text: `${state.setlist.title} · ${setIdx + 1} / ${state.setlist.ids.length}곡`}),
+      button('다음 곡', () => go(1), 'button primary', 'arrow', {disabled: setIdx >= state.setlist.ids.length - 1})
+    );
+  }
+
   if (abSwitcher) app.append(abSwitcher);
+  if (setlistNav) app.append(setlistNav);
   app.append(startingPitchPanel, playerLayout, controller, actions, switches);
 }
 
 function renderSettings() {
   app.append(el('div', {class: 'page-heading'}, el('p', {class: 'eyebrow', text: 'MAKE YOURSELF AT HOME'}), el('h1', {text: '나만의 연습실'}), el('p', {text: '내 파트와 화면을 설정하고, 편안하게 연습하세요.'})));
-  const partPanel = el('section', {class: 'settings-panel'}, icon('mic'), el('h2', {text: '내 기본 파트'}), el('p', {text: '선택한 파트가 있는 곡에서 바로 연습할 수 있어요.'}));
+  const names = allMemberNames();
+  const namePanel = el('section', {class: 'settings-panel'}, icon('mic'), el('h2', {text: '나는 누구?'}), el('p', {text: '이름을 고르면 곡마다 내가 맡은 파트를 자동으로 찾아 줘요. 이름이 없는 곡은 아래 기본 파트를 사용해요.'}));
+  namePanel.append(el('div', {class: 'setting-options name-options'}, names.map(name => button(name, () => {
+    state.myName = name; write('myName', name); refreshChrome();
+    for (const node of namePanel.querySelectorAll('[data-name]')) { node.classList.toggle('active', node.dataset.name === name); node.setAttribute('aria-pressed', String(node.dataset.name === name)); }
+    toast(`${name}님으로 설정했어요. 곡마다 ${name}님의 파트가 먼저 보여요.`);
+  }, `choice-button${state.myName === name ? ' active' : ''}`, null, {'data-name': name, 'aria-pressed': String(state.myName === name)}))));
+  namePanel.append(button('이름 선택 해제', () => { state.myName = ''; remove('myName'); render(); toast('이름 선택을 해제했어요.'); }, 'text-button'));
+  const partPanel = el('section', {class: 'settings-panel'}, icon('mic'), el('h2', {text: '내 기본 파트'}), el('p', {text: '이름이 등록되지 않은 곡에서 사용할 파트예요.'}));
   const longNames = {
     part1: '1번 파트', part2: '2번 파트', part3: '3번 파트',
     part4: '4번 파트', part5: '5번 파트', part6: '6번 파트', part7: '7번 파트',
@@ -4763,7 +4916,7 @@ function renderSettings() {
       state.favorites.clear(); state.recent = []; state.progress = {};
       toast('개인 연습 기록을 초기화했어요.');
     }, 'button secondary danger'));
-  app.append(el('div', {class: 'settings-grid'}, partPanel, themePanel, bgPlayPanel, dataPanel, privacyPanel));
+  app.append(el('div', {class: 'settings-grid'}, namePanel, partPanel, themePanel, bgPlayPanel, dataPanel, privacyPanel));
 }
 
 function normalizeRoute() {
