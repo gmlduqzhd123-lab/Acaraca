@@ -1349,20 +1349,20 @@
         ]
       },
       "startingPitches": {
-        "part1": "D5",
-        "part2": "Bb4",
-        "part3": "F4",
-        "part4": "D4",
-        "part5": "Bb3",
-        "part6": "Bb2",
-        "soprano": "D5",
-        "alto": "F4",
-        "tenor": "D4",
-        "baritone": "Bb3",
-        "bass": "Bb2",
-        "full": "Bb3"
+        "part1": "C#4",
+        "part2": "C#4",
+        "part3": "A3",
+        "part4": "A3",
+        "part5": "G3",
+        "part6": "A2",
+        "soprano": "C#4",
+        "alto": "A3",
+        "tenor": "A3",
+        "baritone": "G3",
+        "bass": "A2",
+        "full": "A3"
       },
-      "musicalKey": "Bb Major",
+      "musicalKey": "A Major",
       "entryOrder": [
         "part1",
         "part2",
