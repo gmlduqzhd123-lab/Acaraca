@@ -73,7 +73,14 @@
         "bass": "F3",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ]
     },
     {
       "id": "bohemian-rhapsody-6",
@@ -151,7 +158,15 @@
         "vp": "Bb2",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5",
+        "part6"
+      ]
     },
     {
       "id": "mujogeon",
@@ -288,7 +303,13 @@
         "bass": "A2",
         "full": "A3"
       },
-      "musicalKey": "A Minor"
+      "musicalKey": "A Minor",
+      "entryOrder": [
+        "part2",
+        "part1",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "disney-medley-7",
@@ -378,7 +399,16 @@
         "vp": "C3",
         "full": "F3"
       },
-      "musicalKey": "F Major"
+      "musicalKey": "F Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5",
+        "part6",
+        "part7"
+      ]
     },
     {
       "id": "disney-medley",
@@ -668,7 +698,13 @@
         "bass": "D3",
         "full": "D4"
       },
-      "musicalKey": "D Major"
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part3",
+        "part2",
+        "part4",
+        "part1"
+      ]
     },
     {
       "id": "tayo-pororo",
@@ -737,7 +773,13 @@
         "bass": "Db2",
         "full": "Db3"
       },
-      "musicalKey": "Db Major"
+      "musicalKey": "Db Major",
+      "entryOrder": [
+        "part4",
+        "part2",
+        "part1",
+        "part3"
+      ]
     },
     {
       "id": "run-the-sky",
@@ -973,7 +1015,15 @@
         "full": "D3",
         "lead": "C#5"
       },
-      "musicalKey": "D Major"
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part2",
+        "part3",
+        "part1",
+        "part4",
+        "part5",
+        "part6"
+      ]
     },
     {
       "id": "in-your-arms",
@@ -1050,7 +1100,14 @@
         "bass": "C#3",
         "full": "C#3"
       },
-      "musicalKey": "C# Minor"
+      "musicalKey": "C# Minor",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part3",
+        "part5",
+        "part1"
+      ]
     },
     {
       "id": "happy-school",
@@ -1201,7 +1258,14 @@
         "bass": "G2",
         "full": "G4"
       },
-      "musicalKey": "G Major"
+      "musicalKey": "G Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ]
     },
     {
       "id": "well-done-today",
@@ -1368,7 +1432,14 @@
         "bass": "F3",
         "full": "Bb3"
       },
-      "musicalKey": "Bb Major"
+      "musicalKey": "Bb Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ]
     },
     {
       "id": "daft-punk",
@@ -1571,7 +1642,13 @@
         "bass": "E3",
         "full": "E4"
       },
-      "musicalKey": "E Major"
+      "musicalKey": "E Major",
+      "entryOrder": [
+        "part4",
+        "part2",
+        "part1",
+        "part3"
+      ]
     },
     {
       "id": "lets-travel",
@@ -1658,7 +1735,13 @@
         "bass": "Eb3",
         "full": "Eb4"
       },
-      "musicalKey": "Eb Major"
+      "musicalKey": "Eb Major",
+      "entryOrder": [
+        "part3",
+        "part2",
+        "part4",
+        "part1"
+      ]
     },
     {
       "id": "love-song-medley",
@@ -1872,7 +1955,13 @@
         "bass": "E3",
         "full": "E4"
       },
-      "musicalKey": "E Major / C# Minor"
+      "musicalKey": "E Major / C# Minor",
+      "entryOrder": [
+        "part4",
+        "part1",
+        "part2",
+        "part3"
+      ]
     },
     {
       "id": "beautiful-world",
@@ -1971,7 +2060,14 @@
         "bass": "Ab2",
         "full": "Ab3"
       },
-      "musicalKey": "Ab Major"
+      "musicalKey": "Ab Major",
+      "entryOrder": [
+        "part2",
+        "part1",
+        "part3",
+        "part5",
+        "part4"
+      ]
     },
     {
       "id": "butterfly",
@@ -2149,7 +2245,14 @@
         "bass": "A2",
         "full": "D3"
       },
-      "musicalKey": "D Major"
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part2",
+        "part4",
+        "part1",
+        "part3",
+        "part5"
+      ]
     },
     {
       "id": "love-love",
@@ -2247,7 +2350,14 @@
         "bass": "F#2",
         "full": "F#3"
       },
-      "musicalKey": "F# Major"
+      "musicalKey": "F# Major",
+      "entryOrder": [
+        "part4",
+        "part5",
+        "part3",
+        "part1",
+        "part2"
+      ]
     },
     {
       "id": "carol-medley",

@@ -4038,7 +4038,7 @@ function renderStartingPitchPanel(song, currentPart = null) {
   const seqBtn = el('button', {
     type: 'button',
     class: 'button primary small seq-play-btn',
-    title: '2번 → 4번 → 1번 → 3번 파트 순서로 음을 잡은 후 화음으로 울려줍니다.',
+    title: '악보에서 먼저 시작하는 파트 순서로 음을 잡은 후 화음으로 울려줍니다.',
     onclick: () => {
       if (isPitchSequencePlaying()) {
         stopPitchSequence();
@@ -4049,14 +4049,16 @@ function renderStartingPitchPanel(song, currentPart = null) {
         return;
       }
 
-      toast('🎶 2번 → 4번 → 1번 → 3번 파트 순서로 음을 맞춘 후 전체 화음을 울려줍니다.');
+      toast('🎶 악보에서 먼저 시작하는 파트 순서로 음을 맞춘 후 전체 화음을 울려줍니다.');
       seqBtn.classList.add('playing');
       seqBtn.replaceChildren(icon('pause'), document.createTextNode('순차 재생 중지'));
       seqStatusBadge.style.display = 'flex';
       seqStatusBadge.textContent = '🎶 전 파트 시작음 시퀀스를 준비 중...';
 
-      // 재생 순서: 2번 → 4번 → 1번 → 3번 파트 (그 외 파트는 뒤에 이어서)
-      const seqOrder = ['part2', 'part4', 'part1', 'part3'];
+      // 재생 순서: 악보에서 먼저 시작하는 파트 순(song.entryOrder), 없으면 2번 → 4번 → 1번 → 3번 파트
+      const seqOrder = Array.isArray(song.entryOrder) && song.entryOrder.length
+        ? song.entryOrder
+        : ['part2', 'part4', 'part1', 'part3'];
       const voiceToPartKey = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
       const rank = (item) => {
         const idx = seqOrder.indexOf(voiceToPartKey[item.partKey] || item.partKey);
