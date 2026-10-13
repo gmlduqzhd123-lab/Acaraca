@@ -2555,6 +2555,14 @@ body.in-pocket-mode {
   box-shadow: 0 0 16px rgba(45, 212, 191, 0.6);
 }
 
+.stage-part-singer {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(45, 212, 191, .15);
+  color: #5eead4;
+}
 .stage-part-name {
   font-size: 11px;
   font-weight: 700;

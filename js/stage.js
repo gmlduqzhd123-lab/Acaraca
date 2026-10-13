@@ -463,47 +463,34 @@ export function getSongStartingPitchEntries(songData) {
     ? songData.startingPitches.pitches
     : songData.startingPitches;
 
-  const numberedParts = Object.keys(rawPitches).filter(k => k.startsWith('part') && rawPitches[k]);
-  const namedKeys = ['bass', 'baritone', 'tenor', 'alto', 'soprano', 'lead', 'vp'];
-  const namedParts = namedKeys.filter(k => Boolean(rawPitches[k]));
+  const isPlayable = (v) => typeof v === 'string' && Boolean(parseNoteString(v));
+  const numberedParts = Object.keys(rawPitches).filter(k => /^part\d+$/.test(k) && isPlayable(rawPitches[k]));
 
-  // 6부 이상이거나 파트 번호 개수가 명명된 성부 개수보다 많은 경우, 모든 단원의 음이 누락 없이 표시되도록 numbered 파트 우선
-  const useNumbered = numberedParts.length > 5 || (numberedParts.length > namedParts.length);
+  // 번호 파트가 있으면 번호 파트만 사용 (파트 페이지와 동일). 순서: 악보 등장 순서(entryOrder) → 기본 2·4·1·3번
+  if (numberedParts.length) {
+    const defaultOrder = ['part2', 'part4', 'part1', 'part3'];
+    const order = Array.isArray(songData.entryOrder) && songData.entryOrder.length ? songData.entryOrder : defaultOrder;
+    const rank = (k) => {
+      const i = order.indexOf(k);
+      return i === -1 ? order.length + (parseInt(k.slice(4), 10) || 0) : i;
+    };
+    return numberedParts.sort((a, b) => rank(a) - rank(b)).map(k => [k, rawPitches[k]]);
+  }
 
-  const entries = Object.entries(rawPitches).filter(([part, noteStr]) => {
-    if (!noteStr || typeof noteStr !== 'string' || part === 'full') return false;
-    if (useNumbered && numberedParts.length > 0) {
-      return part.startsWith('part');
-    }
-    if (namedParts.length > 0) {
-      return !part.startsWith('part');
-    }
-    return true;
-  });
+  const orderMap = { bass: 1, baritone: 3, tenor: 5, alto: 7, soprano: 9, lead: 11, vp: 12 };
+  return Object.entries(rawPitches)
+    .filter(([part, noteStr]) => part !== 'full' && part !== 'key' && isPlayable(noteStr))
+    .sort((a, b) => {
+      const pA = parseNoteString(a[1]);
+      const pB = parseNoteString(b[1]);
+      if (pA.freq !== pB.freq) return pA.freq - pB.freq;
+      return (orderMap[a[0]] || 99) - (orderMap[b[0]] || 99);
+    });
+}
 
-  const orderMap = {
-    bass: 1,
-    part5: 1,
-    baritone: 3,
-    part4: 3,
-    tenor: 5,
-    part3: 5,
-    alto: 7,
-    part2: 7,
-    soprano: 9,
-    part1: 9,
-    lead: 11,
-    vp: 12,
-    part6: 13,
-    part7: 14
-  };
-
-  return entries.sort((a, b) => {
-    const pA = parseNoteString(a[1]);
-    const pB = parseNoteString(b[1]);
-    if (pA && pB && pA.freq !== pB.freq) return pA.freq - pB.freq;
-    return (orderMap[a[0]] || 99) - (orderMap[b[0]] || 99);
-  });
+/** 곡 데이터의 partNames에서 파트 담당자 이름/이니셜을 찾음 */
+export function getStagePartSinger(songData, part) {
+  return (songData?.partNames && typeof songData.partNames[part] === 'string') ? songData.partNames[part] : '';
 }
 
 /**
@@ -1485,6 +1472,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       })).filter(it => it.parsed);
 
       playPitchSequence(noteItems, {
+        keepOrder: true,
         noteDuration: 900,
         gapDuration: 160,
         chordDuration: 2800,
@@ -1526,6 +1514,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
       pitchEntries.forEach(([part, noteStr]) => {
         const parsed = parseNoteString(noteStr);
         const partName = partLabels[part] || part.toUpperCase();
+        const singer = getStagePartSinger(songData, part);
         const displayNote = parsed ? parsed.displayNote : noteStr;
         const koreanNote = parsed ? parsed.koreanNote : '';
 
@@ -1566,6 +1555,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
           }
         },
           el('span', { class: 'stage-part-name', text: partName }),
+          singer ? el('span', { class: 'stage-part-singer', text: singer }) : null,
           el('span', { class: 'stage-part-note', text: displayNote }),
           koreanNote ? el('span', { style: 'font-size: 11px; opacity: 0.85;', text: koreanNote }) : null
         );
@@ -1948,7 +1938,7 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
             }
           },
             el('strong', { text: shortPart }),
-            document.createTextNode(` ${displayNote}`)
+            document.createTextNode(`${getStagePartSinger(songData, part) ? ` ${getStagePartSinger(songData, part)}` : ''} ${displayNote}`)
           );
           overviewPitchItems.push({ type: 'single', el: chip, parsed, songIndex: idx, part });
           pitchChipsWrap.append(chip);
