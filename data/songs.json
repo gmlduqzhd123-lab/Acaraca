@@ -840,11 +840,11 @@
       },
       "startingPitches": {
         "part1": "Eb4",
-        "part2": "G#4",
+        "part2": "G3",
         "part3": "C4",
         "part4": "G3",
         "soprano": "Eb4",
-        "alto": "G#4",
+        "alto": "G3",
         "tenor": "C4",
         "bass": "G3",
         "full": "C4"
