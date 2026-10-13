@@ -141,7 +141,9 @@ assert(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'], 'the-lion-sleeps-to
 const standByMePitches = getSongStartingPitchEntries(STAGE_EXTRA_SONG_METADATA['stand-by-me']);
 assert(standByMePitches.length === 5, 'stand-by-me has 5 pitch entries');
 const lionPitches = getSongStartingPitchEntries(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight']);
-assert(lionPitches.length === 5, 'the-lion-sleeps-tonight has 5 pitch entries');
+// 악보 화면에서 확인된 솔로·소프라노 첫 음만 등록 (알토·베이스 미확인)
+assert(lionPitches.length === 2, 'the-lion-sleeps-tonight has 2 verified pitch entries');
+assert(standByMePitches[0][0] === 'lead' && lionPitches[0][0] === 'lead', 'extra songs play in score entry order (solo first)');
 
 // 4. Test Starting Pitch Extraction across all 33 songs
 const songs = JSON.parse(fs.readFileSync('data/songs.json', 'utf8')).songs;
