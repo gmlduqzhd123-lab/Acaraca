@@ -839,17 +839,23 @@
         ]
       },
       "startingPitches": {
-        "part1": "B4",
+        "part1": "Eb4",
         "part2": "G#4",
-        "part3": "E4",
-        "part4": "E3",
-        "soprano": "B4",
+        "part3": "C4",
+        "part4": "G3",
+        "soprano": "Eb4",
         "alto": "G#4",
-        "tenor": "E4",
-        "bass": "E3",
-        "full": "E4"
+        "tenor": "C4",
+        "bass": "G3",
+        "full": "C4"
       },
-      "musicalKey": "E Major"
+      "musicalKey": "Eb Major / C Minor",
+      "entryOrder": [
+        "part1",
+        "part3",
+        "part4",
+        "part2"
+      ]
     },
     {
       "id": "acaroom-opening",
