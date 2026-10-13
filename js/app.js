@@ -4495,8 +4495,7 @@ function renderDetail(song) {
   const songScores = getScoresForSong(state.scores, song.id);
 
   app.append(button('목록으로', () => navigate({tab: 'songs'}), 'text-button back-button', 'back'));
-  const detail = el('div', {class: 'detail-layout'},
-    el('div', {class: 'detail-cover'}, cover(song, 'detail-cover-image')),
+  const detail = el('div', {class: 'detail-layout no-cover'},
     el('div', {class: 'detail-content'}, el('p', {class: 'eyebrow', text: 'FIND YOUR VOICE'}), el('h1', {text: song.title}), el('p', {class: 'detail-artist', text: song.artist || '아티스트 미등록'}),
       el('div', {class: 'detail-meta'}, [song.category, levels[song.difficulty], song.arrangement, statuses[song.status]].filter(Boolean).map(text => el('span', {class: 'badge', text}))),
       el('div', {class: 'tag-list'}, array(song.tags).map(tag => el('span', {class: 'tag', text: `#${tag}`}))),
@@ -4517,8 +4516,6 @@ function renderDetail(song) {
   );
   app.append(detail);
   if (state.myPart && parts.includes(state.myPart)) app.append(el('section', {class: 'my-part-callout'}, el('p', {class: 'eyebrow', text: 'MY PART'}), button(`${PARTS[state.myPart]} 바로 연습`, () => startPractice(song, state.myPart), 'button primary', 'play')));
-  const pitchPanel = renderStartingPitchPanel(song, state.myPart || preferredPart(song, state.myPart));
-  app.append(pitchPanel);
   const partsSection = section('파트를 선택해 주세요', '내 목소리를 하나씩 쌓아가요', parts.length ? el('div', {class: 'part-grid'}, parts.map(part => button(
     [el('strong', {text: PARTS[part]}), el('span', {class: 'part-subtitle', text: part === state.myPart ? 'MY PART · 바로 연습' : part === 'full' ? '모든 목소리를 함께' : '파트별 연습'}), icon('play')],
     () => startPractice(song, part), `part-button${part === state.myPart ? ' my-part' : ''}`,
@@ -4526,6 +4523,8 @@ function renderDetail(song) {
   ))) : emptyState('아직 등록된 연습 영상이 없습니다.', '데이터 편집기에서 파트별 YouTube 주소를 등록해 주세요.', button('영상 등록하기', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary')),
   button('+ 영상 추가 / 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'text-button', 'external'));
   app.append(partsSection);
+  // 파트 선택 바로 아래에 파트별 첫 음
+  app.append(renderStartingPitchPanel(song, state.myPart || preferredPart(song, state.myPart)));
 
   if (songScores.length) {
     app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
