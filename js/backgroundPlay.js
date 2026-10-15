@@ -96,6 +96,12 @@ if (typeof document !== 'undefined') {
  */
 export function startAudioAnchor() {
   if (typeof window === 'undefined') return;
+  // 연습 영상은 백그라운드 재생을 위해 일반 재생 세션 사용 (첫 음 소리는 pitch.js에서 'ambient'로 다시 전환)
+  try {
+    if (typeof navigator !== 'undefined' && navigator.audioSession && navigator.audioSession.type === 'ambient') {
+      navigator.audioSession.type = 'auto';
+    }
+  } catch {}
   if (!audioAnchor) {
     audioAnchor = new Audio(SILENT_WAV_URI);
     audioAnchor.loop = true;

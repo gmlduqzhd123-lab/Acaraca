@@ -39,8 +39,33 @@ let currentGainNode = null;
 let currentPlaying = null;
 const stateListeners = new Set();
 
+// 첫 음 소리는 다른 앱(음성 녹음 앱 등)을 끊지 않고 섞여서 나오도록 'ambient' 오디오 세션 사용
+// (iOS Safari 16.4+ Audio Session API. 지원하지 않는 브라우저에서는 무시됨)
+export function useMixableAudioSession() {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.audioSession && navigator.audioSession.type !== 'ambient') {
+      navigator.audioSession.type = 'ambient';
+    }
+  } catch {}
+}
+
+// 소리가 끝나면 AudioContext를 잠시 쉬게 해서 기기의 오디오 점유(오디오 포커스)를 바로 놓아 줌
+let idleSuspendTimer = null;
+function scheduleIdleSuspend(delay = 1200) {
+  if (typeof window === 'undefined') return;
+  if (idleSuspendTimer) clearTimeout(idleSuspendTimer);
+  idleSuspendTimer = setTimeout(() => {
+    idleSuspendTimer = null;
+    if (audioCtx && audioCtx.state === 'running' && typeof audioCtx.suspend === 'function' && !currentPlaying && !currentSequence) {
+      Promise.resolve(audioCtx.suspend()).catch(() => {});
+    }
+  }, delay);
+}
+
 function getAudioContext() {
   if (typeof window === 'undefined') return null;
+  useMixableAudioSession();
+  if (idleSuspendTimer) { clearTimeout(idleSuspendTimer); idleSuspendTimer = null; }
   if (!audioCtx) {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (AudioContextClass) {
@@ -65,6 +90,7 @@ export function unlockAudioContext() {
   if (ctx && ctx.state === 'suspended') {
     ctx.resume().catch(() => {});
   }
+  scheduleIdleSuspend();
 }
 
 if (typeof window !== 'undefined') {
@@ -76,6 +102,7 @@ if (typeof window !== 'undefined') {
 }
 
 function notifyStateChange() {
+  if (!currentPlaying && !currentSequence) scheduleIdleSuspend();
   for (const listener of stateListeners) {
     try {
       listener(currentPlaying);
