@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart} from './data.js';
-import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime} from './player.js';
+import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
@@ -428,6 +428,8 @@ function openBackgroundGuideModal() {
   if (dialog) dialog.showModal();
 }
 
+let topbarMoreRefs = null;
+let topbarMoreListenerAdded = false;
 function refreshChrome() {
   const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
   const desktopNav = document.getElementById('desktop-nav');
@@ -475,7 +477,15 @@ function refreshChrome() {
     if (open) moreMenu.replaceChildren(...extras.map(b => { const c = b.cloneNode(true); c.onclick = () => { closeMore(); b.click(); }; c.classList.remove('topbar-extra'); return c; }));
     moreMenu.hidden = !open; moreBtn.setAttribute('aria-expanded', String(open));
   }, 'icon-button topbar-more-btn', 'more', {'aria-label': '더보기 메뉴', 'aria-expanded': 'false', 'aria-haspopup': 'menu'});
-  document.addEventListener('click', (e) => { if (!moreMenu.hidden && !moreMenu.contains(e.target) && !moreBtn.contains(e.target)) closeMore(); });
+  // 바깥 클릭 시 닫기: 화면이 바뀔 때마다 리스너가 쌓이지 않도록 한 번만 등록하고 현재 메뉴만 참조
+  topbarMoreRefs = {menu: moreMenu, btn: moreBtn, close: closeMore};
+  if (!topbarMoreListenerAdded) {
+    topbarMoreListenerAdded = true;
+    document.addEventListener('click', (e) => {
+      const ref = topbarMoreRefs;
+      if (ref && !ref.menu.hidden && !ref.menu.contains(e.target) && !ref.btn.contains(e.target)) ref.close();
+    });
+  }
   document.getElementById('topbar-actions').replaceChildren(
     extras[0], extras[1], extras[2], extras[3],
     button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
@@ -4964,7 +4974,7 @@ function render() {
   stopPitch(true);
   app.classList.remove('stage-live-page');
   state.player?.destroy(); state.player = null;
-  app.replaceChildren(); refreshChrome();
+  app.replaceChildren(); destroyDetachedPlayers(); refreshChrome();
   if (state.loading) { app.append(el('div', {class: 'loading-state', role: 'status', text: '연습실을 준비하고 있어요…'})); return; }
   if (state.loadError) {
     app.append(el('div', {class: 'error-state', role: 'alert'}, el('h1', {text: '연습 자료를 불러오지 못했어요'}), el('p', {text: state.loadError}), button('다시 시도', initialize, 'button primary'), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary'))); return;
