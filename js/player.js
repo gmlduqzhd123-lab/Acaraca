@@ -96,7 +96,16 @@ export function parseYouTube(media) {
 }
 
 /** Create an inert preview; a YouTube iframe exists only after an explicit play action. */
+// 화면에서 사라진 플레이어를 정리해 타이머·이벤트가 쌓이지 않게 함 (오래 쓰면 터치가 둔해지는 문제 방지)
+const livePlayers = new Set();
+export function destroyDetachedPlayers() {
+  for (const player of [...livePlayers]) {
+    if (!player.isAttached()) player.destroy();
+  }
+}
+
 export function createPlayer(container, media, title = 'AcaRaca 연습 영상') {
+  destroyDetachedPlayers();
   const parsed = parseYouTube(media);
   const shell = document.createElement('div');
   shell.className = 'player-shell';
@@ -381,6 +390,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
 
     if (!ticker && typeof setInterval !== 'undefined') {
       ticker = setInterval(() => {
+        if (!shell.isConnected) { controller.destroy(); return; }
         if (isPlaying) {
           currentTime = Math.max(0, currentTime + 0.5 * currentRate);
           notifyChange();
@@ -434,7 +444,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   }
   container.replaceChildren(shell);
 
-  return {
+  const controller = {
     restart() { mountFrame(0); },
     mount(startSec = 0) { mountFrame(startSec); },
     seekRelative(delta) {
@@ -531,6 +541,8 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       return exitPocketMode();
     },
     destroy() {
+      if (destroyed) return;
+      livePlayers.delete(controller);
       destroyed = true;
       releaseWakeLock();
       exitPocketMode();
@@ -557,6 +569,12 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       shell.remove();
     },
   };
+  // 막 만들어져 아직 화면에 붙기 전인 플레이어는 정리 대상에서 잠시 제외
+  let mountGrace = true;
+  setTimeout(() => { mountGrace = false; }, 1500);
+  controller.isAttached = () => mountGrace || shell.isConnected;
+  livePlayers.add(controller);
+  return controller;
 }
 
 /** Formats seconds into mm:ss (or --:-- when empty/invalid) */
