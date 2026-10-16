@@ -222,12 +222,47 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   }
 
   let wasPlayingBeforeHidden = false;
+  // 사용자가 직접 정지했는지 여부. 직접 정지하지 않았는데 화면 잠금·앱 전환으로 멈추면 다시 재생 시도
+  let userPaused = false;
+  let hiddenAt = 0;
+  let keepAliveTimers = [];
+
+  function backgroundKeepEnabled() {
+    return (read('bgAutoResume', true) ?? true) !== false;
+  }
+  function clearKeepAlive() {
+    keepAliveTimers.forEach(clearTimeout);
+    keepAliveTimers = [];
+  }
+  function keepPlayingInBackground() {
+    if (destroyed || userPaused || !iframe || !backgroundKeepEnabled()) return;
+    clearKeepAlive();
+    startAudioAnchor();
+    setMediaSessionPlaybackState('playing');
+    for (const delay of [0, 300, 900, 2000, 4000]) {
+      keepAliveTimers.push(setTimeout(() => {
+        if (!destroyed && !userPaused && !isPlaying) sendYT('playVideo', []);
+      }, delay));
+    }
+  }
+  // 일시정지 신호가 오면 잠시 기다렸다가 화면이 꺼진(숨겨진) 상태면 시스템 정지로 보고 이어서 재생
+  function handleUnexpectedPause() {
+    if (userPaused || destroyed) return;
+    setTimeout(() => {
+      if (destroyed || userPaused || isPlaying) return;
+      const systemPause = document.visibilityState === 'hidden' || Date.now() - hiddenAt < 2500;
+      if (systemPause) keepPlayingInBackground();
+      else userPaused = true; // 화면이 켜진 채 영상 화면에서 직접 멈춘 경우
+    }, 700);
+  }
 
   function handleVisibilityChange() {
     if (destroyed) return;
     if (document.visibilityState === 'hidden') {
+      hiddenAt = Date.now();
       if (isPlaying) {
         wasPlayingBeforeHidden = true;
+        keepAliveTimers.push(setTimeout(() => { if (!isPlaying) keepPlayingInBackground(); }, 500));
       }
     } else if (document.visibilityState === 'visible') {
       const autoResume = read('bgAutoResume', true) ?? true;
@@ -235,7 +270,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       if (keepAwake) {
         requestWakeLock();
       }
-      if (wasPlayingBeforeHidden && autoResume && iframe) {
+      if (wasPlayingBeforeHidden && autoResume && iframe && !userPaused) {
         wasPlayingBeforeHidden = false;
         sendYT('playVideo', []);
         startAudioAnchor();
@@ -277,19 +312,22 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       album: '파트 연습실',
       artwork: parsed.videoId ? `https://i.ytimg.com/vi/${parsed.videoId}/hqdefault.jpg` : null,
       onPlay: () => {
+        userPaused = false;
         sendYT('playVideo', []);
         startAudioAnchor();
       },
       onPause: () => {
+        userPaused = true;
+        clearKeepAlive();
         sendYT('pauseVideo', []);
       },
       onSeekBackward: () => {
-        const target = Math.max(0, currentTime - 5);
+        const target = Math.max(0, currentTime - 10);
         currentTime = target;
         sendYT('seekTo', [target, true]);
       },
       onSeekForward: () => {
-        const target = currentTime + 5;
+        const target = currentTime + 10;
         currentTime = target;
         sendYT('seekTo', [target, true]);
       },
@@ -322,6 +360,10 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
           startAudioAnchor();
           syncMediaSession();
         } else if (data.info.playerState === 2) {
+          if (userPaused) setMediaSessionPlaybackState('paused');
+          else handleUnexpectedPause();
+        } else if (data.info.playerState === 0) {
+          userPaused = true; // 영상 끝
           setMediaSessionPlaybackState('paused');
         }
       }
@@ -345,6 +387,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
 
   function mountFrame(startSeconds = 0) {
     if (!parsed.ok || destroyed) return;
+    userPaused = false;
     const initialTime = Math.max(0, Number(startSeconds) || 0);
     currentTime = initialTime;
     pendingSeek = initialTime;
@@ -497,14 +540,18 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       }
       if (isPlaying) {
         isPlaying = false;
+        userPaused = true;
+        clearKeepAlive();
         sendYT('pauseVideo', []);
       } else {
         isPlaying = true;
+        userPaused = false;
         sendYT('playVideo', []);
       }
       notifyChange();
     },
     play() {
+      userPaused = false;
       if (!iframe) {
         mountFrame(currentTime);
       } else {
@@ -514,6 +561,8 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
       }
     },
     pause() {
+      userPaused = true;
+      clearKeepAlive();
       if (iframe) {
         isPlaying = false;
         sendYT('pauseVideo', []);
@@ -542,6 +591,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
     },
     destroy() {
       if (destroyed) return;
+      clearKeepAlive();
       livePlayers.delete(controller);
       destroyed = true;
       releaseWakeLock();
