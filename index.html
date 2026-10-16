@@ -853,17 +853,37 @@
       renderEmergencyRecovery('스크립트 오류');
     });
 
-    let swRefreshing = false;
+    // 새 버전이 배포돼도 사용 중인 화면을 강제로 새로고침하지 않음 (영상·연습이 갑자기 꺼지는 문제 방지).
+    // 파일은 항상 네트워크 우선으로 받으므로, 다음에 앱을 열면 자동으로 새 버전이 적용됨.
+    // 대신 화면 아래에 '새 버전' 안내를 띄워 원할 때 직접 새로고침할 수 있게 함.
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      const hadController = Boolean(navigator.serviceWorker.controller);
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
           reg.update().catch(() => {});
         }).catch(() => {});
       });
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (swRefreshing) return;
-        swRefreshing = true;
-        window.location.reload();
+        if (!hadController || document.getElementById('update-banner')) return; // 첫 설치는 안내 불필요
+        const bar = document.createElement('div');
+        bar.id = 'update-banner';
+        bar.setAttribute('role', 'status');
+        bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:1000;display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 12px;border-radius:12px;background:#1d4d46;color:#fff;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:520px;margin:0 auto;';
+        const text = document.createElement('span');
+        text.textContent = '새 버전이 준비됐어요. 연습을 마친 뒤 새로고침해 주세요.';
+        const go = document.createElement('button');
+        go.type = 'button';
+        go.textContent = '새로고침';
+        go.style.cssText = 'flex:none;border:0;border-radius:8px;padding:8px 12px;background:#2dd4bf;color:#06201c;font-weight:700;';
+        go.onclick = () => window.location.reload();
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.textContent = '✕';
+        close.setAttribute('aria-label', '안내 닫기');
+        close.style.cssText = 'flex:none;border:0;background:transparent;color:#cbd5e1;font-size:16px;padding:4px 6px;';
+        close.onclick = () => bar.remove();
+        bar.append(text, go, close);
+        document.body.append(bar);
       });
     }
 
