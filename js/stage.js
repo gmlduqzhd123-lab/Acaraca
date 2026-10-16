@@ -752,7 +752,37 @@ export function getChronologicalPerformanceList() {
 /**
  * 현재 활성화된 무대 세션 가져오기 (없으면 히스토리 최신 또는 기본 생성)
  */
+function stageDateValue(value) {
+  const m = String(value || '').match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime() : null;
+}
+
+/** 오늘 또는 가장 가까운 다가오는 공연 (없으면 null) */
+export function findUpcomingStage(history = getStageHistory()) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return history
+    .map(item => ({ item, t: stageDateValue(item.date) }))
+    .filter(x => x.t !== null && x.t >= today.getTime() && Array.isArray(x.item.songs) && x.item.songs.length)
+    .sort((a, b) => a.t - b.t)[0]?.item || null;
+}
+
 export function getActiveStageSession(allSongs = []) {
+  // 앱을 새로 열 때마다 한 번, 무대 큐시트를 오늘·다가오는 공연으로 맞춤 (그 뒤 사용자가 고른 공연은 유지)
+  try {
+    if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem('acaroom_stage_autopick')) {
+      sessionStorage.setItem('acaroom_stage_autopick', '1');
+      const upcoming = findUpcomingStage();
+      const raw = localStorage.getItem(STAGE_ACTIVE_KEY);
+      const currentId = raw ? (JSON.parse(raw) || {}).id : null;
+      if (upcoming && upcoming.id !== currentId) {
+        const picked = JSON.parse(JSON.stringify(upcoming));
+        picked.currentIndex = 0;
+        localStorage.setItem(STAGE_ACTIVE_KEY, JSON.stringify(picked));
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to auto-pick upcoming stage:', e);
+  }
   try {
     const raw = localStorage.getItem(STAGE_ACTIVE_KEY);
     if (raw) {
