@@ -466,33 +466,44 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
     masterGain.gain.setValueAtTime(0.0001, now);
   }
   const scaledVol = Math.min(0.55, volume / Math.sqrt(uniqueNotes.length));
-  safeRampToValue(masterGain.gain, scaledVol, now + 0.08);
+  safeRampToValue(masterGain.gain, scaledVol, now + 0.15);
 
   const filter = ctx.createBiquadFilter();
   filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(3000, now);
+  filter.frequency.setValueAtTime(2400, now);
   filter.connect(masterGain);
   masterGain.connect(getOutputNode(ctx));
 
   const oscillators = [];
 
+  // 모든 성부를 같은 '허밍' 음색으로 맞춰 하나로 섞이게 함.
+  // 저음은 순수 사인파면 휴대폰 스피커에서 거의 안 들리고 다른 악기처럼 따로 놀아서
+  // 배음(2·3·4배)을 더 실어 존재감을 맞추고, 높은 음은 살짝 줄여 균형을 맞춤.
   uniqueNotes.forEach((parsed) => {
-    const osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(parsed.freq, now);
-
-    const oscHarm = ctx.createOscillator();
-    oscHarm.type = 'sine';
-    oscHarm.frequency.setValueAtTime(parsed.freq * 2, now);
-    const harmGain = ctx.createGain();
-    harmGain.gain.setValueAtTime(0.2, now);
-    oscHarm.connect(harmGain);
-    harmGain.connect(filter);
-
-    osc.connect(filter);
-    osc.start(now);
-    oscHarm.start(now);
-    oscillators.push(osc, oscHarm);
+    const f = parsed.freq;
+    const isBass = f < 165;
+    const harmonics = isBass
+      ? [[1, 1], [2, 0.8], [3, 0.6], [4, 0.38], [5, 0.2]]
+      : [[1, 1], [2, 0.32], [3, 0.14]];
+    const harmSum = harmonics.reduce((s, [, g]) => s + g, 0);
+    const weight = (isBass ? 1.5 : f > 420 ? 0.72 : f > 300 ? 0.88 : 1) / harmSum * 1.5;
+    const voiceGain = ctx.createGain();
+    voiceGain.gain.setValueAtTime(weight, now);
+    voiceGain.connect(filter);
+    // 아주 약한 디튠(±3cent) 두 겹으로 합창처럼 부드럽게 섞음
+    for (const cents of [-3, 3]) {
+      for (const [mult, g] of harmonics) {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f * mult * Math.pow(2, cents / 1200), now);
+        const hg = ctx.createGain();
+        hg.gain.setValueAtTime(g * 0.5, now);
+        osc.connect(hg);
+        hg.connect(voiceGain);
+        osc.start(now);
+        oscillators.push(osc);
+      }
+    }
   });
 
   currentOscillators = oscillators;
