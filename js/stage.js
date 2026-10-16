@@ -1519,9 +1519,9 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
       playPitchSequence(noteItems, {
         keepOrder: true,
-        noteDuration: 900,
-        gapDuration: 160,
-        chordDuration: 2800,
+        noteDuration: 650,
+        gapDuration: 120,
+        chordDuration: 2000,
         onStep: (step) => {
           if (step.type === 'note' && step.item) {
             updatePitchPlayingUI({ ...step.item.parsed, part: step.item.part });
@@ -2012,13 +2012,27 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
             return;
           }
           clearStagePitchAutoStop();
-          const res = playChordStrings(notesList, 0.4, true, 3000);
-          activeOverviewElement = res ? chordBtn : null;
-          updateOverviewPitchUI(res);
-          if (res) {
-            scheduleStagePitchAutoStop(3000);
-          }
-        }, 'stage-overview-chord-btn', null, { title: '이 곡의 전체 파트 시작 화음 동시 재생 (3초 후 자동 종료, 빈 화면 터치 시 꺼짐)' });
+          stopPitch(true);
+          // 첫 음 순서대로 아르페지오 후 마지막에 2초 화음
+          const seqItems = pitchEntries.map(([part, noteStr]) => ({ part, noteStr, parsed: parseNoteString(noteStr), label: part })).filter(it => it.parsed);
+          activeOverviewElement = chordBtn;
+          updateOverviewPitchUI({ isChord: true });
+          playPitchSequence(seqItems, {
+            keepOrder: true,
+            noteDuration: 650,
+            gapDuration: 120,
+            chordDuration: 2000,
+            onStep: (step) => {
+              if (step.type === 'finish') {
+                activeOverviewElement = null;
+                updateOverviewPitchUI(null);
+              } else {
+                activeOverviewElement = chordBtn;
+                updateOverviewPitchUI(step.type === 'chord' ? { isChord: true } : { ...step.item?.parsed, part: step.item?.part });
+              }
+            }
+          });
+        }, 'stage-overview-chord-btn', null, { title: '이 곡의 첫 음을 순서대로 울린 뒤 2초 화음 (다시 누르면 정지)' });
         chordBtn.dataset.pitchTrigger = 'true';
         overviewPitchItems.push({ type: 'chord', el: chordBtn, notesList, songIndex: idx });
       }
