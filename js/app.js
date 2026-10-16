@@ -685,6 +685,14 @@ function upcomingStage() {
     .filter(({stage, date}) => date && date >= today && Array.isArray(stage.songs) && stage.songs.length)
     .sort((a, b) => a.date - b.date)[0] || null;
 }
+function orderedPitchItems(song) {
+  const order = Array.isArray(song.entryOrder) && song.entryOrder.length ? song.entryOrder : ['part2', 'part4', 'part1', 'part3'];
+  const rank = (k) => { const i = order.indexOf(k); return i === -1 ? order.length + (parseInt(k.slice(4), 10) || 0) : i; };
+  return Object.entries(song.startingPitches || {})
+    .filter(([k, v]) => /^part\d+$/.test(k) && parseNoteString(v))
+    .sort((a, b) => rank(a[0]) - rank(b[0]))
+    .map(([k, v]) => ({ partKey: k, noteStr: v, parsed: parseNoteString(v), label: `${PARTS[k] || k}${song.partNames?.[k] ? ` ${song.partNames[k]}` : ''}` }));
+}
 function startSetlistPractice(stage, index) {
   const ids = stage.songs.map(item => item.songId || item.id);
   state.setlist = {title: stage.eventTitle, ids};
@@ -709,17 +717,26 @@ function renderUpcomingStageCard() {
       el('span', {class: 'setlist-part', text: song ? (part ? `${PARTS[part] || part}${name ? ` · ${name}` : ''}` : '파트 선택') : '무대 전용'})
     ], () => startSetlistPractice(stage, i), 'setlist-item', null, {'aria-label': `${i + 1}번째 곡 ${song?.title || item.title || id} 연습`});
     // 곡별 첫 음 전체 화음 (공연 직전 빠르게 음 잡기)
-    const chordNotes = song ? Object.entries(song.startingPitches || {}).filter(([k, v]) => /^part\d+$/.test(k) && parseNoteString(v)).map(([, v]) => v) : [];
-    const chordBtn = chordNotes.length ? button([icon('music'), el('span', {text: '화음'})], () => {
-      const current = getCurrentPlaying();
-      if (current?.isChord && chordBtn.classList.contains('playing')) { stopPitch(true); return; }
+    // 첫 음 순서(악보 등장 순서 → 기본 2·4·1·3번)대로 아르페지오 후 마지막에 2초 화음
+    const seqItems = song ? orderedPitchItems(song) : [];
+    const chordBtn = seqItems.length ? button([icon('music'), el('span', {text: '화음'})], () => {
+      const wasMine = chordBtn.classList.contains('playing');
       document.querySelectorAll('.setlist-chord-btn.playing').forEach(n => n.classList.remove('playing'));
-      if (playChordStrings(chordNotes)) {
-        chordBtn.classList.add('playing');
-        toast(`🎶 ${song.title} 첫 음 화음 (${chordNotes.map(n => parseNoteString(n).displayNote).join(' · ')})`);
-        setTimeout(() => chordBtn.classList.remove('playing'), 3000);
-      }
-    }, 'setlist-chord-btn', null, {'aria-label': `${song.title} 첫 음 전체 화음 듣기`, title: '첫 음 전체 화음'}) : null;
+      if (isPitchSequencePlaying() || getCurrentPlaying()) { stopPitchSequence(); stopPitch(true); }
+      if (wasMine) return; // 재생 중 다시 누르면 정지
+      chordBtn.classList.add('playing');
+      playPitchSequence(seqItems, {
+        keepOrder: true,
+        noteDuration: 650,
+        gapDuration: 120,
+        chordDuration: 2000,
+        onStep: (step) => {
+          if (step.type === 'note') toast(`🎵 ${song.title} · ${step.index + 1}/${step.total} ${step.label} ${step.parsed.displayNote}`);
+          else if (step.type === 'chord') toast(`✨ ${song.title} 화음 (${step.notes.map(n => parseNoteString(n)?.displayNote || n).join(' · ')})`);
+          else if (step.type === 'finish') chordBtn.classList.remove('playing');
+        }
+      });
+    }, 'setlist-chord-btn', null, {'aria-label': `${song.title} 첫 음 순서대로 듣고 화음`, title: '첫 음 순서대로 + 화음'}) : null;
     return el('div', {class: 'setlist-row'}, practiceBtn, chordBtn);
   });
   return el('section', {class: 'upcoming-stage', 'aria-label': '다가오는 공연 연습'},
