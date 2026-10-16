@@ -2532,8 +2532,8 @@ function renderScores() {
       );
 
       const actions = el('div', {class: 'score-actions'},
-        button('📖 악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
-        button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
+        button('악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
+        button('다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
         sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank'), 'button ghost small') : null,
         song ? button('연습실 ↗', () => openSong(song), 'button ghost small') : null,
         sc.isCustom ? button('삭제', async () => {
@@ -2898,7 +2898,7 @@ function renderEducation() {
           ? button('📥 PPT 다운로드', () => openOrDownloadEducation(item, true), 'button primary small', 'download')
           : button('📖 자료 열기', () => openOrDownloadEducation(item, false), 'button primary small', 'external'),
         (item.blobUrl || item.fileUrl) && fmt !== 'ppt'
-          ? button('📥 다운로드', () => openOrDownloadEducation(item, true), 'button secondary small', 'download')
+          ? button('다운로드', () => openOrDownloadEducation(item, true), 'button secondary small', 'download')
           : null,
         item.isCustom ? button('삭제', async () => {
           if (confirm(`'${item.title}' 교육 자료를 삭제할까요?`)) {
@@ -4704,8 +4704,8 @@ function renderDetail(song) {
             )
           ),
           el('div', {class: 'score-actions', style: 'margin-top: 8px;'},
-            button('📖 악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
-            button('📥 다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
+            button('악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
+            button('다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
             sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank'), 'button ghost small') : null
           )
         );
