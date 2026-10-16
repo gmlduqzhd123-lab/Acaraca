@@ -3451,13 +3451,11 @@ body.in-pocket-mode {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    flex-wrap: nowrap;
+    /* 숨은 가로 스크롤 대신 줄바꿈: 휴대폰에서 버튼이 화면 밖에 숨지 않게 */
+    flex-wrap: wrap;
     gap: 8px;
     width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     padding: 2px 1px 6px;
-    scrollbar-width: none;
   }
   .stage-header-actions::-webkit-scrollbar {
     display: none;
