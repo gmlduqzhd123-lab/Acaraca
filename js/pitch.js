@@ -465,7 +465,7 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
   if (typeof masterGain.gain.setValueAtTime === 'function') {
     masterGain.gain.setValueAtTime(0.0001, now);
   }
-  const scaledVol = Math.min(0.55, volume / Math.sqrt(uniqueNotes.length));
+  const scaledVol = Math.min(0.3, (volume * 0.66) / Math.pow(uniqueNotes.length, 0.62));
   safeRampToValue(masterGain.gain, scaledVol, now + 0.15);
 
   const filter = ctx.createBiquadFilter();
@@ -477,33 +477,30 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
   const oscillators = [];
 
   // 모든 성부를 같은 '허밍' 음색으로 맞춰 하나로 섞이게 함.
-  // 저음은 순수 사인파면 휴대폰 스피커에서 거의 안 들리고 다른 악기처럼 따로 놀아서
-  // 배음(2·3·4배)을 더 실어 존재감을 맞추고, 높은 음은 살짝 줄여 균형을 맞춤.
-  uniqueNotes.forEach((parsed) => {
+  // 음마다 배음을 담은 파형(PeriodicWave) 오실레이터 1개만 사용 → 휴대폰에서도 가볍고 끊김·떨림 없음
+  // 저음은 배음을 더 실어 휴대폰 스피커에서도 들리게, 높은 음은 살짝 줄여 균형을 맞춤
+  uniqueNotes.forEach((parsed, idx) => {
     const f = parsed.freq;
     const isBass = f < 165;
-    const harmonics = isBass
-      ? [[1, 1], [2, 0.8], [3, 0.6], [4, 0.38], [5, 0.2]]
-      : [[1, 1], [2, 0.32], [3, 0.14]];
-    const harmSum = harmonics.reduce((s, [, g]) => s + g, 0);
-    const weight = (isBass ? 1.5 : f > 420 ? 0.72 : f > 300 ? 0.88 : 1) / harmSum * 1.5;
+    const harmonics = isBass ? [1, 0.8, 0.6, 0.38, 0.2] : [1, 0.32, 0.14];
+    const harmSum = harmonics.reduce((s, g) => s + g, 0);
+    const weight = (isBass ? 1.3 : f > 420 ? 0.72 : f > 300 ? 0.88 : 1) / harmSum * 1.2;
     const voiceGain = ctx.createGain();
     voiceGain.gain.setValueAtTime(weight, now);
     voiceGain.connect(filter);
-    // 아주 약한 디튠(±3cent) 두 겹으로 합창처럼 부드럽게 섞음
-    for (const cents of [-3, 3]) {
-      for (const [mult, g] of harmonics) {
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(f * mult * Math.pow(2, cents / 1200), now);
-        const hg = ctx.createGain();
-        hg.gain.setValueAtTime(g * 0.5, now);
-        osc.connect(hg);
-        hg.connect(voiceGain);
-        osc.start(now);
-        oscillators.push(osc);
-      }
+    const osc = ctx.createOscillator();
+    if (typeof ctx.createPeriodicWave === 'function') {
+      const real = new Float32Array(harmonics.length + 1);
+      const imag = new Float32Array([0, ...harmonics]);
+      osc.setPeriodicWave(ctx.createPeriodicWave(real, imag, { disableNormalization: true }));
+    } else {
+      osc.type = 'sine';
     }
+    osc.frequency.setValueAtTime(f, now);
+    osc.connect(voiceGain);
+    // 모든 음이 같은 위상으로 동시에 시작하면 순간 최고치가 겹쳐 깨지므로 수 ms씩 엇갈려 시작
+    osc.start(now + idx * 0.0037);
+    oscillators.push(osc);
   });
 
   currentOscillators = oscillators;
