@@ -78,6 +78,49 @@ function getAudioContext() {
   return audioCtx;
 }
 
+// 첫 음 전체 볼륨: 기존 대비 3배로 키움. 디지털 최대치를 넘지 않도록
+// 부드러운 포화(배음 추가 → 휴대폰 스피커에서 더 크게 들림) + 리미터를 거쳐 출력
+const OUTPUT_BOOST = 3.0;
+function softClipCurve(amount = 3.2, n = 2048) {
+  const curve = new Float32Array(n);
+  const norm = Math.tanh(amount);
+  for (let i = 0; i < n; i++) {
+    const x = (i / (n - 1)) * 2 - 1;
+    curve[i] = Math.tanh(amount * x) / norm;
+  }
+  return curve;
+}
+function getOutputNode(ctx) {
+  if (ctx.__acaOutput) return ctx.__acaOutput;
+  let node = ctx.destination;
+  const set = (param, v) => { if (!param) return; if (typeof param.setValueAtTime === 'function') param.setValueAtTime(v, ctx.currentTime); else param.value = v; };
+  try {
+    if (typeof ctx.createDynamicsCompressor === 'function') {
+      const limiter = ctx.createDynamicsCompressor();
+      set(limiter.threshold, -1.5);
+      set(limiter.knee, 1);
+      set(limiter.ratio, 20);
+      set(limiter.attack, 0.002);
+      set(limiter.release, 0.1);
+      limiter.connect(node);
+      node = limiter;
+    }
+    if (typeof ctx.createWaveShaper === 'function') {
+      const shaper = ctx.createWaveShaper();
+      shaper.curve = softClipCurve();
+      shaper.oversample = '4x';
+      shaper.connect(node);
+      node = shaper;
+    }
+    const boost = ctx.createGain();
+    set(boost.gain, OUTPUT_BOOST);
+    boost.connect(node);
+    node = boost;
+  } catch {}
+  ctx.__acaOutput = node;
+  return node;
+}
+
 export function subscribePitchState(callback) {
   if (typeof callback !== 'function') return () => {};
   stateListeners.add(callback);
@@ -284,7 +327,7 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
   gain2.connect(filter);
   gain3.connect(filter);
   filter.connect(masterGain);
-  masterGain.connect(ctx.destination);
+  masterGain.connect(getOutputNode(ctx));
 
   osc1.start(now);
   osc2.start(now);
@@ -445,7 +488,7 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
   filter.type = 'lowpass';
   filter.frequency.setValueAtTime(3000, now);
   filter.connect(masterGain);
-  masterGain.connect(ctx.destination);
+  masterGain.connect(getOutputNode(ctx));
 
   const oscillators = [];
 
