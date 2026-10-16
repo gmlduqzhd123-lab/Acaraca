@@ -78,18 +78,9 @@ function getAudioContext() {
   return audioCtx;
 }
 
-// 첫 음 전체 볼륨: 기존 대비 3배로 키움. 디지털 최대치를 넘지 않도록
-// 부드러운 포화(배음 추가 → 휴대폰 스피커에서 더 크게 들림) + 리미터를 거쳐 출력
-const OUTPUT_BOOST = 3.0;
-function softClipCurve(amount = 3.2, n = 2048) {
-  const curve = new Float32Array(n);
-  const norm = Math.tanh(amount);
-  for (let i = 0; i < n; i++) {
-    const x = (i / (n - 1)) * 2 - 1;
-    curve[i] = Math.tanh(amount * x) / norm;
-  }
-  return curve;
-}
+// 첫 음 전체 볼륨: 찢어짐(포화) 없이 깨끗하게 키움.
+// 단음 최고치가 약 0.8이 되도록 증폭하고, 화음 등 겹친 소리는 리미터가 부드럽게 눌러 줌
+const OUTPUT_BOOST = 1.45;
 function getOutputNode(ctx) {
   if (ctx.__acaOutput) return ctx.__acaOutput;
   let node = ctx.destination;
@@ -97,20 +88,13 @@ function getOutputNode(ctx) {
   try {
     if (typeof ctx.createDynamicsCompressor === 'function') {
       const limiter = ctx.createDynamicsCompressor();
-      set(limiter.threshold, -1.5);
-      set(limiter.knee, 1);
-      set(limiter.ratio, 20);
+      set(limiter.threshold, -6);
+      set(limiter.knee, 6);
+      set(limiter.ratio, 12);
       set(limiter.attack, 0.002);
-      set(limiter.release, 0.1);
+      set(limiter.release, 0.25);
       limiter.connect(node);
       node = limiter;
-    }
-    if (typeof ctx.createWaveShaper === 'function') {
-      const shaper = ctx.createWaveShaper();
-      shaper.curve = softClipCurve();
-      shaper.oversample = '4x';
-      shaper.connect(node);
-      node = shaper;
     }
     const boost = ctx.createGain();
     set(boost.gain, OUTPUT_BOOST);
