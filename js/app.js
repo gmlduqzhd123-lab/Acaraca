@@ -465,16 +465,18 @@ function refreshChrome() {
   const moreMenu = el('div', {class: 'topbar-more-menu', hidden: true, role: 'menu'});
   const closeMore = () => { moreMenu.hidden = true; moreBtn.setAttribute('aria-expanded', 'false'); };
   const extra = (label, action, iconName, attrs = {}) => button(label, () => { closeMore(); action(); }, 'button secondary small topbar-extra', iconName, attrs);
+  // 앱설치·QR은 휴대폰에서도 ⋯ 메뉴에 숨기지 않고 맨 윗줄(설정 버튼 옆)에 바로 보이게 함
+  const keyBtn = (label, action, iconName, attrs) => button(label, action, 'button secondary small topbar-key', iconName, attrs);
   const extras = [
-    extra('앱설치', () => openInstallDialog(), 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
-    extra('📱 QR', () => window.YSQr?.open(), null, {'aria-label': 'QR 코드로 접속', 'data-qr-btn': ''}),
+    keyBtn('앱설치', () => openInstallDialog(), 'download', {'aria-label': 'AcaRaca 앱 설치 안내'}),
+    keyBtn('📱 QR', () => window.YSQr?.open(), null, {'aria-label': 'QR 코드로 접속', 'data-qr-btn': ''}),
     extra('🎤 무대', () => navigate({tab: 'stage', view: 'live'}), 'stage', {'aria-label': '무대 전용 큐시트 모드'}),
     extra('설명서', () => openGuideDialog(), 'book', {'aria-label': 'AcaRaca 연습실 사용 설명서'}),
     extra('+ 곡 추가', () => openAdmin('./admin.html?action=new'), null, {'aria-label': '새 곡 및 영상 추가'})
   ];
   const moreBtn = button('', () => {
     const open = moreMenu.hidden;
-    if (open) moreMenu.replaceChildren(...extras.map(b => { const c = b.cloneNode(true); c.onclick = () => { closeMore(); b.click(); }; c.classList.remove('topbar-extra'); return c; }));
+    if (open) moreMenu.replaceChildren(...extras.filter(b => !b.classList.contains('topbar-key')).map(b => { const c = b.cloneNode(true); c.onclick = () => { closeMore(); b.click(); }; c.classList.remove('topbar-extra'); return c; }));
     moreMenu.hidden = !open; moreBtn.setAttribute('aria-expanded', String(open));
   }, 'icon-button topbar-more-btn', 'more', {'aria-label': '더보기 메뉴', 'aria-expanded': 'false', 'aria-haspopup': 'menu'});
   // 바깥 클릭 시 닫기: 화면이 바뀔 때마다 리스너가 쌓이지 않도록 한 번만 등록하고 현재 메뉴만 참조
@@ -488,7 +490,7 @@ function refreshChrome() {
   }
   document.getElementById('topbar-actions').replaceChildren(
     extras[0], extras[1], extras[2], extras[3],
-    button('첫 음 잡기', () => openPitchPipe(), 'button secondary small', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
+    button('첫 음 잡기', () => openPitchPipe(), 'button secondary small topbar-pitch', 'music', {'aria-label': '첫 음 잡기 (피치파이프)'}),
     extras[4],
     button('', () => { if (!document.getElementById('song-search')) navigate({tab: 'songs'}); document.getElementById('song-search')?.focus(); }, 'icon-button', 'search', {'aria-label': '곡 검색'}),
     button('', () => navigate({tab: 'settings'}), 'icon-button desktop-settings-btn', 'settings', {'aria-label': '설정 열기'}),
