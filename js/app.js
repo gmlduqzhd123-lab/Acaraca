@@ -4,7 +4,7 @@ import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
 import {el, icon, button, toast, cover, emptyState} from './ui.js';
-import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, getCurrentSequence, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying} from './pitch.js';
+import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, getCurrentSequence, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, pitchPipeInfo, playPitchPipe} from './pitch.js';
 import {
   loadPerformances,
   loadRehearsals,
@@ -739,7 +739,11 @@ function renderUpcomingStageCard() {
         }
       });
     }, 'setlist-chord-btn', null, {'aria-label': `${song.title} 첫 음 순서대로 듣고 화음`, title: '첫 음 순서대로 + 화음'}) : null;
-    return el('div', {class: 'setlist-row'}, practiceBtn, chordBtn);
+    const pp = pitchPipeInfo(song?.pitchPipe);
+    const ppBtn = pp ? button([el('span', {class: 'pp-label', text: '피치파이프'}), el('strong', {text: pp.display}), el('span', {class: 'pp-kor', text: pp.korean})], () => {
+      if (playPitchPipe(pp.note)) toast(`🎵 ${song.title} 피치파이프 대표음 ${pp.display} (${pp.korean})`);
+    }, 'pitchpipe-badge', null, {'aria-label': `${song.title} 피치파이프 대표음 ${pp.display} ${pp.korean} 듣기`, title: '무대에서 피치파이프로 불어 줄 대표음'}) : null;
+    return el('div', {class: 'setlist-row'}, practiceBtn, ppBtn, chordBtn);
   });
   return el('section', {class: 'upcoming-stage', 'aria-label': '다가오는 공연 연습'},
     el('div', {class: 'upcoming-stage-head'},

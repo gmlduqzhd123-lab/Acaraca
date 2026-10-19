@@ -709,3 +709,20 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
 }
 
 
+
+/** 피치파이프 대표음 표시용 정보 (옥타브 없이) */
+export function pitchPipeInfo(note) {
+  const parsed = typeof note === 'string' && note ? parseNoteString(`${note}4`) : null;
+  if (!parsed) return null;
+  return {
+    note,
+    display: parsed.displayNote.replace(/\d+$/, ''),
+    korean: parsed.koreanNote.replace(/\d+$/, ''),
+  };
+}
+
+/** 피치파이프 대표음 1.5초 재생 */
+export function playPitchPipe(note) {
+  if (isPitchSequencePlaying()) stopPitchSequence();
+  return playNoteString(`${note}4`, 0.5, true, 1500);
+}
