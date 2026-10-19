@@ -593,16 +593,15 @@ export const DEFAULT_STAGE_HISTORY = [
     venue: '광주교육연수원',
     notes: '2026 전교조 전남지부 참교육실천대회 찬조 공연 큐시트 (장소: 광주교육연수원)',
     updatedAt: 1792836000000,
+    revision: 2,
     currentIndex: 0,
     songs: [
+      { songId: 'love-song-medley', title: '러브송 메들리', note: '오프닝 메들리', commentTone: 'story' },
+      { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 그루브', commentTone: 'wit' },
       { songId: 'in-your-arms', title: '그대 내 품에', note: '감성 발라드', commentTone: 'story' },
       { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
-      { songId: 'love-song-medley', title: '러브송 메들리', note: '로맨틱 앙상블', commentTone: 'story' },
-      { songId: 'isnt-she-lovely', title: 'Isn\'t She Lovely', note: '소울풀 그루브', commentTone: 'wit' },
-      { songId: 'lets-travel', title: '여행을 떠나요', note: '신나는 에너지', commentTone: 'wit' },
       { songId: 'short-hair', title: '단발머리', note: '경쾌한 비트', commentTone: 'wit' },
-      { songId: 'stand-by-me', title: 'Stand By Me (스탠바이미)', note: '따뜻한 위로', commentTone: 'story' },
-      { songId: 'the-lion-sleeps-tonight', title: 'The Lion Sleeps Tonight', note: '위모웨 피날레', commentTone: 'wit' }
+      { songId: 'lets-travel', title: '여행을 떠나요', note: '피날레 호응 유도', commentTone: 'wit' }
     ]
   },
   {
