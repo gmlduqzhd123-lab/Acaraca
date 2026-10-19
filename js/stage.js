@@ -18,7 +18,9 @@ import {
   isPitchSequencePlaying,
   playChordStrings,
   subscribePitchState,
-  getCurrentPlaying
+  getCurrentPlaying,
+  pitchPipeInfo,
+  playPitchPipe
 } from './pitch.js';
 import { requestWakeLock, releaseWakeLock, isWakeLockActive } from './backgroundPlay.js';
 import { createPlayer } from './player.js';
@@ -509,6 +511,7 @@ export const STAGE_EXTRA_SONG_METADATA = {
     category: 'Pop / Soul',
     arrangement: '혼성 5부',
     musicalKey: 'E Major',
+    pitchPipe: 'E',
     difficulty: 2,
     status: 'practice',
     tags: ['무대 레퍼토리', '소울', '명곡'],
@@ -538,6 +541,7 @@ export const STAGE_EXTRA_SONG_METADATA = {
     category: 'Pop / World',
     arrangement: '혼성 5부',
     musicalKey: 'A Major',
+    pitchPipe: 'E',
     difficulty: 2,
     status: 'practice',
     tags: ['무대 레퍼토리', '아카펠라', '라이온킹'],
@@ -1482,10 +1486,19 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     partButtons = [];
     const pitchEntries = getSongStartingPitchEntries(songData);
 
+    const ppInfo = pitchPipeInfo(songData?.pitchPipe);
+    const ppChip = ppInfo ? el('button', {
+      type: 'button',
+      class: 'stage-pitchpipe-chip',
+      'data-pitch-trigger': 'true',
+      title: '무대에서 피치파이프로 불어 줄 대표음',
+      onclick: (e) => { e.stopPropagation(); clearStagePitchAutoStop(); if (playPitchPipe(ppInfo.note)) toast(`🎵 피치파이프 대표음 ${ppInfo.display} (${ppInfo.korean})`); }
+    }, `🎵 피치파이프 ${ppInfo.display} (${ppInfo.korean})`) : null;
     const header = el('div', { class: 'stage-pitch-header' },
       el('div', { class: 'stage-pitch-title' },
         icon('music'),
-        '파트별 첫 음 조율'
+        '파트별 첫 음 조율',
+        ppChip
       ),
       button('정지 ⏹', () => {
         clearStagePitchAutoStop();
@@ -2036,9 +2049,18 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
         overviewPitchItems.push({ type: 'chord', el: chordBtn, notesList, songIndex: idx });
       }
 
+      const ovPp = pitchPipeInfo(songData?.pitchPipe);
+      const ovPpBtn = ovPp ? el('button', {
+        type: 'button',
+        class: 'stage-overview-pitchpipe',
+        'data-pitch-trigger': 'true',
+        title: '무대에서 피치파이프로 불어 줄 대표음',
+        onclick: (e) => { e.stopPropagation(); clearStagePitchAutoStop(); if (playPitchPipe(ovPp.note)) toast(`🎵 피치파이프 대표음 ${ovPp.display} (${ovPp.korean})`); }
+      }, `🎵 피치파이프 ${ovPp.display} (${ovPp.korean})`) : null;
       const pitchBar = el('div', { class: 'stage-overview-pitch-bar' },
         el('span', { class: 'stage-overview-pitch-label' }, icon('music'), document.createTextNode('첫 음')),
         pitchChipsWrap,
+        ovPpBtn,
         chordBtn
       );
 

@@ -87,7 +87,8 @@
         "part3": "선영",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "pitchPipe": "F"
     },
     {
       "id": "bohemian-rhapsody-6",
@@ -180,7 +181,8 @@
         "part3": "선영",
         "part4": "명현",
         "part5": "재우"
-      }
+      },
+      "pitchPipe": "Bb"
     },
     {
       "id": "mujogeon",
@@ -255,7 +257,8 @@
         "part2": "용석",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "F#"
     },
     {
       "id": "short-hair",
@@ -335,7 +338,8 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "G"
     },
     {
       "id": "disney-medley-7",
@@ -443,7 +447,8 @@
         "part5": "현",
         "part6": "명현",
         "part7": "용석"
-      }
+      },
+      "pitchPipe": "F"
     },
     {
       "id": "disney-medley",
@@ -526,7 +531,8 @@
         "bass": "F2",
         "full": "F3"
       },
-      "musicalKey": "F Major"
+      "musicalKey": "F Major",
+      "pitchPipe": "F"
     },
     {
       "id": "first-impression",
@@ -601,7 +607,8 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "A"
     },
     {
       "id": "tobacco-shop-girl",
@@ -670,7 +677,8 @@
         "bass": "G#2",
         "full": "D3"
       },
-      "musicalKey": "E Major"
+      "musicalKey": "E Major",
+      "pitchPipe": "G#"
     },
     {
       "id": "aloha",
@@ -745,7 +753,8 @@
         "part2",
         "part4",
         "part1"
-      ]
+      ],
+      "pitchPipe": "D"
     },
     {
       "id": "tayo-pororo",
@@ -823,7 +832,8 @@
       ],
       "partNames": {
         "part1": "용석"
-      }
+      },
+      "pitchPipe": "G"
     },
     {
       "id": "run-the-sky",
@@ -905,7 +915,8 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "Eb"
     },
     {
       "id": "acaroom-opening",
@@ -995,7 +1006,8 @@
         "part1",
         "part3",
         "part4"
-      ]
+      ],
+      "pitchPipe": "E"
     },
     {
       "id": "speechless",
@@ -1095,7 +1107,8 @@
         "part4": "현",
         "part5": "명현",
         "part6": "용석"
-      }
+      },
+      "pitchPipe": "D"
     },
     {
       "id": "in-your-arms",
@@ -1186,7 +1199,8 @@
         "part3": "희엽",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "pitchPipe": "C#"
     },
     {
       "id": "happy-school",
@@ -1261,7 +1275,8 @@
         "bass": "F3",
         "full": "F4"
       },
-      "musicalKey": "F Major"
+      "musicalKey": "F Major",
+      "pitchPipe": "F"
     },
     {
       "id": "go-to-school",
@@ -1344,7 +1359,8 @@
         "part1",
         "part3",
         "part5"
-      ]
+      ],
+      "pitchPipe": "G"
     },
     {
       "id": "well-done-today",
@@ -1443,7 +1459,8 @@
         "part4": "현",
         "part5": "명현",
         "part6": "용석"
-      }
+      },
+      "pitchPipe": "A"
     },
     {
       "id": "bohemian-rhapsody",
@@ -1541,7 +1558,8 @@
         "part3": "선영",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "pitchPipe": "F"
     },
     {
       "id": "daft-punk",
@@ -1618,7 +1636,8 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "D"
     },
     {
       "id": "dansori",
@@ -1687,7 +1706,8 @@
         "bass": "G3",
         "full": "G4"
       },
-      "musicalKey": "G Major"
+      "musicalKey": "G Major",
+      "pitchPipe": "G"
     },
     {
       "id": "isnt-she-lovely",
@@ -1768,7 +1788,8 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "E"
     },
     {
       "id": "lets-travel",
@@ -1867,7 +1888,8 @@
         "part2": "희엽",
         "part3": "선영",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "Eb"
     },
     {
       "id": "love-song-medley",
@@ -1942,7 +1964,8 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "pitchPipe": "F#"
     },
     {
       "id": "l-o-v-e",
@@ -2018,7 +2041,8 @@
         "bass": "G2",
         "full": "G3"
       },
-      "musicalKey": "G Major"
+      "musicalKey": "G Major",
+      "pitchPipe": "G"
     },
     {
       "id": "old-pop-medley",
@@ -2102,7 +2126,8 @@
         "part3": "희엽",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "pitchPipe": "E"
     },
     {
       "id": "beautiful-world",
@@ -2208,7 +2233,8 @@
         "part3",
         "part5",
         "part4"
-      ]
+      ],
+      "pitchPipe": "Ab"
     },
     {
       "id": "butterfly",
@@ -2309,7 +2335,8 @@
         "bass": "Ab3",
         "full": "Ab3"
       },
-      "musicalKey": "Eb Major"
+      "musicalKey": "Eb Major",
+      "pitchPipe": "Ab"
     },
     {
       "id": "cherry-blossom-ending",
@@ -2393,7 +2420,8 @@
         "part1",
         "part3",
         "part5"
-      ]
+      ],
+      "pitchPipe": "D"
     },
     {
       "id": "love-love",
@@ -2498,7 +2526,8 @@
         "part3",
         "part1",
         "part2"
-      ]
+      ],
+      "pitchPipe": "F#"
     },
     {
       "id": "carol-medley",
@@ -2547,7 +2576,8 @@
         "bass": "E3",
         "full": "E4"
       },
-      "musicalKey": "B Major"
+      "musicalKey": "B Major",
+      "pitchPipe": "E"
     },
     {
       "id": "same-place",
@@ -2592,7 +2622,8 @@
         "bass": "E3",
         "full": "G4"
       },
-      "musicalKey": "G Major"
+      "musicalKey": "G Major",
+      "pitchPipe": "G"
     },
     {
       "id": "would-be-good",
@@ -2641,7 +2672,8 @@
         "bass": "Ab2",
         "full": "Ab3"
       },
-      "musicalKey": "Ab Major"
+      "musicalKey": "Ab Major",
+      "pitchPipe": "Ab"
     },
     {
       "id": "ditto",
@@ -2687,7 +2719,8 @@
         "bass": "F#2",
         "full": "F#3"
       },
-      "musicalKey": "F# Minor"
+      "musicalKey": "F# Minor",
+      "pitchPipe": "F#"
     }
   ]
 }

@@ -3914,3 +3914,16 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
 @media (max-width: 340px) {
   header.topbar .topbar-pitch .icon { display: none; }
 }
+
+/* 피치파이프 대표음 배지 (셋리스트·무대 큐시트) */
+.pitchpipe-badge { flex: none; width: 64px; border-radius: 12px; border: 1px dashed var(--primary); background: var(--surface); color: var(--primary); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer; padding: 6px 2px; font: inherit; line-height: 1.15; }
+.pitchpipe-badge .pp-label { font-size: 9.5px; font-weight: 700; opacity: .75; letter-spacing: -.2px; }
+.pitchpipe-badge strong { font-size: 18px; font-weight: 800; }
+.pitchpipe-badge .pp-kor { font-size: 11px; font-weight: 600; opacity: .85; }
+.pitchpipe-badge:active { background: var(--primary); color: #fff; }
+.stage-overview-pitchpipe { display: inline-flex; align-items: center; gap: 4px; border: 1px dashed #2dd4bf; border-radius: 999px; padding: 4px 10px; background: rgba(45,212,191,.1); color: #5eead4; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.stage-pitchpipe-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed #2dd4bf; border-radius: 999px; padding: 6px 12px; background: rgba(45,212,191,.12); color: #5eead4; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+@media (max-width: 400px) {
+  .pitchpipe-badge { width: 56px; }
+  .pitchpipe-badge strong { font-size: 16px; }
+}
