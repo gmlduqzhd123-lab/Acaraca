@@ -93,16 +93,14 @@ for (const dummyId of ['stage-2026-spring', 'stage-2025-busking', 'stage-2024-su
 assert.strictEqual(DEFAULT_STAGE_HISTORY[0].id, 'stage-2026-jeonnam', '1st should be 10.24 Jeonnam');
 assert.strictEqual(DEFAULT_STAGE_HISTORY[0].date, '2026.10.24', '1st date matches');
 assert.strictEqual(DEFAULT_STAGE_HISTORY[0].venue, '광주교육연수원', '1st venue matches');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[0].songs.length, 8, 'Jeonnam performance must have 8 songs');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[0].songs.length, 6, 'Jeonnam performance must have 6 songs');
 const expectedJeonnamSongIds = [
-  'in-your-arms',
-  'old-pop-medley',
   'love-song-medley',
   'isnt-she-lovely',
-  'lets-travel',
+  'in-your-arms',
+  'old-pop-medley',
   'short-hair',
-  'stand-by-me',
-  'the-lion-sleeps-tonight'
+  'lets-travel'
 ];
 assert.deepStrictEqual(DEFAULT_STAGE_HISTORY[0].songs.map(s => s.songId), expectedJeonnamSongIds);
 
