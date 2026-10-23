@@ -207,6 +207,7 @@ export function isPitchPlaying() {
  */
 export function stopPitch(cancelSequence = true) {
   clearSinglePitchTimer();
+  stopFallbackAudio();
   if (cancelSequence) {
     if (sequenceTimer) {
       clearTimeout(sequenceTimer);
@@ -265,9 +266,89 @@ export function stopPitch(cancelSequence = true) {
  * If the exact same pitch is already playing, it will stop it (toggle behavior).
  * Auto-stops after `duration` ms (default 3000ms = 3초). Set duration=0 for indefinite.
  */
+// ───────────────────────────────────────────────────────────────
+// 인앱 브라우저(카카오톡·네이버·인스타그램 등)나 Web Audio가 깨어나지 않는 환경을 위한 대체 재생.
+// 첫 음을 즉석에서 WAV 파일로 만들어 일반 <audio>로 재생한다 (터치 직후 바로 재생되어 막히지 않음).
+// ───────────────────────────────────────────────────────────────
+const IN_APP_UA = /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|; wv\)/i;
+let webAudioBroken = false;
+try { webAudioBroken = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('aca_webaudio_broken') === '1'; } catch {}
+let fallbackAudio = null;
+
+function shouldUseFallback() {
+  if (typeof window === 'undefined') return false;
+  if (!(window.AudioContext || window.webkitAudioContext)) return true;
+  if (webAudioBroken) return true;
+  return typeof navigator !== 'undefined' && IN_APP_UA.test(navigator.userAgent || '');
+}
+function markWebAudioBrokenIfSilent(ctx) {
+  if (!ctx || typeof setTimeout === 'undefined') return;
+  setTimeout(() => {
+    if (ctx.state && ctx.state !== 'running' && ctx.state !== 'closed') {
+      webAudioBroken = true;
+      try { sessionStorage.setItem('aca_webaudio_broken', '1'); } catch {}
+    }
+  }, 400);
+}
+function stopFallbackAudio() {
+  if (!fallbackAudio) return;
+  try { fallbackAudio.pause(); } catch {}
+  fallbackAudio = null;
+}
+// voices: [{ freq, weight, harmonics: [h1, h2, ...] }]
+function playFallbackTones(voices, durationMs) {
+  if (typeof window === 'undefined' || typeof Audio === 'undefined') return false;
+  stopFallbackAudio();
+  const rate = 22050;
+  const dur = Math.min(Math.max(durationMs || 3000, 300), 6000) / 1000;
+  const n = Math.floor(rate * (dur + 0.15));
+  const data = new Float32Array(n);
+  const attack = 0.03 * rate, release = 0.15 * rate, end = Math.floor(dur * rate);
+  voices.forEach((v, vi) => {
+    const offset = Math.floor(vi * 0.0037 * rate);
+    for (let i = offset; i < n; i++) {
+      const tt = (i - offset) / rate;
+      let s = 0;
+      v.harmonics.forEach((h, k) => { if (h) s += h * Math.sin(2 * Math.PI * v.freq * (k + 1) * tt); });
+      let env = 1;
+      if (i - offset < attack) env = (i - offset) / attack;
+      if (i > end) env *= Math.max(0, 1 - (i - end) / release);
+      data[i] += s * v.weight * env;
+    }
+  });
+  let peak = 0;
+  for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(data[i]));
+  const scale = peak > 0 ? 0.75 / peak : 0;
+  const buf = new ArrayBuffer(44 + n * 2);
+  const dv = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+  dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+  w(36, 'data'); dv.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) dv.setInt16(44 + i * 2, Math.max(-1, Math.min(1, data[i] * scale)) * 32767, true);
+  const url = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  const audio = new Audio(url);
+  audio.volume = 1;
+  audio.addEventListener('ended', () => { URL.revokeObjectURL(url); if (fallbackAudio === audio) fallbackAudio = null; }, { once: true });
+  fallbackAudio = audio;
+  const pr = audio.play();
+  if (pr && typeof pr.catch === 'function') pr.catch(() => {});
+  return true;
+}
+function chordVoices(notes) {
+  return notes.map((p) => {
+    const isBass = p.freq < 165;
+    const harmonics = isBass ? [1, 0.8, 0.6, 0.38, 0.2] : [1, 0.32, 0.14];
+    const sum = harmonics.reduce((s, g) => s + g, 0);
+    return { freq: p.freq, harmonics, weight: (isBass ? 1.3 : p.freq > 420 ? 0.72 : p.freq > 300 ? 0.88 : 1) / sum };
+  });
+}
+
 export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = true, duration = DEFAULT_PITCH_DURATION, meta = null) {
-  const ctx = getAudioContext();
-  if (!ctx) return null;
+  const useFallback = shouldUseFallback();
+  const ctx = useFallback ? null : getAudioContext();
+  if (!ctx && !useFallback) return null;
 
   // Toggle off if clicking the currently playing note
   if (currentPlaying && !currentPlaying.isChord && currentPlaying.semitone === semitone && currentPlaying.octave === octave) {
@@ -281,6 +362,11 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
 
   const noteInfo = NOTES.find((n) => n.semitone === semitone) || NOTES[0];
   const freq = getNoteFrequency(semitone, octave);
+
+  if (useFallback) {
+    playFallbackTones([{ freq, weight: 1, harmonics: [1, 0.28, 0.12] }], duration > 0 ? duration : 3000);
+    return finishPitchStart(semitone, octave, noteInfo, freq, duration, meta);
+  }
 
   const now = ctx.currentTime;
   const masterGain = ctx.createGain();
@@ -326,6 +412,11 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
   currentOscillators = [osc1, osc2, osc3];
   currentGainNode = masterGain;
 
+  markWebAudioBrokenIfSilent(ctx);
+  return finishPitchStart(semitone, octave, noteInfo, freq, duration, meta);
+}
+
+function finishPitchStart(semitone, octave, noteInfo, freq, duration, meta) {
   currentPlaying = {
     isChord: false,
     semitone,
@@ -438,8 +529,9 @@ export function playNoteString(noteStr, volume = 0.5, cancelSequence = true, dur
  * Auto-stops after `duration` ms (default 3000ms = 3초). Set duration=0 for indefinite.
  */
 export function playChordStrings(notesList, volume = 0.38, cancelSequence = true, duration = DEFAULT_PITCH_DURATION) {
-  const ctx = getAudioContext();
-  if (!ctx) return null;
+  const useFallback = shouldUseFallback();
+  const ctx = useFallback ? null : getAudioContext();
+  if (!ctx && !useFallback) return null;
 
   if (currentPlaying && currentPlaying.isChord) {
     stopPitch(cancelSequence);
@@ -464,6 +556,22 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
       seen.add(key);
       uniqueNotes.push(item);
     }
+  }
+
+  if (useFallback) {
+    playFallbackTones(chordVoices(uniqueNotes), duration > 0 ? duration : 3000);
+    currentOscillators = [];
+    currentGainNode = null;
+    currentPlaying = {
+      isChord: true,
+      notes: uniqueNotes.map((p) => p.displayNote),
+      label: `화음 (${uniqueNotes.map((p) => p.displayNote).join(' · ')})`,
+    };
+    if (duration > 0) {
+      singlePitchTimer = setTimeout(() => { singlePitchTimer = null; stopPitch(false); }, duration);
+    }
+    notifyStateChange();
+    return currentPlaying;
   }
 
   const now = ctx.currentTime;
@@ -511,6 +619,7 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
 
   currentOscillators = oscillators;
   currentGainNode = masterGain;
+  markWebAudioBrokenIfSilent(ctx);
 
   currentPlaying = {
     isChord: true,
