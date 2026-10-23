@@ -87,6 +87,21 @@ function getAudioContext() {
 // 첫 음 전체 볼륨: 찢어짐(포화) 없이 깨끗하게 키움.
 // 단음 최고치가 약 0.8이 되도록 증폭하고, 화음 등 겹친 소리는 리미터가 부드럽게 눌러 줌
 const OUTPUT_BOOST = 1.45;
+// 단음용 깨끗한 출력: 리미터 없이 일정 배율만 적용
+const SINGLE_NOTE_GAIN = 1.0;
+function getCleanOutputNode(ctx) {
+  if (ctx.__acaClean) return ctx.__acaClean;
+  let node = ctx.destination;
+  try {
+    const g = ctx.createGain();
+    if (typeof g.gain.setValueAtTime === 'function') g.gain.setValueAtTime(SINGLE_NOTE_GAIN, ctx.currentTime); else g.gain.value = SINGLE_NOTE_GAIN;
+    g.connect(node);
+    node = g;
+  } catch {}
+  ctx.__acaClean = node;
+  return node;
+}
+
 function getOutputNode(ctx) {
   if (ctx.__acaOutput) return ctx.__acaOutput;
   let node = ctx.destination;
@@ -94,10 +109,10 @@ function getOutputNode(ctx) {
   try {
     if (typeof ctx.createDynamicsCompressor === 'function') {
       const limiter = ctx.createDynamicsCompressor();
-      set(limiter.threshold, -6);
+      set(limiter.threshold, -1.5);
       set(limiter.knee, 6);
       set(limiter.ratio, 12);
-      set(limiter.attack, 0.002);
+      set(limiter.attack, 0.008);
       set(limiter.release, 0.25);
       limiter.connect(node);
       node = limiter;
@@ -296,7 +311,7 @@ function stopFallbackAudio() {
   fallbackAudio = null;
 }
 // voices: [{ freq, weight, harmonics: [h1, h2, ...] }]
-function playFallbackTones(voices, durationMs) {
+function playFallbackTones(voices, durationMs, peakTarget = 0.7) {
   if (typeof window === 'undefined' || typeof Audio === 'undefined') return false;
   stopFallbackAudio();
   const rate = 22050;
@@ -318,7 +333,7 @@ function playFallbackTones(voices, durationMs) {
   });
   let peak = 0;
   for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(data[i]));
-  const scale = peak > 0 ? 0.75 / peak : 0;
+  const scale = peak > 0 ? peakTarget / peak : 0;
   const buf = new ArrayBuffer(44 + n * 2);
   const dv = new DataView(buf);
   const w = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
@@ -336,6 +351,15 @@ function playFallbackTones(voices, durationMs) {
   if (pr && typeof pr.catch === 'function') pr.catch(() => {});
   return true;
 }
+function lowNoteRecipe(freq) {
+  if (freq < 230) {
+    // 낮을수록 기본음을 더 줄임 (F3≈175Hz, F2≈87Hz)
+    const k = Math.max(0, Math.min(1, (230 - freq) / 140));
+    return { isLow: true, h: [0.55 - 0.25 * k, 0.6, 0.42, 0.22], level: 0.8 - 0.08 * k };
+  }
+  return { isLow: false, h: [1, 0.28, 0.12, 0], level: 1 };
+}
+
 function chordVoices(notes) {
   return notes.map((p) => {
     const isBass = p.freq < 165;
@@ -364,7 +388,8 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
   const freq = getNoteFrequency(semitone, octave);
 
   if (useFallback) {
-    playFallbackTones([{ freq, weight: 1, harmonics: [1, 0.28, 0.12] }], duration > 0 ? duration : 3000);
+    const lowR = lowNoteRecipe(freq);
+    playFallbackTones([{ freq, weight: lowR.level, harmonics: lowR.h }], duration > 0 ? duration : 3000, lowR.isLow ? 0.6 : 0.75);
     return finishPitchStart(semitone, octave, noteInfo, freq, duration, meta);
   }
 
@@ -373,43 +398,64 @@ export function playPitch(semitone, octave = 4, volume = 0.5, cancelSequence = t
   if (typeof masterGain.gain.setValueAtTime === 'function') {
     masterGain.gain.setValueAtTime(0.0001, now);
   }
+  // 낮은 음(약 230Hz 미만)은 휴대폰 스피커가 기본음을 감당하지 못해 '찢어지는' 소리가 나므로
+  // 기본음을 줄이고 배음을 키워 같은 음으로 들리면서 스피커 떨림을 막는다
+  const low = lowNoteRecipe(freq);
   // Gentle attack to avoid clicking
-  safeRampToValue(masterGain.gain, Math.max(0.05, Math.min(1.0, volume)), now + 0.05);
+  safeRampToValue(masterGain.gain, Math.max(0.05, Math.min(1.0, volume * low.level)), now + 0.05);
 
   // Warm acoustic vocal-pipe timbre using fundamental + harmonics + gentle lowpass
   const osc1 = ctx.createOscillator();
   osc1.type = 'sine';
   osc1.frequency.setValueAtTime(freq, now);
+  const gain1 = ctx.createGain();
+  gain1.gain.setValueAtTime(low.h[0], now);
+  osc1.connect(gain1);
 
   const osc2 = ctx.createOscillator();
   osc2.type = 'sine';
   osc2.frequency.setValueAtTime(freq * 2, now);
   const gain2 = ctx.createGain();
-  gain2.gain.setValueAtTime(0.28, now);
+  gain2.gain.setValueAtTime(low.h[1], now);
   osc2.connect(gain2);
 
   const osc3 = ctx.createOscillator();
-  osc3.type = 'triangle';
+  osc3.type = low.isLow ? 'sine' : 'triangle';
   osc3.frequency.setValueAtTime(freq * 3, now);
   const gain3 = ctx.createGain();
-  gain3.gain.setValueAtTime(0.12, now);
+  gain3.gain.setValueAtTime(low.h[2], now);
   osc3.connect(gain3);
+
+  const osc4 = ctx.createOscillator();
+  osc4.type = 'sine';
+  osc4.frequency.setValueAtTime(freq * 4, now);
+  const gain4 = ctx.createGain();
+  gain4.gain.setValueAtTime(low.h[3], now);
+  osc4.connect(gain4);
 
   const filter = ctx.createBiquadFilter();
   filter.type = 'lowpass';
   filter.frequency.setValueAtTime(2600, now);
+  // 휴대폰 스피커가 낼 수 없는 초저음은 미리 걸러 떨림(찢어짐) 방지
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.setValueAtTime(110, now);
 
-  osc1.connect(filter);
+  gain1.connect(filter);
   gain2.connect(filter);
   gain3.connect(filter);
-  filter.connect(masterGain);
-  masterGain.connect(getOutputNode(ctx));
+  gain4.connect(filter);
+  filter.connect(hp);
+  hp.connect(masterGain);
+  // 단음은 리미터를 거치지 않고 바로 출력 (리미터가 낮은 음의 파형을 일그러뜨려 '깨지는' 소리가 났음)
+  masterGain.connect(getCleanOutputNode(ctx));
 
   osc1.start(now);
   osc2.start(now);
   osc3.start(now);
+  osc4.start(now);
 
-  currentOscillators = [osc1, osc2, osc3];
+  currentOscillators = [osc1, osc2, osc3, osc4];
   currentGainNode = masterGain;
 
   markWebAudioBrokenIfSilent(ctx);
@@ -579,7 +625,7 @@ export function playChordStrings(notesList, volume = 0.38, cancelSequence = true
   if (typeof masterGain.gain.setValueAtTime === 'function') {
     masterGain.gain.setValueAtTime(0.0001, now);
   }
-  const scaledVol = Math.min(0.3, (volume * 0.66) / Math.pow(uniqueNotes.length, 0.62));
+  const scaledVol = Math.min(0.37, (volume * 0.82) / Math.pow(uniqueNotes.length, 0.62));
   safeRampToValue(masterGain.gain, scaledVol, now + 0.15);
 
   const filter = ctx.createBiquadFilter();
