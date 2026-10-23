@@ -3390,7 +3390,9 @@ function openUploadAppreciationModal() {
   dialog.showModal();
 }
 
+const APPREC_PAGE = 24;
 function renderAppreciation() {
+  let apprecShown = APPREC_PAGE;
   const categoryOptions = ['전체', '연습곡', '국내 아카펠라', '해외 명작', '보컬 커버', '라이브 콘서트', '영화 / OST'];
   const artistOptions = [
     '전체 아티스트',
@@ -3541,7 +3543,8 @@ function renderAppreciation() {
     return filtered;
   }
 
-  function updateApprecList() {
+  function updateApprecList(keepPage = false) {
+    if (!keepPage) apprecShown = APPREC_PAGE;
     const filtered = getFilteredAppreciation();
     const totalCount = state.appreciation.length;
     const isFiltered = Boolean(
@@ -3580,7 +3583,9 @@ function renderAppreciation() {
       return;
     }
 
-    gridContainer.replaceChildren(...filtered.map(item => {
+    // 태블릿·휴대폰 부담을 줄이기 위해 한 번에 24개씩만 그리고 '더 보기'로 이어서 표시
+    const shownItems = filtered.slice(0, apprecShown);
+    gridContainer.replaceChildren(...shownItems.map(item => {
       const thumbWrap = el('div', {
         class: 'custom-video-thumb-wrap',
         onclick: () => openMemoryLightboxModal({
@@ -3691,6 +3696,10 @@ function renderAppreciation() {
 
       return el('article', {class: 'custom-video-card'}, thumbWrap, body);
     }));
+    if (filtered.length > shownItems.length) {
+      gridContainer.append(el('div', {class: 'load-more-row'},
+        button(`더 보기 (${shownItems.length} / ${filtered.length})`, () => { apprecShown += APPREC_PAGE; updateApprecList(true); }, 'button secondary', 'arrow')));
+    }
   }
 
   updateApprecList();
