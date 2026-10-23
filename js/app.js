@@ -4882,7 +4882,9 @@ function renderPractice(song, part, record = true) {
     };
     setlistNav = el('div', {class: 'setlist-nav', 'aria-label': '공연 셋리스트 이동'},
       button('이전 곡', () => go(-1), 'button secondary', 'back', {disabled: setIdx <= 0}),
-      el('span', {class: 'setlist-nav-label', text: `${state.setlist.title} · ${setIdx + 1} / ${state.setlist.ids.length}곡`}),
+      el('span', {class: 'setlist-nav-label'},
+        el('span', {class: 'setlist-nav-title', text: state.setlist.title}),
+        el('span', {class: 'setlist-nav-count', text: `${setIdx + 1} / ${state.setlist.ids.length}곡`})),
       button('다음 곡', () => go(1), 'button primary', 'arrow', {disabled: setIdx >= state.setlist.ids.length - 1})
     );
   }
