@@ -56,8 +56,12 @@ function scheduleIdleSuspend(delay = 1200) {
   if (idleSuspendTimer) clearTimeout(idleSuspendTimer);
   idleSuspendTimer = setTimeout(() => {
     idleSuspendTimer = null;
-    if (audioCtx && audioCtx.state === 'running' && typeof audioCtx.suspend === 'function' && !currentPlaying && !currentSequence) {
-      Promise.resolve(audioCtx.suspend()).catch(() => {});
+    // suspend→resume은 일부 인앱 브라우저(카카오톡 등)에서 다시 깨어나지 않아 소리가 안 나는 문제가 있어
+    // 쉬는 동안에는 소리 엔진을 완전히 닫고, 다음에 누를 때 새로 만든다 (오디오 점유도 바로 해제됨)
+    if (audioCtx && !currentPlaying && !currentSequence) {
+      const old = audioCtx;
+      audioCtx = null;
+      try { if (typeof old.close === 'function') Promise.resolve(old.close()).catch(() => {}); } catch {}
     }
   }, delay);
 }
@@ -66,14 +70,16 @@ function getAudioContext() {
   if (typeof window === 'undefined') return null;
   useMixableAudioSession();
   if (idleSuspendTimer) { clearTimeout(idleSuspendTimer); idleSuspendTimer = null; }
+  // 닫혔거나(iOS 'interrupted' 포함) 멈춘 채 깨어나지 않는 엔진은 버리고 새로 만든다
+  if (audioCtx && (audioCtx.state === 'closed' || audioCtx.state === 'interrupted')) audioCtx = null;
   if (!audioCtx) {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (AudioContextClass) {
-      audioCtx = new AudioContextClass();
+      try { audioCtx = new AudioContextClass(); } catch { audioCtx = null; }
     }
   }
-  if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume();
+  if (audioCtx && audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function') {
+    Promise.resolve(audioCtx.resume()).catch(() => {});
   }
   return audioCtx;
 }
