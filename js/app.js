@@ -2346,7 +2346,7 @@ function openOrDownloadScore(score, isDownload = false) {
     document.body.removeChild(a);
     toast(`📥 '${score.fileName || score.title}' 악보 파일을 다운로드합니다.`);
   } else {
-    window.open(safeUrl, '_blank');
+    window.open(safeUrl, '_blank', 'noopener,noreferrer');
   }
 }
 
@@ -2375,7 +2375,7 @@ function renderScores() {
         el('p', {text: `아카라카 및 연구회 통합 악보 아카이브 (총 ${state.scores.length.toLocaleString()}개 악보)`})
       ),
       el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap;'},
-        button('📁 드라이브 폴더 열기 ↗', () => window.open('https://drive.google.com/drive/folders/1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb', '_blank'), 'button secondary small', 'external'),
+        button('📁 드라이브 폴더 열기 ↗', () => window.open('https://drive.google.com/drive/folders/1kHXtiDydo0XYbAP9MMgtrWLXQMi9Nzcb', '_blank', 'noopener,noreferrer'), 'button secondary small', 'external'),
         button('+ 새 악보 올리기', () => openUploadScoreModal(), 'button primary small', 'plus')
       )
     )
@@ -2557,7 +2557,7 @@ function renderScores() {
       const actions = el('div', {class: 'score-actions'},
         button('악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
         button('다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
-        sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank'), 'button ghost small') : null,
+        sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank', 'noopener,noreferrer'), 'button ghost small') : null,
         song ? button('연습실 ↗', () => openSong(song), 'button ghost small') : null,
         sc.isCustom ? button('삭제', async () => {
           if (confirm(`'${sc.title}' 악보를 삭제할까요?`)) {
@@ -2742,7 +2742,7 @@ function openOrDownloadEducation(edu, forceDownload = false) {
     document.body.removeChild(a);
     toast(`📥 '${edu.title}' 파일을 다운로드합니다.`);
   } else {
-    window.open(fileUrl, '_blank');
+    window.open(fileUrl, '_blank', 'noopener,noreferrer');
   }
 }
 
@@ -3679,7 +3679,7 @@ function renderAppreciation() {
             }, 'button secondary small', 'music', {title: '아카라카 연습실에서 이 곡 파트 연습하기'}) : null,
             item.videoUrl ? button('YouTube ↗', (e) => {
               e.stopPropagation();
-              window.open(item.videoUrl, '_blank');
+              window.open(item.videoUrl, '_blank', 'noopener,noreferrer');
             }, 'button ghost small', 'external') : null,
             item.isCustom ? button('', async (e) => {
               e.stopPropagation();
@@ -4738,7 +4738,7 @@ function renderDetail(song) {
           el('div', {class: 'score-actions', style: 'margin-top: 8px;'},
             button('악보 열기', () => openOrDownloadScore(sc, false), 'button primary small', 'external'),
             button('다운로드', () => openOrDownloadScore(sc, true), 'button secondary small', 'download'),
-            sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank'), 'button ghost small') : null
+            sc.driveUrl ? button('드라이브 ↗', () => window.open(sc.driveUrl, '_blank', 'noopener,noreferrer'), 'button ghost small') : null
           )
         );
       }))
