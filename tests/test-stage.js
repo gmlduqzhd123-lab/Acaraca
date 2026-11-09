@@ -142,9 +142,9 @@ const lionPitches = getSongStartingPitchEntries(STAGE_EXTRA_SONG_METADATA['the-l
 assert(lionPitches.length === 2, 'the-lion-sleeps-tonight has 2 verified pitch entries');
 assert(standByMePitches[0][0] === 'lead' && lionPitches[0][0] === 'lead', 'extra songs play in score entry order (solo first)');
 
-// 4. Test Starting Pitch Extraction across all 33 songs
+// 4. Test Starting Pitch Extraction across all 34 songs
 const songs = JSON.parse(fs.readFileSync('data/songs.json', 'utf8')).songs;
-assert(songs.length === 33, '33 songs present in songs.json');
+assert(songs.length === 34, '34 songs present in songs.json');
 
 songs.forEach((song) => {
   const entries = getSongStartingPitchEntries(song);

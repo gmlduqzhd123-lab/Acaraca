@@ -247,9 +247,9 @@ export function runCoreTests() {
     check('Pretendard 웹폰트 링크 삽입 검증', () => nodeFs.readFileSync('./index.html', 'utf8').includes('pretendardvariable.min.css') && nodeFs.readFileSync('./admin.html', 'utf8').includes('pretendardvariable.min.css'));
     check('체크리스트 및 집중 연습 타이머 제거 검증', () => !nodeFs.readFileSync('./js/app.js', 'utf8').includes('오늘의 연습 체크') && !nodeFs.readFileSync('./js/app.js', 'utf8').includes('10분 집중 연습'));
     check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
-    check('33곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
+    check('34곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
       const songsRaw = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
-      return songsRaw.length === 33 && songsRaw.every(song => {
+      return songsRaw.length === 34 && songsRaw.every(song => {
         if (!song.startingPitches || typeof song.startingPitches !== 'object') return false;
         return Object.values(song.startingPitches).every(noteStr => {
           if (!noteStr) return true;

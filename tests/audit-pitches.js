@@ -47,7 +47,7 @@ songs.forEach(song => {
 });
 
 if (errors === 0) {
-  console.log('✓ All 33 songs have 100% valid, playable starting pitches for all parts!');
+  console.log(`✓ All ${songs.length} songs have 100% valid, playable starting pitches for all parts!`);
 } else {
   console.error('✗ Total pitch errors:', errors);
   process.exit(1);

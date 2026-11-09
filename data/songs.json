@@ -2721,6 +2721,66 @@
       },
       "musicalKey": "F# Minor",
       "pitchPipe": "F#"
+    },
+    {
+      "id": "if-you-dont-dream",
+      "title": "꿈꾸지 않으면",
+      "artist": "유영석 · 양희은",
+      "category": "K-POP",
+      "difficulty": 2,
+      "status": "practice",
+      "arrangement": "4 Voices",
+      "tags": [
+        "4부",
+        "힐링",
+        "캠핑아카펠라"
+      ],
+      "thumbnail": "https://img.youtube.com/vi/QWmOhnePNVw/hqdefault.jpg",
+      "memo": "꿈꾸지 않으면 4부 아카펠라 연습 음원입니다.",
+      "videos": {
+        "part1": {
+          "type": "video",
+          "url": "https://youtu.be/QWmOhnePNVw"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://youtu.be/1yedxLHY_u0"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://youtu.be/KSrJQwLQ2Qs"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://youtu.be/Jms_1dg6qBU"
+        }
+      },
+      "startingPitches": {
+        "part1": "A4",
+        "part2": "E4",
+        "part3": "C4",
+        "part4": "F2",
+        "soprano": "A4",
+        "alto": "E4",
+        "tenor": "C4",
+        "bass": "F2",
+        "full": "F3"
+      },
+      "musicalKey": "F Major",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ],
+      "partNames": {
+        "part1": "선영",
+        "part2": "용석",
+        "part3": "희엽",
+        "part4": "휘소"
+      },
+      "pitchPipe": "F"
     }
   ]
 }
+
