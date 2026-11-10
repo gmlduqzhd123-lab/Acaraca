@@ -2148,6 +2148,80 @@ export function cleanupStageLive() {
 }
 
 /**
+ * 무대 큐시트(셋리스트 및 커스텀 멘트)를 공유용 JSON 문자열로 직렬화
+ */
+export function serializeStageSession(session) {
+  if (!session || typeof session !== 'object') return '';
+  const payload = {
+    type: 'acaraca-stage-cuesheet',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    session: {
+      id: session.id || `stage-${Date.now()}`,
+      eventTitle: session.eventTitle || '아카라카 공연',
+      date: session.date || new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+      venue: session.venue || '',
+      currentIndex: 0,
+      songs: Array.isArray(session.songs) ? session.songs.map((s) => ({
+        songId: s.songId || '',
+        title: s.title || '',
+        note: s.note || '',
+        commentTone: s.commentTone || 'story',
+        ...(s.customComment ? { customComment: s.customComment } : {}),
+        ...(typeof s.commentVariationIndex === 'number' ? { commentVariationIndex: s.commentVariationIndex } : {})
+      })) : []
+    }
+  };
+  return `${JSON.stringify(payload, null, 2)}\n`;
+}
+
+/**
+ * 가져온 JSON 문자열 또는 객체에서 유효한 무대 큐시트 세션 추출
+ */
+export function parseImportedStageSession(input) {
+  const raw = typeof input === 'string' ? JSON.parse(input.replace(/^\uFEFF/, '')) : input;
+  const target = (raw && typeof raw === 'object' && raw.session && typeof raw.session === 'object') ? raw.session : raw;
+  if (!target || typeof target !== 'object' || !Array.isArray(target.songs)) {
+    throw new Error('유효한 무대 큐시트(songs 배열) 형식이 아닙니다.');
+  }
+  return {
+    id: target.id || `stage-${Date.now()}`,
+    eventTitle: typeof target.eventTitle === 'string' && target.eventTitle.trim() ? target.eventTitle.trim() : '가져온 아카라카 공연',
+    date: typeof target.date === 'string' ? target.date.trim() : new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    venue: typeof target.venue === 'string' ? target.venue.trim() : '',
+    currentIndex: 0,
+    updatedAt: Date.now(),
+    songs: target.songs
+      .filter((s) => s && typeof s === 'object' && (s.songId || s.title))
+      .map((s) => ({
+        songId: typeof s.songId === 'string' ? s.songId.trim() : '',
+        title: typeof s.title === 'string' ? s.title.trim() : '연습곡',
+        note: typeof s.note === 'string' ? s.note.trim() : '',
+        commentTone: ['wit', 'story', 'brief'].includes(s.commentTone) ? s.commentTone : 'story',
+        ...(typeof s.customComment === 'string' && s.customComment.trim() ? { customComment: s.customComment.trim() } : {}),
+        ...(typeof s.commentVariationIndex === 'number' ? { commentVariationIndex: s.commentVariationIndex } : {})
+      }))
+  };
+}
+
+function downloadStageSessionJSON(session) {
+  try {
+    const json = serializeStageSession(session);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const safeTitle = (session.eventTitle || 'cuesheet').replace(/[\\/:*?"<>|\s]+/g, '-').slice(0, 40);
+    const link = el('a', { href: url, download: `acaraca-cuesheet-${safeTitle}.json` });
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('📤 무대 큐시트 JSON 파일을 다운로드했습니다. 단원들과 공유해 보세요!');
+  } catch (err) {
+    toast(`큐시트 내보내기 실패: ${err.message}`);
+  }
+}
+
+/**
  * 공연 히스토리 & 보관함 모달 (최신순 정렬)
  */
 export function openStageHistoryModal({ songs, onSelectSession }) {
@@ -2168,6 +2242,29 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
     button('✕', () => dialog.close(), 'icon-button', null, { 'aria-label': '닫기' })
   );
 
+  const importInput = el('input', {
+    type: 'file',
+    accept: '.json,application/json',
+    hidden: true,
+    onchange: async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const imported = parseImportedStageSession(await file.text());
+        const currentHist = getStageHistory().filter((h) => h.id !== imported.id);
+        saveStageHistory([imported, ...currentHist]);
+        renderHistoryCards();
+        toast(`📥 '${imported.eventTitle}' 큐시트(${imported.songs.length}곡)를 가져왔습니다.`);
+      } catch (err) {
+        toast(`큐시트 파일 가져오기 오류: ${err.message}`);
+      } finally {
+        e.target.value = '';
+      }
+    }
+  });
+
+  const importBtn = button('📥 큐시트 가져오기', () => importInput.click(), 'button secondary small');
+
   const newBtn = button('+ 새 공연 셋리스트 만들기', () => {
     promptStagePassword({
       actionName: '새 공연 셋리스트 생성',
@@ -2179,9 +2276,9 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
     });
   }, 'button primary small');
 
-  const topBar = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;' },
+  const topBar = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;' },
     el('strong', { text: '역대 공연 목록' }),
-    newBtn
+    el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' }, importInput, importBtn, newBtn)
   );
 
   const historyContainer = el('div', { class: 'stage-history-list' });
@@ -2384,17 +2481,55 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
 
   renderSongList();
 
-  const footerActions = el('div', { style: 'display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;' },
-    button('취소', () => dialog.close(), 'button secondary small'),
-    button('저장 및 큐시트 적용', () => {
-      draft.eventTitle = titleInput.value.trim() || '아카라카 공연';
-      draft.date = dateInput.value.trim();
-      draft.venue = venueInput.value.trim();
-      draft.currentIndex = Math.max(0, Math.min(draft.currentIndex || 0, Math.max(0, draft.songs.length - 1)));
-      dialog.close();
-      if (typeof onSaveSession === 'function') onSaveSession(draft);
-      toast('셋리스트가 저장되었습니다.');
-    }, 'button primary small')
+  const importDraftInput = el('input', {
+    type: 'file',
+    accept: '.json,application/json',
+    hidden: true,
+    onchange: async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const imported = parseImportedStageSession(await file.text());
+        draft.eventTitle = imported.eventTitle;
+        draft.date = imported.date;
+        draft.venue = imported.venue;
+        draft.songs = imported.songs;
+        titleInput.value = draft.eventTitle;
+        dateInput.value = draft.date;
+        venueInput.value = draft.venue;
+        renderSongList();
+        toast(`📥 '${draft.eventTitle}' 큐시트(${draft.songs.length}곡)를 불러왔습니다. '저장 및 큐시트 적용'을 눌러 확정하세요.`);
+      } catch (err) {
+        toast(`큐시트 파일 가져오기 오류: ${err.message}`);
+      } finally {
+        e.target.value = '';
+      }
+    }
+  });
+
+  const exportDraftBtn = button('📤 큐시트 내보내기', () => {
+    draft.eventTitle = titleInput.value.trim() || '아카라카 공연';
+    draft.date = dateInput.value.trim();
+    draft.venue = venueInput.value.trim();
+    downloadStageSessionJSON(draft);
+  }, 'button secondary small');
+
+  const importDraftBtn = button('📥 큐시트 가져오기', () => importDraftInput.click(), 'button secondary small');
+
+  const footerActions = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px;' },
+    el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' }, importDraftInput, exportDraftBtn, importDraftBtn),
+    el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' },
+      button('취소', () => dialog.close(), 'button secondary small'),
+      button('저장 및 큐시트 적용', () => {
+        draft.eventTitle = titleInput.value.trim() || '아카라카 공연';
+        draft.date = dateInput.value.trim();
+        draft.venue = venueInput.value.trim();
+        draft.currentIndex = Math.max(0, Math.min(draft.currentIndex || 0, Math.max(0, draft.songs.length - 1)));
+        dialog.close();
+        if (typeof onSaveSession === 'function') onSaveSession(draft);
+        toast('셋리스트가 저장되었습니다.');
+      }, 'button primary small')
+    )
   );
 
   const body = el('div', { class: 'stage-modal-body' },

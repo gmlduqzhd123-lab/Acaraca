@@ -15478,7 +15478,7 @@
     },
     {
       "id": "score-desk-045",
-      "songId": null,
+      "songId": "daft-punk",
       "title": "Pentatonix - Daft Punk",
       "team": "아카라카",
       "category": "가요",
@@ -15558,7 +15558,7 @@
     },
     {
       "id": "score-desk-050",
-      "songId": null,
+      "songId": "would-be-good",
       "title": "좋겠다",
       "team": "아카라카",
       "category": "페스티벌",
@@ -15590,7 +15590,7 @@
     },
     {
       "id": "score-desk-052",
-      "songId": null,
+      "songId": "would-be-good",
       "title": "좋겠다",
       "team": "아카라카",
       "category": "페스티벌",

@@ -76,9 +76,29 @@ function buildMediaFields() {
     input.placeholder = 'https://www.youtube.com/…';
     input.setAttribute('aria-describedby', `media-${part}-feedback`);
     urlLabel.append(input);
+    const metaGrid = makeElement('div', undefined, 'admin-part-meta-grid');
+    const pitchLabel = makeElement('label', '첫 음 (Pitch)', 'admin-field');
+    pitchLabel.htmlFor = `media-${part}-pitch`;
+    const pitchInput = makeElement('input', undefined, 'admin-input');
+    pitchInput.id = `media-${part}-pitch`;
+    pitchInput.name = `${part}-pitch`;
+    pitchInput.type = 'text';
+    pitchInput.autocomplete = 'off';
+    pitchInput.placeholder = '예: A4, F2';
+    pitchLabel.append(pitchInput);
+    const singerLabel = makeElement('label', '담당 단원', 'admin-field');
+    singerLabel.htmlFor = `media-${part}-singer`;
+    const singerInput = makeElement('input', undefined, 'admin-input');
+    singerInput.id = `media-${part}-singer`;
+    singerInput.name = `${part}-singer`;
+    singerInput.type = 'text';
+    singerInput.autocomplete = 'off';
+    singerInput.placeholder = '예: 선영, 용석';
+    singerLabel.append(singerInput);
+    metaGrid.append(pitchLabel, singerLabel);
     const feedback = makeElement('p', 'URL 없음 · 이 파트는 표시하지 않습니다.', 'admin-media-feedback');
     feedback.id = `media-${part}-feedback`;
-    fieldset.append(typeLabel, urlLabel, feedback);
+    fieldset.append(typeLabel, urlLabel, metaGrid, feedback);
     $('media-fields').append(fieldset);
     input.addEventListener('input', () => checkMediaField(part));
     select.addEventListener('change', () => checkMediaField(part));
@@ -123,14 +143,21 @@ function fillForm(index) {
   for (const field of ['id', 'title', 'artist', 'category', 'arrangement', 'thumbnail', 'memo']) {
     $(`song-${field}`).value = index === null && field === 'id' ? nextId() : textValue(song[field]);
   }
+  if ($('song-musical-key')) $('song-musical-key').value = textValue(song.musicalKey);
+  if ($('song-pitch-pipe')) $('song-pitch-pipe').value = textValue(song.pitchPipe);
+  if ($('song-entry-order')) $('song-entry-order').value = Array.isArray(song.entryOrder) ? song.entryOrder.map(textValue).join(', ') : '';
   $('song-tags').value = Array.isArray(song.tags) ? song.tags.map(textValue).join(', ') : textValue(song.tags);
   setSelectValue($('song-difficulty'), index === null ? 2 : song.difficulty);
   setSelectValue($('song-status'), index === null ? 'practice' : song.status);
   const videos = isRecord(song.videos) ? song.videos : {};
+  const pitches = isRecord(song.startingPitches) ? song.startingPitches : {};
+  const partNames = isRecord(song.partNames) ? song.partNames : {};
   for (const part of Object.keys(PARTS)) {
     const media = isRecord(videos[part]) ? videos[part] : {};
     setSelectValue($(`media-${part}-type`), media.type ?? 'video');
     $(`media-${part}-url`).value = textValue(media.url);
+    if ($(`media-${part}-pitch`)) $(`media-${part}-pitch`).value = textValue(pitches[part]);
+    if ($(`media-${part}-singer`)) $(`media-${part}-singer`).value = textValue(partNames[part]);
     checkMediaField(part);
   }
   $('form-title').textContent = index === null ? '새 곡 추가' : textValue(song.title) || '곡 수정';
@@ -236,14 +263,47 @@ function readFormSong() {
   song.difficulty = Number($('song-difficulty').value);
   song.status = $('song-status').value;
   song.tags = Array.from(new Set($('song-tags').value.split(',').map((tag) => tag.trim()).filter(Boolean)));
+  if ($('song-musical-key')) {
+    const mk = $('song-musical-key').value.trim();
+    if (mk) song.musicalKey = mk;
+    else delete song.musicalKey;
+  }
+  if ($('song-pitch-pipe')) {
+    const pp = $('song-pitch-pipe').value.trim();
+    if (pp) song.pitchPipe = pp;
+    else delete song.pitchPipe;
+  }
+  if ($('song-entry-order')) {
+    const eo = $('song-entry-order').value.split(',').map((s) => s.trim()).filter(Boolean);
+    if (eo.length) song.entryOrder = eo;
+    else delete song.entryOrder;
+  }
   const oldVideos = isRecord(old.videos) ? old.videos : {};
+  const oldPitches = isRecord(old.startingPitches) ? old.startingPitches : {};
+  const oldPartNames = isRecord(old.partNames) ? old.partNames : {};
   song.videos = { ...oldVideos };
+  const nextPitches = { ...oldPitches };
+  const nextPartNames = { ...oldPartNames };
   for (const part of Object.keys(PARTS)) {
     const url = $(`media-${part}-url`).value.trim();
     const type = $(`media-${part}-type`).value;
     const oldMedia = isRecord(oldVideos[part]) ? oldVideos[part] : null;
     song.videos[part] = url || oldMedia ? { ...(oldMedia || {}), type, url } : null;
+    if ($(`media-${part}-pitch`)) {
+      const pVal = $(`media-${part}-pitch`).value.trim();
+      if (pVal) nextPitches[part] = pVal;
+      else delete nextPitches[part];
+    }
+    if ($(`media-${part}-singer`)) {
+      const sVal = $(`media-${part}-singer`).value.trim();
+      if (sVal) nextPartNames[part] = sVal;
+      else delete nextPartNames[part];
+    }
   }
+  if (Object.keys(nextPitches).length) song.startingPitches = nextPitches;
+  else delete song.startingPitches;
+  if (Object.keys(nextPartNames).length) song.partNames = nextPartNames;
+  else delete song.partNames;
   if (!song.thumbnail) {
     for (const part of ['full', 'part1', ...Object.keys(PARTS)]) {
       const v = song.videos[part];
@@ -478,6 +538,124 @@ function checkAdminAuth() {
   }
 }
 
+const NWC_BASE_DUR = { Whole: 1, Half: 0.5, '4th': 0.25, '8th': 0.125, '16th': 0.0625, '32nd': 0.03125, '64th': 0.015625 };
+const NWC_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+const NWC_CLEF_MID = { Treble: [6, 4], Bass: [1, 3], Alto: [0, 4], Tenor: [5, 3], Percussion: [1, 3] };
+
+function nwcDurOf(spec) {
+  const parts = spec.split(',');
+  if (parts.includes('Grace')) return 0;
+  let d = NWC_BASE_DUR[parts[0]];
+  if (d === undefined) return 0;
+  if (parts.includes('DblDotted')) d *= 1.75;
+  else if (parts.includes('Dotted')) d *= 1.5;
+  if (parts.includes('Triplet') || parts.some((p) => p.startsWith('Triplet'))) d *= 2 / 3;
+  return d;
+}
+
+function nwcPitchOf(clef, octShift, keyAcc, acc, pos) {
+  const [li, oct] = NWC_CLEF_MID[clef] || NWC_CLEF_MID.Treble;
+  const step = li + pos;
+  const letter = NWC_LETTERS[((step % 7) + 7) % 7];
+  const octave = oct + Math.floor(step / 7) + octShift;
+  const map = { '#': '#', b: 'b', n: '', x: '##', v: 'bb' };
+  const a = acc ? map[acc] : (keyAcc[letter] || '');
+  return `${letter}${a}${octave}`;
+}
+
+function parseNwcText(text) {
+  const staves = text.split('|AddStaff').slice(1);
+  return staves.map((s, i) => {
+    const name = s.match(/Name:"([^"]*)"/)?.[1] || `staff${i + 1}`;
+    let t = 0;
+    let barLen = 1;
+    let first = null;
+    let firstPitch = null;
+    let clef = 'Treble';
+    let octShift = 0;
+    let keyAcc = {};
+    for (const line of s.split(/\r?\n/)) {
+      const sig = line.match(/^\|TimeSig\|Signature:(\d+)\/(\d+)/);
+      if (sig) { barLen = Number(sig[1]) / Number(sig[2]); continue; }
+      if (/^\|TimeSig\|Signature:(Common|AllaBreve)/.test(line)) { barLen = 1; continue; }
+      const c = line.match(/^\|Clef\|Type:(\w+)/);
+      if (c) { clef = c[1]; octShift = /Octave Down/.test(line) ? -1 : /Octave Up/.test(line) ? 1 : 0; continue; }
+      const k = line.match(/^\|Key\|Signature:([^|]*)/);
+      if (k) { keyAcc = {}; k[1].split(',').forEach((a) => { if ((a[0] && a[0] !== 'C') || a.length > 1) keyAcc[a[0]] = a[1] || ''; }); continue; }
+      const mbr = line.match(/^\|RestMultiBar\|NumBars:(\d+)/);
+      if (mbr) { t += Number(mbr[1]) * barLen; continue; }
+      const m = line.match(/^\|(Rest|Note|Chord|RestChord)\|Dur:([^|]+)/);
+      if (!m) continue;
+      if (m[1] === 'Note' || m[1] === 'Chord' || m[1] === 'RestChord') {
+        first = t;
+        const pm = line.match(/Pos:([#bnxv]?)(-?\d+)/);
+        if (pm) firstPitch = nwcPitchOf(clef, octShift, keyAcc, pm[1], Number(pm[2]));
+        break;
+      }
+      t += m[2].startsWith('Whole') && !m[2].includes('Dotted') ? barLen : nwcDurOf(m[2]);
+    }
+    return { index: i + 1, name, firstNoteAt: first, firstPitch };
+  });
+}
+
+async function importNwcFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  try {
+    const buffer = new Uint8Array(await file.arrayBuffer());
+    let zStart = -1;
+    for (let i = 0; i < buffer.length - 1; i += 1) {
+      if (buffer[i] === 0x78 && [0x01, 0x5e, 0x9c, 0xda].includes(buffer[i + 1])) {
+        zStart = i;
+        break;
+      }
+    }
+    if (zStart < 0 || typeof DecompressionStream === 'undefined') {
+      throw new Error('유효한 NWC 압축 스트림을 찾을 수 없거나 브라우저가 압축 해제를 지원하지 않습니다.');
+    }
+    const stream = new Blob([buffer.slice(zStart)]).stream().pipeThrough(new DecompressionStream('deflate'));
+    const decompressedBytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    const text = new TextDecoder('utf-8', { fatal: false }).decode(decompressedBytes);
+    const parsedStaves = parseNwcText(text).filter((st) => st.firstPitch && st.index <= 7);
+    if (!parsedStaves.length) throw new Error('악보에서 유효한 첫 음을 찾지 못했습니다.');
+
+    const initialMap = { YS: '용석', SY: '선영', HY: '희엽', JW: '재우', HS: '휘소', MH: '명현' };
+    parsedStaves.forEach((st) => {
+      const partKey = `part${st.index}`;
+      if ($(`media-${partKey}-pitch`)) $(`media-${partKey}-pitch`).value = st.firstPitch;
+      const cleanName = initialMap[st.name.trim()] || (/^[가-힣]{2,4}$/.test(st.name.trim()) ? st.name.trim() : '');
+      if (cleanName && $(`media-${partKey}-singer`) && !$(`media-${partKey}-singer`).value.trim()) {
+        $(`media-${partKey}-singer`).value = cleanName;
+      }
+    });
+
+    if (parsedStaves[0]?.firstPitch && $('media-soprano-pitch') && !$('media-soprano-pitch').value.trim()) $('media-soprano-pitch').value = parsedStaves[0].firstPitch;
+    if (parsedStaves[1]?.firstPitch && $('media-alto-pitch') && !$('media-alto-pitch').value.trim()) $('media-alto-pitch').value = parsedStaves[1].firstPitch;
+    if (parsedStaves[2]?.firstPitch && $('media-tenor-pitch') && !$('media-tenor-pitch').value.trim()) $('media-tenor-pitch').value = parsedStaves[2].firstPitch;
+    const lastPitch = parsedStaves[parsedStaves.length - 1]?.firstPitch;
+    if (lastPitch && $('media-bass-pitch') && !$('media-bass-pitch').value.trim()) $('media-bass-pitch').value = lastPitch;
+
+    const ordered = [...parsedStaves]
+      .sort((a, b) => (a.firstNoteAt ?? 999) - (b.firstNoteAt ?? 999) || a.index - b.index)
+      .map((st) => `part${st.index}`);
+    if ($('song-entry-order')) $('song-entry-order').value = ordered.join(', ');
+    if (lastPitch && $('song-pitch-pipe') && !$('song-pitch-pipe').value.trim()) {
+      $('song-pitch-pipe').value = lastPitch.replace(/[0-9]+$/, '');
+    }
+    if ($('song-arrangement') && !$('song-arrangement').value.trim()) {
+      $('song-arrangement').value = `${parsedStaves.length} Voices`;
+    }
+
+    state.formDirty = true;
+    updateState();
+    notice(`“${file.name}” 악보에서 ${parsedStaves.length}개 파트의 첫 음(${parsedStaves.map((s) => `P${s.index}:${s.firstPitch}`).join(', ')})과 진입 순서를 자동 추출했습니다. “곡 추가” 또는 “변경사항 적용”을 눌러 반영하세요.`);
+  } catch (error) {
+    notice(`NWC 악보를 분석하지 못했습니다: ${error.message}`, 'error');
+  } finally {
+    event.target.value = '';
+  }
+}
+
 function initialize() {
   checkAdminAuth();
   $('admin-lock-btn')?.addEventListener('click', () => {
@@ -499,6 +677,7 @@ function initialize() {
   $('reset-form').addEventListener('click', () => { if (confirmDraftDiscard()) fillForm(state.selected); });
   $('load-current').addEventListener('click', () => loadCurrent(true));
   $('import-file').addEventListener('change', importFile);
+  $('import-nwc-file')?.addEventListener('change', importNwcFile);
   $('validate-data').addEventListener('click', () => { if (draftIsApplied()) renderValidation(getValidation(), true); });
   $('preview-json').addEventListener('click', previewJSON);
   $('download-json').addEventListener('click', downloadJSON);
@@ -512,3 +691,4 @@ function initialize() {
 }
 
 initialize();
+

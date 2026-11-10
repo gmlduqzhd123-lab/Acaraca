@@ -253,7 +253,8 @@ export async function deleteCustomScore(scoreId) {
 
 export function getScoresForSong(scores, songId) {
   if (!Array.isArray(scores) || !songId) return [];
-  return scores.filter(s => s.songId === songId);
+  const baseId = String(songId).replace(/-[0-9]+$/, '');
+  return scores.filter(s => s.songId === songId || (baseId !== songId && s.songId === baseId));
 }
 
 export async function loadMemories(forceReload = false) {

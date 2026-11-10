@@ -4976,8 +4976,92 @@ function renderSettings() {
     )
   );
   const dataPanel = el('section', {class: 'settings-panel'}, icon('library'), el('h2', {text: '연습 자료 관리'}), el('p', {text: '새 곡과 파트 영상을 등록하려면 데이터 편집기를 이용하세요.'}), button('데이터 편집기 열기', () => openAdmin('./admin.html'), 'button secondary', 'external'));
-  const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록'}), el('p', {text: '즐겨찾기와 최근 연습 기록은 이 브라우저에만 저장돼요. 다른 기기와 자동으로 동기화되지 않습니다.'}),
+  const backupFileInput = el('input', {
+    type: 'file',
+    accept: '.json,application/json',
+    hidden: true,
+    onchange: async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const raw = JSON.parse((await file.text()).replace(/^\uFEFF/, ''));
+        if (!raw || typeof raw !== 'object') throw new Error('유효한 백업 JSON 형식이 아닙니다.');
+        if (Array.isArray(raw.favorites)) {
+          write('favorites', raw.favorites);
+          state.favorites = new Set(raw.favorites);
+        }
+        if (Array.isArray(raw.recent)) {
+          write('recent', raw.recent);
+          state.recent = raw.recent;
+        }
+        if (raw.progress && typeof raw.progress === 'object') {
+          write('progress', raw.progress);
+          state.progress = raw.progress;
+        }
+        if (typeof raw.myPart === 'string') {
+          write('myPart', raw.myPart);
+          state.myPart = raw.myPart;
+        }
+        if (typeof raw.singerName === 'string') {
+          write('singer_name', raw.singerName);
+        }
+        if (Array.isArray(raw.customRehearsals)) {
+          write('custom_rehearsals', raw.customRehearsals);
+        }
+        if (Array.isArray(raw.teamFeedbacks)) {
+          write('team_feedbacks', raw.teamFeedbacks);
+        }
+        if (raw.stageHistory) {
+          try { localStorage.setItem('acaroom_stage_history_v2', JSON.stringify(raw.stageHistory)); } catch {}
+        }
+        if (raw.stageActive) {
+          try { localStorage.setItem('acaroom_stage_active_v2', JSON.stringify(raw.stageActive)); } catch {}
+        }
+        render();
+        toast('📥 연습 기록과 무대 큐시트 백업 데이터를 복원했습니다.');
+      } catch (err) {
+        toast(`백업 파일을 불러오지 못했습니다: ${err.message}`);
+      } finally {
+        e.target.value = '';
+      }
+    }
+  });
+  const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록 · 백업 공유'}), el('p', {text: '즐겨찾기, 최근 연습, 무대 큐시트, 연습 피드백은 이 브라우저에 저장됩니다. JSON 백업 파일로 내보내어 다른 기기나 단원과 공유할 수 있습니다.'}),
     !isAvailable() && el('p', {class: 'notice warning', text: '브라우저 저장소를 사용할 수 없어 현재 세션에서만 기록됩니다.'}),
+    backupFileInput,
+    el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;'},
+      button('📤 기록 · 큐시트 백업 내보내기', () => {
+        let stageHistory = null;
+        let stageActive = null;
+        try {
+          stageHistory = JSON.parse(localStorage.getItem('acaroom_stage_history_v2') || 'null');
+          stageActive = JSON.parse(localStorage.getItem('acaroom_stage_active_v2') || 'null');
+        } catch {}
+        const payload = {
+          type: 'acaraca-backup',
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          favorites: [...state.favorites],
+          recent: state.recent,
+          progress: state.progress,
+          myPart: state.myPart,
+          singerName: read('singer_name', ''),
+          customRehearsals: read('custom_rehearsals', []),
+          teamFeedbacks: read('team_feedbacks', []),
+          stageHistory,
+          stageActive
+        };
+        const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {type: 'application/json;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const link = el('a', {href: url, download: `acaraca-backup-${new Date().toISOString().slice(0, 10)}.json`});
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast('📤 연습 기록 및 무대 큐시트 백업 파일을 다운로드했습니다.');
+      }, 'button secondary'),
+      button('📥 백업 파일 불러오기', () => backupFileInput.click(), 'button secondary')
+    ),
     button('개인 연습 기록 초기화', () => {
       if (!confirm('즐겨찾기와 최근 연습 기록을 모두 지울까요? 곡 자료와 내 파트 설정은 유지됩니다.')) return;
       for (const key of ['favorites', 'recent', 'progress', 'timer']) remove(key);

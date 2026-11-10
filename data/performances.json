@@ -610,6 +610,27 @@
           "time": 0
         }
       ]
+    },
+    {
+      "id": "akaraka-stage-l0ZgOjQj35Q",
+      "title": "꿈꾸지 않으면 - 아카펠라 커버(Acapella Cover) | 2023 교원음악제 추계 워크숍",
+      "date": "2023-11",
+      "venue": "교원음악제 추계 워크숍",
+      "category": "음악제",
+      "thumbnail": "https://img.youtube.com/vi/l0ZgOjQj35Q/hqdefault.jpg",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=l0ZgOjQj35Q"
+      },
+      "description": "아카펠라 그룹 아카라카(Akaraka)의 ‘꿈꾸지 않으면’ 무대 실황 영상입니다. (2023 교원음악제 추계 워크숍)",
+      "setlist": [
+        {
+          "songId": "if-you-dont-dream",
+          "title": "꿈꾸지 않으면",
+          "artist": "아카라카",
+          "time": 0
+        }
+      ]
     }
   ]
 }

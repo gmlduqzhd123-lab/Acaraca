@@ -62,8 +62,10 @@
 .admin-required { font-size: 10px; font-weight: 500; color: #586b5d; margin-left: 5px; }
 .admin-field textarea { resize: vertical; }
 .admin-media-heading { border-top: 1px solid #e2e7dc; padding-top: 24px; margin-top: 26px; }
+.admin-media-heading-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .admin-media-heading h3 { margin: 0; font-size: 16px; }
-.admin-media-heading p { font-size: 12px; color: #586b5d; margin: 7px 0 17px; }
+.admin-media-heading p { font-size: 12px; color: #586b5d; margin: 7px 0 0; }
+.admin-part-meta-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
 .admin-media-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .admin-media-field { margin: 0; border: 1px solid #dce4d7; border-radius: 11px; padding: 10px 12px 12px; min-width: 0; background: #fbfcf7; }
 .admin-media-field legend { color: #336a53; font-size: 12px; letter-spacing: .8px; font-weight: 800; padding: 0 5px; }

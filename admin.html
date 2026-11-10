@@ -78,10 +78,21 @@
             <label class="admin-field" for="song-status">상태<select id="song-status" class="admin-input" name="status" required><option value="practice">현재 연습</option><option value="complete">완료</option><option value="archive">보관</option></select></label>
             <label class="admin-field" for="song-arrangement">편성<input id="song-arrangement" class="admin-input" name="arrangement" placeholder="예: 5 Voices" autocomplete="off"></label>
             <label class="admin-field" for="song-tags">태그<input id="song-tags" class="admin-input" name="tags" placeholder="쉼표로 구분: KPOP, 5voices" autocomplete="off"></label>
-            <label class="admin-field admin-field-wide" for="song-thumbnail">썸네일 URL<input id="song-thumbnail" class="admin-input" name="thumbnail" placeholder="https://… 또는 ./assets/images/…" autocomplete="off"><small>비워두면 앱의 기본 썸네일을 사용합니다.</small></label>
+            <label class="admin-field" for="song-musical-key">조성 (Key)<input id="song-musical-key" class="admin-input" name="musicalKey" placeholder="예: F Major, Bb Major" autocomplete="off"></label>
+            <label class="admin-field" for="song-pitch-pipe">피치파이프 기준음<input id="song-pitch-pipe" class="admin-input" name="pitchPipe" placeholder="예: F, Bb, F#" autocomplete="off"></label>
+            <label class="admin-field admin-field-wide" for="song-entry-order">파트 진입 순서 (쉼표 구분)<input id="song-entry-order" class="admin-input" name="entryOrder" placeholder="예: part1, part2, part3, part4" autocomplete="off"><small>무대 모드 첫 음 아르페지오 재생 순서입니다. NWC 악보를 불러오면 자동으로 채워집니다.</small></label>
+            <label class="admin-field admin-field-wide" for="song-thumbnail">썸네일 URL<input id="song-thumbnail" class="admin-input" name="thumbnail" placeholder="https://… 또는 ./assets/images/…" autocomplete="off"><small>비워두면 파트 영상 썸네일 또는 기본 커버를 사용합니다.</small></label>
             <label class="admin-field admin-field-wide" for="song-memo">연습 메모<textarea id="song-memo" class="admin-input" name="memo" rows="3" placeholder="팀과 공유할 연습 포인트를 적어 주세요."></textarea></label>
           </div>
-          <div class="admin-media-heading"><h3>파트별 연습 자료</h3><p>영상은 video, 재생목록은 playlist를 선택하세요. 없는 파트의 URL은 비워두세요.</p></div>
+          <div class="admin-media-heading">
+            <div class="admin-media-heading-top">
+              <div>
+                <h3>파트별 연습 자료 · 첫 음 · 담당 단원</h3>
+                <p>영상은 video, 재생목록은 playlist를 선택하세요. 첫 음(예: A4, F2)과 담당 단원 이름을 함께 관리할 수 있습니다.</p>
+              </div>
+              <label class="admin-button admin-button-secondary admin-file-button" for="import-nwc-file">🎼 NWC 악보에서 첫 음 자동 추출<input id="import-nwc-file" type="file" accept=".nwc"></label>
+            </div>
+          </div>
           <div id="media-fields" class="admin-media-grid"></div>
           <div class="admin-form-actions"><button id="save-song" class="admin-button admin-button-primary" type="submit">곡 추가</button><button id="reset-form" class="admin-button admin-button-secondary" type="button">입력 초기화</button></div>
         </form>

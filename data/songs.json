@@ -23,7 +23,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=krcU5xmlzqA"
         },
         "part1": {
           "type": "video",
@@ -113,7 +113,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=ojRj2JK5oCI"
         },
         "part1": {
           "type": "video",
@@ -207,7 +207,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=Pya8GKVnfC4"
         },
         "part1": {
           "type": "video",
@@ -258,7 +258,13 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "F#"
+      "pitchPipe": "F#",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "short-hair",
@@ -283,7 +289,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=-QwGNWKKiAE"
         },
         "part1": {
           "type": "video",
@@ -364,7 +370,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=GDEFuG30FYg"
         },
         "part1": {
           "type": "video",
@@ -473,7 +479,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=lVqNI6qP1ms"
         },
         "part1": {
           "type": "video",
@@ -532,7 +538,23 @@
         "full": "F3"
       },
       "musicalKey": "F Major",
-      "pitchPipe": "F"
+      "pitchPipe": "F",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4",
+        "part5",
+        "part6"
+      ],
+      "partNames": {
+        "part1": "종미",
+        "part2": "수희",
+        "part3": "선영",
+        "part4": "현",
+        "part5": "명현",
+        "part6": "용석"
+      }
     },
     {
       "id": "first-impression",
@@ -557,7 +579,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=koKC3zS_CYw"
         },
         "part1": {
           "type": "video",
@@ -608,7 +630,13 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "A"
+      "pitchPipe": "A",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "tobacco-shop-girl",
@@ -633,7 +661,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=6gw6D0RRFDs"
         },
         "part1": {
           "type": "video",
@@ -678,7 +706,13 @@
         "full": "D3"
       },
       "musicalKey": "E Major",
-      "pitchPipe": "G#"
+      "pitchPipe": "G#",
+      "entryOrder": [
+        "part4",
+        "part1",
+        "part2",
+        "part3"
+      ]
     },
     {
       "id": "aloha",
@@ -703,7 +737,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=bw9c_Gp5Ixs"
         },
         "part1": {
           "type": "video",
@@ -779,7 +813,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=z4cOfW52eJ8"
         },
         "part1": {
           "type": "video",
@@ -858,7 +892,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=ZoSmLW7e9jk"
         },
         "part1": {
           "type": "video",
@@ -941,7 +975,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=-xAYYFYyrVw"
         },
         "part1": {
           "type": "video",
@@ -1032,7 +1066,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=vGG62umYgvg"
         },
         "part1": {
           "type": "video",
@@ -1225,7 +1259,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=s0_kbld9PB8"
         },
         "part1": {
           "type": "video",
@@ -1276,7 +1310,21 @@
         "full": "F4"
       },
       "musicalKey": "F Major",
-      "pitchPipe": "F"
+      "pitchPipe": "F",
+      "entryOrder": [
+        "part2",
+        "part3",
+        "part4",
+        "part5",
+        "part1"
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "희엽",
+        "part3": "선영",
+        "part4": "명현",
+        "part5": "재우"
+      }
     },
     {
       "id": "go-to-school",
@@ -1301,7 +1349,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=nPqnsaIXWxw"
         },
         "part1": {
           "type": "video",
@@ -1360,7 +1408,14 @@
         "part3",
         "part5"
       ],
-      "pitchPipe": "G"
+      "pitchPipe": "G",
+      "partNames": {
+        "part1": "혜령 · 종미",
+        "part2": "수희",
+        "part3": "현 · 선영",
+        "part4": "명현 · 희엽",
+        "part5": "용석 · 재우"
+      }
     },
     {
       "id": "well-done-today",
@@ -1385,7 +1440,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=w9Gf4T6Gsg0"
         },
         "part1": {
           "type": "video",
@@ -1485,7 +1540,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=ojRj2JK5oCI"
         },
         "part1": {
           "type": "video",
@@ -1584,7 +1639,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=3MteSlpxCpo"
         },
         "part1": {
           "type": "video",
@@ -1662,7 +1717,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=d1Dcf2_ICDI"
         },
         "part1": {
           "type": "video",
@@ -1707,7 +1762,13 @@
         "full": "G4"
       },
       "musicalKey": "G Major",
-      "pitchPipe": "G"
+      "pitchPipe": "G",
+      "entryOrder": [
+        "part4",
+        "part1",
+        "part2",
+        "part3"
+      ]
     },
     {
       "id": "isnt-she-lovely",
@@ -1732,7 +1793,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=VCDXJbA2YjI"
         },
         "part1": {
           "type": "video",
@@ -1826,7 +1887,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=bW0tcG8oLro"
         },
         "part1": {
           "type": "video",
@@ -1914,7 +1975,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=dVgzbLgkLdY"
         },
         "part1": {
           "type": "video",
@@ -1965,7 +2026,13 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "F#"
+      "pitchPipe": "F#",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "l-o-v-e",
@@ -1990,7 +2057,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=peiYcaL6BvQ"
         },
         "part1": {
           "type": "video",
@@ -2042,7 +2109,14 @@
         "full": "G3"
       },
       "musicalKey": "G Major",
-      "pitchPipe": "G"
+      "pitchPipe": "G",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4",
+        "part5"
+      ]
     },
     {
       "id": "old-pop-medley",
@@ -2067,7 +2141,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=8cNuJQ6pgg8"
         },
         "part1": {
           "type": "video",
@@ -2167,7 +2241,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=RPY5H6drjDk"
         },
         "part1": {
           "type": "video",
@@ -2336,7 +2410,14 @@
         "full": "Ab3"
       },
       "musicalKey": "Eb Major",
-      "pitchPipe": "Ab"
+      "pitchPipe": "Ab",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4",
+        "part5"
+      ]
     },
     {
       "id": "cherry-blossom-ending",
@@ -2461,7 +2542,7 @@
         "vp": null,
         "full": {
           "type": "video",
-          "url": ""
+          "url": "https://www.youtube.com/watch?v=abd9ioW3u_E"
         },
         "part1": {
           "type": "video",
@@ -2577,7 +2658,19 @@
         "full": "E4"
       },
       "musicalKey": "B Major",
-      "pitchPipe": "E"
+      "pitchPipe": "E",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
+      }
     },
     {
       "id": "same-place",
@@ -2609,6 +2702,10 @@
         "part4": {
           "type": "video",
           "url": "https://www.youtube.com/watch?v=DCg7DmfdXJw"
+        },
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=kY1TMDiNSq0"
         }
       },
       "startingPitches": {
@@ -2623,7 +2720,13 @@
         "full": "G4"
       },
       "musicalKey": "G Major",
-      "pitchPipe": "G"
+      "pitchPipe": "G",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ]
     },
     {
       "id": "would-be-good",
@@ -2673,7 +2776,13 @@
         "full": "Ab3"
       },
       "musicalKey": "Ab Major",
-      "pitchPipe": "Ab"
+      "pitchPipe": "Ab",
+      "entryOrder": [
+        "part4",
+        "part1",
+        "part2",
+        "part3"
+      ]
     },
     {
       "id": "ditto",
@@ -2706,6 +2815,10 @@
         "part5": {
           "type": "video",
           "url": "https://www.youtube.com/watch?v=PZoIP4DvpbA"
+        },
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=u4SWcpt08VE"
         }
       },
       "startingPitches": {
@@ -2720,7 +2833,13 @@
         "full": "F#3"
       },
       "musicalKey": "F# Minor",
-      "pitchPipe": "F#"
+      "pitchPipe": "F#",
+      "entryOrder": [
+        "part2",
+        "part3",
+        "part5",
+        "part1"
+      ]
     },
     {
       "id": "if-you-dont-dream",
@@ -2753,6 +2872,10 @@
         "part4": {
           "type": "video",
           "url": "https://youtu.be/Jms_1dg6qBU"
+        },
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=l0ZgOjQj35Q"
         }
       },
       "startingPitches": {
@@ -2783,4 +2906,3 @@
     }
   ]
 }
-
