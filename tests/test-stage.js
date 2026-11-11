@@ -233,14 +233,41 @@ assert(stageJsSource.includes('◀ 그 전 공연'), 'stage.js must include ◀ 
 assert(stageJsSource.includes('그 후 공연 ▶'), 'stage.js must include 그 후 공연 ▶ button');
 assert(stageJsSource.includes('Ctrl+ArrowLeft / Ctrl+ArrowRight'), 'stage.js must support Ctrl+Arrow keyboard navigation for performances');
 
-// 13. Test Cue Sheet Export / Import Serialization
-import { serializeStageSession, parseImportedStageSession } from '../js/stage.js';
+// 13. Test Cue Sheet Export / Import Serialization & URL Share Parameter (?cuesheet=...)
+import {
+  serializeStageSession,
+  parseImportedStageSession,
+  encodeStageSessionShareParam,
+  decodeStageSessionShareParam,
+  buildStageShareUrl,
+  openStageShareModal,
+  printStageCueSheet
+} from '../js/stage.js';
 const exportedJson = serializeStageSession(DEFAULT_STAGE_HISTORY[0]);
 assert(exportedJson.includes('"type": "acaraca-stage-cuesheet"'), 'Exported JSON must contain acaraca-stage-cuesheet type');
 const reimported = parseImportedStageSession(exportedJson);
 assert.strictEqual(reimported.eventTitle, DEFAULT_STAGE_HISTORY[0].eventTitle, 'Reimported eventTitle must match');
 assert.strictEqual(reimported.songs.length, DEFAULT_STAGE_HISTORY[0].songs.length, 'Reimported song count must match');
 
+const encodedParam = encodeStageSessionShareParam(DEFAULT_STAGE_HISTORY[0]);
+assert(encodedParam && typeof encodedParam === 'string' && !encodedParam.includes('='), 'encodeStageSessionShareParam must return URL-safe Base64 string');
+const decodedSession = decodeStageSessionShareParam(encodedParam);
+assert(decodedSession && decodedSession.eventTitle === DEFAULT_STAGE_HISTORY[0].eventTitle, 'decodeStageSessionShareParam must restore eventTitle');
+assert.strictEqual(decodedSession.songs.length, DEFAULT_STAGE_HISTORY[0].songs.length, 'decodeStageSessionShareParam must restore all songs');
+const shareHref = buildStageShareUrl(DEFAULT_STAGE_HISTORY[0], 'https://gmlduqzhd123-lab.github.io/Acaraca/index.html');
+assert(shareHref.includes('tab=stage') && shareHref.includes('view=live') && shareHref.includes('cuesheet='), 'buildStageShareUrl must include tab=stage, view=live, and cuesheet param');
+assert.strictEqual(typeof openStageShareModal, 'function', 'openStageShareModal must be exported');
+assert.strictEqual(typeof printStageCueSheet, 'function', 'printStageCueSheet must be exported');
+
+// 14. Test 34/34 Songs Dedicated STAGE_AI_COMMENTS Coverage & Print Styles
+for (const song of songsData.songs) {
+  const c = STAGE_AI_COMMENTS[song.id];
+  assert(c && c.wit && c.story && c.brief, `Song '${song.id}' (${song.title}) must have dedicated wit/story/brief STAGE_AI_COMMENTS`);
+}
+const styleCssSource = fs.readFileSync('css/style.css', 'utf8');
+assert(styleCssSource.includes('@media print') && styleCssSource.includes('.stage-print-sheet'), 'css/style.css must include @media print rules for .stage-print-sheet');
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');
+
 
 

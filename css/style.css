@@ -3947,3 +3947,378 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
 .setlist-nav-title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; word-break: keep-all; }
 .setlist-nav-count { font-size: 11px; font-weight: 600; color: var(--muted); white-space: nowrap; }
 .setlist-nav .button { flex: none; white-space: nowrap; }
+
+/* ===== 인앱 NWC · MIDI 악보 미리보기 & Web Audio 재생 모달 ===== */
+.score-preview-dialog {
+  width: min(94vw, 760px);
+  max-height: 88vh;
+}
+.score-preview-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-alt, rgba(25, 77, 70, 0.06));
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.score-preview-meta-chips,
+.score-preview-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.score-preview-staff-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.score-preview-staff-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.score-preview-staff-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.score-staff-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  margin-right: 8px;
+}
+.score-staff-name {
+  font-size: 15px;
+  font-weight: 750;
+}
+.score-preview-notes-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.score-note-pill {
+  padding: 4px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.score-note-pill:hover,
+.score-note-pill:active {
+  border-color: var(--brand);
+  transform: translateY(-1px);
+}
+.score-note-pill.first {
+  border-color: var(--brand);
+  background: var(--brand-tint, rgba(25, 77, 70, 0.1));
+  color: var(--brand);
+  font-weight: 800;
+}
+.score-preview-lyrics {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+/* ===== 구간 반복 저장 북마크 & 현 위치 유지 파트 대조 전환 ===== */
+.loop-bookmarks-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.loop-bookmark-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.loop-bookmark-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+}
+.loop-bookmark-play {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.loop-bookmark-play:hover {
+  color: var(--brand);
+}
+.loop-bookmark-del {
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.loop-bookmark-del:hover {
+  color: #dc2626;
+}
+
+.part-sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.part-sync-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted-strong, var(--ink));
+}
+
+/* ===== 실시간 음정 튜너 & 합주 메트로놈 (피치파이프 모달 내부) ===== */
+.pitch-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.pitch-tool-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft, var(--surface));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pitch-tool-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+}
+.pitch-tuner-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pitch-tuner-readout strong {
+  font-size: 18px;
+  color: var(--brand);
+}
+.pitch-tuner-readout span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pitch-tuner-gauge {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.pitch-tuner-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ink);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.pitch-tuner-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 0%;
+  transition: left 0.08s linear, width 0.08s linear;
+  background: var(--brand);
+}
+.pitch-tuner-fill.in-tune {
+  background: #10b981;
+}
+.pitch-tuner-fill.off-tune {
+  background: #f59e0b;
+}
+.pitch-metro-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pitch-metro-bpm {
+  min-width: 68px;
+  font-size: 15px;
+  color: var(--ink);
+}
+.pitch-metro-controls input[type="range"] {
+  flex: 1;
+  accent-color: var(--brand);
+}
+.pitch-metro-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.metro-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: transform 0.08s ease, background 0.08s ease;
+}
+.metro-dot.active {
+  background: var(--brand);
+  transform: scale(1.2);
+}
+.metro-dot.accent {
+  background: #f59e0b;
+  transform: scale(1.32);
+}
+
+/* ===== 무대 큐시트 A4 인쇄 전용 레이아웃 ===== */
+.stage-print-sheet {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .skip-link,
+  .app-shell,
+  .bottom-nav,
+  .toast,
+  .big-practice-bar,
+  #update-banner,
+  dialog {
+    display: none !important;
+  }
+  .stage-print-sheet {
+    display: block !important;
+    font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
+    color: #111;
+    width: 100%;
+  }
+  .stage-print-header {
+    border-bottom: 2px solid #111;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .stage-print-kicker {
+    font-size: 9pt;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #444;
+  }
+  .stage-print-title {
+    margin: 2px 0 4px;
+    font-size: 18pt;
+    font-weight: 800;
+  }
+  .stage-print-meta,
+  .stage-print-notes {
+    margin: 2px 0;
+    font-size: 10pt;
+    color: #333;
+  }
+  .stage-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+  }
+  .stage-print-table th,
+  .stage-print-table td {
+    border: 1px solid #999;
+    padding: 6px 8px;
+    vertical-align: top;
+    text-align: left;
+  }
+  .stage-print-table th {
+    background: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 800;
+  }
+  .stage-print-col-num {
+    width: 26px;
+    text-align: center !important;
+    font-weight: 800;
+  }
+  .stage-print-col-song {
+    width: 20%;
+  }
+  .stage-print-col-key {
+    width: 15%;
+  }
+  .stage-print-col-pitch {
+    width: 28%;
+    font-weight: 600;
+  }
+  .stage-print-sub {
+    font-size: 8.5pt;
+    color: #555;
+    margin-top: 2px;
+  }
+  .stage-print-memo {
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .stage-print-mc {
+    font-size: 8.8pt;
+    color: #333;
+    line-height: 1.35;
+  }
+  .stage-print-footer {
+    margin-top: 10px;
+    font-size: 8.5pt;
+    color: #666;
+    text-align: right;
+  }
+}
+

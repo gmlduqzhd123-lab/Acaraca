@@ -2,9 +2,10 @@ import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } fro
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, isPitchPlaying, DEFAULT_PITCH_DURATION } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, isPitchPlaying, DEFAULT_PITCH_DURATION, frequencyToPitchInfo, autoCorrelatePitch, setMetronomeBpm, getMetronomeBpm } from '../js/pitch.js';
 import {
   getAllFeedbacks,
+  initFeedbacksFromData,
   addFeedback,
   toggleFeedbackLike,
   getPerformancesForSong,
@@ -710,6 +711,74 @@ export function runCoreTests() {
     check('renderScores 내 미인증 시 락 스크린 및 모달 호출 가드 검증', () => appJsContent.includes("if (!isProtectedAuthorized('scores'))") && appJsContent.includes("openProtectedAuthDialog('scores'"));
     check('renderEducation 내 미인증 시 락 스크린 및 모달 호출 가드 검증', () => appJsContent.includes("if (!isProtectedAuthorized('education'))") && appJsContent.includes("openProtectedAuthDialog('education'"));
     check('style.css 락 스크린 및 안내 배지 스타일 클래스 정의 검증', () => styleCssContent.includes('.protected-lock-state') && styleCssContent.includes('.protected-notice-badge'));
+    check('모바일 인앱 NWC·MIDI 악보 미리보기 및 재생 모달 구현 검증', () => appJsContent.includes('openScorePreviewModal') && appJsContent.includes('parseNwcScoreDetail') && appJsContent.includes('parseMidiScoreDetail') && styleCssContent.includes('.score-preview-dialog'));
+    check('34곡 전 곡 partNames(파트별 담당 단원 이름) 100% 매핑 검증', () => {
+      const allSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
+      return allSongs.length === 34 && allSongs.every(s => s.partNames && Object.keys(s.partNames).length > 0);
+    });
+    check('31개 전 공연 아카이브(performances.json) setlist 객체 스키마 정규화 100% 검증', () => {
+      const allPerfs = JSON.parse(nodeFs.readFileSync('./data/performances.json', 'utf8')).performances;
+      return allPerfs.length === 31 && allPerfs.every(p =>
+        Array.isArray(p.setlist) &&
+        p.setlist.length > 0 &&
+        p.setlist.every(it => it && typeof it === 'object' && typeof it.title === 'string')
+      );
+    });
+    check('practice_videos.json 및 rehearsals.json 꿈꾸지 않으면 아카이브 등록 검증', () => {
+      const pVids = JSON.parse(nodeFs.readFileSync('./data/practice_videos.json', 'utf8')).videos;
+      const rehs = JSON.parse(nodeFs.readFileSync('./data/rehearsals.json', 'utf8')).rehearsals;
+      return Array.isArray(pVids) && pVids.some(v => v.songId === 'if-you-dont-dream') && Array.isArray(rehs) && rehs.some(r => r.songId === 'if-you-dont-dream');
+    });
+    check('frequencyToPitchInfo(440) 기준음 A4 · 0 cents 변환 검증', () => {
+      const info = frequencyToPitchInfo(440);
+      return info && info.note === 'A4' && info.octave === 4 && info.cents === 0 && info.korean === '라4' && info.displayNote === 'A4 (라)';
+    });
+    check('autoCorrelatePitch 합성 440Hz 사인파 버퍼 음정 감지 검증', () => {
+      const sampleRate = 44100;
+      const buf = new Float32Array(2048);
+      for (let i = 0; i < buf.length; i++) {
+        buf[i] = 0.5 * Math.sin((2 * Math.PI * 440 * i) / sampleRate);
+      }
+      const detected = autoCorrelatePitch(buf, sampleRate);
+      return detected > 435 && detected < 445;
+    });
+    check('setMetronomeBpm 범위 제한(40~220 BPM) 검증', () => {
+      const low = setMetronomeBpm(10);
+      const high = setMetronomeBpm(300);
+      const mid = setMetronomeBpm(96);
+      return low === 40 && high === 220 && mid === 96 && getMetronomeBpm() === 96;
+    });
+    check('initFeedbacksFromData 기존 시드 버전(v2) 기기에서 신규 initialFeedbacks 비파괴 병합 검증', () => {
+      storage.write('feedbacks_seed_v', 2);
+      storage.write('team_feedbacks', [
+        { id: 'fb-user-1', rehearsalId: 'reh-existing', songId: 'balloon', author: '단원', content: '기존 댓글 보존' }
+      ]);
+      initFeedbacksFromData([
+        { id: 'reh-existing', songId: 'balloon', initialFeedbacks: [{ id: 'fb-seed-new', author: '리더', content: '새 시드 피드백' }] },
+        { id: 'reh-if-you-dont-dream', songId: 'if-you-dont-dream', initialFeedbacks: [{ id: 'fb-dream-1', author: '희엽', content: '첫음 체크' }] }
+      ]);
+      const mergedExisting = getAllFeedbacks('reh-existing');
+      const mergedDream = getAllFeedbacks('reh-if-you-dont-dream');
+      return (
+        mergedExisting.some(f => f.id === 'fb-user-1') &&
+        mergedExisting.some(f => f.id === 'fb-seed-new') &&
+        mergedDream.some(f => f.id === 'fb-dream-1')
+      );
+    });
+    check('연습실 A-B 구간 북마크 저장·현 구간 유지 파트 전환·튜너 UI 구현 검증', () => {
+      return (
+        appJsContent.includes('savedLoops') &&
+        appJsContent.includes('switchPartAtSameTime') &&
+        appJsContent.includes('🎼 인앱 악보 보기') &&
+        indexHtmlContent.includes('id="pitch-tuner-box"') &&
+        indexHtmlContent.includes('id="pitch-metro-box"')
+      );
+    });
+    check('GitHub Actions CI 워크플로(.github/workflows/ci.yml) 구성 검증', () => {
+      if (!nodeFs.existsSync('./.github/workflows/ci.yml')) return false;
+      const ciYml = nodeFs.readFileSync('./.github/workflows/ci.yml', 'utf8');
+      return ciYml.includes('npm run validate') && ciYml.includes('npm test') && ciYml.includes('npm run audit');
+    });
   }
 
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };

@@ -4,7 +4,7 @@ import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
 import {readRoute, writeRoute, routeUrl} from './router.js';
 import {el, icon, button, toast, cover, emptyState} from './ui.js';
-import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, getCurrentSequence, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, pitchPipeInfo, playPitchPipe} from './pitch.js';
+import {NOTES, OCTAVES, getNoteFrequency, playPitch, stopPitch, getCurrentPlaying, getCurrentSequence, subscribePitchState, parseNoteString, playNoteString, playChordStrings, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, pitchPipeInfo, playPitchPipe, frequencyToPitchInfo, startVocalTuner, stopVocalTuner, isVocalTunerRunning, startMetronome, stopMetronome, isMetronomeRunning, getMetronomeBpm, setMetronomeBpm} from './pitch.js';
 import {
   loadPerformances,
   loadRehearsals,
@@ -54,7 +54,8 @@ import {
   saveStageHistory,
   cleanupStageLive,
   promptStagePassword,
-  resolveSongData
+  resolveSongData,
+  decodeStageSessionShareParam
 } from './stage.js';
 
 const app = document.getElementById('app');
@@ -111,7 +112,7 @@ const state = {
   filters: {query: '', status: '', category: '', difficulty: '', part: ''},
   stageView: read('stageView', 'live'),
   stageFilters: {query: '', category: ''},
-  scoreFilters: {query: '', category: '', songId: '', year: ''},
+  scoreFilters: {query: '', category: '', songId: '', year: '', format: ''},
   educationFilters: {query: '', category: '', target: ''},
   practiceVideoFilters: {query: '', part: '', songId: '', sourceType: ''},
   appreciationFilters: {query: '', category: '', artist: '', sortBy: 'latest'},
@@ -157,14 +158,24 @@ function openSong(song) { navigate({song: song.id}); }
 // 이름(나는 누구?)이 설정되어 있으면 곡마다 그 사람이 맡은 파트를, 없으면 기본 파트를 내 파트로 사용
 function songMyPart(song) {
   if (state.myName && song?.partNames) {
-    const hit = Object.entries(song.partNames).find(([, name]) => name === state.myName);
+    const hit = Object.entries(song.partNames).find(([, name]) => {
+      if (typeof name !== 'string') return false;
+      return name === state.myName || name.split(/\s*[·,/]\s*/).map(s => s.trim()).includes(state.myName);
+    });
     if (hit) return hit[0];
   }
   return state.myPart;
 }
 function allMemberNames() {
   const count = new Map();
-  for (const song of state.songs) for (const name of Object.values(song.partNames || {})) count.set(name, (count.get(name) || 0) + 1);
+  for (const song of state.songs) {
+    for (const rawName of Object.values(song.partNames || {})) {
+      if (typeof rawName !== 'string') continue;
+      for (const name of rawName.split(/\s*[·,/]\s*/).map(s => s.trim()).filter(Boolean)) {
+        count.set(name, (count.get(name) || 0) + 1);
+      }
+    }
+  }
   return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko')).map(([name]) => name);
 }
 function myVoiceLabel() {
@@ -880,6 +891,30 @@ function renderBrowse(favoritesOnly = false) {
   app.append(searchBar(false, updateResults), filterContainer, results); updateFilters(); updateResults();
 }
 
+function normalizePerfSetlistItem(rawItem) {
+  if (typeof rawItem === 'string') {
+    const clean = rawItem.trim();
+    const song = state.songs.find(s => s.id === clean || s.title === clean || clean.includes(s.title));
+    return {
+      songId: song?.id || null,
+      title: clean,
+      artist: song?.artist || '',
+      time: '',
+      song: song || null
+    };
+  }
+  const obj = rawItem && typeof rawItem === 'object' ? rawItem : {};
+  const baseId = obj.songId ? String(obj.songId).replace(/-[0-9]+$/, '') : '';
+  const song = state.songs.find(s => s.id === obj.songId || (baseId && s.id === baseId));
+  return {
+    songId: obj.songId || song?.id || null,
+    title: obj.title || song?.title || '',
+    artist: obj.artist || song?.artist || '',
+    time: obj.time || '',
+    song: song || null
+  };
+}
+
 function openStageModal(perf) {
   const existing = document.getElementById('stage-video-dialog');
   if (existing) {
@@ -915,8 +950,9 @@ function openStageModal(perf) {
 
   const setlistBlock = perf.setlist?.length ? el('div', {class: 'stage-setlist-box', style: 'margin-top: 14px;'},
     el('div', {class: 'stage-setlist-title', text: '무대 셋리스트 (파트 연습 바로가기)'}),
-    el('div', {class: 'stage-setlist-items'}, perf.setlist.map(item => {
-      const song = state.songs.find(s => s.id === item.songId);
+    el('div', {class: 'stage-setlist-items'}, perf.setlist.map(rawItem => {
+      const item = normalizePerfSetlistItem(rawItem);
+      const song = item.song;
       return el('div', {class: 'setlist-item'},
         el('div', {},
           el('span', {class: 'setlist-song-name', text: item.title}),
@@ -997,8 +1033,9 @@ function renderStageList(performances, container) {
     if (perf.setlist && perf.setlist.length) {
       setlistRow = el('div', {class: 'stage-list-setlist'},
         el('span', {style: 'font-weight: 600; color: var(--muted); font-size: 11.5px;'}, '🎵 연주곡:'),
-        ...perf.setlist.map(item => {
-          const song = state.songs.find(s => s.id === item.songId);
+        ...perf.setlist.map(rawItem => {
+          const item = normalizePerfSetlistItem(rawItem);
+          const song = item.song;
           return el('span', {class: 'stage-setlist-chip'},
             el('strong', {text: item.title}),
             item.artist ? el('span', {style: 'color: var(--muted); font-size: 11px;'}, ` (${item.artist})`) : null,
@@ -1052,8 +1089,9 @@ function renderStageCards(performances, container) {
 
     const setlistNode = perf.setlist?.length ? el('div', {class: 'stage-setlist-box'},
       el('div', {class: 'stage-setlist-title', text: '무대 셋리스트 (파트 연습 바로가기)'}),
-      el('div', {class: 'stage-setlist-items'}, perf.setlist.map(item => {
-        const song = state.songs.find(s => s.id === item.songId);
+      el('div', {class: 'stage-setlist-items'}, perf.setlist.map(rawItem => {
+        const item = normalizePerfSetlistItem(rawItem);
+        const song = item.song;
         return el('div', {class: 'setlist-item'},
           el('div', {},
             el('span', {class: 'setlist-song-name', text: item.title}),
@@ -1309,9 +1347,10 @@ function renderStage() {
       const venueMatch = (perf.venue || '').toLowerCase().includes(q);
       const descMatch = (perf.description || '').toLowerCase().includes(q);
       const dateMatch = (perf.date || '').toLowerCase().includes(q);
-      const setlistMatch = perf.setlist?.some(item =>
-        (item.title || '').toLowerCase().includes(q) || (item.artist || '').toLowerCase().includes(q)
-      );
+      const setlistMatch = perf.setlist?.some(rawItem => {
+        const item = normalizePerfSetlistItem(rawItem);
+        return (item.title || '').toLowerCase().includes(q) || (item.artist || '').toLowerCase().includes(q);
+      });
 
       return titleMatch || venueMatch || descMatch || dateMatch || setlistMatch;
     });
@@ -2328,6 +2367,635 @@ function openUploadScoreModal(defaultSongId = '') {
   dialog.showModal();
 }
 
+function decodeSmartBytes(bytes) {
+  const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const utf8 = new TextDecoder('utf-8', { fatal: false }).decode(u8);
+  let euckr = utf8;
+  try {
+    euckr = new TextDecoder('euc-kr', { fatal: false }).decode(u8);
+  } catch {}
+  const scoreText = (s) => (s.match(/[가-힣]/g) || []).length * 3 - (s.match(/\ufffd/g) || []).length * 5;
+  return scoreText(euckr) > scoreText(utf8) ? euckr : utf8;
+}
+
+const SCORE_CHROMATIC_SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const SCORE_CHROMATIC_FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+function parseNwctxtScoreDetail(text, fallbackTitle = '') {
+  const lines = String(text || '').split(/\r?\n/);
+  let title = fallbackTitle;
+  let author = '';
+  let staves = [];
+  let currentStaff = null;
+
+  for (const line of lines) {
+    if (line.startsWith('|SongInfo|')) {
+      const tMatch = line.match(/Title:"([^"]*)"/);
+      const aMatch = line.match(/Author:"([^"]*)"/);
+      if (tMatch && tMatch[1]) title = tMatch[1];
+      if (aMatch && aMatch[1]) author = aMatch[1];
+    } else if (line.startsWith('|AddStaff|')) {
+      const nameMatch = line.match(/Name:"([^"]*)"/);
+      const labelMatch = line.match(/Label:"([^"]*)"/);
+      currentStaff = {
+        name: (labelMatch && labelMatch[1]) || (nameMatch && nameMatch[1]) || `Staff ${staves.length + 1}`,
+        clef: 'Treble',
+        keySig: 'C Major',
+        timeSig: '4/4',
+        tempo: null,
+        firstNote: null,
+        melodyNotes: [],
+        lyrics: ''
+      };
+      staves.push(currentStaff);
+    } else if (currentStaff && line.startsWith('|Lyric1|')) {
+      const lMatch = line.match(/Text:"([^"]*)"/);
+      if (lMatch && lMatch[1]) {
+        currentStaff.lyrics = lMatch[1].replace(/\\r\\n|\\n/g, ' ').replace(/\s+/g, ' ').trim();
+      }
+    } else if (currentStaff && line.startsWith('|Clef|')) {
+      const cMatch = line.match(/Type:([A-Za-z]+)/);
+      if (cMatch) currentStaff.clef = cMatch[1];
+    } else if (currentStaff && line.startsWith('|Tempo|')) {
+      const bMatch = line.match(/Tempo:(\d+)/);
+      if (bMatch) currentStaff.tempo = Number(bMatch[1]);
+    }
+  }
+
+  return {
+    format: 'NWCTXT',
+    title,
+    author,
+    musicalKey: staves[0]?.keySig || 'C Major',
+    timeSig: staves[0]?.timeSig || '4/4',
+    tempo: staves.find(s => s.tempo)?.tempo || null,
+    staves
+  };
+}
+
+async function parseNwcScoreDetail(buffer, fallbackTitle = '') {
+  let u8 = new Uint8Array(buffer);
+  const headerStr = new TextDecoder('ascii').decode(u8.slice(0, 16));
+  if (headerStr.startsWith('!NoteWorthy')) {
+    return parseNwctxtScoreDetail(decodeSmartBytes(u8), fallbackTitle);
+  }
+  if (headerStr.startsWith('[NWZ]') && typeof DecompressionStream !== 'undefined') {
+    const ds = new DecompressionStream('deflate');
+    const writer = ds.writable.getWriter();
+    writer.write(u8.slice(6));
+    writer.close();
+    const outChunks = [];
+    const reader = ds.readable.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      outChunks.push(value);
+    }
+    const total = outChunks.reduce((acc, c) => acc + c.length, 0);
+    const merged = new Uint8Array(total);
+    let offset = 0;
+    for (const c of outChunks) {
+      merged.set(c, offset);
+      offset += c.length;
+    }
+    u8 = merged;
+  }
+
+  const findNextNull = (pos, maxLen = 256) => {
+    let end = pos;
+    while (end < u8.length && end - pos < maxLen && u8[end] !== 0) end++;
+    return end;
+  };
+  const readStrAt = (pos, maxLen = 256) => {
+    const end = findNextNull(pos, maxLen);
+    return { str: decodeSmartBytes(u8.slice(pos, end)).trim(), next: end + 1 };
+  };
+
+  // NWC 헤더에서 제목·작곡가 텍스트 스캔 및 마커(24 00 00 00 46 00) 탐색
+  let markerIdx = -1;
+  for (let i = 0; i < Math.min(u8.length - 6, 800); i++) {
+    if (u8[i] === 0x24 && u8[i + 1] === 0x00 && u8[i + 2] === 0x00 && u8[i + 3] === 0x00 && u8[i + 4] === 0x46 && u8[i + 5] === 0x00) {
+      markerIdx = i;
+      break;
+    }
+  }
+
+  const staves = [];
+  if (markerIdx >= 0) {
+    let pos = markerIdx;
+    while (pos < u8.length - 20) {
+      if (u8[pos] === 0x24 && u8[pos + 1] === 0x00 && u8[pos + 2] === 0x00 && u8[pos + 3] === 0x00 && u8[pos + 4] === 0x46 && u8[pos + 5] === 0x00) {
+        const nameRes = readStrAt(pos + 6, 120);
+        let p = nameRes.next;
+        const labelRes = readStrAt(p, 120);
+        p = labelRes.next;
+        const instRes = readStrAt(p, 120);
+        p = instRes.next;
+        const groupRes = readStrAt(p, 120);
+
+        let nextMarker = u8.length;
+        for (let k = groupRes.next; k < u8.length - 6; k++) {
+          if (u8[k] === 0x24 && u8[k + 1] === 0x00 && u8[k + 2] === 0x00 && u8[k + 3] === 0x00 && u8[k + 4] === 0x46 && u8[k + 5] === 0x00) {
+            nextMarker = k;
+            break;
+          }
+        }
+        staves.push({
+          rawName: nameRes.str,
+          rawLabel: labelRes.str,
+          rawGroup: groupRes.str,
+          start: groupRes.next,
+          end: nextMarker
+        });
+        pos = nextMarker;
+      } else {
+        pos++;
+      }
+    }
+  }
+
+  const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  const CLEFS = {
+    0: { name: 'Treble', steps: [['E', 4], ['F', 4], ['G', 4], ['A', 4], ['B', 4], ['C', 5], ['D', 5], ['E', 5], ['F', 5]] },
+    1: { name: 'Bass', steps: [['G', 2], ['A', 2], ['B', 2], ['C', 3], ['D', 3], ['E', 3], ['F', 3], ['G', 3], ['A', 3]] },
+    2: { name: 'Alto', steps: [['F', 3], ['G', 3], ['A', 3], ['B', 3], ['C', 4], ['D', 4], ['E', 4], ['F', 4], ['G', 4]] },
+    3: { name: 'Tenor', steps: [['D', 3], ['E', 3], ['F', 3], ['G', 3], ['A', 3], ['B', 3], ['C', 4], ['D', 4], ['E', 4]] }
+  };
+  const FLAT_BIT_MAP = { 0: 'C', 1: 'D', 2: 'E', 3: 'F', 4: 'G', 5: 'A', 6: 'B' };
+  const MAJOR_KEYS_BY_FLATS = { 0: 'C Major', 1: 'F Major', 2: 'Bb Major', 3: 'Eb Major', 4: 'Ab Major', 5: 'Db Major', 6: 'Gb Major', 7: 'Cb Major' };
+  const MAJOR_KEYS_BY_SHARPS = { 0: 'C Major', 1: 'G Major', 2: 'D Major', 3: 'A Major', 4: 'E Major', 5: 'B Major', 6: 'F# Major', 7: 'C# Major' };
+
+  const getPitchAtPos = (clefType, octaveShift, posVal, keyFlats, keySharps, accCode) => {
+    const clef = CLEFS[clefType] || CLEFS[0];
+    const baseE4Index = clef.steps[0][0].charCodeAt(0) - 'C'.charCodeAt(0) + clef.steps[0][1] * 7;
+    const d = -posVal;
+    const totalSteps = baseE4Index + 4 + d;
+    const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    const noteIdx = ((totalSteps % 7) + 7) % 7;
+    let octave = Math.floor(totalSteps / 7);
+    if (octaveShift === 1) octave += 1;
+    else if (octaveShift === 2) octave -= 1;
+    const letter = noteNames[noteIdx];
+    let semitone = SEMI[letter];
+    let useFlat = false;
+    if (accCode === 0) semitone += 1;
+    else if (accCode === 1) { semitone -= 1; useFlat = true; }
+    else if (accCode === 2) semitone += 0;
+    else if (accCode === 3) semitone += 2;
+    else if (accCode === 4) { semitone -= 2; useFlat = true; }
+    else {
+      if (keyFlats.includes(letter)) { semitone -= 1; useFlat = true; }
+      else if (keySharps.includes(letter)) semitone += 1;
+    }
+    if (semitone < 0) { semitone += 12; octave -= 1; }
+    if (semitone >= 12) { semitone -= 12; octave += 1; }
+    const scale = useFlat ? SCORE_CHROMATIC_FLAT : SCORE_CHROMATIC_SHARP;
+    return `${scale[semitone]}${octave}`;
+  };
+
+  let globalTempo = null;
+  let globalKey = 'C Major';
+  let globalTimeSig = '4/4';
+
+  const parsedStaves = staves.map((st, idx) => {
+    const slice = u8.slice(st.start, st.end);
+    // 가사 텍스트 추출 (스태프 시작부 한글/영문 가사 블록)
+    const rawText = decodeSmartBytes(slice.slice(0, Math.min(slice.length, 1600)));
+    const lyricMatches = rawText.match(/[가-힣a-zA-Z0-9\s,.!?~'-]{4,}/g) || [];
+    const lyrics = lyricMatches
+      .map(s => s.replace(/\s+/g, ' ').trim())
+      .filter(s => /[가-힣]{2,}|[a-zA-Z]{4,}/.test(s) && !/^(Standard|Staff|Layer|Default)$/i.test(s))
+      .join(' · ')
+      .slice(0, 140);
+
+    let objStart = -1;
+    for (let i = 20; i < slice.length - 12; i++) {
+      if (slice[i] === 0x00 && slice[i + 1] <= 3 && slice[i + 2] === 0x00 && slice[i + 3] <= 2 && slice[i + 4] === 0x00 && (slice[i + 5] === 0x01 || slice[i + 5] === 0x02 || slice[i + 5] === 0x05)) {
+        objStart = i;
+        break;
+      }
+    }
+
+    let clefType = 0;
+    let octaveShift = 0;
+    let keyFlats = [];
+    let keySharps = [];
+    let keyName = 'C Major';
+    let timeSig = '4/4';
+    let melodyNotes = [];
+
+    if (objStart >= 0) {
+      let i = objStart;
+      while (i < slice.length - 4 && melodyNotes.length < 24) {
+        const type = slice[i];
+        if (type === 0x00 && i + 4 < slice.length) {
+          clefType = slice[i + 1];
+          octaveShift = slice[i + 3];
+          i += 5;
+        } else if (type === 0x01 && i + 12 < slice.length) {
+          const flatBits = slice[i + 1];
+          const sharpBits = slice[i + 3];
+          keyFlats = [];
+          keySharps = [];
+          for (let b = 0; b < 7; b++) {
+            if (flatBits & (1 << b)) keyFlats.push(FLAT_BIT_MAP[b]);
+            if (sharpBits & (1 << b)) keySharps.push(FLAT_BIT_MAP[b]);
+          }
+          if (keyFlats.length > 0) keyName = MAJOR_KEYS_BY_FLATS[keyFlats.length] || 'C Major';
+          else if (keySharps.length > 0) keyName = MAJOR_KEYS_BY_SHARPS[keySharps.length] || 'C Major';
+          if (globalKey === 'C Major' && keyName !== 'C Major') globalKey = keyName;
+          i += 13;
+        } else if (type === 0x02 && i + 2 < slice.length) {
+          i += 3;
+        } else if (type === 0x03 && i + 4 < slice.length) {
+          i += 5;
+        } else if (type === 0x05 && i + 6 < slice.length) {
+          const num = slice[i + 1];
+          const denPow = slice[i + 3];
+          if (num > 0 && num <= 16 && denPow <= 4) {
+            timeSig = `${num}/${Math.pow(2, denPow)}`;
+            globalTimeSig = timeSig;
+          }
+          i += 7;
+        } else if (type === 0x06 && i + 6 < slice.length) {
+          const bpm = slice[i + 3] | (slice[i + 4] << 8);
+          if (bpm >= 30 && bpm <= 260 && !globalTempo) globalTempo = bpm;
+          i += 7;
+        } else if (type === 0x07 && i + 4 < slice.length) {
+          i += 5;
+        } else if (type === 0x08 && i + 10 <= slice.length) {
+          const posByte = slice[i + 5];
+          const posVal = posByte > 127 ? posByte - 256 : posByte;
+          const attr2 = slice[i + 7];
+          const accCode = attr2 & 0x07;
+          if (Math.abs(posVal) <= 18) {
+            const pitch = getPitchAtPos(clefType, octaveShift, posVal, keyFlats, keySharps, accCode);
+            melodyNotes.push(pitch);
+          }
+          i += 10;
+        } else if (type === 0x09 && i + 10 <= slice.length) {
+          i += 10;
+        } else {
+          i += 1;
+        }
+      }
+    }
+
+    const displayName = st.rawLabel || st.rawName || `Part ${idx + 1}`;
+    return {
+      name: displayName,
+      subName: st.rawName && st.rawName !== displayName ? st.rawName : '',
+      clef: (CLEFS[clefType]?.name || 'Treble') + (octaveShift === 2 ? ' 8vb' : octaveShift === 1 ? ' 8va' : ''),
+      keySig: keyName,
+      timeSig,
+      firstNote: melodyNotes[0] || null,
+      melodyNotes: melodyNotes.slice(0, 16),
+      lyrics
+    };
+  });
+
+  return {
+    format: 'NWC',
+    title: fallbackTitle,
+    author: '',
+    musicalKey: globalKey,
+    timeSig: globalTimeSig,
+    tempo: globalTempo,
+    staves: parsedStaves
+  };
+}
+
+function parseMidiScoreDetail(buffer, fallbackTitle = '') {
+  const u8 = new Uint8Array(buffer);
+  const magic = new TextDecoder('ascii').decode(u8.slice(0, 4));
+  if (magic !== 'MThd') {
+    throw new Error('유효한 MIDI 파일(MThd)이 아닙니다.');
+  }
+  const numTracks = (u8[10] << 8) | u8[11];
+  let pos = 8 + ((u8[4] << 24) | (u8[5] << 16) | (u8[6] << 8) | u8[7]);
+  let tempoBpm = null;
+  let timeSig = '4/4';
+  const staves = [];
+
+  const readVarLen = (idx) => {
+    let val = 0;
+    let p = idx;
+    while (p < u8.length) {
+      const b = u8[p++];
+      val = (val << 7) | (b & 0x7f);
+      if ((b & 0x80) === 0) break;
+    }
+    return { val, next: p };
+  };
+
+  for (let t = 0; t < numTracks && pos < u8.length - 8; t++) {
+    const trkMagic = new TextDecoder('ascii').decode(u8.slice(pos, pos + 4));
+    const trkLen = (u8[pos + 4] << 24) | (u8[pos + 5] << 16) | (u8[pos + 6] << 8) | u8[pos + 7];
+    if (trkMagic !== 'MTrk') break;
+    let p = pos + 8;
+    const end = p + trkLen;
+    let runningStatus = 0;
+    let trackName = '';
+    const notes = [];
+
+    while (p < end) {
+      const delta = readVarLen(p);
+      p = delta.next;
+      if (p >= end) break;
+      let status = u8[p];
+      if (status < 0x80) {
+        status = runningStatus;
+      } else {
+        p++;
+        if (status < 0xf0) runningStatus = status;
+      }
+
+      const cmd = status & 0xf0;
+      if (cmd === 0x90) {
+        const note = u8[p++];
+        const vel = u8[p++];
+        if (vel > 0 && notes.length < 16) {
+          const name = SCORE_CHROMATIC_SHARP[note % 12] + (Math.floor(note / 12) - 1);
+          notes.push(name);
+        }
+      } else if (cmd === 0x80 || cmd === 0xa0 || cmd === 0xb0 || cmd === 0xe0) {
+        p += 2;
+      } else if (cmd === 0xc0 || cmd === 0xd0) {
+        p += 1;
+      } else if (status === 0xff) {
+        const metaType = u8[p++];
+        const lenRes = readVarLen(p);
+        p = lenRes.next;
+        const data = u8.slice(p, p + lenRes.val);
+        if (metaType === 0x03 && !trackName) {
+          trackName = decodeSmartBytes(data).replace(/\0/g, '').trim();
+        } else if (metaType === 0x51 && data.length === 3 && !tempoBpm) {
+          const mpqn = (data[0] << 16) | (data[1] << 8) | data[2];
+          if (mpqn > 0) tempoBpm = Math.round(60000000 / mpqn);
+        } else if (metaType === 0x58 && data.length >= 2) {
+          timeSig = `${data[0]}/${Math.pow(2, data[1])}`;
+        }
+        p += lenRes.val;
+      } else if (status === 0xf0 || status === 0xf7) {
+        const lenRes = readVarLen(p);
+        p = lenRes.next + lenRes.val;
+      } else {
+        break;
+      }
+    }
+
+    if (notes.length > 0) {
+      staves.push({
+        name: trackName || `Track ${staves.length + 1}`,
+        subName: `MIDI Ch.${staves.length + 1}`,
+        clef: 'MIDI',
+        keySig: 'Standard',
+        timeSig,
+        firstNote: notes[0],
+        melodyNotes: notes,
+        lyrics: ''
+      });
+    }
+    pos = end;
+  }
+
+  return {
+    format: 'MIDI',
+    title: fallbackTitle,
+    author: '',
+    musicalKey: 'MIDI Track',
+    timeSig,
+    tempo: tempoBpm,
+    staves
+  };
+}
+
+function getScoreFormatKey(sc) {
+  const fmt = String(sc?.format || sc?.fileType || '').toLowerCase();
+  const ext = String(sc?.fileName || sc?.fileUrl || '').toLowerCase();
+  if (fmt === 'nwc' || fmt === 'nwctxt' || ext.endsWith('.nwc') || ext.endsWith('.nwctxt')) return 'nwc';
+  if (fmt === 'pdf' || ext.endsWith('.pdf')) return 'pdf';
+  if (fmt === 'mid' || fmt === 'midi' || ext.endsWith('.mid') || ext.endsWith('.midi')) return 'midi';
+  return 'etc';
+}
+
+function getScoreFormatLabel(sc) {
+  const fmt = String(sc?.format || sc?.fileType || '').toLowerCase();
+  const ext = String(sc?.fileName || sc?.fileUrl || '').toLowerCase();
+  if (fmt === 'nwctxt' || ext.endsWith('.nwctxt')) return '📝 NWC 텍스트 악보';
+  if (fmt === 'nwc' || ext.endsWith('.nwc')) return '🎵 NWC 악보';
+  if (fmt === 'mid' || fmt === 'midi' || ext.endsWith('.mid') || ext.endsWith('.midi')) return '🎹 MIDI 음원';
+  if (fmt === 'pdf' || ext.endsWith('.pdf')) return '📄 PDF 악보';
+  if (fmt === 'mscz' || ext.endsWith('.mscz')) return '🎼 뮤즈스코어';
+  if (fmt === 'audio') return '🎙️ 가이드 음원';
+  if (fmt === 'image') return '악보 이미지';
+  return '클라우드 악보';
+}
+
+async function openScorePreviewModal(score) {
+  const existing = document.getElementById('score-preview-dialog');
+  if (existing) existing.remove();
+
+  const fileUrl = score.blobUrl || score.fileUrl || score.driveUrl;
+  const safeUrl = score.blobUrl ? score.blobUrl : (score.fileUrl ? encodeURI(decodeURI(score.fileUrl)) : '');
+  const linkedSong = state.songs.find(s => s.id === score.songId || String(s.id).replace(/-[0-9]+$/, '') === score.songId);
+  const siblingScores = score.songId ? getScoresForSong(state.scores, score.songId) : [];
+
+  const dialog = el('dialog', {
+    id: 'score-preview-dialog',
+    class: 'stage-modal-dialog score-preview-dialog',
+    'aria-labelledby': 'score-preview-modal-title'
+  });
+
+  const closePreview = () => {
+    stopPitch(true);
+    dialog.close();
+  };
+
+  const fmtDisplay = getScoreFormatKey(score) === 'midi'
+    ? 'MIDI'
+    : (score.format || score.fileType || 'NWC').toUpperCase();
+
+  const header = el('div', { class: 'stage-modal-header' },
+    el('div', {},
+      el('div', { style: 'display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;' },
+        el('span', { class: 'badge', style: 'background: var(--brand); color: #fff; font-weight: 700;', text: fmtDisplay }),
+        score.category && el('span', { class: 'badge', text: score.category }),
+        score.year && el('span', { class: 'badge', text: `${score.year}년` })
+      ),
+      el('h3', { id: 'score-preview-modal-title', text: `🎼 ${score.title}` }),
+      el('p', { style: 'font-size: 12.5px; color: var(--muted); margin-top: 2px;', text: `${score.fileName || score.title} · 모바일 인앱 파트보 & 첫음·멜로디 미리듣기` })
+    ),
+    button('✕', closePreview, 'icon-button', null, { 'aria-label': '닫기' })
+  );
+
+  const switcherBar = siblingScores.length > 1
+    ? el('div', { class: 'chip-group', style: 'margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);' },
+        el('span', { style: 'font-size: 11.5px; font-weight: 700; color: var(--muted); align-self: center; margin-right: 4px;', text: '이 곡의 다른 자료:' }),
+        ...siblingScores.map(sib => button(
+          `${getScoreFormatKey(sib).toUpperCase()} · ${sib.title}`,
+          () => {
+            if (sib.id === score.id) return;
+            stopPitch(true);
+            dialog.close();
+            openOrDownloadScore(sib, false);
+          },
+          `chip${sib.id === score.id ? ' active' : ''}`
+        ))
+      )
+    : null;
+
+  const contentBox = el('div', { class: 'stage-modal-body score-preview-body' },
+    switcherBar,
+    el('div', { class: 'loading-state', style: 'padding: 28px; text-align: center;', text: '악보 데이터를 분석하고 성부별 첫 음과 멜로디를 추출하고 있어요…' })
+  );
+
+  dialog.append(header, contentBox);
+  dialog.addEventListener('close', () => {
+    stopPitch(true);
+    dialog.remove();
+  });
+  document.body.append(dialog);
+  dialog.showModal();
+
+  try {
+    const res = await fetch(safeUrl);
+    if (!res.ok) throw new Error(`파일을 불러올 수 없습니다 (${res.status})`);
+    const buf = await res.arrayBuffer();
+    const isMidi = getScoreFormatKey(score) === 'midi';
+    const detail = isMidi
+      ? parseMidiScoreDetail(buf, score.title)
+      : await parseNwcScoreDetail(buf, score.title);
+
+    const validStaves = detail.staves.filter(st => st.firstNote || st.lyrics || st.name);
+    const firstNotes = validStaves.map(st => st.firstNote).filter(Boolean);
+
+    const summaryBar = el('div', { class: 'score-preview-summary' },
+      el('div', { class: 'score-preview-meta-chips' },
+        detail.musicalKey && el('span', { class: 'badge', style: 'font-weight: 700;', text: `조성: ${detail.musicalKey}` }),
+        detail.timeSig && el('span', { class: 'badge', text: `박자: ${detail.timeSig}` }),
+        detail.tempo && el('span', { class: 'badge', text: `템포: ♩=${detail.tempo}` }),
+        el('span', { class: 'badge', text: `분석 성부: ${validStaves.length}개 파트` })
+      ),
+      el('div', { class: 'score-preview-top-actions' },
+        firstNotes.length > 0 ? button('🎹 전 파트 화음 듣기', () => {
+          playChordStrings(firstNotes, 2500);
+          toast(`🎹 ${firstNotes.length}개 성부 첫 음 화음(${firstNotes.join(' · ')})을 재생합니다.`);
+        }, 'button primary small') : null,
+        firstNotes.length > 0 ? button('🎼 파트별 첫음 순차 듣기', () => {
+          const seq = validStaves
+            .filter(st => st.firstNote)
+            .map(st => {
+              const parsed = parseNoteString(st.firstNote);
+              return parsed ? { semitone: parsed.semitone, octave: parsed.octave, partLabel: st.name } : null;
+            })
+            .filter(Boolean);
+          if (seq.length) {
+            playPitchSequence(seq, 680);
+            toast('🎼 위 성부부터 차례대로 첫 음을 재생합니다.');
+          }
+        }, 'button secondary small') : null,
+        button('⏹ 소리 끄기', () => stopPitch(true), 'button ghost small')
+      )
+    );
+
+    const staffList = el('div', { class: 'score-preview-staff-list' },
+      ...(validStaves.length ? validStaves.map((st, idx) => {
+        const parsedFirst = st.firstNote ? parseNoteString(st.firstNote) : null;
+        const playFirstBtn = parsedFirst
+          ? button(`🔊 첫음 ${parsedFirst.displayNote}`, () => {
+              playNoteString(st.firstNote);
+              toast(`🎵 [${st.name}] 첫 음: ${parsedFirst.displayNote}`);
+            }, 'button primary small')
+          : el('span', { style: 'font-size: 12px; color: var(--muted);', text: '첫음 없음' });
+
+        const playMelodyBtn = st.melodyNotes && st.melodyNotes.length > 1
+          ? button(`🎶 도입부 멜로디 (${st.melodyNotes.length}음)`, () => {
+              const seq = st.melodyNotes
+                .map((n, nIdx) => {
+                  const p = parseNoteString(n);
+                  return p ? { semitone: p.semitone, octave: p.octave, partLabel: `${st.name} #${nIdx + 1}` } : null;
+                })
+                .filter(Boolean);
+              if (seq.length) {
+                playPitchSequence(seq, 380);
+                toast(`🎶 [${st.name}] 도입부 ${seq.length}음을 연속 재생합니다.`);
+              }
+            }, 'button secondary small')
+          : null;
+
+        const notesRow = st.melodyNotes && st.melodyNotes.length
+          ? el('div', { class: 'score-preview-notes-row' },
+              ...st.melodyNotes.map((n, nIdx) => {
+                const p = parseNoteString(n);
+                return el('button', {
+                  type: 'button',
+                  class: `score-note-pill${nIdx === 0 ? ' first' : ''}`,
+                  title: `${n} 클릭하여 소리 듣기`,
+                  onclick: () => playNoteString(n)
+                }, p ? p.displayNote : n);
+              })
+            )
+          : null;
+
+        const lyricsRow = st.lyrics
+          ? el('p', { class: 'score-preview-lyrics', text: `💬 가사: ${st.lyrics}` })
+          : null;
+
+        return el('article', { class: 'score-preview-staff-card' },
+          el('div', { class: 'score-preview-staff-head' },
+            el('div', {},
+              el('span', { class: 'score-staff-num', text: `${idx + 1}` }),
+              el('strong', { class: 'score-staff-name', text: st.name }),
+              st.subName && el('span', { style: 'font-size: 12px; color: var(--muted); margin-left: 6px;', text: `(${st.subName})` }),
+              el('span', { class: 'badge', style: 'margin-left: 8px; font-size: 11px;', text: st.clef })
+            ),
+            el('div', { style: 'display: flex; gap: 6px; flex-wrap: wrap;' },
+              playFirstBtn,
+              playMelodyBtn
+            )
+          ),
+          notesRow,
+          lyricsRow
+        );
+      }) : [
+        el('p', { style: 'padding: 20px; text-align: center; color: var(--muted);', text: '이 악보 파일에서 개별 성부 노트를 찾지 못했습니다. 아래 버튼으로 원본 파일을 다운로드해 확인해 주세요.' })
+      ])
+    );
+
+    const footerBar = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);' },
+      el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' },
+        button('📥 원본 파일 다운로드', () => openOrDownloadScore(score, true), 'button secondary small', 'download'),
+        score.driveUrl ? button('📁 구글 드라이브 ↗', () => window.open(score.driveUrl, '_blank', 'noopener,noreferrer'), 'button ghost small') : null,
+        linkedSong ? button(`🎵 '${linkedSong.title}' 연습실 이동`, () => {
+          closePreview();
+          openSong(linkedSong);
+        }, 'button secondary small') : null
+      ),
+      button('닫기', closePreview, 'button primary small')
+    );
+
+    contentBox.replaceChildren(...[switcherBar, summaryBar, staffList, footerBar].filter(Boolean));
+  } catch (err) {
+    console.warn('Score preview failed, offering download instead:', err);
+    contentBox.replaceChildren(
+      ...[
+        switcherBar,
+        el('div', { style: 'padding: 20px; text-align: center;' },
+          el('p', { style: 'margin-bottom: 12px; color: var(--muted);', text: `미리보기를 불러오지 못했습니다 (${err.message}). 원본 파일을 바로 다운로드할 수 있습니다.` }),
+          el('div', { style: 'display: flex; justify-content: center; gap: 8px;' },
+            button('📥 원본 파일 다운로드', () => {
+              dialog.close();
+              openOrDownloadScore(score, true);
+            }, 'button primary small', 'download'),
+            button('닫기', closePreview, 'button secondary small')
+          )
+        )
+      ].filter(Boolean)
+    );
+  }
+}
+
 function openOrDownloadScore(score, isDownload = false) {
   const fileUrl = score.blobUrl || score.fileUrl || score.driveUrl;
   if (!fileUrl) {
@@ -2335,7 +3003,14 @@ function openOrDownloadScore(score, isDownload = false) {
     return;
   }
   const safeUrl = score.blobUrl ? score.blobUrl : (score.driveUrl || (score.fileUrl ? encodeURI(decodeURI(score.fileUrl)) : ''));
-  const isPdf = Boolean(score.format === 'pdf' || (score.fileUrl && score.fileUrl.toLowerCase().endsWith('.pdf')));
+  const fmtKey = getScoreFormatKey(score);
+  const isPdf = fmtKey === 'pdf';
+  const isPreviewableBinary = Boolean(!score.driveUrl && (fmtKey === 'nwc' || fmtKey === 'midi'));
+
+  if (!isDownload && isPreviewableBinary) {
+    openScorePreviewModal(score);
+    return;
+  }
 
   if (isDownload || (!isPdf && !score.driveUrl)) {
     const a = document.createElement('a');
@@ -2359,13 +3034,21 @@ function renderScores() {
   }
   const songOptions = [{ value: '', label: '전체 곡 악보 보기' }];
   for (const s of state.songs) {
-    if (state.scores.some(sc => sc.songId === s.id)) {
+    const baseId = String(s.id).replace(/-[0-9]+$/, '');
+    if (state.scores.some(sc => sc.songId === s.id || (baseId !== s.id && sc.songId === baseId))) {
       songOptions.push({ value: s.id, label: s.title });
     }
   }
 
   const categoryOptions = ['전체', '남성팀', '혼성팀', '연구회', '가요', '동요', 'POP', 'OST', '캐롤', '클래식', '창작', '페스티벌', '총보', '파트보'];
   const yearOptions = ['전체 연도', '2025년', '2024년', '2023년', '2022년', '2021년', '2020년 이전'];
+  const formatOptions = [
+    { value: '', label: '전체 포맷' },
+    { value: 'nwc', label: '🎵 NWC' },
+    { value: 'pdf', label: '📄 PDF' },
+    { value: 'midi', label: '🎹 MIDI' },
+    { value: 'etc', label: '🎼 기타' }
+  ];
 
   const heading = el('div', {class: 'page-heading'},
     el('div', {style: 'display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;'},
@@ -2415,6 +3098,16 @@ function renderScores() {
     })
   );
 
+  const formatChips = el('div', {class: 'chip-group'},
+    formatOptions.map(opt => button(opt.label, () => {
+      state.scoreFilters.format = opt.value;
+      for (const btn of formatChips.querySelectorAll('button')) {
+        btn.classList.toggle('active', btn.textContent.trim() === opt.label);
+      }
+      updateScoreList(true);
+    }, `chip${(state.scoreFilters.format || '') === opt.value ? ' active' : ''}`))
+  );
+
   const songSelect = el('select', {
     class: 'filter-select',
     style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12px;',
@@ -2434,9 +3127,13 @@ function renderScores() {
       categoryChips,
       songSelect
     ),
-    el('div', {style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap;'},
+    el('div', {style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;'},
       el('span', {style: 'font-size: 12px; font-weight: 600; color: var(--muted);', text: '연도별:'}),
       yearChips
+    ),
+    el('div', {style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap;'},
+      el('span', {style: 'font-size: 12px; font-weight: 600; color: var(--muted);', text: '파일 포맷:'}),
+      formatChips
     )
   );
 
@@ -2447,9 +3144,12 @@ function renderScores() {
     const q = (state.scoreFilters.query || '').trim().toLowerCase();
     const cat = state.scoreFilters.category || '';
     const sId = state.scoreFilters.songId || '';
+    const sBaseId = sId ? String(sId).replace(/-[0-9]+$/, '') : '';
     const yr = state.scoreFilters.year || '';
+    const fmt = state.scoreFilters.format || '';
 
     return state.scores.filter(sc => {
+      if (fmt && getScoreFormatKey(sc) !== fmt) return false;
       if (cat === '남성팀') {
         if (sc.team !== '남성팀' && sc.category !== '남성팀' && !sc.title?.includes('남성')) return false;
       } else if (cat === '혼성팀') {
@@ -2460,7 +3160,7 @@ function renderScores() {
         const matchesCategory = sc.category === cat || (sc.category && sc.category.toLowerCase().includes(cat.toLowerCase())) || (sc.title && sc.title.includes(cat));
         if (!matchesCategory) return false;
       }
-      if (sId && sc.songId !== sId) return false;
+      if (sId && sc.songId !== sId && !(sBaseId !== sId && sc.songId === sBaseId)) return false;
       if (yr === '2020이전') {
         if (!sc.year || Number(sc.year) > 2020) return false;
       } else if (yr && sc.year && sc.year !== yr) {
@@ -2533,21 +3233,7 @@ function renderScores() {
 
       const memo = sc.memo ? el('p', {class: 'score-memo', text: sc.memo}) : null;
 
-      const formatLabel = sc.fileType === 'nwc' || sc.format === 'nwc'
-        ? '🎵 NWC 악보'
-        : sc.fileType === 'nwctxt' || sc.format === 'nwctxt'
-        ? '📝 NWC 텍스트 악보'
-        : sc.fileType === 'midi' || sc.format === 'midi'
-        ? '🎹 MIDI 음원'
-        : sc.fileType === 'audio' || sc.format === 'audio'
-        ? '🎙️ 가이드 음원'
-        : sc.fileType === 'pdf' || sc.format === 'pdf'
-        ? '📄 PDF 악보'
-        : sc.fileType === 'mscz' || sc.format === 'mscz'
-        ? '🎼 뮤즈스코어'
-        : sc.fileType === 'image'
-        ? '악보 이미지'
-        : '클라우드 악보';
+      const formatLabel = getScoreFormatLabel(sc);
 
       const metaRow = el('div', {class: 'score-meta-row'},
         el('span', {text: `${sc.pages || ''} ${sc.fileSize ? `· ${sc.fileSize}` : ''}`.trim() || '악보 자료'}),
@@ -4032,6 +4718,7 @@ function showQR(song, part = null) {
 }
 
 let currentOctave = 4;
+let metroTapTimestamps = [];
 function openPitchPipe() {
   const dialog = document.getElementById('pitch-dialog');
   if (!dialog) return;
@@ -4043,6 +4730,17 @@ function openPitchPipe() {
   const stopBtn = document.getElementById('pitch-stop-btn');
   const presetA4 = document.getElementById('pitch-preset-a4');
   const presetC4 = document.getElementById('pitch-preset-c4');
+
+  const tunerBtn = document.getElementById('pitch-tuner-btn');
+  const tunerNoteEl = document.getElementById('pitch-tuner-note');
+  const tunerDetailEl = document.getElementById('pitch-tuner-detail');
+  const tunerMeterEl = document.getElementById('pitch-tuner-meter');
+
+  const metroToggleBtn = document.getElementById('pitch-metro-toggle');
+  const metroBpmEl = document.getElementById('pitch-metro-bpm');
+  const metroSliderEl = document.getElementById('pitch-metro-slider');
+  const metroTapBtn = document.getElementById('pitch-metro-tap');
+  const metroDotsEl = document.getElementById('pitch-metro-dots');
 
   function renderStatus(playing) {
     if (playing) {
@@ -4091,6 +4789,118 @@ function openPitchPipe() {
     }));
   }
 
+  function syncTunerUI() {
+    if (!tunerBtn || !tunerNoteEl || !tunerDetailEl || !tunerMeterEl) return;
+    const active = isVocalTunerRunning();
+    tunerBtn.textContent = active ? '마이크 끄기' : '마이크 켜기';
+    tunerBtn.className = `button ${active ? 'primary' : 'secondary'} small tuner-ctrl-btn`;
+    if (!active) {
+      tunerNoteEl.textContent = '대기 중';
+      tunerDetailEl.textContent = '마이크를 켜고 소리를 내면 실시간 음정(±센트)을 알려줍니다.';
+      tunerMeterEl.style.left = '50%';
+      tunerMeterEl.style.width = '0%';
+      tunerMeterEl.className = 'pitch-tuner-fill';
+    }
+  }
+
+  if (tunerBtn) {
+    tunerBtn.onclick = async () => {
+      if (isVocalTunerRunning()) {
+        stopVocalTuner();
+        syncTunerUI();
+        return;
+      }
+      tunerBtn.disabled = true;
+      await startVocalTuner({
+        onDetect: (info) => {
+          if (!tunerNoteEl || !tunerDetailEl || !tunerMeterEl) return;
+          if (!info) {
+            tunerNoteEl.textContent = '듣는 중…';
+            tunerDetailEl.textContent = '아~ 하고 일정한 목소리를 내어 보세요';
+            return;
+          }
+          const cents = info.cents;
+          const absCents = Math.abs(cents);
+          const statusLabel = absCents <= 10 ? '정확 ✨' : cents < 0 ? `낮음 ♭ (${cents}c)` : `높음 ♯ (+${cents}c)`;
+          tunerNoteEl.textContent = `${info.displayNote}`;
+          tunerDetailEl.textContent = `${info.freq} Hz · ${statusLabel}`;
+          const clamped = Math.max(-50, Math.min(50, cents));
+          const pct = Math.abs(clamped);
+          tunerMeterEl.style.left = clamped >= 0 ? '50%' : `${50 - pct}%`;
+          tunerMeterEl.style.width = `${pct}%`;
+          tunerMeterEl.className = `pitch-tuner-fill ${absCents <= 10 ? 'in-tune' : 'off-tune'}`;
+        },
+        onError: (msg) => {
+          toast(msg);
+          syncTunerUI();
+        }
+      });
+      tunerBtn.disabled = false;
+      syncTunerUI();
+    };
+  }
+
+  function syncMetronomeUI(activeBeat = -1) {
+    const bpm = getMetronomeBpm();
+    const running = isMetronomeRunning();
+    if (metroBpmEl) metroBpmEl.textContent = `${bpm} BPM`;
+    if (metroSliderEl) metroSliderEl.value = String(bpm);
+    if (metroToggleBtn) {
+      metroToggleBtn.textContent = running ? '⏹ 박자 정지' : '▶ 박자 시작';
+      metroToggleBtn.className = `button ${running ? 'primary' : 'secondary'} small metronome-ctrl-btn`;
+    }
+    if (metroDotsEl) {
+      const dots = metroDotsEl.querySelectorAll('.metro-dot');
+      dots.forEach((d, idx) => {
+        d.classList.toggle('active', running && idx === activeBeat);
+        d.classList.toggle('accent', running && idx === 0 && activeBeat === 0);
+      });
+    }
+  }
+
+  if (metroSliderEl) {
+    metroSliderEl.oninput = (e) => {
+      const next = setMetronomeBpm(Number(e.target.value));
+      if (metroBpmEl) metroBpmEl.textContent = `${next} BPM`;
+    };
+  }
+
+  if (metroToggleBtn) {
+    metroToggleBtn.onclick = () => {
+      if (isMetronomeRunning()) {
+        stopMetronome();
+        syncMetronomeUI(-1);
+      } else {
+        startMetronome({
+          bpm: getMetronomeBpm(),
+          beatsPerBar: 4,
+          onBeat: (beatIdx) => syncMetronomeUI(beatIdx)
+        });
+        syncMetronomeUI(0);
+      }
+    };
+  }
+
+  if (metroTapBtn) {
+    metroTapBtn.onclick = () => {
+      const now = performance.now();
+      metroTapTimestamps = metroTapTimestamps.filter(t => now - t < 2500);
+      metroTapTimestamps.push(now);
+      if (metroTapTimestamps.length >= 2) {
+        const intervals = [];
+        for (let i = 1; i < metroTapTimestamps.length; i++) {
+          intervals.push(metroTapTimestamps[i] - metroTapTimestamps[i - 1]);
+        }
+        const avgMs = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const tappedBpm = setMetronomeBpm(Math.round(60000 / avgMs));
+        syncMetronomeUI(-1);
+        toast(`⏱️ 탭 템포: ${tappedBpm} BPM`);
+      } else {
+        toast('박자에 맞춰 한 번 더 탭해 주세요.');
+      }
+    };
+  }
+
   const unsubscribePitch = subscribePitchState((playing) => {
     renderStatus(playing);
     renderKeyboard();
@@ -4099,13 +4909,23 @@ function openPitchPipe() {
   renderStatus(getCurrentPlaying());
   renderOctaves();
   renderKeyboard();
+  syncTunerUI();
+  syncMetronomeUI(-1);
 
-  stopBtn.onclick = () => stopPitch();
+  stopBtn.onclick = () => {
+    stopPitch();
+    stopVocalTuner();
+    stopMetronome();
+    syncTunerUI();
+    syncMetronomeUI(-1);
+  };
   presetA4.onclick = () => { currentOctave = 4; renderOctaves(); playPitch(9, 4); };
   presetC4.onclick = () => { currentOctave = 4; renderOctaves(); playPitch(0, 4); };
 
   dialog.addEventListener('close', () => {
     stopPitch();
+    stopVocalTuner();
+    stopMetronome();
     unsubscribePitch();
   }, { once: true });
   dialog.showModal();
@@ -4588,6 +5408,88 @@ function renderPlayerController(player, song, part) {
     }
   }, '⚡ 15초');
 
+  const getSongSavedLoops = () => {
+    const all = object(read('savedLoops', {}));
+    return array(all[song.id]).filter(it => it && Number.isFinite(it.start) && Number.isFinite(it.end) && it.end > it.start);
+  };
+  const setSongSavedLoops = (list) => {
+    const all = {...object(read('savedLoops', {}))};
+    if (list.length) all[song.id] = list;
+    else delete all[song.id];
+    write('savedLoops', all);
+  };
+
+  const loopBookmarksBar = el('div', {class: 'loop-bookmarks-bar'});
+  function renderLoopBookmarks() {
+    const items = getSongSavedLoops();
+    if (!items.length) {
+      loopBookmarksBar.hidden = true;
+      loopBookmarksBar.replaceChildren();
+      return;
+    }
+    loopBookmarksBar.hidden = false;
+    loopBookmarksBar.replaceChildren(
+      el('span', {class: 'loop-bookmark-label', text: '📌 저장 구간:'}),
+      ...items.map(bm => el('span', {class: 'loop-bookmark-chip'},
+        el('button', {
+          type: 'button',
+          class: 'loop-bookmark-play',
+          title: `${bm.label} (${formatPlayerTime(bm.start)} ~ ${formatPlayerTime(bm.end)}) 구간 반복 재생`,
+          onclick: () => {
+            looper.setStart(bm.start);
+            looper.setEnd(bm.end);
+            if (!looper.getState().isLooping) looper.toggleLoop();
+            else looper.jumpToStart();
+            player.play();
+            toast(`🔁 [${bm.label}] (${formatPlayerTime(bm.start)} ~ ${formatPlayerTime(bm.end)}) 구간 반복 시작`);
+          }
+        }, `${bm.label} (${formatPlayerTime(bm.start)}~${formatPlayerTime(bm.end)})`),
+        el('button', {
+          type: 'button',
+          class: 'loop-bookmark-del',
+          'aria-label': `${bm.label} 저장 구간 삭제`,
+          title: '저장 구간 삭제',
+          onclick: () => {
+            setSongSavedLoops(getSongSavedLoops().filter(x => x.id !== bm.id));
+            renderLoopBookmarks();
+            toast(`'${bm.label}' 저장 구간을 삭제했습니다.`);
+          }
+        }, '×')
+      ))
+    );
+  }
+
+  const saveLoopBtn = el('button', {
+    type: 'button',
+    class: 'loop-btn-sub',
+    'aria-label': '현재 설정된 A-B 구간을 북마크로 저장',
+    onclick: () => {
+      let st = looper.getState();
+      if (st.loopStart === null || st.loopEnd === null) {
+        looper.setQuickPreset(10);
+        st = looper.getState();
+      }
+      const existing = getSongSavedLoops();
+      const defaultName = `집중 구간 ${existing.length + 1}`;
+      const rawLabel = typeof window !== 'undefined' && typeof window.prompt === 'function'
+        ? window.prompt('저장할 연습 구간 이름을 입력해 주세요 (예: 후렴 화음, 전조 구간):', defaultName)
+        : defaultName;
+      if (rawLabel === null) return;
+      const label = rawLabel.trim() || defaultName;
+      const entry = {
+        id: `lp-${Date.now().toString(36)}`,
+        label,
+        start: st.loopStart,
+        end: st.loopEnd
+      };
+      setSongSavedLoops([...existing, entry]);
+      renderLoopBookmarks();
+      toast(`💾 [${label}] (${formatPlayerTime(entry.start)} ~ ${formatPlayerTime(entry.end)}) 구간을 저장했습니다!`);
+    }
+  }, '💾 구간 저장');
+
+  renderLoopBookmarks();
+
   const loopPanel = el('div', {class: 'practice-loop-panel', role: 'region', 'aria-label': '구간 반복 연습 (A-B Loop)'},
     el('div', {class: 'practice-loop-header'},
       el('div', {class: 'practice-loop-title-box'},
@@ -4617,10 +5519,12 @@ function renderPlayerController(player, song, part) {
       ),
       el('div', {class: 'loop-controls-right'},
         loopToggleBtn,
+        saveLoopBtn,
         jumpStartBtn,
         clearLoopBtn
       )
-    )
+    ),
+    loopBookmarksBar
   );
 
   // 큰 버튼 모드: 악보를 보며 한 손으로 조작할 수 있게 핵심 버튼 4개를 화면 아래에 고정
@@ -4723,7 +5627,7 @@ function renderDetail(song) {
   if (songScores.length) {
     app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
       el('div', {class: 'score-grid'}, songScores.map(sc => {
-        const formatLabel = sc.fileType === 'nwc' || sc.format === 'nwc' ? '🎵 NWC 악보' : sc.fileType === 'pdf' ? 'PDF 악보' : '악보';
+        const formatLabel = getScoreFormatLabel(sc);
         return el('article', {class: 'score-card', style: 'padding: 16px;'},
           el('div', {class: 'score-top'},
             el('div', {class: 'score-icon-badge'}, icon('document')),
@@ -4776,10 +5680,37 @@ function renderPractice(song, part, record = true) {
   const songScores = getScoresForSong(state.scores, song.id);
   const rehearsalAudio = songRehearsals[0]?.audio?.url ? songRehearsals[0].audio : null;
 
+  const switchPartAtSameTime = (targetPart) => {
+    if (!targetPart || targetPart === part) return;
+    const curSec = Math.floor(state.player?.getCurrentTime?.() || 0);
+    if (curSec > 1) {
+      state.initialSeek = curSec;
+      toast(`🔄 ${formatPlayerTime(curSec)} 위치 그대로 ${PARTS[targetPart] || targetPart} 파트로 이어 듣습니다.`);
+    }
+    startPractice(song, targetPart);
+  };
+
   app.append(button('파트 선택으로', () => openSong(song), 'text-button back-button', 'back'),
-    el('div', {class: 'practice-heading'}, el('div', {}, el('p', {class: 'eyebrow', text: 'MAKE THIS MOMENT COUNT'}), el('h1', {text: song.title}), el('p', {text: song.artist})), el('span', {class: 'part-indicator', text: PARTS[part]})));
+    el('div', {class: 'practice-heading'}, el('div', {}, el('p', {class: 'eyebrow', text: 'MAKE THIS MOMENT COUNT'}), el('h1', {text: song.title}), el('p', {text: song.artist})), el('span', {class: 'part-indicator', text: `${PARTS[part]}${song.partNames?.[part] ? ` · ${song.partNames[part]}` : ''}`})));
   
   const startingPitchPanel = renderStartingPitchPanel(song, part);
+  const partSyncBar = parts.length > 1
+    ? el('div', {class: 'part-sync-bar', role: 'region', 'aria-label': '현 위치 유지 파트 대조 전환'},
+        el('span', {class: 'part-sync-label', text: '🔄 같은 구간 다른 파트 듣기:'}),
+        el('div', {class: 'chip-group'},
+          ...parts.map(pKey => {
+            const singer = song.partNames?.[pKey];
+            const label = `${PARTS[pKey] || pKey}${singer ? ` · ${singer}` : ''}`;
+            const isActive = pKey === part;
+            return button(label, () => switchPartAtSameTime(pKey), `chip${isActive ? ' active' : ''}`, null, {
+              'aria-pressed': String(isActive),
+              title: isActive ? '현재 연습 중인 파트입니다' : '현재 재생 시간 위치를 그대로 유지한 채 해당 파트로 전환합니다'
+            });
+          })
+        )
+      )
+    : null;
+
   const playerHost = el('div', {class: 'player-panel'});
   const playerLayout = el('div', {class: 'practice-layout'}, playerHost);
   state.player = createPlayer(playerHost, song.videos[part], `${song.title} · ${PARTS[part]} 연습`);
@@ -4831,6 +5762,8 @@ function renderPractice(song, part, record = true) {
   }
 
   const actions = el('div', {class: 'player-actions'},
+    songScores.length ? button('🎼 인앱 악보 보기', () => openOrDownloadScore(songScores[0], false), 'button primary', 'document', {'aria-label': '연습 화면을 벗어나지 않고 악보 바로 열기'}) : null,
+    button('🎙️ 튜너·메트로놈', () => openPitchPipe(), 'button secondary', 'music', {'aria-label': '실시간 음정 튜너 및 합주 메트로놈 열기'}),
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('가로 확대', () => state.player?.toggleLandscape?.(), 'button secondary', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'}),
     button('화면 절전 (포켓)', () => {
@@ -4868,8 +5801,8 @@ function renderPractice(song, part, record = true) {
     songRehearsals.length ? button('연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null,
     favoriteButton(song)
   );
-  const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => startPractice(song, parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
-    el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => startPractice(song, parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
+  const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => switchPartAtSameTime(parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
+    el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => switchPartAtSameTime(parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
   
   let setlistNav = null;
   const setIdx = state.setlist ? state.setlist.ids.indexOf(song.id) : -1;
@@ -4891,7 +5824,7 @@ function renderPractice(song, part, record = true) {
 
   if (abSwitcher) app.append(abSwitcher);
   if (setlistNav) app.append(setlistNav);
-  app.append(startingPitchPanel, playerLayout, controller, actions, switches);
+  app.append(...[startingPitchPanel, partSyncBar, playerLayout, controller, actions, switches].filter(Boolean));
 }
 
 function renderSettings() {
@@ -5072,6 +6005,25 @@ function renderSettings() {
 }
 
 function normalizeRoute() {
+  if (state.route.cuesheet) {
+    const decoded = decodeStageSessionShareParam(state.route.cuesheet);
+    if (decoded && Array.isArray(decoded.songs) && decoded.songs.length) {
+      try {
+        if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('acaroom_stage_autopick', '1');
+      } catch {}
+      saveActiveStageSession(decoded);
+      const currentHist = getStageHistory().filter(h => h.id !== decoded.id);
+      saveStageHistory([decoded, ...currentHist]);
+      state.stageView = 'live';
+      write('stageView', 'live');
+      state.route = { tab: 'stage', view: 'live' };
+      writeRoute(state.route, { replace: true });
+      toast(`📲 공유받은 '${decoded.eventTitle}' 큐시트(${decoded.songs.length}곡)를 열었습니다.`);
+      return;
+    }
+    state.route = { tab: 'stage', view: 'live' };
+    writeRoute(state.route, { replace: true });
+  }
   if (!state.route.song) return;
   const song = state.songs.find(song => song.id === state.route.song) || resolveSongData(state.songs, state.route.song);
   if (!song || !song.title) { state.route = {tab: 'home'}; writeRoute(state.route, {replace: true}); toast('찾을 수 없는 곡입니다. 홈으로 이동했어요.'); return; }

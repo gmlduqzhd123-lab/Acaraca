@@ -172,6 +172,51 @@ export const STAGE_AI_COMMENTS = {
     wit: `“아~위모웨 위모웨 위모웨! 오늘 밤 정글의 사자는 잠들었지만 우리 무대의 열정은 잠들지 않습니다!\n신나게 외쳐볼까요?”`,
     story: `“영화 <라이언 킹>의 흥겨운 명곡으로도 친숙한 'The Lion Sleeps Tonight'입니다.\n통통 튀는 아프리칸 리듬과 매력적인 하이 테너의 팔세토 앙상블을 즐겨보세요.”`,
     brief: `“경쾌하고 이국적인 리듬이 매력적인\n'The Lion Sleeps Tonight'입니다.”`
+  },
+  'acaroom-opening': {
+    wit: `“자, 드디어 아카라카의 시그니처 오프닝이 시작됩니다!\n여섯 목소리가 화음으로 인사드릴 테니 뜨거운 박수로 맞이해 주세요!”`,
+    story: `“오직 사람의 목소리만으로 무대의 막을 여는 '아카라카 오프닝'입니다.\n여섯 성부가 차례로 쌓아 올리는 풍성한 첫 화음으로 오늘 공연의 설렘을 전합니다.”`,
+    brief: `“아카라카 무대의 힘찬 시작을 알리는 시그니처,\n'아카라카 오프닝'입니다.”`
+  },
+  'happy-school': {
+    wit: `“학교 가는 길이 매일 이렇게 신나면 얼마나 좋을까요?\n밝은 미소와 손뼉 리듬으로 동심 가득한 교실로 함께 떠나보시죠!”`,
+    story: `“아이들과 선생님의 웃음소리가 피어나는 교실을 노래한 별의별의 '행복한 학교'입니다.\n맑고 따뜻한 혼성 4성부 화음으로 기분 좋은 에너지를 선물합니다.”`,
+    brief: `“밝고 따뜻한 교실의 풍경을 담은 창작 동요,\n'행복한 학교'입니다.”`
+  },
+  'go-to-school': {
+    wit: `“오늘만큼은 지각 걱정 없는 즐거운 등굣길입니다!\n다섯 목소리의 발랄한 발걸음에 맞춰 가볍게 리듬을 타보세요!”`,
+    story: `“아침 햇살처럼 상쾌한 등굣길의 설렘을 담은 별의별의 '학교 가자'입니다.\n경쾌한 리듬과 다섯 성부의 산뜻한 호흡이 어우러지는 무대입니다.”`,
+    brief: `“설레는 아침 등굣길의 에너지를 노래하는\n5성부 아카펠라 '학교 가자'입니다.”`
+  },
+  'bohemian-rhapsody': {
+    wit: `“마마~ 우우우~! 기타 솔로도 드럼도 전부 입으로 해결합니다!\n펜타토닉스 스타일의 록 오페라 아카펠라, 숨 참고 지켜봐 주세요!”`,
+    story: `“퀸의 전설적인 명곡을 펜타토닉스 스타일의 5성부 아카펠라로 재해석한 '보헤미안 랩소디'입니다.\n서정적인 발라드부터 폭발적인 오페라·록 파트까지 목소리의 한계를 넘어섭니다.”`,
+    brief: `“발라드와 오페라, 록을 넘나드는 드라마틱한 명작,\n펜타토닉스 버전 '보헤미안 랩소디'입니다.”`
+  },
+  'dansori': {
+    wit: `“우리 가락과 서양 화음이 만나면 얼마나 멋질까요?\n얼씨구 추임새 준비하시고 흥겨운 국악 아카펠라에 빠져보시죠!”`,
+    story: `“전통 국악의 멋스러운 장단과 현대 아카펠라 화성이 어우러진 '단소리'입니다.\n네 성부가 빚어내는 한국적인 울림과 신명 나는 호흡을 느껴보세요.”`,
+    brief: `“한국적인 가락과 네 목소리의 화음이 어우러진\n국악 아카펠라 '단소리'입니다.”`
+  },
+  'love-love': {
+    wit: `“제목부터 사랑이 두 배! 오늘 객석에 하트를 듬뿍 뿌려드립니다!\n설레는 다섯 목소리의 고백, 기분 좋게 받아주실 거죠?”`,
+    story: `“듣기만 해도 입가에 미소가 번지는 달콤한 고백송, 다이아의 '사랑해 사랑해'입니다.\n다섯 보컬의 상큼하고 포근한 화음으로 사랑스러운 무대를 꾸밉니다.”`,
+    brief: `“달콤하고 산뜻한 설렘을 전하는 5성부 하모니,\n'사랑해 사랑해'입니다.”`
+  },
+  'carol-medley': {
+    wit: `“오늘 무대에 미리 크리스마스 종소리가 울려 퍼집니다!\n아는 캐롤 멜로디가 나오면 눈빛 반짝이며 함께 흥얼거려 주세요!”`,
+    story: `“겨울밤의 설렘과 따스한 축복을 한데 모은 '캐롤 메들리'입니다.\n종소리처럼 영롱한 네 성부의 아카펠라 화음으로 포근한 연말 분위기를 선물합니다.”`,
+    brief: `“반짝이는 겨울의 설렘을 네 목소리로 엮어낸\n'캐롤 메들리'입니다.”`
+  },
+  'same-place': {
+    wit: `“우리 모두 같은 무대, 같은 마음으로 모였잖아요!\n아련하면서도 벅차오르는 화음 속으로 함께 걸어가 보시죠!”`,
+    story: `“서로의 꿈을 응원하던 청춘의 진심을 담은 '같은 곳에서'입니다.\n네 목소리가 차곡차곡 쌓아 올리는 아련하고 벅찬 감동을 전해드립니다.”`,
+    brief: `“청춘의 아련한 진심과 벅찬 울림을 담은 4성부 무대,\n'같은 곳에서'입니다.”`
+  },
+  'would-be-good': {
+    wit: `“오늘 이 밤, 좋은 사람들과 좋은 노래가 함께하니 참 좋겠다~ 싶으시죠?\n성시경 부럽지 않은 달콤한 화음으로 귀 호강 시켜드립니다!”`,
+    story: `“소박하지만 진심 어린 바람을 다정한 선율에 담은 성시경의 '좋겠다'입니다.\n네 성부의 포근한 블렌딩으로 듣는 분들의 마음을 따뜻하게 감싸드립니다.”`,
+    brief: `“다정하고 포근한 위로를 건네는 감성 발라드,\n'좋겠다' 아카펠라 버전입니다.”`
   }
 };
 
@@ -1267,6 +1312,10 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
 
     const copyBtn = button('📋 셋리스트 복사', copyFullSetlist, 'button secondary small', null, { title: '단원 공지용 전체 셋리스트 텍스트 복사' });
 
+    const qrShareBtn = button('📱 큐시트 QR·공유', () => openStageShareModal(session, songs), 'button secondary small', 'qr', { title: '원클릭 공유 링크 및 현장 스캔용 QR 코드 열기' });
+
+    const printBtn = button('🖨️ 큐시트 인쇄', () => printStageCueSheet(session, songs), 'button secondary small', null, { title: '무대 바닥·보면대 부착용 A4 큐시트 인쇄' });
+
     const historyBtn = button('📜 공연 히스토리', () => {
       openStageHistoryModal({
         songs,
@@ -1320,6 +1369,8 @@ export function renderStageLiveView({ container, songs, navigate, onSwitchView }
     }, 'button secondary small icon-only', null, { title: '전체화면 전환', 'aria-label': '전체화면' });
 
     const actions = el('div', { class: 'stage-header-actions' }, copyBtn, historyBtn, archiveBtn, editBtn, fullscreenBtn);
+    actions.insertBefore(qrShareBtn, historyBtn);
+    actions.insertBefore(printBtn, historyBtn);
 
     header.replaceChildren(headerLeft, actions);
   }
@@ -2222,6 +2273,271 @@ function downloadStageSessionJSON(session) {
 }
 
 /**
+ * 무대 큐시트 세션을 URL-safe Base64 파라미터(?cuesheet=...)로 압축 인코딩
+ */
+export function encodeStageSessionShareParam(session) {
+  if (!session || typeof session !== 'object') return '';
+  const compact = {
+    i: session.id || `stage-${Date.now()}`,
+    t: session.eventTitle || '아카라카 공연',
+    d: session.date || '',
+    v: session.venue || '',
+    s: Array.isArray(session.songs)
+      ? session.songs.map((s) => ({
+          id: s.songId || '',
+          t: s.title || '',
+          ...(s.note ? { n: s.note } : {}),
+          ...(s.commentTone && s.commentTone !== 'story' ? { c: s.commentTone } : {}),
+          ...(s.customComment ? { m: s.customComment } : {})
+        }))
+      : []
+  };
+  const json = JSON.stringify(compact);
+  const bytes = new TextEncoder().encode(json);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/**
+ * URL 파라미터(?cuesheet=...)에서 무대 큐시트 세션 복원
+ */
+export function decodeStageSessionShareParam(param) {
+  if (!param || typeof param !== 'string') return null;
+  try {
+    const base64 = param.trim().replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    const binary = atob(padded);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const raw = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (raw && Array.isArray(raw.s)) {
+      return parseImportedStageSession({
+        id: raw.i || `stage-${Date.now()}`,
+        eventTitle: raw.t || '공유받은 무대 큐시트',
+        date: raw.d || '',
+        venue: raw.v || '',
+        songs: raw.s.map((item) => ({
+          songId: item.id || '',
+          title: item.t || item.id || '연습곡',
+          note: item.n || '',
+          commentTone: item.c || 'story',
+          ...(item.m ? { customComment: item.m } : {})
+        }))
+      });
+    }
+    return parseImportedStageSession(raw);
+  } catch (err) {
+    console.warn('Failed to decode stage cuesheet share param:', err);
+    return null;
+  }
+}
+
+/**
+ * 원클릭 무대 큐시트 공유 링크 생성
+ */
+export function buildStageShareUrl(session, baseHref = (typeof location !== 'undefined' ? location.href : 'https://gmlduqzhd123-lab.github.io/Acaraca/index.html')) {
+  const url = new URL('./index.html', baseHref);
+  url.searchParams.set('tab', 'stage');
+  url.searchParams.set('view', 'live');
+  const encoded = encodeStageSessionShareParam(session);
+  if (encoded) url.searchParams.set('cuesheet', encoded);
+  return url.href;
+}
+
+/**
+ * 무대 바닥·보면대 부착용 A4 큐시트 인쇄 뷰 생성 및 브라우저 인쇄 호출
+ */
+export function printStageCueSheet(session, songs = []) {
+  if (!session || typeof document === 'undefined') return null;
+  const existing = document.getElementById('stage-print-sheet');
+  if (existing) existing.remove();
+
+  const shortLabels = {
+    soprano: 'S', alto: 'A', tenor: 'T', baritone: 'Bar', bass: 'B', lead: 'Solo', vp: 'VP',
+    part1: 'P1', part2: 'P2', part3: 'P3', part4: 'P4', part5: 'P5', part6: 'P6', part7: 'P7'
+  };
+
+  const rows = (Array.isArray(session.songs) ? session.songs : []).map((item, idx) => {
+    const songData = resolveSongData(songs, item.songId, item.title);
+    const keyStr = songData?.musicalKey || songData?.startingPitches?.key || '-';
+    const ppInfo = pitchPipeInfo(songData?.pitchPipe);
+    const ppStr = ppInfo ? `피치파이프: ${ppInfo.display} (${ppInfo.korean})` : '';
+    const pitchEntries = getSongStartingPitchEntries(songData);
+    const pitchText = pitchEntries.length
+      ? pitchEntries.map(([part, noteStr]) => {
+          const parsed = parseNoteString(noteStr);
+          const shortPart = shortLabels[part] || part.toUpperCase().slice(0, 3);
+          const singer = getStagePartSinger(songData, part);
+          const displayNote = parsed ? parsed.displayNote : noteStr;
+          return `${shortPart}${singer ? `(${singer})` : ''}: ${displayNote}`;
+        }).join(' · ')
+      : '첫 음 정보 없음';
+
+    const mcVars = getMCCommentVariations(songData, item.commentTone || 'story');
+    const curVarIdx = typeof item.commentVariationIndex === 'number' ? item.commentVariationIndex : 0;
+    const mcComment = (item.customComment || mcVars[curVarIdx % mcVars.length] || mcVars[0] || '').replace(/\n+/g, ' ');
+
+    return el('tr', {},
+      el('td', { class: 'stage-print-col-num', text: String(idx + 1) }),
+      el('td', { class: 'stage-print-col-song' },
+        el('strong', { text: item.title || songData?.title || '-' }),
+        el('div', { class: 'stage-print-sub', text: `${songData?.artist || '아카라카'} · ${songData?.arrangement || '다성부'}` })
+      ),
+      el('td', { class: 'stage-print-col-key' },
+        el('strong', { text: keyStr }),
+        ppStr ? el('div', { class: 'stage-print-sub', text: ppStr }) : null
+      ),
+      el('td', { class: 'stage-print-col-pitch', text: pitchText }),
+      el('td', { class: 'stage-print-col-note' },
+        item.note ? el('div', { class: 'stage-print-memo', text: `[진행] ${item.note}` }) : null,
+        mcComment ? el('div', { class: 'stage-print-mc', text: mcComment }) : null
+      )
+    );
+  });
+
+  const sheet = el('section', { id: 'stage-print-sheet', class: 'stage-print-sheet', 'aria-label': '인쇄용 무대 큐시트' },
+    el('header', { class: 'stage-print-header' },
+      el('div', {},
+        el('div', { class: 'stage-print-kicker', text: 'ACARACA LIVE STAGE CUE SHEET' }),
+        el('h1', { class: 'stage-print-title', text: session.eventTitle || '아카라카 공연 무대 큐시트' }),
+        el('p', {
+          class: 'stage-print-meta',
+          text: `일시: ${session.date || '미정'}  |  장소: ${session.venue || '공연 무대'}  |  총 ${rows.length}곡`
+        }),
+        session.notes ? el('p', { class: 'stage-print-notes', text: `메모: ${session.notes}` }) : null
+      )
+    ),
+    el('table', { class: 'stage-print-table' },
+      el('thead', {},
+        el('tr', {},
+          el('th', { text: '#' }),
+          el('th', { text: '곡명 / 편성' }),
+          el('th', { text: '조성 / 기준음' }),
+          el('th', { text: '파트별 첫 음 (담당자)' }),
+          el('th', { text: '진행 메모 & MC 멘트' })
+        )
+      ),
+      el('tbody', {}, ...rows)
+    ),
+    el('footer', { class: 'stage-print-footer', text: `출력 일시: ${new Date().toLocaleDateString('ko-KR')} · 아카라카 연습실 (AcaRaca)` })
+  );
+
+  document.body.appendChild(sheet);
+  const cleanup = () => {
+    try { sheet.remove(); } catch {}
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('afterprint', cleanup, { once: true });
+    if (typeof window.print === 'function') {
+      window.print();
+    }
+  }
+  return sheet;
+}
+
+/**
+ * 현장 단원들과 즉시 큐시트를 공유하는 QR 코드 & 원클릭 링크 모달
+ */
+export function openStageShareModal(session, songs = []) {
+  if (!session) return;
+  const existing = document.getElementById('stage-share-dialog');
+  if (existing) existing.remove();
+
+  const shareUrl = buildStageShareUrl(session);
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(shareUrl)}`;
+
+  const dialog = el('dialog', {
+    id: 'stage-share-dialog',
+    class: 'stage-modal-dialog',
+    'aria-labelledby': 'stage-share-modal-title'
+  });
+
+  const header = el('div', { class: 'stage-modal-header' },
+    el('div', {},
+      el('h3', { id: 'stage-share-modal-title', text: '📱 무대 큐시트 QR & 원클릭 링크 공유' }),
+      el('p', { style: 'font-size: 13px; color: var(--muted); margin-top: 4px;', text: '단원들이 카메라로 스캔하거나 링크를 열면 이 큐시트가 즉시 무대 모드로 열립니다.' })
+    ),
+    button('✕', () => dialog.close(), 'icon-button', null, { 'aria-label': '닫기' })
+  );
+
+  const qrImg = el('img', {
+    src: qrSrc,
+    alt: `${session.eventTitle || '무대 큐시트'} 공유 QR 코드`,
+    width: 220,
+    height: 220,
+    style: 'display: block; margin: 0 auto; border-radius: 14px; background: #fff; padding: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12);',
+    onerror: () => { qrImg.src = './qr.svg'; }
+  });
+
+  const urlInput = el('input', {
+    type: 'text',
+    class: 'search-input',
+    readonly: true,
+    value: shareUrl,
+    style: 'font-size: 12px; font-family: ui-monospace, monospace;',
+    onclick: () => urlInput.select()
+  });
+
+  const copyLinkBtn = button('🔗 공유 링크 복사', async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        toast('🔗 무대 큐시트 원클릭 공유 링크를 복사했습니다!');
+        return;
+      }
+    } catch {}
+    urlInput.focus();
+    urlInput.select();
+    toast('링크가 선택되었습니다. 복사해 공유해 주세요.');
+  }, 'button primary small');
+
+  const nativeShareBtn = (typeof navigator !== 'undefined' && typeof navigator.share === 'function')
+    ? button('📤 카톡·메시지 공유', async () => {
+        try {
+          await navigator.share({
+            title: `${session.eventTitle || '아카라카 무대 큐시트'} | AcaRaca`,
+            text: `🎤 [${session.eventTitle || '아카라카 공연'}] 무대 큐시트 (${session.songs?.length || 0}곡)`,
+            url: shareUrl
+          });
+        } catch (err) {
+          if (err?.name !== 'AbortError') toast('공유 창을 열지 못했습니다.');
+        }
+      }, 'button secondary small')
+    : null;
+
+  const jsonDownloadBtn = button('📄 JSON 파일 저장', () => downloadStageSessionJSON(session), 'button secondary small');
+  const printSheetBtn = button('🖨️ A4 큐시트 인쇄', () => {
+    dialog.close();
+    printStageCueSheet(session, songs);
+  }, 'button secondary small');
+
+  const body = el('div', { class: 'stage-modal-body', style: 'text-align: center; display: flex; flex-direction: column; gap: 14px;' },
+    el('div', { style: 'padding: 10px 14px; border-radius: 12px; background: var(--surface-alt, rgba(25,77,70,0.06));' },
+      el('strong', { style: 'display: block; font-size: 16px;', text: session.eventTitle || '아카라카 공연' }),
+      el('span', { style: 'font-size: 12.5px; color: var(--muted);', text: `📅 ${session.date || '일정 미정'} · 📍 ${session.venue || '공연 무대'} · 총 ${session.songs?.length || 0}곡` })
+    ),
+    qrImg,
+    el('div', { style: 'text-align: left; display: flex; flex-direction: column; gap: 6px;' },
+      el('label', { style: 'font-size: 12px; font-weight: 700; color: var(--muted);', text: '원클릭 큐시트 접속 주소' }),
+      urlInput
+    ),
+    el('div', { style: 'display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;' },
+      copyLinkBtn,
+      nativeShareBtn,
+      printSheetBtn,
+      jsonDownloadBtn,
+      button('닫기', () => dialog.close(), 'button ghost small')
+    )
+  );
+
+  dialog.append(header, body);
+  dialog.addEventListener('close', () => dialog.remove());
+  document.body.append(dialog);
+  dialog.showModal();
+}
+
+/**
  * 공연 히스토리 & 보관함 모달 (최신순 정렬)
  */
 export function openStageHistoryModal({ songs, onSelectSession }) {
@@ -2312,6 +2628,8 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
         if (typeof onSelectSession === 'function') onSelectSession(item);
       }, 'button primary small', 'play');
 
+      const shareItemBtn = button('📱 QR·공유', () => openStageShareModal(item, songs), 'button secondary small');
+
       const cloneBtn = button('📋 복제', () => {
         promptStagePassword({
           actionName: `'${item.eventTitle}' 셋리스트 복제`,
@@ -2343,6 +2661,7 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
       }, 'button secondary small icon-only', null, { title: '공연 기록 삭제' });
 
       const actions = el('div', { class: 'stage-history-actions' }, loadBtn, cloneBtn, deleteBtn);
+      actions.insertBefore(shareItemBtn, cloneBtn);
 
       card.append(top, songsRow, actions);
       historyContainer.append(card);
@@ -2507,6 +2826,13 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
     }
   });
 
+  const shareDraftBtn = button('📱 QR·링크 공유', () => {
+    draft.eventTitle = titleInput.value.trim() || '아카라카 공연';
+    draft.date = dateInput.value.trim();
+    draft.venue = venueInput.value.trim();
+    openStageShareModal(draft);
+  }, 'button secondary small');
+
   const exportDraftBtn = button('📤 큐시트 내보내기', () => {
     draft.eventTitle = titleInput.value.trim() || '아카라카 공연';
     draft.date = dateInput.value.trim();
@@ -2517,7 +2843,7 @@ export function openSetlistEditModal({ session, songs, onSaveSession }) {
   const importDraftBtn = button('📥 큐시트 가져오기', () => importDraftInput.click(), 'button secondary small');
 
   const footerActions = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px;' },
-    el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' }, importDraftInput, exportDraftBtn, importDraftBtn),
+    el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' }, importDraftInput, shareDraftBtn, exportDraftBtn, importDraftBtn),
     el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' },
       button('취소', () => dialog.close(), 'button secondary small'),
       button('저장 및 큐시트 적용', () => {

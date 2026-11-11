@@ -83,26 +83,36 @@ export async function loadRehearsals(forceReload = false) {
 }
 
 /**
- * Initialize public feedback list in storage with seed version check.
+ * Initialize public feedback list in storage with seed version check,
+ * and non-destructively merge any newly added seed initialFeedbacks.
  */
-function initFeedbacksFromData(rehearsals) {
+export function initFeedbacksFromData(rehearsals) {
   const version = read('feedbacks_seed_v', 0);
-  if (version < 2) {
-    // Replace old example feedbacks with Bohemian Rhapsody & actual data
-    const defaults = [];
-    for (const reh of rehearsals) {
-      if (Array.isArray(reh.initialFeedbacks)) {
-        for (const fb of reh.initialFeedbacks) {
-          defaults.push({
-            ...fb,
-            rehearsalId: reh.id,
-            songId: reh.songId,
-          });
-        }
+  const seedItems = [];
+  for (const reh of Array.isArray(rehearsals) ? rehearsals : []) {
+    if (Array.isArray(reh.initialFeedbacks)) {
+      for (const fb of reh.initialFeedbacks) {
+        seedItems.push({
+          ...fb,
+          rehearsalId: reh.id,
+          songId: reh.songId,
+        });
       }
     }
-    write('team_feedbacks', defaults);
+  }
+
+  if (version < 2) {
+    write('team_feedbacks', seedItems);
     write('feedbacks_seed_v', 2);
+    return;
+  }
+
+  const existing = read('team_feedbacks', []);
+  const currentList = Array.isArray(existing) ? existing : [];
+  const existingIds = new Set(currentList.map((fb) => fb && fb.id).filter(Boolean));
+  const missingSeeds = seedItems.filter((fb) => fb.id && !existingIds.has(fb.id));
+  if (missingSeeds.length > 0) {
+    write('team_feedbacks', [...currentList, ...missingSeeds]);
   }
 }
 
@@ -159,8 +169,12 @@ export function toggleFeedbackLike(feedbackId) {
 
 export function getPerformancesForSong(performances, songId) {
   if (!Array.isArray(performances) || !songId) return [];
+  const baseId = String(songId).replace(/-[0-9]+$/, '');
   return performances.filter((perf) =>
-    Array.isArray(perf.setlist) && perf.setlist.some((item) => item.songId === songId)
+    Array.isArray(perf.setlist) && perf.setlist.some((item) => {
+      const itemSongId = typeof item === 'string' ? item : item?.songId;
+      return itemSongId === songId || (baseId !== songId && itemSongId === baseId);
+    })
   );
 }
 

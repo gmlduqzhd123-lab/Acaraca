@@ -209,6 +209,61 @@
           "likes": 0
         }
       ]
+    },
+    {
+      "id": "reh-if-you-dont-dream",
+      "songId": "if-you-dont-dream",
+      "date": "2025-05-12",
+      "title": "꿈꾸지 않으면 (4성부) 첫 합주 & 파트별 호흡·다이내믹 체크",
+      "notes": "E Major 4성부(1번 선영 · 2번 용석 · 3번 희엽 · 4번 휘소) 합주 체크 포인트: 인트로 4성부 첫 음(B4·G#4·E4·E3) 어택 정렬, 1절 '배운다는 건 꿈을 꾸는 것' 가사 전달력, 후렴구 크레센도 및 엔딩 화음 밸런스.",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=l0ZgOjQj35Q",
+        "label": "꿈꾸지 않으면 합주 레퍼런스 영상"
+      },
+      "audio": null,
+      "initialFeedbacks": [
+        {
+          "id": "fb-iydd-1",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "intro",
+          "time": 4,
+          "content": "[intro] E Major 첫 화음(E3-E4-G#4-B4) 들어갈 때 숨소리를 맞추고 부드럽게 어택하기",
+          "createdAt": "2025-05-12T19:10:00.000Z",
+          "likes": 1
+        },
+        {
+          "id": "fb-iydd-2",
+          "author": "선영",
+          "part": "soprano",
+          "section": "verse1",
+          "time": 22,
+          "content": "[verse1] 1번 파트 '배운다는 건 꿈을 꾸는 것' 구절은 자음을 또렷하게 발음해 가사 전달력 높이기",
+          "createdAt": "2025-05-12T19:12:00.000Z",
+          "likes": 1
+        },
+        {
+          "id": "fb-iydd-3",
+          "author": "용석 · 희엽",
+          "part": "alto",
+          "section": "chorus",
+          "time": 58,
+          "content": "[chorus] 2번·3번 내성 파트는 후렴구에서 주선율(1번 파트)을 감싸듯 볼륨 70%로 블렌딩 유지",
+          "createdAt": "2025-05-12T19:15:00.000Z",
+          "likes": 2
+        },
+        {
+          "id": "fb-iydd-4",
+          "author": "휘소",
+          "part": "bass",
+          "section": "outro",
+          "time": 135,
+          "content": "[outro] 엔딩 '꿈꾸지 않으면~' 롱톤 구간에서 베이스 E3 루트 흔들리지 않게 호흡 끝까지 지지하기",
+          "createdAt": "2025-05-12T19:18:00.000Z",
+          "likes": 1
+        }
+      ]
     }
   ]
 }

@@ -849,6 +849,9 @@ const PITCH_TRIGGER_SELECTORS = [
   '.pitch-chord-btn',
   '.pitch-play-btn',
   '.pitch-arpeggio-btn',
+  '.metronome-ctrl-btn',
+  '.tuner-ctrl-btn',
+  '.score-note-pill',
   '[data-pitch-trigger]'
 ].join(', ');
 
@@ -869,8 +872,6 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
   }, true);
 }
 
-
-
 /** 피치파이프 대표음 표시용 정보 (옥타브 없이) */
 export function pitchPipeInfo(note) {
   const parsed = typeof note === 'string' && note ? parseNoteString(`${note}4`) : null;
@@ -887,3 +888,257 @@ export function playPitchPipe(note) {
   if (isPitchSequencePlaying()) stopPitchSequence();
   return playNoteString(`${note}4`, 0.5, true, 1500);
 }
+
+/* ============================================================================
+ * Real-Time Vocal Pitch Tuner (마이크 실시간 음정 튜너 · 자기상관 기반)
+ * ============================================================================ */
+
+/**
+ * 주파수(Hz)를 가장 가까운 평균율 음이름, 계이름, 옥타브, 센트(±cents) 오차로 변환
+ */
+export function frequencyToPitchInfo(freq) {
+  if (typeof freq !== 'number' || !Number.isFinite(freq) || freq < 50 || freq > 1600) {
+    return null;
+  }
+  const exactMidi = 69 + 12 * Math.log2(freq / 440);
+  const nearestMidi = Math.round(exactMidi);
+  const cents = Math.round((exactMidi - nearestMidi) * 100);
+  const semitone = ((nearestMidi % 12) + 12) % 12;
+  const octave = Math.floor(nearestMidi / 12) - 1;
+  const meta = NOTES[semitone] || NOTES[0];
+  const targetFreq = getNoteFrequency(semitone, octave);
+  return {
+    freq: Number(freq.toFixed(1)),
+    targetFreq,
+    midi: nearestMidi,
+    semitone,
+    octave,
+    note: `${meta.note}${octave}`,
+    korean: `${meta.korean}${octave}`,
+    displayNote: `${meta.note}${octave} (${meta.korean})`,
+    cents
+  };
+}
+
+/**
+ * 시간 영역 오디오 버퍼(Float32Array)에서 기본 주파수(Hz) 추출 (Normalized Autocorrelation)
+ */
+export function autoCorrelatePitch(buf, sampleRate) {
+  if (!buf || !buf.length || !sampleRate) return -1;
+  let rms = 0;
+  for (let i = 0; i < buf.length; i++) {
+    rms += buf[i] * buf[i];
+  }
+  rms = Math.sqrt(rms / buf.length);
+  if (rms < 0.012) return -1; // 주변 무음 임계값
+
+  let r1 = 0;
+  let r2 = buf.length - 1;
+  const thres = 0.2;
+  for (let i = 0; i < buf.length / 2; i++) {
+    if (Math.abs(buf[i]) < thres) { r1 = i; break; }
+  }
+  for (let i = 1; i < buf.length / 2; i++) {
+    if (Math.abs(buf[buf.length - i]) < thres) { r2 = buf.length - i; break; }
+  }
+
+  const trimmed = buf.slice(r1, r2);
+  const size = trimmed.length;
+  if (size < 64) return -1;
+
+  const minLag = Math.max(8, Math.floor(sampleRate / 1200)); // ~1200Hz 상한
+  const maxLag = Math.min(size - 2, Math.ceil(sampleRate / 60)); // ~60Hz 하한
+  if (minLag >= maxLag) return -1;
+
+  const c = new Float32Array(maxLag + 2);
+  for (let lag = 0; lag <= maxLag + 1; lag++) {
+    let sum = 0;
+    for (let j = 0; j < size - lag; j++) {
+      sum += trimmed[j] * trimmed[j + lag];
+    }
+    c[lag] = sum;
+  }
+
+  let d = minLag;
+  while (d < maxLag && c[d] > c[d + 1]) d++;
+  let maxval = -1;
+  let maxpos = -1;
+  for (let i = d; i <= maxLag; i++) {
+    if (c[i] > maxval) {
+      maxval = c[i];
+      maxpos = i;
+    }
+  }
+  if (maxpos <= 0 || c[0] <= 0 || maxval / c[0] < 0.25) return -1;
+
+  let T0 = maxpos;
+  if (T0 > 0 && T0 < maxLag) {
+    const x1 = c[T0 - 1];
+    const x2 = c[T0];
+    const x3 = c[T0 + 1];
+    const a = (x1 + x3 - 2 * x2) / 2;
+    const b = (x3 - x1) / 2;
+    if (a) T0 = T0 - b / (2 * a);
+  }
+  return sampleRate / T0;
+}
+
+let tunerCtx = null;
+let tunerStream = null;
+let tunerAnalyser = null;
+let tunerRafId = null;
+
+export function isVocalTunerRunning() {
+  return Boolean(tunerStream);
+}
+
+export function stopVocalTuner() {
+  if (tunerRafId && typeof cancelAnimationFrame === 'function') {
+    cancelAnimationFrame(tunerRafId);
+    tunerRafId = null;
+  }
+  if (tunerStream) {
+    for (const track of tunerStream.getTracks()) {
+      try { track.stop(); } catch {}
+    }
+    tunerStream = null;
+  }
+  if (tunerCtx) {
+    const old = tunerCtx;
+    tunerCtx = null;
+    tunerAnalyser = null;
+    try { Promise.resolve(old.close()).catch(() => {}); } catch {}
+  }
+}
+
+export async function startVocalTuner({ onDetect, onError } = {}) {
+  stopVocalTuner();
+  if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+    const err = new Error('이 브라우저에서는 마이크 음정 인식을 지원하지 않습니다.');
+    if (typeof onError === 'function') onError(err);
+    return false;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      }
+    });
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContextClass();
+    if (ctx.state === 'suspended') await ctx.resume();
+    const source = ctx.createMediaStreamSource(stream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 2048;
+    source.connect(analyser);
+
+    tunerCtx = ctx;
+    tunerStream = stream;
+    tunerAnalyser = analyser;
+    const buffer = new Float32Array(analyser.fftSize);
+
+    const tick = () => {
+      if (!tunerAnalyser || !tunerCtx) return;
+      tunerAnalyser.getFloatTimeDomainData(buffer);
+      const detectedHz = autoCorrelatePitch(buffer, tunerCtx.sampleRate);
+      if (typeof onDetect === 'function') {
+        onDetect(detectedHz > 0 ? frequencyToPitchInfo(detectedHz) : null);
+      }
+      tunerRafId = requestAnimationFrame(tick);
+    };
+    tunerRafId = requestAnimationFrame(tick);
+    return true;
+  } catch (err) {
+    stopVocalTuner();
+    if (typeof onError === 'function') onError(err);
+    return false;
+  }
+}
+
+/* ============================================================================
+ * Web Audio Metronome (무반주 아카펠라 리듬·템포 연습용 메트로놈)
+ * ============================================================================ */
+
+let metroTimer = null;
+let metroBpm = 96;
+let metroBeatsPerBar = 4;
+let metroBeatIndex = 0;
+let metroOnBeat = null;
+
+export function isMetronomeRunning() {
+  return Boolean(metroTimer);
+}
+
+export function getMetronomeBpm() {
+  return metroBpm;
+}
+
+function playMetronomeClick(isAccent = false) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(isAccent ? 1180 : 820, now);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(isAccent ? 0.42 : 0.25, now + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.055);
+    osc.connect(gain);
+    gain.connect(getCleanOutputNode(ctx));
+    osc.start(now);
+    osc.stop(now + 0.06);
+  } catch {}
+}
+
+function scheduleMetronomeTick() {
+  if (metroTimer) clearInterval(metroTimer);
+  const intervalMs = Math.max(200, Math.round(60000 / metroBpm));
+  metroTimer = setInterval(() => {
+    const isAccent = (metroBeatIndex % metroBeatsPerBar) === 0;
+    playMetronomeClick(isAccent);
+    if (typeof metroOnBeat === 'function') {
+      try { metroOnBeat({ beat: (metroBeatIndex % metroBeatsPerBar) + 1, beatsPerBar: metroBeatsPerBar, bpm: metroBpm, isAccent }); } catch {}
+    }
+    metroBeatIndex = (metroBeatIndex + 1) % metroBeatsPerBar;
+  }, intervalMs);
+}
+
+export function setMetronomeBpm(bpm) {
+  const clamped = Math.max(40, Math.min(220, Math.round(Number(bpm) || 96)));
+  metroBpm = clamped;
+  if (metroTimer) {
+    scheduleMetronomeTick();
+  }
+  return metroBpm;
+}
+
+export function startMetronome({ bpm = metroBpm, beatsPerBar = 4, onBeat = null } = {}) {
+  stopMetronome();
+  metroBpm = Math.max(40, Math.min(220, Math.round(Number(bpm) || 96)));
+  metroBeatsPerBar = Math.max(2, Math.min(6, Math.round(Number(beatsPerBar) || 4)));
+  metroBeatIndex = 0;
+  metroOnBeat = onBeat;
+  // 즉시 첫 박 재생
+  playMetronomeClick(true);
+  if (typeof metroOnBeat === 'function') {
+    try { metroOnBeat({ beat: 1, beatsPerBar: metroBeatsPerBar, bpm: metroBpm, isAccent: true }); } catch {}
+  }
+  metroBeatIndex = 1 % metroBeatsPerBar;
+  scheduleMetronomeTick();
+  return true;
+}
+
+export function stopMetronome() {
+  if (metroTimer) {
+    clearInterval(metroTimer);
+    metroTimer = null;
+  }
+  metroBeatIndex = 0;
+  metroOnBeat = null;
+  scheduleIdleSuspend();
+}
+

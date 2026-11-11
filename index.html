@@ -29,7 +29,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=105">
+  <link rel="stylesheet" href="./css/style.css?v=107">
 
 
 </head>
@@ -764,16 +764,16 @@
     </div>
   </dialog>
 
-  <!-- Vocal Pitch Pipe Modal -->
+  <!-- Vocal Pitch Pipe, Real-time Tuner & Metronome Modal -->
   <dialog class="pitch-dialog" id="pitch-dialog" aria-labelledby="pitch-title">
     <div class="pitch-dialog-header">
       <div>
-        <p class="eyebrow">VOCAL PITCH PIPE</p>
-        <h2 id="pitch-title">첫 음 잡기 (피치파이프)</h2>
+        <p class="eyebrow">VOCAL PITCH PIPE · TUNER · METRONOME</p>
+        <h2 id="pitch-title">첫 음 잡기 · 튜너 · 메트로놈</h2>
       </div>
       <button type="button" class="dialog-close-x" onclick="document.getElementById('pitch-dialog').close()" aria-label="닫기">✕</button>
     </div>
-    <p class="pitch-dialog-desc">우리 팀 파트별 첫 음을 바로 찾아보세요. 건반을 누르면 첫 음 소리가 울립니다.</p>
+    <p class="pitch-dialog-desc">파트별 첫 음 건반, 실시간 마이크 음정 튜너, 합주 메트로놈을 한곳에서 사용하세요.</p>
     
     <div class="pitch-status-card" id="pitch-status-card">
       <span class="pitch-now-label">현재 소리</span>
@@ -787,6 +787,43 @@
     </div>
 
     <div class="pitch-keyboard" id="pitch-keyboard" role="region" aria-label="첫 음 건반"></div>
+
+    <div class="pitch-tools-grid">
+      <section class="pitch-tool-card" id="pitch-tuner-box" aria-label="실시간 마이크 음정 튜너">
+        <div class="pitch-tool-head">
+          <strong>🎙️ 내 목소리 음정 튜너</strong>
+          <button type="button" class="button secondary small tuner-ctrl-btn" id="pitch-tuner-btn">마이크 켜기</button>
+        </div>
+        <div class="pitch-tuner-readout">
+          <strong id="pitch-tuner-note">대기 중</strong>
+          <span id="pitch-tuner-detail">마이크를 켜고 소리를 내면 실시간 음정(±센트)을 알려줍니다.</span>
+        </div>
+        <div class="pitch-tuner-gauge" aria-hidden="true">
+          <div class="pitch-tuner-center"></div>
+          <div class="pitch-tuner-fill" id="pitch-tuner-meter"></div>
+        </div>
+      </section>
+
+      <section class="pitch-tool-card" id="pitch-metro-box" aria-label="아카펠라 메트로놈">
+        <div class="pitch-tool-head">
+          <strong>⏱️ 합주 메트로놈</strong>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <button type="button" class="button ghost small metronome-ctrl-btn" id="pitch-metro-tap" title="박자에 맞춰 연속 탭하여 템포 설정">탭 템포</button>
+            <button type="button" class="button secondary small metronome-ctrl-btn" id="pitch-metro-toggle">박자 시작</button>
+          </div>
+        </div>
+        <div class="pitch-metro-controls">
+          <strong class="pitch-metro-bpm" id="pitch-metro-bpm">96 BPM</strong>
+          <input type="range" id="pitch-metro-slider" min="40" max="220" value="96" aria-label="메트로놈 BPM 조절">
+        </div>
+        <div class="pitch-metro-dots" id="pitch-metro-dots" aria-hidden="true">
+          <span class="metro-dot"></span>
+          <span class="metro-dot"></span>
+          <span class="metro-dot"></span>
+          <span class="metro-dot"></span>
+        </div>
+      </section>
+    </div>
 
     <div class="pitch-dialog-footer">
       <div class="pitch-presets">
@@ -892,7 +929,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=105';
+      script.src = './js/app.js?v=107';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);

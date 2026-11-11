@@ -497,7 +497,26 @@
         "url": "https://www.youtube.com/watch?v=CL7KkjJ_ooA"
       },
       "description": "아카펠라 그룹 아카라카(Akaraka)의 무대 실황 영상입니다. (광주교육대학교 풍향문화관)",
-      "setlist": []
+      "setlist": [
+        {
+          "songId": "old-pop-medley",
+          "title": "올드팝 메들리",
+          "artist": "아카라카",
+          "time": 0
+        },
+        {
+          "songId": "love-song-medley",
+          "title": "러브송 메들리",
+          "artist": "EXIT",
+          "time": 0
+        },
+        {
+          "songId": "in-your-arms",
+          "title": "그대 내 품에",
+          "artist": "EXIT",
+          "time": 0
+        }
+      ]
     },
     {
       "id": "akaraka-stage-SPHvelHh85M",
@@ -511,7 +530,38 @@
         "url": "https://www.youtube.com/watch?v=SPHvelHh85M"
       },
       "description": "아카펠라 그룹 아카라카(Akaraka)의 무대 실황 영상입니다. (광양 성황스포츠센터 다목적체육관)",
-      "setlist": []
+      "setlist": [
+        {
+          "songId": "love-song-medley",
+          "title": "러브송 메들리",
+          "artist": "EXIT",
+          "time": 0
+        },
+        {
+          "songId": "isnt-she-lovely",
+          "title": "Isn't She Lovely",
+          "artist": "EXIT",
+          "time": 0
+        },
+        {
+          "songId": "in-your-arms",
+          "title": "그대 내 품에",
+          "artist": "EXIT",
+          "time": 0
+        },
+        {
+          "songId": "old-pop-medley",
+          "title": "올드팝 메들리",
+          "artist": "아카라카",
+          "time": 0
+        },
+        {
+          "songId": "lets-travel",
+          "title": "여행을 떠나요",
+          "artist": "아카라카",
+          "time": 0
+        }
+      ]
     },
     {
       "id": "akaraka-stage-lyIHzFTnFY4",
@@ -567,7 +617,14 @@
         "url": "https://www.youtube.com/watch?v=FrZsv-Z77fU"
       },
       "description": "아카펠라 그룹 아카라카(Akaraka)의 무대 실황 영상입니다. (5.18 기념문화센터)",
-      "setlist": []
+      "setlist": [
+        {
+          "songId": "march-for-the-beloved",
+          "title": "임을 위한 행진곡",
+          "artist": "아카라카",
+          "time": 0
+        }
+      ]
     },
     {
       "id": "akaraka-stage-8Dx4ZoHKF5M",

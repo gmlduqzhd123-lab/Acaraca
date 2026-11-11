@@ -1,0 +1,35 @@
+name: AcaRaca Quality & Integrity CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Validate Data, Unit Tests & Static Audits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate songs.json schema
+        run: npm run validate
+
+      - name: Run core unit tests
+        run: npm test
+
+      - name: Run DOM, CSS, HTML, Pitch & Stage audits
+        run: npm run audit

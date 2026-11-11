@@ -6,7 +6,8 @@ export function readRoute() {
     tab: tabs.has(query.get('tab')) ? query.get('tab') : 'home',
     song: query.get('song') || null,
     part: query.get('part') || null,
-    view: query.get('view') || null
+    view: query.get('view') || null,
+    cuesheet: query.get('cuesheet') || null
   };
 }
 
@@ -18,6 +19,7 @@ export function routeUrl(route) {
   } else if (route.tab && route.tab !== 'home') {
     url.searchParams.set('tab', route.tab);
     if (route.view) url.searchParams.set('view', route.view);
+    if (route.cuesheet) url.searchParams.set('cuesheet', route.cuesheet);
   }
   return url;
 }

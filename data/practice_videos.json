@@ -1,4 +1,101 @@
 {
   "version": 1,
-  "videos": []
+  "videos": [
+    {
+      "id": "prac-if-you-dont-dream-full",
+      "title": "꿈꾸지 않으면 · 전체 합주 레퍼런스 (오직목소리)",
+      "songId": "if-you-dont-dream",
+      "part": "전체 합주",
+      "date": "2025-05-12",
+      "author": "오직목소리 · 아카라카",
+      "sourceType": "youtube",
+      "videoUrl": "https://www.youtube.com/watch?v=l0ZgOjQj35Q",
+      "thumbnail": "https://img.youtube.com/vi/l0ZgOjQj35Q/hqdefault.jpg",
+      "description": "배운다는 건 꿈을 꾸는 것, 가르친다는 건 희망을 노래하는 것 — E Major 4성부 전체 합주 가이드 영상입니다."
+    },
+    {
+      "id": "prac-if-you-dont-dream-p1",
+      "title": "꿈꾸지 않으면 · 1번 파트 (Soprano · 선영) 가이드",
+      "songId": "if-you-dont-dream",
+      "part": "소프라노",
+      "date": "2025-05-12",
+      "author": "선영",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/QWmOhnePNVw",
+      "thumbnail": "https://img.youtube.com/vi/QWmOhnePNVw/hqdefault.jpg",
+      "description": "1번 파트(선영) 주선율 및 고음 하모니 집중 연습 영상 (첫 음 B4)."
+    },
+    {
+      "id": "prac-if-you-dont-dream-p2",
+      "title": "꿈꾸지 않으면 · 2번 파트 (Alto · 용석) 가이드",
+      "songId": "if-you-dont-dream",
+      "part": "알토",
+      "date": "2025-05-12",
+      "author": "용석",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/1yedxLHY_u0",
+      "thumbnail": "https://img.youtube.com/vi/1yedxLHY_u0/hqdefault.jpg",
+      "description": "2번 파트(용석) 내성 화음 밸런스 및 리듬 반주 연습 영상 (첫 음 G#4)."
+    },
+    {
+      "id": "prac-if-you-dont-dream-p3",
+      "title": "꿈꾸지 않으면 · 3번 파트 (Tenor · 희엽) 가이드",
+      "songId": "if-you-dont-dream",
+      "part": "테너",
+      "date": "2025-05-12",
+      "author": "희엽",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/KSrJQwLQ2Qs",
+      "thumbnail": "https://img.youtube.com/vi/KSrJQwLQ2Qs/hqdefault.jpg",
+      "description": "3번 파트(희엽) 테너 화성 진행 및 브릿지 아티큘레이션 연습 영상 (첫 음 E4)."
+    },
+    {
+      "id": "prac-if-you-dont-dream-p4",
+      "title": "꿈꾸지 않으면 · 4번 파트 (Bass · 휘소) 가이드",
+      "songId": "if-you-dont-dream",
+      "part": "베이스",
+      "date": "2025-05-12",
+      "author": "휘소",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/Jms_1dg6qBU",
+      "thumbnail": "https://img.youtube.com/vi/Jms_1dg6qBU/hqdefault.jpg",
+      "description": "4번 파트(휘소) 베이스 그루브 및 루트 음정 유지 연습 영상 (첫 음 E3)."
+    },
+    {
+      "id": "prac-bohemian-5-full",
+      "title": "보헤미안 랩소디 · 5인용 전체 합주 연습 영상",
+      "songId": "bohemian-rhapsody-5",
+      "part": "전체 합주",
+      "date": "2025-03-15",
+      "author": "아카라카",
+      "sourceType": "youtube",
+      "videoUrl": "https://www.youtube.com/watch?v=DUwM7EAkJNs",
+      "thumbnail": "https://img.youtube.com/vi/DUwM7EAkJNs/hqdefault.jpg",
+      "description": "인트로 코러스, 발라드 솔로, 오페라 파트 전조, 하드록 피날레까지 이어지는 5인용 전체 합주 연습 영상입니다."
+    },
+    {
+      "id": "prac-in-your-arms-full",
+      "title": "그대 내 품에 · 혼성 5부 전체 합주 가이드",
+      "songId": "in-your-arms",
+      "part": "전체 합주",
+      "date": "2025-02-20",
+      "author": "아카라카",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/ps1ce2L-n1Y",
+      "thumbnail": "https://img.youtube.com/vi/ps1ce2L-n1Y/hqdefault.jpg",
+      "description": "유재하 원곡 '그대 내 품에' 아카펠라 5성부 호흡과 다이내믹 밸런스 점검용 합주 영상입니다."
+    },
+    {
+      "id": "prac-old-pop-medley-full",
+      "title": "올드팝 메들리 · 전체 합주 가이드",
+      "songId": "old-pop-medley",
+      "part": "전체 합주",
+      "date": "2025-01-18",
+      "author": "아카라카",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/eD_vbdO8l7Q",
+      "thumbnail": "https://img.youtube.com/vi/eD_vbdO8l7Q/hqdefault.jpg",
+      "description": "무대 단골 레퍼토리 '올드팝 메들리' 곡 간 전환 템포와 스윙 리듬 합주 가이드입니다."
+    }
+  ]
 }
