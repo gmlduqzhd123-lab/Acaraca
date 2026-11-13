@@ -2999,7 +2999,7 @@
         "4부"
       ],
       "thumbnail": "https://img.youtube.com/vi/YJBvofCb9pQ/hqdefault.jpg",
-      "memo": "White Christmas 4부 아카펠라 연습 음원입니다. D Major로 시작해 후반부에 E♭ Major로 전조합니다.",
+      "memo": "White Christmas 4부 아카펠라 연습 음원입니다. D Major로 시작해 후반부에 E♭ Major로 전조합니다. 전체 합주는 엑시트(E.X.I.T.) 아카펠라 영상을 참고하세요.",
       "videos": {
         "part1": {
           "type": "video",
@@ -3016,6 +3016,10 @@
         "part4": {
           "type": "video",
           "url": "https://youtu.be/HfqqtoxdIfE"
+        },
+        "full": {
+          "type": "video",
+          "url": "https://www.youtube.com/watch?v=28vlYD7Toew"
         }
       },
       "startingPitches": {
