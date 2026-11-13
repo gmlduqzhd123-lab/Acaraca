@@ -578,6 +578,22 @@
       "memo": "남성팀 학교 가자 총보"
     },
     {
+      "id": "score-white-christmas-4part",
+      "songId": "white-christmas",
+      "title": "White Christmas (4부 · 연습곡)",
+      "team": "아카라카",
+      "category": "캐롤",
+      "part": "all",
+      "format": "nwc",
+      "fileType": "nwc",
+      "fileName": "White Christmas 4부.nwc",
+      "fileSize": "4.7 KB",
+      "fileUrl": "./assets/scores/White Christmas 4부.nwc",
+      "year": "2026",
+      "arranger": "아카라카",
+      "memo": "White Christmas 4부 총보 (NoteWorthy Composer .nwc 악보) · 파트 YS·SY·HY·JW"
+    },
+    {
       "id": "score-research-1-nwc",
       "songId": "",
       "title": "20세기 히트쏭 메들리(혼성7부)arr 김승호",

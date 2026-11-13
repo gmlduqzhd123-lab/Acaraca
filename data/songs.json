@@ -2984,6 +2984,65 @@
         "part4": "휘소"
       },
       "pitchPipe": "F"
+    },
+    {
+      "id": "white-christmas",
+      "title": "White Christmas",
+      "artist": "Irving Berlin · Bing Crosby",
+      "category": "시즌",
+      "difficulty": 2,
+      "status": "practice",
+      "arrangement": "4 Voices",
+      "tags": [
+        "크리스마스",
+        "캐롤",
+        "4부"
+      ],
+      "thumbnail": "https://img.youtube.com/vi/YJBvofCb9pQ/hqdefault.jpg",
+      "memo": "White Christmas 4부 아카펠라 연습 음원입니다. D Major로 시작해 후반부에 E♭ Major로 전조합니다.",
+      "videos": {
+        "part1": {
+          "type": "video",
+          "url": "https://youtu.be/YJBvofCb9pQ"
+        },
+        "part2": {
+          "type": "video",
+          "url": "https://youtu.be/PseV6bxEd5E"
+        },
+        "part3": {
+          "type": "video",
+          "url": "https://youtu.be/KiWCNEdSJZ8"
+        },
+        "part4": {
+          "type": "video",
+          "url": "https://youtu.be/HfqqtoxdIfE"
+        }
+      },
+      "startingPitches": {
+        "part1": "D4",
+        "part2": "B3",
+        "part3": "A3",
+        "part4": "G2",
+        "soprano": "D4",
+        "alto": "B3",
+        "tenor": "A3",
+        "bass": "G2",
+        "full": "D3"
+      },
+      "musicalKey": "D Major",
+      "entryOrder": [
+        "part1",
+        "part2",
+        "part3",
+        "part4"
+      ],
+      "partNames": {
+        "part1": "용석",
+        "part2": "선영",
+        "part3": "희엽",
+        "part4": "재우"
+      },
+      "pitchPipe": "D"
     }
   ]
 }
