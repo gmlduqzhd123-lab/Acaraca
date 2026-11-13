@@ -248,9 +248,9 @@ export function runCoreTests() {
     check('Pretendard 웹폰트 링크 삽입 검증', () => nodeFs.readFileSync('./index.html', 'utf8').includes('pretendardvariable.min.css') && nodeFs.readFileSync('./admin.html', 'utf8').includes('pretendardvariable.min.css'));
     check('체크리스트 및 집중 연습 타이머 제거 검증', () => !nodeFs.readFileSync('./js/app.js', 'utf8').includes('오늘의 연습 체크') && !nodeFs.readFileSync('./js/app.js', 'utf8').includes('10분 집중 연습'));
     check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
-    check('34곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
+    check('35곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
       const songsRaw = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
-      return songsRaw.length === 34 && songsRaw.every(song => {
+      return songsRaw.length === 35 && songsRaw.every(song => {
         if (!song.startingPitches || typeof song.startingPitches !== 'object') return false;
         return Object.values(song.startingPitches).every(noteStr => {
           if (!noteStr) return true;
@@ -712,9 +712,9 @@ export function runCoreTests() {
     check('renderEducation 내 미인증 시 락 스크린 및 모달 호출 가드 검증', () => appJsContent.includes("if (!isProtectedAuthorized('education'))") && appJsContent.includes("openProtectedAuthDialog('education'"));
     check('style.css 락 스크린 및 안내 배지 스타일 클래스 정의 검증', () => styleCssContent.includes('.protected-lock-state') && styleCssContent.includes('.protected-notice-badge'));
     check('모바일 인앱 NWC·MIDI 악보 미리보기 및 재생 모달 구현 검증', () => appJsContent.includes('openScorePreviewModal') && appJsContent.includes('parseNwcScoreDetail') && appJsContent.includes('parseMidiScoreDetail') && styleCssContent.includes('.score-preview-dialog'));
-    check('34곡 전 곡 partNames(파트별 담당 단원 이름) 100% 매핑 검증', () => {
+    check('35곡 전 곡 partNames(파트별 담당 단원 이름) 100% 매핑 검증', () => {
       const allSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
-      return allSongs.length === 34 && allSongs.every(s => s.partNames && Object.keys(s.partNames).length > 0);
+      return allSongs.length === 35 && allSongs.every(s => s.partNames && Object.keys(s.partNames).length > 0);
     });
     check('31개 전 공연 아카이브(performances.json) setlist 객체 스키마 정규화 100% 검증', () => {
       const allPerfs = JSON.parse(nodeFs.readFileSync('./data/performances.json', 'utf8')).performances;
