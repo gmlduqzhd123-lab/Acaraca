@@ -33,6 +33,7 @@ import {
   deleteCustomEducation
 } from './archive.js';
 import { saveMediaFile, getMediaBlobUrl } from './mediaStorage.js';
+import { qrDataUrl } from './qr.js';
 import {
   requestWakeLock,
   releaseWakeLock,
@@ -4700,7 +4701,9 @@ function showQR(song, part = null) {
   const img = document.getElementById('qr-image');
   const title = document.getElementById('qr-target-title');
   const copyBtn = document.getElementById('qr-copy-btn');
-  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+  const qrSrc = qrDataUrl(url);
+  img.hidden = !qrSrc;
+  img.src = qrSrc || '';
   title.textContent = `${song.title}${part ? ` · ${PARTS[part]}` : ''}`;
   copyBtn.onclick = async () => {
     try {

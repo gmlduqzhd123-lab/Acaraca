@@ -8,6 +8,7 @@
  */
 
 import { el, icon, button, toast } from './ui.js';
+import { qrDataUrl } from './qr.js';
 import {
   parseNoteString,
   getNoteFrequency,
@@ -2450,7 +2451,7 @@ export function openStageShareModal(session, songs = []) {
   if (existing) existing.remove();
 
   const shareUrl = buildStageShareUrl(session);
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(shareUrl)}`;
+  const qrSrc = qrDataUrl(shareUrl);
 
   const dialog = el('dialog', {
     id: 'stage-share-dialog',
@@ -2466,13 +2467,16 @@ export function openStageShareModal(session, songs = []) {
     button('✕', () => dialog.close(), 'icon-button', null, { 'aria-label': '닫기' })
   );
 
-  const qrImg = el('img', {
+  const qrImg = qrSrc ? el('img', {
     src: qrSrc,
     alt: `${session.eventTitle || '무대 큐시트'} 공유 QR 코드`,
     width: 220,
     height: 220,
-    style: 'display: block; margin: 0 auto; border-radius: 14px; background: #fff; padding: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12);',
-    onerror: () => { qrImg.src = './qr.svg'; }
+    style: 'display: block; margin: 0 auto; border-radius: 14px; background: #fff; padding: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12);'
+  }) : el('p', {
+    class: 'notice warning',
+    style: 'display: block; text-align: center;',
+    text: '큐시트 내용이 많아 QR 한 장에 담을 수 없어요. 아래 링크를 복사해 공유해 주세요.'
   });
 
   const urlInput = el('input', {
