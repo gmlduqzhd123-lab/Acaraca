@@ -42,6 +42,9 @@ npm run validate
 # 전체 단위 테스트 및 무대 모드·오프라인·데이터 무결성 테스트 실행
 npm test
 npm run audit
+
+# 등록된 YouTube 영상이 아직 재생 가능한지 확인 (인터넷 필요, GitHub Actions에서 매주 월요일 자동 실행)
+npm run check-links
 ```
 
 ---

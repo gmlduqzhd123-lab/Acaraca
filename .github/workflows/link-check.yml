@@ -1,0 +1,29 @@
+name: YouTube Link Check
+
+# 등록된 YouTube 영상이 삭제·비공개·퍼가기 금지로 바뀌지 않았는지 주 1회 확인한다.
+# 실패하면 GitHub가 이 예약을 마지막으로 바꾼 사람에게 알림(메일)을 보낸다.
+# 네트워크 상태에 따라 흔들릴 수 있어 PR 검사(ci.yml)에는 넣지 않는다.
+on:
+  schedule:
+    - cron: '17 0 * * 1' # 매주 월요일 09:17 (KST)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-youtube:
+    name: Check YouTube videos are still playable
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check YouTube links
+        run: npm run check-links
