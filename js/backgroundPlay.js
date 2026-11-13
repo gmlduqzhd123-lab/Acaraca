@@ -255,8 +255,8 @@ export function enterPocketMode({
       <span class="pocket-mode-badge">터치 방지 모드 (화면 켜짐 유지 중)</span>
     </div>
     <div class="pocket-center">
-      <p class="pocket-song-title">${title}</p>
-      <p class="pocket-part-label">${partLabel}</p>
+      <p class="pocket-song-title"></p>
+      <p class="pocket-part-label"></p>
       <div class="pocket-pulse-wrap">
         <span class="pocket-pulse-dot"></span>
         <span class="pocket-pulse-text">음악이 백그라운드에서 재생 중입니다</span>
@@ -270,6 +270,12 @@ export function enterPocketMode({
       </button>
     </div>
   `;
+
+  // 곡명·파트명에는 사용자가 정한 파일 이름이 올 수 있어 HTML이 아닌 글자로만 넣는다.
+  const titleNode = overlay.querySelector('.pocket-song-title');
+  const partNode = overlay.querySelector('.pocket-part-label');
+  if (titleNode) titleNode.textContent = String(title ?? '');
+  if (partNode) partNode.textContent = String(partLabel ?? '');
 
   const exitMode = () => {
     exitPocketMode();
