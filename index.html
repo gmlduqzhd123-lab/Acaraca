@@ -30,7 +30,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=108">
+  <link rel="stylesheet" href="./css/style.css?v=109">
 
 
 </head>
@@ -280,6 +280,7 @@
       <button type="button" class="dialog-close-x" onclick="document.getElementById('attach-media-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p id="attach-media-target" style="font-size: 13px; color: var(--muted); margin-bottom: 16px;"></p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="attach-media-form">
       <div style="margin-bottom: 16px;">
         <label for="attach-file-input" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">
@@ -309,7 +310,8 @@
       <h2 id="new-rehearsal-title" style="margin: 0; font-size: 19px;">+ 새 연습 일지 등록</h2>
       <button type="button" class="dialog-close-x" onclick="document.getElementById('new-rehearsal-dialog').close()" aria-label="닫기">✕</button>
     </div>
-    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">정기 합주 녹음본이나 런스루 영상을 올리고 팀원들과 피드백을 공유하세요.</p>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">정기 합주 녹음본이나 런스루 영상을 연습 일지로 정리해 보세요.</p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="new-rehearsal-form">
       <div style="margin-bottom: 12px;">
         <label for="new-reh-song" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">연습곡 선택</label>
@@ -354,6 +356,7 @@
       <button type="button" class="dialog-close-x" id="upload-score-close" onclick="document.getElementById('upload-score-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">합주 총보, 파트보, 가사지 PDF나 악보 이미지 파일을 올려두고 언제든 열람하세요.</p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="upload-score-form">
       <div style="margin-bottom: 12px;">
         <label for="score-song-select" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">관련 곡 선택</label>
@@ -427,7 +430,8 @@
       <h2 id="upload-education-title" style="margin: 0; font-size: 19px;">🎓 + 교육 자료 등록하기</h2>
       <button type="button" class="dialog-close-x" id="upload-education-close" onclick="document.getElementById('upload-education-dialog').close()" aria-label="닫기">✕</button>
     </div>
-    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">아카펠라 지도안, 워크숍 PPT, 교재 PDF, 수업 강의 영상을 팀원들과 공유하세요.</p>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">아카펠라 지도안, 워크숍 PPT, 교재 PDF, 수업 강의 영상을 정리해 두세요.</p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="upload-education-form">
       <div style="margin-bottom: 12px;">
         <label for="edu-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">자료 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
@@ -488,7 +492,8 @@
       <h2 id="upload-memory-title" style="margin: 0; font-size: 19px;">📷 + 우리들의 기록 올리기</h2>
       <button type="button" class="dialog-close-x" id="upload-memory-close" onclick="document.getElementById('upload-memory-dialog').close()" aria-label="닫기">✕</button>
     </div>
-    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">연습실 숏츠 영상, 무대 사진, 비하인드 순간을 팀원들과 함께 공유해 보세요.</p>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">연습실 숏츠 영상, 무대 사진, 비하인드 순간을 기록으로 남겨 보세요.</p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="upload-memory-form">
       <div style="margin-bottom: 12px;">
         <label for="mem-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">기록 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
@@ -555,6 +560,7 @@
       <button type="button" class="dialog-close-x" id="upload-practice-vid-close" onclick="document.getElementById('upload-practice-video-dialog').close()" aria-label="닫기">✕</button>
     </div>
     <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">유튜브 영상 링크 또는 내 컴퓨터의 연습 영상 파일(.mp4, .webm, .mov)을 등록할 수 있습니다.</p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="upload-practice-vid-form">
       <div style="margin-bottom: 12px;">
         <label for="practice-vid-title-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">영상 제목 <span style="color: var(--danger, #d9383a);">*</span></label>
@@ -632,7 +638,8 @@
       <h2 id="upload-apprec-title" style="margin: 0; font-size: 19px;">🎧 + 아카펠라 감상 영상 등록</h2>
       <button type="button" class="dialog-close-x" id="upload-apprec-close" onclick="document.getElementById('upload-appreciation-dialog').close()" aria-label="닫기">✕</button>
     </div>
-    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">팀원들과 함께 나누고 싶은 멋진 아카펠라 유튜브 영상 링크를 등록해 보세요.</p>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">함께 보고 싶은 멋진 아카펠라 유튜브 영상 링크를 등록해 보세요.</p>
+    <p class="notice warning local-only-notice" role="note">📱 여기서 올린 내용은 <strong>이 기기(브라우저)에만 저장</strong>돼요. 다른 단원의 휴대폰·PC에는 보이지 않습니다. 팀 전체에 올리려면 사이트 운영자에게 자료를 보내 주세요.</p>
     <form id="upload-apprec-form">
       <div style="margin-bottom: 12px;">
         <label for="apprec-url-input" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">유튜브 영상 링크 <span style="color: var(--danger, #d9383a);">*</span></label>

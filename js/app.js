@@ -1876,7 +1876,7 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
     textArea.value = '';
     selectedTime = 0;
     timeBtn.textContent = '⏱️ 재생시간 가져오기';
-    toast('피드백을 등록했어요. 팀원 누구나 열람할 수 있습니다.');
+    toast('피드백을 이 기기에 저장했어요. 다른 단원에게 보여주려면 설정 → 백업 내보내기 파일을 공유해 주세요.');
     updateFeed();
   }, 'button primary small');
 
@@ -1884,7 +1884,7 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
     el('div', {class: 'feedback-form-row'}, authorInput, partSelect, timeBtn),
     textArea,
     el('div', {class: 'feedback-form-actions'},
-      el('small', {style: 'color: var(--muted); font-size: 11px;', text: '팀원 모두에게 즉시 공개됩니다'}),
+      el('small', {style: 'color: var(--muted); font-size: 11px;', text: '📱 이 기기에만 저장돼요 · 공유는 설정 → 백업 내보내기'}),
       submitBtn
     )
   );

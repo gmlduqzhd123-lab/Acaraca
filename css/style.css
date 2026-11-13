@@ -4322,3 +4322,7 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
   }
 }
 
+
+/* 업로드 화면: 이 기기에만 저장된다는 안내 (flex를 끄고 문장 흐름 유지) */
+.local-only-notice { display: block; font-size: 12px; line-height: 1.55; margin: 0 0 14px; }
+.local-only-notice strong { font-weight: 700; }
