@@ -1,5 +1,6 @@
 const fs = require('fs');
-const imgBase64 = fs.readFileSync('assets/icons/logo.jpg').toString('base64');
+// 화면 표시용(최대 42px) 로고라 원본(logo.jpg, 1024px) 대신 256px 축소본을 넣어 용량을 줄인다.
+const imgBase64 = fs.readFileSync('assets/icons/logo-256.jpg').toString('base64');
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
     <clipPath id="circleClip">
