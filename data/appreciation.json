@@ -3684,6 +3684,25 @@
         "4부",
         "힐링"
       ]
+    },
+    {
+      "id": "apprec-song-white-christmas",
+      "songId": "white-christmas",
+      "title": "White Christmas ft. The Manhattan Transfer - 펜타토닉스 (Pentatonix Official)",
+      "artist": "펜타토닉스 (Pentatonix) · 맨해튼 트랜스퍼 (The Manhattan Transfer)",
+      "category": "연습곡",
+      "videoUrl": "https://www.youtube.com/watch?v=cE2LMJrzNkM",
+      "thumbnail": "https://img.youtube.com/vi/cE2LMJrzNkM/hqdefault.jpg",
+      "uploader": "펜타토닉스 (PentatonixVEVO)",
+      "date": "A Pentatonix Christmas (2016) 수록곡",
+      "description": "펜타토닉스가 전설적인 재즈 보컬 그룹 맨해튼 트랜스퍼와 함께 부른 아카펠라 ‘White Christmas’입니다. 스윙감 있는 재즈 화성과 포근한 블렌딩을 감상해 보세요.",
+      "tags": [
+        "연습곡",
+        "White Christmas",
+        "Pentatonix",
+        "펜타토닉스",
+        "캐롤"
+      ]
     }
   ]
 }
