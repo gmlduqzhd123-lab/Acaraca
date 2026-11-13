@@ -72,30 +72,6 @@
       "videoUrl": "https://www.youtube.com/watch?v=DUwM7EAkJNs",
       "thumbnail": "https://img.youtube.com/vi/DUwM7EAkJNs/hqdefault.jpg",
       "description": "인트로 코러스, 발라드 솔로, 오페라 파트 전조, 하드록 피날레까지 이어지는 5인용 전체 합주 연습 영상입니다."
-    },
-    {
-      "id": "prac-in-your-arms-full",
-      "title": "그대 내 품에 · 혼성 5부 전체 합주 가이드",
-      "songId": "in-your-arms",
-      "part": "전체 합주",
-      "date": "2025-02-20",
-      "author": "아카라카",
-      "sourceType": "youtube",
-      "videoUrl": "https://youtu.be/ps1ce2L-n1Y",
-      "thumbnail": "https://img.youtube.com/vi/ps1ce2L-n1Y/hqdefault.jpg",
-      "description": "유재하 원곡 '그대 내 품에' 아카펠라 5성부 호흡과 다이내믹 밸런스 점검용 합주 영상입니다."
-    },
-    {
-      "id": "prac-old-pop-medley-full",
-      "title": "올드팝 메들리 · 전체 합주 가이드",
-      "songId": "old-pop-medley",
-      "part": "전체 합주",
-      "date": "2025-01-18",
-      "author": "아카라카",
-      "sourceType": "youtube",
-      "videoUrl": "https://youtu.be/eD_vbdO8l7Q",
-      "thumbnail": "https://img.youtube.com/vi/eD_vbdO8l7Q/hqdefault.jpg",
-      "description": "무대 단골 레퍼토리 '올드팝 메들리' 곡 간 전환 템포와 스윙 리듬 합주 가이드입니다."
     }
   ]
 }
