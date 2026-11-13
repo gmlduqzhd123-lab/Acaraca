@@ -2,6 +2,122 @@
   "version": 1,
   "memories": [
     {
+      "id": "mem-shorts-jangheung-bohemian-rhapsody",
+      "title": "보헤미안 랩소디 - 전남초등교원음악제 @장흥문화예술회관 👑🎤",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2026-10-23",
+      "venue": "장흥문화예술회관",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/shorts/EctWNXjwmSY",
+      "thumbnail": "https://img.youtube.com/vi/EctWNXjwmSY/hqdefault.jpg",
+      "description": "전남초등교원음악제 무대에서 선보인 아카라카의 '보헤미안 랩소디' 아카펠라 라이브 숏츠 클립.",
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "보헤미안랩소디",
+        "퀸",
+        "queen",
+        "장흥문화예술회관",
+        "전남초등교원음악제",
+        "라이브",
+        "숏츠"
+      ],
+      "songId": "bohemian-rhapsody"
+    },
+    {
+      "id": "mem-shorts-yeosu-culture-old-pop-medley",
+      "title": "올드팝 메들리 - 여수 문화의 달 라이브 🎶🌊",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2026-10-18",
+      "venue": "여수 문화의 달 행사",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/shorts/0N0Tj6OOAIs",
+      "thumbnail": "https://img.youtube.com/vi/0N0Tj6OOAIs/hqdefault.jpg",
+      "description": "여수 문화의 달 행사 무대에서 부른 아카라카의 '올드팝 메들리' 아카펠라 라이브 숏츠 클립.",
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "올드팝",
+        "메들리",
+        "여수",
+        "문화의달",
+        "라이브",
+        "숏츠"
+      ],
+      "songId": "old-pop-medley"
+    },
+    {
+      "id": "mem-shorts-yeosu-culture-in-your-arms",
+      "title": "그대 내 품에 - 여수 문화의 달 라이브 🌙🤍",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2026-10-18",
+      "venue": "여수 문화의 달 행사",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/shorts/VZoTRL7IysM",
+      "thumbnail": "https://img.youtube.com/vi/VZoTRL7IysM/hqdefault.jpg",
+      "description": "여수 문화의 달 행사 무대에서 부른 유재하의 '그대 내 품에' 아카라카 아카펠라 라이브 숏츠 클립.",
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "그대내품에",
+        "유재하",
+        "여수",
+        "문화의달",
+        "라이브",
+        "숏츠"
+      ],
+      "songId": "in-your-arms"
+    },
+    {
+      "id": "mem-shorts-yeosu-culture-bohemian-rhapsody",
+      "title": "보헤미안 랩소디 - 여수 문화의 달 라이브 👑⚡",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2026-10-18",
+      "venue": "여수 문화의 달 행사",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/shorts/YTY9ieiZ_6o",
+      "thumbnail": "https://img.youtube.com/vi/YTY9ieiZ_6o/hqdefault.jpg",
+      "description": "여수 문화의 달 행사 무대에서 부른 아카라카의 '보헤미안 랩소디' 아카펠라 라이브 숏츠 클립.",
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "보헤미안랩소디",
+        "퀸",
+        "여수",
+        "문화의달",
+        "라이브",
+        "숏츠"
+      ],
+      "songId": "bohemian-rhapsody"
+    },
+    {
+      "id": "mem-shorts-yeosu-culture-love-song-medley",
+      "title": "러브송 메들리 - 여수 문화의 달 라이브 💕🎵",
+      "type": "shorts",
+      "category": "숏츠 영상",
+      "date": "2026-10-18",
+      "venue": "여수 문화의 달 행사",
+      "author": "아카라카",
+      "videoUrl": "https://www.youtube.com/shorts/rNzRnqN0DKo",
+      "thumbnail": "https://img.youtube.com/vi/rNzRnqN0DKo/hqdefault.jpg",
+      "description": "여수 문화의 달 행사 무대에서 부른 아카라카의 '러브송 메들리' 아카펠라 라이브 숏츠 클립.",
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "러브송메들리",
+        "메들리",
+        "여수",
+        "문화의달",
+        "라이브",
+        "숏츠"
+      ],
+      "songId": "love-song-medley"
+    },
+    {
       "id": "mem-shorts-bohemian-rhapsody",
       "title": "보헤미안 랩소디 (Bohemian Rhapsody) - 퀸 👑⚡",
       "type": "shorts",
@@ -12,7 +128,17 @@
       "videoUrl": "https://www.youtube.com/shorts/fZyHXECeye4",
       "thumbnail": "https://img.youtube.com/vi/fZyHXECeye4/hqdefault.jpg",
       "description": "퀸(Queen)의 전설적인 명곡 '보헤미안 랩소디'! 웅장하고 전율 넘치는 아카라카의 5성부 아카펠라 합주 연습 숏츠 클립.",
-      "tags": ["아카라카", "아카펠라", "보헤미안랩소디", "퀸", "queen", "bohemianrhapsody", "합주연습", "연습실", "숏츠"],
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "보헤미안랩소디",
+        "퀸",
+        "queen",
+        "bohemianrhapsody",
+        "합주연습",
+        "연습실",
+        "숏츠"
+      ],
       "songId": "bohemian-rhapsody"
     },
     {
@@ -26,7 +152,14 @@
       "videoUrl": "https://www.youtube.com/shorts/29RLIESjNS8",
       "thumbnail": "https://img.youtube.com/vi/29RLIESjNS8/hqdefault.jpg",
       "description": "차량 이동 중에 신나게 터져 나온 뽀로로 오프닝 '노는 게 제일 좋아'! 차 안에서도 완벽한 호흡을 자랑하는 아카라카의 5성부 아카펠라 라이브.",
-      "tags": ["아카라카", "아카펠라", "뽀로로", "노는게제일좋아", "차안라이브", "숏츠"],
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "뽀로로",
+        "노는게제일좋아",
+        "차안라이브",
+        "숏츠"
+      ],
       "songId": "tayo-pororo"
     },
     {
@@ -40,7 +173,14 @@
       "videoUrl": "https://www.youtube.com/shorts/EavZk7RcPeo",
       "thumbnail": "https://img.youtube.com/vi/EavZk7RcPeo/hqdefault.jpg",
       "description": "가왕 조용필의 대표곡 '단발머리'! 통통 튀는 레트로 리듬과 화려한 5부 보컬 하모니가 돋보이는 차 안 즉흥 라이브.",
-      "tags": ["아카라카", "아카펠라", "단발머리", "조용필", "차안라이브", "숏츠"],
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "단발머리",
+        "조용필",
+        "차안라이브",
+        "숏츠"
+      ],
       "songId": "short-hair"
     },
     {
@@ -54,7 +194,15 @@
       "videoUrl": "https://www.youtube.com/shorts/Ui_nSqKE-VQ",
       "thumbnail": "https://img.youtube.com/vi/Ui_nSqKE-VQ/hqdefault.jpg",
       "description": "개구쟁이 꼬마버스 타요! 차 안에서 펼쳐지는 유쾌한 손동작과 찰떡같은 화음이 매력적인 이동 중 아카펠라 라이브.",
-      "tags": ["아카라카", "아카펠라", "타요", "얼른타요", "꼬마버스", "차안라이브", "숏츠"],
+      "tags": [
+        "아카라카",
+        "아카펠라",
+        "타요",
+        "얼른타요",
+        "꼬마버스",
+        "차안라이브",
+        "숏츠"
+      ],
       "songId": "tayo-pororo"
     },
     {
@@ -68,7 +216,15 @@
       "videoUrl": "https://www.youtube.com/shorts/EW8Gnos_Nic",
       "thumbnail": "https://img.youtube.com/vi/EW8Gnos_Nic/hqdefault.jpg",
       "description": "유재하의 불후의 명곡 '그대 내 품에'. 연습실에서 진솔하게 울려 퍼지는 감미로운 아카라카 5성부 아카펠라 하모니.",
-      "tags": ["그대내품에", "유재하", "아카라카", "아카펠라", "연습실", "감성보컬", "숏츠"],
+      "tags": [
+        "그대내품에",
+        "유재하",
+        "아카라카",
+        "아카펠라",
+        "연습실",
+        "감성보컬",
+        "숏츠"
+      ],
       "songId": "in-your-arms"
     },
     {
@@ -82,7 +238,15 @@
       "videoUrl": "https://www.youtube.com/shorts/VnFYANEALqs",
       "thumbnail": "https://img.youtube.com/vi/VnFYANEALqs/hqdefault.jpg",
       "description": "영화 알라딘의 감동 명곡 'Speechless (Naomi Scott)'. 연습실을 꽉 채우는 파워풀한 리드 솔로와 웅장한 아카펠라 백코러스의 조화.",
-      "tags": ["speechless", "aladdin", "naomiscott", "아카라카", "아카펠라", "연습실", "숏츠"],
+      "tags": [
+        "speechless",
+        "aladdin",
+        "naomiscott",
+        "아카라카",
+        "아카펠라",
+        "연습실",
+        "숏츠"
+      ],
       "songId": "speechless"
     },
     {
@@ -96,7 +260,16 @@
       "videoUrl": "https://www.youtube.com/shorts/Mn4AFtDtcvo",
       "thumbnail": "https://img.youtube.com/vi/Mn4AFtDtcvo/hqdefault.jpg",
       "description": "알딸딸 기분 좋은 술자리에서 즉석으로 시작된 환상의 L.O.V.E. 아카펠라 화음 라이브! 전남 초등 아카펠라교육연구회 단원들의 낭만 가득한 순간.",
-      "tags": ["아카펠라", "라이브", "전남", "초등", "아카펠라교육연구회", "LOVE", "여수맛집", "숏츠"],
+      "tags": [
+        "아카펠라",
+        "라이브",
+        "전남",
+        "초등",
+        "아카펠라교육연구회",
+        "LOVE",
+        "여수맛집",
+        "숏츠"
+      ],
       "songId": "l-o-v-e"
     },
     {
@@ -110,7 +283,16 @@
       "videoUrl": "https://www.youtube.com/shorts/FuLn4EISEuY",
       "thumbnail": "https://img.youtube.com/vi/FuLn4EISEuY/hqdefault.jpg",
       "description": "여수 맛집 꼭대기연탄에서 고기 굽다 말고 터져 나온 흥 폭발 즉석 아카펠라! 음악이 일상이 되는 아카라카 팀원들의 유쾌한 비하인드.",
-      "tags": ["여수맛집", "꼭대기연탄", "국동", "아카펠라", "전남", "초등", "아카펠라교육연구회", "숏츠"],
+      "tags": [
+        "여수맛집",
+        "꼭대기연탄",
+        "국동",
+        "아카펠라",
+        "전남",
+        "초등",
+        "아카펠라교육연구회",
+        "숏츠"
+      ],
       "songId": ""
     }
   ]
