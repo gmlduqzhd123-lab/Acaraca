@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="AcaRaca">
   <link rel="manifest" href="./manifest.json">
   <script src="./ys-qr.js"></script>
+  <script src="./js/vendor/qrcode-generator-1.4.4.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png">
   <meta name="description" content="곡을 찾고, 내 파트를 고르고, 함께 하모니를 만드는 아카펠라 연습실 AcaRaca.">
   <title>AcaRaca · 우리의 아카펠라 연습실</title>
@@ -937,7 +938,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=108';
+      script.src = './js/app.js?v=109';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);
