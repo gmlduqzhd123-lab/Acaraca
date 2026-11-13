@@ -2,6 +2,25 @@ import { availableParts, PARTS } from './data.js';
 
 const normalized = (value) => String(value ?? '').trim().toLocaleLowerCase('ko-KR');
 
+// 띄어쓰기를 무시한 비교용 ("그대내품에" → "그대 내 품에")
+const compact = (value) => value.replace(/\s+/g, '');
+
+// 한글 초성 검색 ("ㅂㅎㅁㅇ" → "보헤미안")
+const CHOSEONG = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const isChoseongOnly = (word) => /^[ㄱ-ㅎ]+$/.test(word);
+export function toChoseong(value) {
+  return Array.from(String(value ?? ''), (ch) => {
+    const code = ch.charCodeAt(0) - 0xac00;
+    return code >= 0 && code <= 11171 ? CHOSEONG[Math.floor(code / 588)] : ch;
+  }).join('');
+}
+
+/** 검색어 한 단어가 곡 정보 어딘가에 있는지 (띄어쓰기 무시·초성 포함) */
+function matchesWord(word, haystack, haystackCompact, choseongCompact) {
+  if (haystack.includes(word) || haystackCompact.includes(compact(word))) return true;
+  return isChoseongOnly(word) && choseongCompact.includes(word);
+}
+
 const PART_SYNONYMS = {
   soprano: ['soprano', 'part1', 'sop', '소프라노'],
   lead: ['lead', 'part1', '리드'],
@@ -40,11 +59,17 @@ export function filterSongs(songs, {
     const parts = availableParts(song);
     if (allowedParts && !parts.some((p) => allowedParts.includes(p))) return false;
     if (!words.length) return true;
+    const memberNames = song.partNames && typeof song.partNames === 'object'
+      ? Object.values(song.partNames).filter((name) => typeof name === 'string')
+      : [];
     const haystack = normalized([
       song.title, song.artist, song.category, song.memo,
       ...(Array.isArray(song.tags) ? song.tags : []),
+      ...memberNames,
       ...parts.flatMap((key) => [key, PARTS[key], ...(PART_SYNONYMS[key] || [])]),
     ].join(' '));
-    return words.every((word) => haystack.includes(word));
+    const haystackCompact = compact(haystack);
+    const choseongCompact = compact(toChoseong(normalized([song.title, song.artist, ...memberNames].join(' '))));
+    return words.every((word) => matchesWord(word, haystack, haystackCompact, choseongCompact));
   });
 }

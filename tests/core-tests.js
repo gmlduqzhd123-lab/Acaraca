@@ -1,6 +1,6 @@
 import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } from '../js/player.js';
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
-import { filterSongs } from '../js/search.js';
+import { filterSongs, toChoseong } from '../js/search.js';
 import * as storage from '../js/storage.js';
 import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, isPitchPlaying, DEFAULT_PITCH_DURATION, frequencyToPitchInfo, autoCorrelatePitch, setMetronomeBpm, getMetronomeBpm } from '../js/pitch.js';
 import {
@@ -131,6 +131,10 @@ export function runCoreTests() {
   check('메모 검색', () => filterSongs(songs, { query: '화음' }).length === 1);
   check('태그 검색', () => filterSongs(songs, { query: 'SWEET' }).length === 1);
   check('파트 이름 검색', () => filterSongs(songs, { query: 'ALTO' }).length === 1);
+  check('띄어쓰기 무시 검색', () => filterSongs([{ ...songs[0], title: '그대 내 품에' }], { query: '그대내품에' }).length === 1);
+  check('담당 단원 이름 검색', () => filterSongs([{ ...songs[0], partNames: { part1: '희엽', part2: '선영 · 용석' } }], { query: '용석' }).length === 1);
+  check('초성 검색', () => filterSongs(songs, { query: 'ㅂㅇㄱ' }).length === 1 && filterSongs(songs, { query: 'ㅂㅇㅎ' }).length === 0);
+  check('초성 변환', () => toChoseong('보헤미안 랩소디') === 'ㅂㅎㅁㅇ ㄹㅅㄷ');
   check('검색 결과 없음', () => filterSongs(songs, { query: '존재하지않음' }).length === 0);
   check('빈 검색어 전체 복원', () => filterSongs(songs, { query: '  ' }).length === 2);
   check('모든 필터 동시 적용', () => filterSongs(songs, { query: '밤양갱 alto', status: 'practice', category: 'K-POP', difficulty: '2', part: 'alto' }).length === 1);
