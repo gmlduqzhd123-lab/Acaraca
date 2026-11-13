@@ -22,7 +22,7 @@
   - 아카라카 및 한국아카펠라교육연구회 통합 악보 아카이브 (연습곡 35곡 전 곡 악보 매핑 완료, `NWC` · `PDF` · `MIDI` · `기타` 포맷별 필터 제공)
   - **모바일 인앱 `.nwc` · `.nwctxt` · `.mid` 미리보기 & Web Audio 재생 뷰어**: PC 전용 프로그램 없이 스마트폰·태블릿에서 바로 성부 구성, 조성/박자/템포, 가사, 성부별 첫 음과 도입부 멜로디를 확인하고 소리로 들어볼 수 있으며, 동일 곡의 여러 악보 간 즉시 전환도 지원합니다.
 
-- **아카펠라 감상 (`data/appreciation.json`, 217개 영상)** · **연습 일지 (`data/rehearsals.json`)** · **연습 영상 (`data/practice_videos.json`)** · **우리들의 기록 (`data/memories.json`)** · **교육 자료 (`data/education.json`, 41개 자료)**
+- **아카펠라 감상 (`data/appreciation.json`, 218개 영상)** · **연습 일지 (`data/rehearsals.json`)** · **연습 영상 (`data/practice_videos.json`)** · **우리들의 기록 (`data/memories.json`)** · **교육 자료 (`data/education.json`, 41개 자료)**
 
 - **데이터 편집기 (`admin.html`, `js/admin.js`) & 자동 품질 검증 (`.github/workflows/ci.yml`)**
   - 곡·파트별 YouTube 주소 편집, `.nwc` / `.nwctxt` 악보 파일 드래그 앤 드롭 시 조성·첫 음·진입 순서 자동 추출기 내장
@@ -76,7 +76,7 @@ npm run audit
 │   ├── songs.json             # 35개 연습곡 메타데이터, 파트 영상, 첫 음, 담당자
 │   ├── scores.json            # 1,069개 악보 아카이브 메타데이터
 │   ├── performances.json      # 31개 아카라카 무대 실황 영상 및 셋리스트
-│   ├── appreciation.json      # 217개 국내외 아카펠라 감상 영상
+│   ├── appreciation.json      # 218개 국내외 아카펠라 감상 영상
 │   ├── rehearsals.json        # 합주 연습 일지 및 타임스탬프 피드백
 │   ├── practice_videos.json   # 파트별·전체 합주 연습 영상 보관소
 │   ├── memories.json          # 우리들의 기록 (숏츠·사진 앨범)
