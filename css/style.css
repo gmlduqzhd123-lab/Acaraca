@@ -4326,3 +4326,31 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
 /* 업로드 화면: 이 기기에만 저장된다는 안내 (flex를 끄고 문장 흐름 유지) */
 .local-only-notice { display: block; font-size: 12px; line-height: 1.55; margin: 0 0 14px; }
 .local-only-notice strong { font-weight: 700; }
+
+/* ==========================================================================
+   접근성 보정 (글자 대비 · 터치 영역)
+   ========================================================================== */
+/* 다크 모드 하단 메뉴: 현재 탭 글자가 배경과 같은 어두운 초록이 되던 문제 */
+html[data-theme="dark"] .bottom-nav .nav-link.active { color: var(--primary); }
+
+/* 빨간 글자 버튼(연습 비우기 등): 배경 대비 4.5 이상 */
+.button.danger-text, .text-button.danger-text { color: #b23f2f; }
+html[data-theme="dark"] .button.danger-text, html[data-theme="dark"] .text-button.danger-text { color: #f08a78; }
+/* 홈 스포트라이트 카드(어두운 초록 배경) 안의 버튼은 원래의 밝은 글자 유지 */
+html[data-theme="dark"] .hero-actions .button.ghost.danger-text { color: #d4e0cf; }
+/* 다크 모드에서도 빨간 배경 버튼 글자는 흰색 */
+html[data-theme="dark"] .button.danger { color: #fff; }
+
+/* 무대 모드는 테마와 상관없이 늘 어두운 화면이라 일반 글자 버튼을 밝게 */
+.stage-live-shell .text-button:not(.danger-text) { color: #c7d2cc; }
+.stage-live-shell .text-button { min-width: 44px; }
+
+/* 공연 중 급하게 누르는 무대 모드 버튼: 손가락 터치 영역 44px */
+.stage-perf-nav-btn, .stage-perf-nav-count-btn, .stage-tone-btn, .stage-wake-pill {
+  min-height: 44px;
+  justify-content: center;
+}
+.stage-perf-nav-count-btn, .stage-tone-btn { display: inline-flex; align-items: center; }
+
+/* 바닥글 링크도 누르기 쉽게 */
+.app-footer a { display: inline-flex; align-items: center; min-height: 44px; }
