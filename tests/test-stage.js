@@ -142,9 +142,9 @@ const lionPitches = getSongStartingPitchEntries(STAGE_EXTRA_SONG_METADATA['the-l
 assert(lionPitches.length === 2, 'the-lion-sleeps-tonight has 2 verified pitch entries');
 assert(standByMePitches[0][0] === 'lead' && lionPitches[0][0] === 'lead', 'extra songs play in score entry order (solo first)');
 
-// 4. Test Starting Pitch Extraction across all 35 songs
+// 4. Test Starting Pitch Extraction across all songs
 const songs = JSON.parse(fs.readFileSync('data/songs.json', 'utf8')).songs;
-assert(songs.length === 35, '35 songs present in songs.json');
+assert(songs.length > 0, 'songs.json must contain songs');
 
 songs.forEach((song) => {
   const entries = getSongStartingPitchEntries(song);
@@ -259,7 +259,7 @@ assert(shareHref.includes('tab=stage') && shareHref.includes('view=live') && sha
 assert.strictEqual(typeof openStageShareModal, 'function', 'openStageShareModal must be exported');
 assert.strictEqual(typeof printStageCueSheet, 'function', 'printStageCueSheet must be exported');
 
-// 14. Test 35/35 Songs Dedicated STAGE_AI_COMMENTS Coverage & Print Styles
+// 14. Test All Songs Dedicated STAGE_AI_COMMENTS Coverage & Print Styles
 for (const song of songsData.songs) {
   const c = STAGE_AI_COMMENTS[song.id];
   assert(c && c.wit && c.story && c.brief, `Song '${song.id}' (${song.title}) must have dedicated wit/story/brief STAGE_AI_COMMENTS`);

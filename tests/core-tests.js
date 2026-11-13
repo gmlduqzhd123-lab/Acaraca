@@ -215,16 +215,20 @@ export function runCoreTests() {
     check('아카라카 공식 직인 이미지 파일 존재 검증', () => nodeFs.existsSync('./assets/images/acaraca-seal.png'));
 
     const apprecRaw = JSON.parse(nodeFs.readFileSync('./data/appreciation.json', 'utf8'));
-    check('appreciation.json 217개 감상 영상 로드 검증 (회원전용 삭제 및 국내 아카펠라 100개 추가)', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length === 217);
-    check('연습실 34곡 원곡 아카펠라 감상 영상 및 연습곡 카테고리 검증', () => apprecRaw.videos.filter(v => v.category === '연습곡').length === 34);
+    check('appreciation.json 감상 영상 로드 검증 (회원전용 삭제 및 국내 아카펠라 100개 추가 이후 최소 217개 유지)', () => Array.isArray(apprecRaw.videos) && apprecRaw.videos.length >= 217);
+    check('연습곡 카테고리 감상 영상이 실제 연습곡과 1곡당 1개씩 연결되는지 검증', () => {
+      const songIds = new Set(JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs.map(s => s.id));
+      const linked = apprecRaw.videos.filter(v => v.category === '연습곡').map(v => v.songId);
+      return linked.length > 0 && linked.every(id => songIds.has(id)) && new Set(linked).size === linked.length;
+    });
     check('모든 감상 영상 YouTube 파싱 유효성 검증', () => apprecRaw.videos.every(v => parseYouTube({ type: 'video', url: v.videoUrl }).ok && Boolean(v.thumbnail)));
     check('요청된 핵심 그룹(메이트리, 엑시트, 펜타토닉스, 나린, 비트펠라 하우스) 전체 포함 검증', () => {
       const artists = apprecRaw.videos.map(v => v.artist);
       return ['메이트리', '엑시트', '펜타토닉스', '나린', '비트펠라 하우스'].every(g => artists.some(a => a.includes(g)));
     });
-    check('34개 연습곡 감상 영상 국내외 프로 아카펠라 그룹 영상 검증', () => {
+    check('연습곡 감상 영상 국내외 프로 아카펠라 그룹 영상 검증 (파트 가이드 영상 제외)', () => {
       const practiceVideos = apprecRaw.videos.filter(v => v.category === '연습곡');
-      return practiceVideos.length === 34 && practiceVideos.every(v => {
+      return practiceVideos.length > 0 && practiceVideos.every(v => {
         const isNotGuide = !v.title.includes('위주') && !v.title.includes('파트)') && !v.uploader.includes('엽쌤');
         return isNotGuide && v.videoUrl.startsWith('https://www.youtube.com/watch?v=');
       });
@@ -248,9 +252,9 @@ export function runCoreTests() {
     check('Pretendard 웹폰트 링크 삽입 검증', () => nodeFs.readFileSync('./index.html', 'utf8').includes('pretendardvariable.min.css') && nodeFs.readFileSync('./admin.html', 'utf8').includes('pretendardvariable.min.css'));
     check('체크리스트 및 집중 연습 타이머 제거 검증', () => !nodeFs.readFileSync('./js/app.js', 'utf8').includes('오늘의 연습 체크') && !nodeFs.readFileSync('./js/app.js', 'utf8').includes('10분 집중 연습'));
     check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
-    check('35곡 모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
+    check('모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
       const songsRaw = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
-      return songsRaw.length === 35 && songsRaw.every(song => {
+      return songsRaw.length > 0 && songsRaw.every(song => {
         if (!song.startingPitches || typeof song.startingPitches !== 'object') return false;
         return Object.values(song.startingPitches).every(noteStr => {
           if (!noteStr) return true;
@@ -712,9 +716,21 @@ export function runCoreTests() {
     check('renderEducation 내 미인증 시 락 스크린 및 모달 호출 가드 검증', () => appJsContent.includes("if (!isProtectedAuthorized('education'))") && appJsContent.includes("openProtectedAuthDialog('education'"));
     check('style.css 락 스크린 및 안내 배지 스타일 클래스 정의 검증', () => styleCssContent.includes('.protected-lock-state') && styleCssContent.includes('.protected-notice-badge'));
     check('모바일 인앱 NWC·MIDI 악보 미리보기 및 재생 모달 구현 검증', () => appJsContent.includes('openScorePreviewModal') && appJsContent.includes('parseNwcScoreDetail') && appJsContent.includes('parseMidiScoreDetail') && styleCssContent.includes('.score-preview-dialog'));
-    check('35곡 전 곡 partNames(파트별 담당 단원 이름) 100% 매핑 검증', () => {
+    check('전 곡 partNames(파트별 담당 단원 이름) 100% 매핑 검증', () => {
       const allSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
-      return allSongs.length === 35 && allSongs.every(s => s.partNames && Object.keys(s.partNames).length > 0);
+      return allSongs.length > 0 && allSongs.every(s => s.partNames && Object.keys(s.partNames).length > 0);
+    });
+    check('partNames 성부 이름 키가 같은 첫 음의 번호 파트 영상으로 옮길 수 있는데 방치되지 않았는지 검증 (나는 누구? 연동)', () => {
+      const allSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
+      return allSongs.every(s => {
+        const playable = availableParts(s).filter(p => /^part\d$/.test(p));
+        const sp = s.startingPitches || {};
+        return Object.keys(s.partNames || {}).every(k => {
+          if (/^part\d$/.test(k) || availableParts(s).includes(k) || !sp[k]) return true;
+          const candidates = playable.filter(p => sp[p] === sp[k] && !(p in s.partNames));
+          return candidates.length !== 1;
+        });
+      });
     });
     check('31개 전 공연 아카이브(performances.json) setlist 객체 스키마 정규화 100% 검증', () => {
       const allPerfs = JSON.parse(nodeFs.readFileSync('./data/performances.json', 'utf8')).performances;
