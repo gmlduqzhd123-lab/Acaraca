@@ -290,11 +290,16 @@ let webAudioBroken = false;
 try { webAudioBroken = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('aca_webaudio_broken') === '1'; } catch {}
 let fallbackAudio = null;
 
+/** 카카오톡 등 인앱 브라우저 여부 (대체 재생 사용) */
+export function isInAppUserAgent(ua = '') {
+  return IN_APP_UA.test(ua || '');
+}
+
 function shouldUseFallback() {
   if (typeof window === 'undefined') return false;
   if (!(window.AudioContext || window.webkitAudioContext)) return true;
   if (webAudioBroken) return true;
-  return typeof navigator !== 'undefined' && IN_APP_UA.test(navigator.userAgent || '');
+  return typeof navigator !== 'undefined' && isInAppUserAgent(navigator.userAgent);
 }
 function markWebAudioBrokenIfSilent(ctx) {
   if (!ctx || typeof setTimeout === 'undefined') return;
@@ -311,9 +316,8 @@ function stopFallbackAudio() {
   fallbackAudio = null;
 }
 // voices: [{ freq, weight, harmonics: [h1, h2, ...] }]
-function playFallbackTones(voices, durationMs, peakTarget = 0.7) {
-  if (typeof window === 'undefined' || typeof Audio === 'undefined') return false;
-  stopFallbackAudio();
+/** 음(배음 포함)들을 16bit 모노 WAV로 합성 (테스트 가능하도록 분리) */
+export function synthesizeWav(voices, durationMs, peakTarget = 0.7) {
   const rate = 22050;
   const dur = Math.min(Math.max(durationMs || 3000, 300), 6000) / 1000;
   const n = Math.floor(rate * (dur + 0.15));
@@ -342,6 +346,13 @@ function playFallbackTones(voices, durationMs, peakTarget = 0.7) {
   dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
   w(36, 'data'); dv.setUint32(40, n * 2, true);
   for (let i = 0; i < n; i++) dv.setInt16(44 + i * 2, Math.max(-1, Math.min(1, data[i] * scale)) * 32767, true);
+  return buf;
+}
+
+function playFallbackTones(voices, durationMs, peakTarget = 0.7) {
+  if (typeof window === 'undefined' || typeof Audio === 'undefined') return false;
+  stopFallbackAudio();
+  const buf = synthesizeWav(voices, durationMs, peakTarget);
   const url = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
   const audio = new Audio(url);
   audio.volume = 1;
@@ -351,7 +362,7 @@ function playFallbackTones(voices, durationMs, peakTarget = 0.7) {
   if (pr && typeof pr.catch === 'function') pr.catch(() => {});
   return true;
 }
-function lowNoteRecipe(freq) {
+export function lowNoteRecipe(freq) {
   if (freq < 230) {
     // 낮을수록 기본음을 더 줄임 (F3≈175Hz, F2≈87Hz)
     const k = Math.max(0, Math.min(1, (230 - freq) / 140));
@@ -360,7 +371,7 @@ function lowNoteRecipe(freq) {
   return { isLow: false, h: [1, 0.28, 0.12, 0], level: 1 };
 }
 
-function chordVoices(notes) {
+export function chordVoices(notes) {
   return notes.map((p) => {
     const isBass = p.freq < 165;
     const harmonics = isBass ? [1, 0.8, 0.6, 0.38, 0.2] : [1, 0.32, 0.14];

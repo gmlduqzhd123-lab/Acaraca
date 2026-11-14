@@ -8,6 +8,7 @@
  */
 
 import { el, icon, button, toast } from './ui.js';
+import { entryRank, nextStage } from './practiceLogic.js';
 import { qrDataUrl } from './qr.js';
 import {
   parseNoteString,
@@ -526,12 +527,7 @@ export function getSongStartingPitchEntries(songData) {
 
   // 번호 파트가 있으면 번호 파트만 사용 (파트 페이지와 동일). 순서: 악보 등장 순서(entryOrder) → 기본 2·4·1·3번
   if (numberedParts.length) {
-    const defaultOrder = ['part2', 'part4', 'part1', 'part3'];
-    const order = Array.isArray(songData.entryOrder) && songData.entryOrder.length ? songData.entryOrder : defaultOrder;
-    const rank = (k) => {
-      const i = order.indexOf(k);
-      return i === -1 ? order.length + (parseInt(k.slice(4), 10) || 0) : i;
-    };
+    const rank = entryRank(songData);
     return numberedParts.sort((a, b) => rank(a) - rank(b)).map(k => [k, rawPitches[k]]);
   }
 
@@ -811,18 +807,9 @@ export function getChronologicalPerformanceList() {
 /**
  * 현재 활성화된 무대 세션 가져오기 (없으면 히스토리 최신 또는 기본 생성)
  */
-function stageDateValue(value) {
-  const m = String(value || '').match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
-  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime() : null;
-}
-
 /** 오늘 또는 가장 가까운 다가오는 공연 (없으면 null) */
-export function findUpcomingStage(history = getStageHistory()) {
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  return history
-    .map(item => ({ item, t: stageDateValue(item.date) }))
-    .filter(x => x.t !== null && x.t >= today.getTime() && Array.isArray(x.item.songs) && x.item.songs.length)
-    .sort((a, b) => a.t - b.t)[0]?.item || null;
+export function findUpcomingStage(history = getStageHistory(), today = new Date()) {
+  return nextStage(history, today)?.stage || null;
 }
 
 export function getActiveStageSession(allSongs = []) {
