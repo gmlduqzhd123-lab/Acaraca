@@ -1,4 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart} from './data.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, nextStage, daysUntil} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -157,28 +158,8 @@ if (typeof HTMLDialogElement !== 'undefined' && !HTMLDialogElement.prototype.__a
 }
 function openSong(song) { navigate({song: song.id}); }
 // 이름(나는 누구?)이 설정되어 있으면 곡마다 그 사람이 맡은 파트를, 없으면 기본 파트를 내 파트로 사용
-function songMyPart(song) {
-  if (state.myName && song?.partNames) {
-    const hit = Object.entries(song.partNames).find(([, name]) => {
-      if (typeof name !== 'string') return false;
-      return name === state.myName || name.split(/\s*[·,/]\s*/).map(s => s.trim()).includes(state.myName);
-    });
-    if (hit) return hit[0];
-  }
-  return state.myPart;
-}
-function allMemberNames() {
-  const count = new Map();
-  for (const song of state.songs) {
-    for (const rawName of Object.values(song.partNames || {})) {
-      if (typeof rawName !== 'string') continue;
-      for (const name of rawName.split(/\s*[·,/]\s*/).map(s => s.trim()).filter(Boolean)) {
-        count.set(name, (count.get(name) || 0) + 1);
-      }
-    }
-  }
-  return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko')).map(([name]) => name);
-}
+function songMyPart(song) { return resolveMyPart(song, state.myName, state.myPart); }
+function allMemberNames() { return collectMemberNames(state.songs); }
 function myVoiceLabel() {
   if (state.myName) return state.myPart ? `${state.myName} · 그 외 ${PARTS[state.myPart]}` : state.myName;
   return state.myPart ? PARTS[state.myPart] : '';
@@ -688,25 +669,8 @@ function recentList(limit) {
 }
 
 
-function parseStageDate(value) {
-  const m = String(value || '').match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
-  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
-}
-function upcomingStage() {
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  return getStageHistory()
-    .map(stage => ({stage, date: parseStageDate(stage.date)}))
-    .filter(({stage, date}) => date && date >= today && Array.isArray(stage.songs) && stage.songs.length)
-    .sort((a, b) => a.date - b.date)[0] || null;
-}
-function orderedPitchItems(song) {
-  const order = Array.isArray(song.entryOrder) && song.entryOrder.length ? song.entryOrder : ['part2', 'part4', 'part1', 'part3'];
-  const rank = (k) => { const i = order.indexOf(k); return i === -1 ? order.length + (parseInt(k.slice(4), 10) || 0) : i; };
-  return Object.entries(song.startingPitches || {})
-    .filter(([k, v]) => /^part\d+$/.test(k) && parseNoteString(v))
-    .sort((a, b) => rank(a[0]) - rank(b[0]))
-    .map(([k, v]) => ({ partKey: k, noteStr: v, parsed: parseNoteString(v), label: `${PARTS[k] || k}${song.partNames?.[k] ? ` ${song.partNames[k]}` : ''}` }));
-}
+function upcomingStage() { return nextStage(getStageHistory()); }
+function orderedPitchItems(song) { return orderedPitchItemsFor(song, PARTS); }
 function startSetlistPractice(stage, index) {
   const ids = stage.songs.map(item => item.songId || item.id);
   state.setlist = {title: stage.eventTitle, ids};
@@ -718,8 +682,7 @@ function renderUpcomingStageCard() {
   const next = upcomingStage();
   if (!next) return null;
   const {stage, date} = next;
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const dday = Math.round((date - today) / 86400000);
+  const dday = daysUntil(date);
   const items = stage.songs.map((item, i) => {
     const id = item.songId || item.id;
     const song = state.songs.find(s => s.id === id);
