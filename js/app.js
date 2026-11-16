@@ -1,4 +1,4 @@
-import {loadSongs, PARTS, availableParts, preferredPart} from './data.js';
+import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
 import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, nextStage, daysUntil} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
@@ -96,7 +96,9 @@ const levels = {1: '초급', 2: '중급', 3: '고급'};
 const statuses = {practice: '현재 연습', complete: '완료', archive: '보관'};
 const object = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {};
 const array = value => Array.isArray(value) ? value : [];
-const favoriteIds = array(read('favorites', [])).filter(value => typeof value === 'string');
+// 합쳐진 곡의 예전 id(SONG_ID_ALIASES)로 저장된 기록은 지금 id로 옮긴다.
+const favoriteIds = [...new Set(array(read('favorites', [])).filter(value => typeof value === 'string').map(resolveSongId))];
+const storedProgress = Object.fromEntries(Object.entries(object(read('progress', {}))).map(([id, value]) => [resolveSongId(id), value]));
 const state = {
   songs: [],
   performances: [],
@@ -109,11 +111,11 @@ const state = {
   loading: true,
   loadError: '',
   favorites: new Set(favoriteIds),
-  recent: array(read('recent', [])).filter(value => value && typeof value.songId === 'string' && typeof value.part === 'string' && Number.isFinite(value.timestamp)),
+  recent: array(read('recent', [])).filter(value => value && typeof value.songId === 'string' && typeof value.part === 'string' && Number.isFinite(value.timestamp)).map(value => ({...value, songId: resolveSongId(value.songId)})),
   myPart: Object.keys(PARTS).filter(part => part !== 'full').includes(read('myPart', '')) ? read('myPart', '') : '',
   myName: typeof read('myName', '') === 'string' ? read('myName', '') : '',
   setlist: null,
-  progress: object(read('progress', {})),
+  progress: storedProgress,
   songTranspositions: object(read('song_transpositions', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: '', mastery: ''},
   stageView: read('stageView', 'live'),
@@ -7898,6 +7900,10 @@ function normalizeRoute() {
     writeRoute(state.route, { replace: true });
   }
   if (!state.route.song) return;
+  if (resolveSongId(state.route.song) !== state.route.song) {
+    state.route = {...state.route, song: resolveSongId(state.route.song)};
+    writeRoute(state.route, {replace: true});
+  }
   const song = state.songs.find(song => song.id === state.route.song) || resolveSongData(state.songs, state.route.song);
   if (!song || !song.title) { state.route = {tab: 'home'}; writeRoute(state.route, {replace: true}); toast('찾을 수 없는 곡입니다. 홈으로 이동했어요.'); return; }
   if (state.route.part && (!Object.hasOwn(PARTS, state.route.part) || !song.videos?.[state.route.part]?.url?.trim())) {

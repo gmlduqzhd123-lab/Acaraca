@@ -7,8 +7,8 @@ import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
   entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil
 } from '../js/practiceLogic.js';
-import { PARTS } from '../js/data.js';
-import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage } from '../js/stage.js';
+import { PARTS, resolveSongId } from '../js/data.js';
+import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage, resolveSongData, parseImportedStageSession } from '../js/stage.js';
 
 const songs = JSON.parse(fs.readFileSync('data/songs.json', 'utf8')).songs;
 const byId = Object.fromEntries(songs.map(s => [s.id, s]));
@@ -45,8 +45,14 @@ ok(songs.every(s => s.pitchPipe), '모든 곡에 피치파이프 대표음이 �
 eq(splitMemberNames('선영 · 희엽'), ['선영', '희엽'], '여러 이름 분리');
 eq(resolveMyPart(byId['in-your-arms'], '선영', 'part3'), 'part1', '그대 내 품에: 선영 = 1번');
 eq(resolveMyPart(byId['lets-travel'], '선영', 'part3'), 'part3', '여행을 떠나요: 선영 = 3번');
-eq(resolveMyPart(byId['bohemian-rhapsody-5'], '희엽', ''), 'part2', '보헤미안 5인용: 희엽 = 2번(맞바꿈 반영)');
+eq(resolveMyPart(byId['bohemian-rhapsody'], '희엽', ''), 'part2', '보헤미안 랩소디: 희엽 = 2번(맞바꿈 반영)');
 eq(resolveMyPart({ partNames: { part1: '용석' } }, '선영', 'part4'), 'part4', '내 이름이 없는 곡은 기본 파트');
+// 합쳐진 곡의 예전 id(보헤미안 랩소디 · 5인용)는 지금 곡으로 연결
+eq(resolveSongId('bohemian-rhapsody-5'), 'bohemian-rhapsody', '예전 5인용 id → 보헤미안 랩소디');
+eq(resolveSongId('aloha'), 'aloha', '별칭 없는 id는 그대로');
+eq(byId['bohemian-rhapsody-5'], undefined, '5인용 곡은 목록에서 제거');
+eq(resolveSongData(songs, 'bohemian-rhapsody-5').id, 'bohemian-rhapsody', '예전 id로 곡 정보 조회');
+eq(parseImportedStageSession({ eventTitle: '예전 큐시트', songs: [{ songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용' }] }).songs[0].songId, 'bohemian-rhapsody', '예전 공유 큐시트의 곡 id 변환');
 eq(resolveMyPart(byId['in-your-arms'], '', 'part2'), 'part2', '이름 미설정 시 기본 파트');
 const names = collectMemberNames(songs);
 for (const n of ['용석', '선영', '희엽', '재우', '휘소', '명현']) ok(names.includes(n), `단원 목록에 ${n}`);
