@@ -19,10 +19,11 @@ console.log('Testing Stage Mode Logic...');
 
 // 1. Check AI Comments (2 lines each)
 assert(typeof STAGE_AI_COMMENTS === 'object', 'STAGE_AI_COMMENTS must be an object');
-assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'], 'bohemian-rhapsody-5 comments exist');
-assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'].wit.includes('퀸'), 'wit comment matches');
-assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'].story.includes('보헤미안 랩소디'), 'story comment matches');
-assert(STAGE_AI_COMMENTS['bohemian-rhapsody-5'].brief.length > 5, 'brief comment exists');
+assert(STAGE_AI_COMMENTS['bohemian-rhapsody'], 'bohemian-rhapsody comments exist');
+assert(STAGE_AI_COMMENTS['bohemian-rhapsody'].story.includes('퀸'), 'story comment mentions Queen');
+assert(STAGE_AI_COMMENTS['bohemian-rhapsody'].story.includes('보헤미안 랩소디'), 'story comment matches');
+assert(STAGE_AI_COMMENTS['bohemian-rhapsody'].brief.length > 5, 'brief comment exists');
+assert(!STAGE_AI_COMMENTS['bohemian-rhapsody-5'], 'merged 5인용 entry removed');
 
 // Verify all STAGE_AI_COMMENTS entries have exactly 2 lines
 for (const [songKey, toneMap] of Object.entries(STAGE_AI_COMMENTS)) {
@@ -59,7 +60,7 @@ const testSongs = [
   { id: 'in-your-arms', title: '그대 내 품에', artist: '유재하' },
   { id: 'stand-by-me', title: '스탠바이미', artist: 'Ben E. King' },
   { id: 'the-lion-sleeps-tonight', title: 'The Lion Sleeps Tonight', artist: 'Solomon Linda' },
-  { id: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', artist: 'Queen' }
+  { id: 'bohemian-rhapsody', title: '보헤미안 랩소디', artist: 'Pentatonix' }
 ];
 
 for (const s of testSongs) {
@@ -108,7 +109,7 @@ assert.strictEqual(DEFAULT_STAGE_HISTORY[1].id, 'stage-2026-gyowon', '2nd should
 assert.strictEqual(DEFAULT_STAGE_HISTORY[1].date, '2026.10.23', '2nd date matches');
 assert.strictEqual(DEFAULT_STAGE_HISTORY[1].venue, '장흥문화예술회관', '2nd venue matches');
 assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs.length, 1, 'Gyowon performance must have 1 song');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs[0].songId, 'bohemian-rhapsody-5');
+assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs[0].songId, 'bohemian-rhapsody');
 
 // 3-1. Verify 2026 여수 생활문화한마당 performance (3rd)
 const yeosu = DEFAULT_STAGE_HISTORY.find(h => h.id === 'stage-2026-yeosu');
@@ -120,7 +121,7 @@ assert.strictEqual(yeosu.venue, '웅천친수공원', 'Yeosu venue matches');
 assert.strictEqual(yeosu.songs.length, 5, 'Yeosu must have 5 songs');
 const expectedYeosuSongIds = [
   'love-song-medley',
-  'bohemian-rhapsody-5',
+  'bohemian-rhapsody',
   'in-your-arms',
   'old-pop-medley',
   'lets-travel'

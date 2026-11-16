@@ -8,6 +8,7 @@
  */
 
 import { el, icon, button, toast } from './ui.js';
+import { resolveSongId } from './data.js';
 import { entryRank, nextStage } from './practiceLogic.js';
 import { qrDataUrl } from './qr.js';
 import {
@@ -38,11 +39,6 @@ export const STAGE_DELETED_KEY = 'acaroom_stage_deleted_ids_v1';
  * 33개 전 곡에 대한 고품질 AI 추천 멘트 데이터베이스 (유쾌/위트, 감성/스토리, 초간단)
  */
 export const STAGE_AI_COMMENTS = {
-  'bohemian-rhapsody-5': {
-    wit: `“드디어 올 것이 왔습니다! 퀸의 전설적인 명곡,\n목소리 다섯 개로 오페라와 록을 넘나드는 기적을 확인해 보세요!”`,
-    story: `“자유와 방황, 오페라와 하드록이 교차하는 불후의 명작 '보헤미안 랩소디'입니다.\n악기 하나 없이 오직 다섯 명의 숨소리와 하모니로 무대를 웅장하게 채웁니다.”`,
-    brief: `“다섯 성부의 다채로운 음색으로 재해석한 퀸의 명곡,\n'보헤미안 랩소디' 5인용 버전입니다.”`
-  },
   'bohemian-rhapsody-6': {
     wit: `“펜타토닉스 버전으로 꽉 채운 6인 보헤미안 랩소디!\n입으로 연주하는 드럼 비트와 심장을 울리는 서브 베이스에 주목해 주세요!”`,
     story: `“현대 아카펠라의 정수를 보여주는 펜타토닉스의 편곡입니다.\n화려한 보컬 퍼커션과 탄탄한 저음 위에 여섯 목소리의 하모니가 폭발합니다.”`,
@@ -366,7 +362,7 @@ export const STAGE_SONG_COMMENT_BANKS = {
       `“밝고 활기찬 목소리의 에너지를 전하는\n'The Lion Sleeps Tonight'입니다.”`
     ]
   },
-  'bohemian-rhapsody-5': {
+  'bohemian-rhapsody': {
     story: [
       `“자유와 방황, 오페라와 하드록이 교차하는 불후의 명작 '보헤미안 랩소디'입니다.\n악기 하나 없이 오직 다섯 명의 숨소리와 하모니로 무대를 웅장하게 채웁니다.”`,
       `“목소리 다섯 개로 록 밴드의 오케스트라 사운드를 재현합니다.\n웅장한 하모니와 숨 막히는 긴장감에 몰입해 보세요.”`,
@@ -667,6 +663,7 @@ STAGE_EXTRA_SONG_METADATA['lion-sleeps-tonight'] = STAGE_EXTRA_SONG_METADATA['th
  * 곡 ID를 통해 메인 songs 및 추가 무대 레퍼토리에서 메타데이터 검색
  */
 export function resolveSongData(songs, songId, fallbackTitle = '') {
+  songId = resolveSongId(songId);
   if (Array.isArray(songs)) {
     const found = songs.find(s => s.id === songId);
     if (found) return found;
@@ -714,9 +711,11 @@ export const DEFAULT_STAGE_HISTORY = [
     venue: '장흥문화예술회관',
     notes: '2026 제19회 교원예술제 무대 큐시트 (장소: 장흥문화예술회관)',
     updatedAt: 1792749600000,
+    // 기본 셋리스트를 고치면 revision을 올려 이미 저장된 기기에도 반영
+    revision: 2,
     currentIndex: 0,
     songs: [
-      { songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', note: '퀸 오페라 하이라이트', commentTone: 'wit' }
+      { songId: 'bohemian-rhapsody', title: '보헤미안 랩소디', note: '퀸 오페라 하이라이트', commentTone: 'wit' }
     ]
   },
   {
@@ -727,11 +726,11 @@ export const DEFAULT_STAGE_HISTORY = [
     notes: '2026 여수 생활문화한마당 공연 큐시트 (장소: 웅천친수공원)',
     updatedAt: 1792144800000,
     // 기본 셋리스트를 고치면 revision을 올려 이미 저장된 기기에도 반영
-    revision: 2,
+    revision: 3,
     currentIndex: 0,
     songs: [
       { songId: 'love-song-medley', title: '러브송 메들리', note: '오프닝 메들리', commentTone: 'story' },
-      { songId: 'bohemian-rhapsody-5', title: '보헤미안 랩소디 · 5인용', note: '5부 하이라이트', commentTone: 'wit' },
+      { songId: 'bohemian-rhapsody', title: '보헤미안 랩소디', note: '5부 하이라이트', commentTone: 'wit' },
       { songId: 'in-your-arms', title: '그대 내 품에', note: '감성 발라드', commentTone: 'story' },
       { songId: 'old-pop-medley', title: '올드팝 메들리', note: '명곡 메들리', commentTone: 'story' },
       { songId: 'lets-travel', title: '여행을 떠나요', note: '피날레 호응 유도', commentTone: 'wit' }
@@ -2607,7 +2606,7 @@ export function parseImportedStageSession(input) {
       .map((s) => {
         const semi = Math.max(-6, Math.min(6, Math.trunc(Number(s?.transpose) || 0)));
         return {
-          songId: typeof s.songId === 'string' ? s.songId.trim() : '',
+          songId: typeof s.songId === 'string' ? resolveSongId(s.songId.trim()) : '',
           title: typeof s.title === 'string' ? s.title.trim() : '연습곡',
           note: typeof s.note === 'string' ? s.note.trim() : '',
           commentTone: ['wit', 'story', 'brief'].includes(s.commentTone) ? s.commentTone : 'story',

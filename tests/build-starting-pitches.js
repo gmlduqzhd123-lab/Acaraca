@@ -2,24 +2,6 @@
 // Derived from NWC score files in assets/scores/ and vocal arrangement analysis
 
 export const STARTING_PITCHES = {
-  // 1. 보헤미안 랩소디 · 5인용 (Queen)
-  "bohemian-rhapsody-5": {
-    "key": "Bb Major",
-    "pitches": {
-              "part1": "Ab4",
-              "part2": "F4",
-              "part3": "Eb4",
-              "part4": "C4",
-              "part5": "F3",
-              "soprano": "Ab4",
-              "alto": "F4",
-              "tenor": "Eb4",
-              "baritone": "C4",
-              "bass": "F3",
-              "full": "Bb3"
-    }
-  },
-
   // 2. 보헤미안 랩소디 · 6인용 (Pentatonix)
   "bohemian-rhapsody-6": {
     "key": "Bb Major",

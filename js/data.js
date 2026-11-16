@@ -1,5 +1,14 @@
 import { parseYouTube } from './player.js';
 
+// 합쳐지거나 이름이 바뀐 곡의 예전 id → 지금 id.
+// 기기에 저장된 즐겨찾기·최근 연습·큐시트, 예전에 공유한 큐시트 링크가 계속 열리도록 한다.
+export const SONG_ID_ALIASES = Object.freeze({
+  'bohemian-rhapsody-5': 'bohemian-rhapsody', // 보헤미안 랩소디 · 5인용 → 보헤미안 랩소디 (같은 5부 편곡)
+});
+export function resolveSongId(id) {
+  return typeof id === 'string' && Object.hasOwn(SONG_ID_ALIASES, id) ? SONG_ID_ALIASES[id] : id;
+}
+
 export const PARTS = Object.freeze({
   part1: '1번 파트', part2: '2번 파트', part3: '3번 파트',
   part4: '4번 파트', part5: '5번 파트', part6: '6번 파트', part7: '7번 파트',
