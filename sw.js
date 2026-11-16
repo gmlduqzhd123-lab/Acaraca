@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v159';
+const CACHE_NAME = 'acaroom-cache-v160';
 // 같은 주소(gmlduqzhd123-lab.github.io)의 다른 앱들과 저장소를 함께 쓰므로, 이 앱의 이전 캐시만 지운다.
 const CACHE_PREFIX = 'acaroom-cache-v';
 
@@ -37,6 +37,8 @@ const CORE_ASSETS = [
   './assets/icons/logo.png',
   './assets/icons/icon-192.png',
   './assets/icons/apple-touch-icon.png',
+  './assets/icons/icon-maskable-192.png',
+  './assets/icons/icon-maskable-512.png',
   './assets/images/fallback.svg',
   './assets/images/acaraca-seal.png',
   './assets/icons/nav/home.png',
