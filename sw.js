@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaroom-cache-v160';
+const CACHE_NAME = 'acaroom-cache-v161';
 // 같은 주소(gmlduqzhd123-lab.github.io)의 다른 앱들과 저장소를 함께 쓰므로, 이 앱의 이전 캐시만 지운다.
 const CACHE_PREFIX = 'acaroom-cache-v';
 
@@ -63,6 +63,8 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// 사용자가 '오프라인 저장'한 악보·PDF는 'acaroom-offline-files' 캐시에 있다(js/archive.js).
+// 이름이 CACHE_PREFIX로 시작하지 않아 아래 정리 대상이 아니며, 오프라인일 때 caches.match가 함께 찾는다.
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {

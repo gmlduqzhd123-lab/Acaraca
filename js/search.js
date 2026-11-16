@@ -59,7 +59,10 @@ export function filterSongs(songs, {
     if (categoryFilter && categoryFilter !== 'all' && normalized(song.category) !== categoryFilter) return false;
     if (difficulty && difficulty !== 'all' && Number(song.difficulty) !== Number(difficulty)) return false;
     if (masteryFilter && masteryFilter !== 'all') {
-      const lvl = Number(progMap[song.id]?.level) || 0;
+      // 숙련도는 { level } 객체 또는 예전 백업의 숫자(0~3) 둘 다 올 수 있다 (곡 카드 표시와 같은 규칙)
+      const entry = progMap[song.id];
+      const rawLevel = Number(typeof entry === 'number' ? entry : entry?.level);
+      const lvl = [0, 1, 2, 3].includes(rawLevel) ? rawLevel : 0;
       if ((masteryFilter === 'unstarted' || masteryFilter === '0') && lvl !== 0) return false;
       if (masteryFilter === 'ready' && lvl !== 3) return false;
       if (masteryFilter === 'learning' && (lvl < 1 || lvl > 2)) return false;

@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { parseNoteString, pitchPipeInfo, lowNoteRecipe, chordVoices, synthesizeWav, isInAppUserAgent } from '../js/pitch.js';
 import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
-  entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil
+  entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose
 } from '../js/practiceLogic.js';
 import { PARTS, resolveSongId } from '../js/data.js';
 import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage, resolveSongData, parseImportedStageSession } from '../js/stage.js';
@@ -101,6 +101,14 @@ let peak = 0; for (let i = 44; i < wav.byteLength; i += 2) peak = Math.max(peak,
 ok(peak / 32767 <= 0.71 && peak / 32767 >= 0.69, `WAV 최고치 0.7 (찢어짐 없음): ${(peak / 32767).toFixed(3)}`);
 ok(isInAppUserAgent('Mozilla/5.0 (Linux; Android 14; wv) KAKAOTALK/10.9.5'), '카카오톡 인앱 감지');
 ok(!isInAppUserAgent('Mozilla/5.0 (Linux; Android 14) Chrome/129 Mobile Safari/537.36'), '일반 크롬은 인앱 아님');
+
+// 큐시트 곡 조바꿈: 큐시트 값(0 포함) 우선, 없으면 연습실에서 저장한 곡 조바꿈 (홈 카드·무대 화면 공통)
+eq(resolveStageItemTranspose({ songId: 'a' }, { a: 2 }), 2, '큐시트 값 없으면 곡 조바꿈 사용');
+eq(resolveStageItemTranspose({ songId: 'a', transpose: -1 }, { a: 2 }), -1, '큐시트 값 우선');
+eq(resolveStageItemTranspose({ songId: 'a', transpose: 0 }, { a: 2 }), 0, '큐시트에서 원키(0)로 정하면 원키');
+eq(resolveStageItemTranspose({ songId: 'a', transpose: null }, { a: 2 }), 2, 'null은 값 없음으로 취급');
+eq(resolveStageItemTranspose({ songId: 'a' }, { a: 9 }), 6, '±6으로 제한');
+eq(resolveStageItemTranspose({ songId: 'b' }, { a: 2 }), 0, '저장값 없으면 0');
 
 for (const w of warnings) console.warn(`⚠ ${w}`);
 console.log(`✓ Recent feature tests passed (${checks} checks${warnings.length ? `, ${warnings.length} warnings` : ''})`);

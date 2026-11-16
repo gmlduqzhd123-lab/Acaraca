@@ -77,3 +77,17 @@ export function daysUntil(date, today = new Date()) {
   const base = new Date(today); base.setHours(0, 0, 0, 0);
   return Math.round((date - base) / 86400000);
 }
+
+const clampSemi = (value) => Math.max(-6, Math.min(6, Math.round(value)));
+
+/**
+ * 큐시트 곡의 조바꿈(반음 수). 홈 '다음 무대' 카드와 무대 큐시트가 같은 규칙을 쓴다.
+ * 큐시트에서 곡별로 정한 값(item.transpose)이 있으면 그것을, 없으면 연습실에서 저장한 곡 조바꿈을 쓴다.
+ */
+export function resolveStageItemTranspose(item, songTranspositions = {}) {
+  const own = item?.transpose;
+  if (own !== null && own !== undefined && own !== '' && Number.isFinite(Number(own))) return clampSemi(Number(own));
+  const songId = item?.songId || item?.id;
+  const saved = Number(songTranspositions?.[songId]);
+  return songId && Number.isFinite(saved) ? clampSemi(saved) : 0;
+}
