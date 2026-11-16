@@ -103,6 +103,12 @@ export function validateData(raw, { warn = true } = {}) {
       song.startingPitches = isObject(item.startingPitches) ? { ...item.startingPitches } : {};
       song.musicalKey = text(item.musicalKey);
       if (typeof item.pitchPipe === 'string' && item.pitchPipe.trim()) song.pitchPipe = item.pitchPipe.trim();
+      const rawBpm = typeof item.bpm === 'number' ? item.bpm : (typeof item.bpm === 'string' && item.bpm.trim() ? Number(item.bpm) : NaN);
+      if (Number.isFinite(rawBpm) && rawBpm >= 30 && rawBpm <= 260) {
+        song.bpm = Math.round(rawBpm);
+      }
+      if (typeof item.duration === 'string' && item.duration.trim()) song.duration = item.duration.trim();
+      if (typeof item.openingCue === 'string' && item.openingCue.trim()) song.openingCue = item.openingCue.trim();
       if (isObject(item.partNames)) {
         song.partNames = Object.fromEntries(Object.entries(item.partNames).filter(([, name]) => typeof name === 'string' && name.trim()).map(([key, name]) => [key, name.trim()]));
       }

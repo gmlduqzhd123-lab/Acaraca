@@ -1,5 +1,5 @@
 // 연습·공연 화면이 함께 쓰는 순수 로직 (화면 상태에 의존하지 않아 테스트하기 쉬움)
-import { parseNoteString } from './pitch.js';
+import { parseNoteString, transposeNoteString } from './pitch.js';
 
 /** 파트 이름이 없는 곡의 기본 첫 음 재생 순서 */
 export const DEFAULT_ENTRY_ORDER = ['part2', 'part4', 'part1', 'part3'];
@@ -40,17 +40,21 @@ export function entryRank(song) {
 }
 
 /** 번호 파트 첫 음을 재생 순서대로 정렬한 목록 */
-export function orderedPitchItems(song, partLabels = {}) {
+export function orderedPitchItems(song, partLabels = {}, transposeSemi = 0) {
   const rank = entryRank(song);
+  const semi = Number.isFinite(transposeSemi) ? transposeSemi : 0;
   return Object.entries(song?.startingPitches || {})
     .filter(([k, v]) => /^part\d+$/.test(k) && parseNoteString(v))
     .sort((a, b) => rank(a[0]) - rank(b[0]))
-    .map(([k, v]) => ({
-      partKey: k,
-      noteStr: v,
-      parsed: parseNoteString(v),
-      label: `${partLabels[k] || k}${song.partNames?.[k] ? ` ${song.partNames[k]}` : ''}`,
-    }));
+    .map(([k, v]) => {
+      const shifted = semi ? transposeNoteString(v, semi) : v;
+      return {
+        partKey: k,
+        noteStr: shifted,
+        parsed: parseNoteString(shifted),
+        label: `${partLabels[k] || k}${song.partNames?.[k] ? ` ${song.partNames[k]}` : ''}`,
+      };
+    });
 }
 
 /** "2026.10.24" → 그날 0시 (Date). 형식이 아니면 null */

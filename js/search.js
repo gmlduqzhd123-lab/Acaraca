@@ -41,14 +41,16 @@ const PART_SYNONYMS = {
 
 /** Every active field is applied together; each search word must occur somewhere. */
 export function filterSongs(songs, {
-  query = '', status = '', category = '', difficulty = '', part = '', favorites = [],
+  query = '', status = '', category = '', difficulty = '', part = '', mastery = '', favorites = [], progress = {},
 } = {}) {
   const words = normalized(query).split(/\s+/).filter(Boolean);
   const favoriteIds = favorites instanceof Set ? favorites : new Set(Array.isArray(favorites) ? favorites : []);
   const categoryFilter = normalized(category);
   const partFilter = normalized(part);
   const statusFilter = normalized(status);
+  const masteryFilter = normalized(mastery);
   const allowedParts = partFilter && partFilter !== 'all' ? (PART_SYNONYMS[partFilter] || [partFilter]) : null;
+  const progMap = progress && typeof progress === 'object' ? progress : {};
 
   return (Array.isArray(songs) ? songs : []).filter((song) => {
     if (!song || typeof song !== 'object') return false;
@@ -56,6 +58,13 @@ export function filterSongs(songs, {
     if (statusFilter && statusFilter !== 'favorite' && statusFilter !== 'all' && song.status !== statusFilter) return false;
     if (categoryFilter && categoryFilter !== 'all' && normalized(song.category) !== categoryFilter) return false;
     if (difficulty && difficulty !== 'all' && Number(song.difficulty) !== Number(difficulty)) return false;
+    if (masteryFilter && masteryFilter !== 'all') {
+      const lvl = Number(progMap[song.id]?.level) || 0;
+      if ((masteryFilter === 'unstarted' || masteryFilter === '0') && lvl !== 0) return false;
+      if (masteryFilter === 'ready' && lvl !== 3) return false;
+      if (masteryFilter === 'learning' && (lvl < 1 || lvl > 2)) return false;
+      if (['1', '2', '3'].includes(masteryFilter) && lvl !== Number(masteryFilter)) return false;
+    }
     const parts = availableParts(song);
     if (allowedParts && !parts.some((p) => allowedParts.includes(p))) return false;
     if (!words.length) return true;

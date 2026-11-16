@@ -51,6 +51,7 @@ export function useMixableAudioSession() {
 
 // 소리가 끝나면 AudioContext를 잠시 쉬게 해서 기기의 오디오 점유(오디오 포커스)를 바로 놓아 줌
 let idleSuspendTimer = null;
+let activeMultiTrackCount = 0;
 function scheduleIdleSuspend(delay = 1200) {
   if (typeof window === 'undefined') return;
   if (idleSuspendTimer) clearTimeout(idleSuspendTimer);
@@ -58,7 +59,7 @@ function scheduleIdleSuspend(delay = 1200) {
     idleSuspendTimer = null;
     // suspend→resume은 일부 인앱 브라우저(카카오톡 등)에서 다시 깨어나지 않아 소리가 안 나는 문제가 있어
     // 쉬는 동안에는 소리 엔진을 완전히 닫고, 다음에 누를 때 새로 만든다 (오디오 점유도 바로 해제됨)
-    if (audioCtx && !currentPlaying && !currentSequence) {
+    if (audioCtx && !currentPlaying && !currentSequence && activeMultiTrackCount === 0) {
       const old = audioCtx;
       audioCtx = null;
       try { if (typeof old.close === 'function') Promise.resolve(old.close()).catch(() => {}); } catch {}
@@ -556,6 +557,69 @@ export function parseNoteString(noteStr) {
   };
 }
 
+const TRANSPOSE_SHARP_SPELL = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const TRANSPOSE_FLAT_SPELL = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const MAJOR_KEY_SPELL = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+const MINOR_KEY_SPELL = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
+
+/**
+ * Transpose a note string (with or without octave, e.g. "F#4", "Bb2", "Eb") by semitones.
+ */
+export function transposeNoteString(noteStr, semitones = 0, preferFlats = null) {
+  if (!noteStr || typeof noteStr !== 'string') return '';
+  const clean = noteStr.trim();
+  const delta = Math.trunc(Number(semitones) || 0);
+  const hasOctave = /-?\d+$/.test(clean);
+  const parsed = parseNoteString(hasOctave ? clean : `${clean}4`);
+  if (!parsed) return clean;
+  if (delta === 0) return clean;
+
+  let nextSemi;
+  let nextOct = parsed.octave;
+  if (hasOctave) {
+    const midi = (parsed.octave + 1) * 12 + parsed.semitone;
+    const clampedMidi = Math.max(24, Math.min(96, midi + delta));
+    nextSemi = ((clampedMidi % 12) + 12) % 12;
+    nextOct = Math.floor(clampedMidi / 12) - 1;
+  } else {
+    nextSemi = (((parsed.semitone + delta) % 12) + 12) % 12;
+  }
+
+  let useFlats;
+  if (typeof preferFlats === 'boolean') {
+    useFlats = preferFlats;
+  } else if (parsed.acc === 'b') {
+    useFlats = nextSemi !== 6 || delta < 0;
+  } else if (parsed.acc === '#') {
+    useFlats = false;
+  } else {
+    useFlats = nextSemi === 6 ? delta < 0 : [1, 3, 8, 10].includes(nextSemi);
+  }
+
+  const name = (useFlats ? TRANSPOSE_FLAT_SPELL : TRANSPOSE_SHARP_SPELL)[nextSemi];
+  return hasOctave ? `${name}${nextOct}` : name;
+}
+
+/**
+ * Transpose a musical key string (e.g. "Bb Major", "Eb Major / C Minor", "F# Minor") by semitones.
+ */
+export function transposeMusicalKey(keyStr, semitones = 0) {
+  if (!keyStr || typeof keyStr !== 'string') return '';
+  const clean = keyStr.trim();
+  const delta = Math.trunc(Number(semitones) || 0);
+  if (!clean || delta === 0) return clean;
+
+  return clean.replace(/([A-Ga-g])([#♯b♭]?)(\s*(?:Major|Minor|maj|min|m|장조|단조))?/g, (full, root, rawAcc, modePart) => {
+    const parsed = parseNoteString(`${root}${rawAcc || ''}4`);
+    if (!parsed) return full;
+    const trimmedMode = (modePart || '').trim();
+    const isMinor = /^(?:minor|min|m|단조)$/i.test(trimmedMode);
+    const nextSemi = (((parsed.semitone + delta) % 12) + 12) % 12;
+    const nextRoot = (isMinor ? MINOR_KEY_SPELL : MAJOR_KEY_SPELL)[nextSemi];
+    return `${nextRoot}${modePart || ''}`;
+  });
+}
+
 /**
  * Play note from string (e.g. "Ab4", "Eb5", "F#3").
  * Toggles off if this note is already playing.
@@ -715,10 +779,12 @@ export function playPitchSequence(items, options = {}) {
 
   stopPitch(true);
 
-  const noteDuration = options.noteDuration || 850;
-  const gapDuration = options.gapDuration || 140;
-  const chordDuration = options.chordDuration || 2600;
-  const onStep = options.onStep;
+  const opts = typeof options === 'number' ? { noteDuration: options } : (options || {});
+  const noteDuration = opts.noteDuration || 850;
+  const gapDuration = opts.gapDuration ?? 140;
+  const chordDuration = opts.chordDuration ?? 2600;
+  const skipChord = Boolean(opts.skipChord || opts.chordDuration === 0);
+  const onStep = opts.onStep;
 
   // Normalize items to objects with parsed note info
   const rawList = Array.isArray(items) ? items : [];
@@ -729,15 +795,27 @@ export function playPitchSequence(items, options = {}) {
       const parsed = parseNoteString(it);
       if (parsed) validItems.push({ noteStr: it, parsed, label: it });
     } else if (typeof it === 'object') {
-      const parsed = it.parsed || (it.noteStr ? parseNoteString(it.noteStr) : null);
-      if (parsed) validItems.push({ ...it, parsed, noteStr: it.noteStr || parsed.displayNote });
+      let noteStr = it.noteStr || '';
+      if (!noteStr && typeof it.semitone === 'number' && typeof it.octave === 'number') {
+        const nMeta = NOTES[((it.semitone % 12) + 12) % 12] || NOTES[0];
+        noteStr = `${nMeta.note}${it.octave}`;
+      }
+      const parsed = it.parsed || (noteStr ? parseNoteString(noteStr) : null);
+      if (parsed) {
+        validItems.push({
+          ...it,
+          parsed,
+          noteStr: noteStr || parsed.displayNote,
+          label: it.label || it.partLabel || parsed.displayNote
+        });
+      }
     }
   });
 
   if (!validItems.length) return null;
 
   // Keep caller order when requested; otherwise sort ascending by frequency (low -> high)
-  const sorted = options.keepOrder
+  const sorted = opts.keepOrder
     ? [...validItems]
     : [...validItems].sort((a, b) => a.parsed.freq - b.parsed.freq);
 
@@ -801,6 +879,21 @@ export function playPitchSequence(items, options = {}) {
       }, noteDuration);
 
     } else if (currentIndex === sorted.length) {
+      if (skipChord) {
+        const prevSeq = currentSequence;
+        currentSequence = null;
+        sequenceTimer = null;
+        stopPitch(false);
+        if (prevSeq && typeof prevSeq.onStep === 'function') {
+          try {
+            prevSeq.onStep({ type: 'finish', stoppedEarly: false });
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        return;
+      }
+
       // Step: Play Full Choral Chord
       currentSequence.isChordPhase = true;
       currentSequence.currentItem = null;
@@ -863,6 +956,12 @@ const PITCH_TRIGGER_SELECTORS = [
   '.metronome-ctrl-btn',
   '.tuner-ctrl-btn',
   '.score-note-pill',
+  '.svg-staff-note',
+  '.stage-tempo-btn',
+  '.pitch-transpose-btn',
+  '.multitrack-ctrl-btn',
+  '.staff-solo-btn',
+  '.staff-mute-btn',
   '[data-pitch-trigger]'
 ].join(', ');
 
@@ -1152,4 +1251,424 @@ export function stopMetronome() {
   metroOnBeat = null;
   scheduleIdleSuspend();
 }
+
+/* ============================================================================
+ * Multi-Track Digital Score Harmony Player (성부별 Solo · Mute 마이너스원 믹서)
+ * ============================================================================ */
+
+/**
+ * Create an interactive Web Audio multi-track score player with real-time
+ * per-staff GainNode buses for Solo / Mute (Minus-One) practice, rhythmic
+ * lookahead scheduling, playback speed (0.5x–1.75x), and semitone transposition.
+ */
+export function createMultiTrackScorePlayer(tracks = [], options = {}) {
+  const normalizedTracks = (Array.isArray(tracks) ? tracks : []).map((t, idx) => {
+    const rawEvents = Array.isArray(t?.timedNotes)
+      ? t.timedNotes
+      : (Array.isArray(t?.notes) ? t.notes : []);
+    const events = rawEvents
+      .filter((ev) => ev && typeof ev.note === 'string' && Number.isFinite(ev.startSec) && ev.startSec >= 0)
+      .map((ev) => ({
+        note: ev.note,
+        startSec: Number(ev.startSec),
+        durSec: Math.max(0.06, Math.min(12, Number(ev.durSec ?? ev.durationSec) || 0.45)),
+      }))
+      .sort((a, b) => a.startSec - b.startSec);
+    return {
+      index: idx,
+      id: t?.id || `track-${idx + 1}`,
+      name: t?.name || `Part ${idx + 1}`,
+      events,
+      muted: Boolean(t?.muted),
+      solo: Boolean(t?.solo),
+      nextIdx: 0,
+      busGain: null,
+      busFilter: null,
+      busCtx: null,
+    };
+  });
+
+  let totalDuration = 0;
+  for (const tr of normalizedTracks) {
+    for (const ev of tr.events) {
+      const end = ev.startSec + ev.durSec;
+      if (end > totalDuration) totalDuration = end;
+    }
+  }
+  totalDuration = Number(totalDuration.toFixed(3));
+
+  let isPlaying = false;
+  let isDestroyed = false;
+  let positionSec = 0;
+  let playbackRate = Math.max(0.5, Math.min(1.75, Number(options.rate) || 1.0));
+  let transposeSemitones = Math.max(-12, Math.min(12, Math.trunc(Number(options.transpose) || 0)));
+  const onStateChange = typeof options.onStateChange === 'function'
+    ? options.onStateChange
+    : (typeof options.onTick === 'function' ? options.onTick : null);
+
+  let schedulerTimer = null;
+  let lastClockTime = 0;
+  let scheduledNodes = [];
+  const LOOKAHEAD_SEC = 0.24;
+  const TICK_MS = 75;
+
+  function isTrackAudible(idx) {
+    const tr = normalizedTracks[idx];
+    if (!tr) return false;
+    const anySolo = normalizedTracks.some((t) => t.solo);
+    if (anySolo) return tr.solo && !tr.muted;
+    return !tr.muted;
+  }
+
+  function ensureTrackBus(ctx, tr) {
+    if (!ctx) return null;
+    if (tr.busGain && tr.busCtx === ctx) return tr.busFilter || tr.busGain;
+    try {
+      const gain = ctx.createGain();
+      const target = isTrackAudible(tr.index) ? 1.0 : 0.0001;
+      if (typeof gain.gain.setValueAtTime === 'function') {
+        gain.gain.setValueAtTime(target, ctx.currentTime);
+      } else {
+        gain.gain.value = target;
+      }
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      if (typeof filter.frequency.setValueAtTime === 'function') {
+        filter.frequency.setValueAtTime(2100, ctx.currentTime);
+      } else {
+        filter.frequency.value = 2100;
+      }
+      filter.connect(gain);
+      gain.connect(getOutputNode(ctx));
+      tr.busGain = gain;
+      tr.busFilter = filter;
+      tr.busCtx = ctx;
+      return filter;
+    } catch {
+      return null;
+    }
+  }
+
+  function syncTrackBuses() {
+    if (!audioCtx || audioCtx.state === 'closed') return;
+    const now = audioCtx.currentTime || 0;
+    for (const tr of normalizedTracks) {
+      if (!tr.busGain || tr.busCtx !== audioCtx) continue;
+      const target = isTrackAudible(tr.index) ? 1.0 : 0.0001;
+      try {
+        if (typeof tr.busGain.gain.cancelScheduledValues === 'function') {
+          tr.busGain.gain.cancelScheduledValues(now);
+        }
+        safeRampToValue(tr.busGain.gain, target, now + 0.025);
+      } catch {}
+    }
+  }
+
+  function stopScheduledVoices() {
+    for (const item of scheduledNodes) {
+      try { item.osc1.stop(); } catch {}
+      try { item.osc2.stop(); } catch {}
+      try { item.env.disconnect(); } catch {}
+    }
+    scheduledNodes = [];
+  }
+
+  function resetPointersForPosition(sec) {
+    for (const tr of normalizedTracks) {
+      let idx = 0;
+      while (idx < tr.events.length && tr.events[idx].startSec + 0.005 < sec) {
+        idx += 1;
+      }
+      tr.nextIdx = idx;
+    }
+  }
+
+  function getClockNow(ctx) {
+    if (ctx && typeof ctx.currentTime === 'number') return ctx.currentTime;
+    return Date.now() / 1000;
+  }
+
+  function scheduleVoiceEvent(ctx, tr, ev, startAudioTime, realDurSec) {
+    if (!ctx) return;
+    const bus = ensureTrackBus(ctx, tr);
+    if (!bus) return;
+    const noteStr = transposeSemitones !== 0 ? transposeNoteString(ev.note, transposeSemitones) : ev.note;
+    const parsed = parseNoteString(noteStr);
+    if (!parsed) return;
+
+    try {
+      const activeTrackCount = Math.max(1, normalizedTracks.filter((t) => t.events.length > 0).length);
+      const voicePeak = Math.min(0.28, 0.56 / Math.sqrt(activeTrackCount));
+      const attack = Math.min(0.028, realDurSec * 0.25);
+      const release = Math.min(0.065, realDurSec * 0.3);
+      const endAudioTime = startAudioTime + realDurSec;
+
+      const env = ctx.createGain();
+      env.gain.setValueAtTime(0.0001, startAudioTime);
+      env.gain.linearRampToValueAtTime(voicePeak, startAudioTime + attack);
+      env.gain.setValueAtTime(voicePeak * 0.88, Math.max(startAudioTime + attack, endAudioTime - release));
+      env.gain.linearRampToValueAtTime(0.0001, endAudioTime + 0.015);
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(parsed.freq, startAudioTime);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(parsed.freq * (parsed.freq < 180 ? 2 : 1), startAudioTime);
+      const harmGain = ctx.createGain();
+      harmGain.gain.setValueAtTime(parsed.freq < 180 ? 0.34 : 0.22, startAudioTime);
+
+      osc1.connect(env);
+      osc2.connect(harmGain);
+      harmGain.connect(env);
+      env.connect(bus);
+
+      osc1.start(startAudioTime);
+      osc2.start(startAudioTime);
+      osc1.stop(endAudioTime + 0.03);
+      osc2.stop(endAudioTime + 0.03);
+
+      const record = { osc1, osc2, env, endAudioTime };
+      scheduledNodes.push(record);
+    } catch {}
+  }
+
+  function getState() {
+    const anySolo = normalizedTracks.some((t) => t.solo);
+    const curPos = Number(Math.min(totalDuration, Math.max(0, positionSec)).toFixed(2));
+    return {
+      isPlaying,
+      currentTime: curPos,
+      positionSec: curPos,
+      duration: totalDuration,
+      totalDuration,
+      rate: playbackRate,
+      transpose: transposeSemitones,
+      anySolo,
+      tracks: normalizedTracks.map((tr) => ({
+        index: tr.index,
+        id: tr.id,
+        name: tr.name,
+        noteCount: tr.events.length,
+        muted: tr.muted,
+        solo: tr.solo,
+        audible: isTrackAudible(tr.index),
+      })),
+    };
+  }
+
+  function emit() {
+    if (onStateChange && !isDestroyed) {
+      try { onStateChange(getState()); } catch {}
+    }
+  }
+
+  function schedulerStep() {
+    if (!isPlaying || isDestroyed) return;
+    const ctx = getAudioContext();
+    const nowClock = getClockNow(ctx);
+    const dt = Math.max(0, Math.min(0.5, nowClock - lastClockTime));
+    lastClockTime = nowClock;
+    positionSec += dt * playbackRate;
+
+    if (ctx && scheduledNodes.length > 24) {
+      const cur = ctx.currentTime || 0;
+      scheduledNodes = scheduledNodes.filter((n) => n.endAudioTime + 0.05 > cur);
+    }
+
+    if (totalDuration <= 0 || positionSec >= totalDuration + 0.06) {
+      pauseInternal(true);
+      emit();
+      return;
+    }
+
+    for (const tr of normalizedTracks) {
+      if (ctx) ensureTrackBus(ctx, tr);
+      while (tr.nextIdx < tr.events.length) {
+        const ev = tr.events[tr.nextIdx];
+        const deltaRealSec = (ev.startSec - positionSec) / playbackRate;
+        if (deltaRealSec > LOOKAHEAD_SEC) break;
+        if (deltaRealSec >= -0.06 && ctx) {
+          const startAt = Math.max(ctx.currentTime + 0.005, ctx.currentTime + deltaRealSec);
+          const realDur = Math.max(0.05, ev.durSec / playbackRate);
+          scheduleVoiceEvent(ctx, tr, ev, startAt, realDur);
+        }
+        tr.nextIdx += 1;
+      }
+    }
+    emit();
+  }
+
+  function pauseInternal(resetToStart = false) {
+    if (schedulerTimer) {
+      clearInterval(schedulerTimer);
+      schedulerTimer = null;
+    }
+    if (isPlaying) {
+      isPlaying = false;
+      activeMultiTrackCount = Math.max(0, activeMultiTrackCount - 1);
+    }
+    stopScheduledVoices();
+    if (resetToStart) {
+      positionSec = 0;
+      resetPointersForPosition(0);
+    }
+    scheduleIdleSuspend();
+  }
+
+  function play() {
+    if (isDestroyed || totalDuration <= 0) return false;
+    if (isPlaying) return true;
+    stopPitch(true);
+    stopPitchSequence();
+    if (positionSec >= totalDuration - 0.05) {
+      positionSec = 0;
+    }
+    resetPointersForPosition(positionSec);
+    const ctx = getAudioContext();
+    if (ctx) {
+      for (const tr of normalizedTracks) ensureTrackBus(ctx, tr);
+      syncTrackBuses();
+    }
+    lastClockTime = getClockNow(ctx);
+    isPlaying = true;
+    activeMultiTrackCount += 1;
+    schedulerStep();
+    schedulerTimer = setInterval(schedulerStep, TICK_MS);
+    emit();
+    return true;
+  }
+
+  function pause() {
+    if (!isPlaying) return;
+    pauseInternal(false);
+    emit();
+  }
+
+  function togglePlay() {
+    if (isPlaying) {
+      pause();
+      return false;
+    }
+    return play();
+  }
+
+  function stop() {
+    pauseInternal(true);
+    emit();
+  }
+
+  function seekTo(sec) {
+    const clamped = Math.max(0, Math.min(totalDuration, Number(sec) || 0));
+    positionSec = clamped;
+    stopScheduledVoices();
+    resetPointersForPosition(clamped);
+    if (isPlaying) {
+      const ctx = getAudioContext();
+      lastClockTime = getClockNow(ctx);
+      schedulerStep();
+    } else {
+      emit();
+    }
+  }
+
+  function setRate(nextRate) {
+    const clamped = Math.max(0.5, Math.min(1.75, Number(nextRate) || 1.0));
+    if (Math.abs(clamped - playbackRate) < 0.001) return playbackRate;
+    playbackRate = Number(clamped.toFixed(2));
+    if (isPlaying) {
+      stopScheduledVoices();
+      resetPointersForPosition(positionSec);
+      const ctx = getAudioContext();
+      lastClockTime = getClockNow(ctx);
+    }
+    emit();
+    return playbackRate;
+  }
+
+  function setTranspose(semitones) {
+    const next = Math.max(-12, Math.min(12, Math.trunc(Number(semitones) || 0)));
+    if (next === transposeSemitones) return transposeSemitones;
+    transposeSemitones = next;
+    if (isPlaying) {
+      stopScheduledVoices();
+      resetPointersForPosition(positionSec);
+      const ctx = getAudioContext();
+      lastClockTime = getClockNow(ctx);
+    }
+    emit();
+    return transposeSemitones;
+  }
+
+  function toggleSolo(idx) {
+    const tr = normalizedTracks[idx];
+    if (!tr) return getState();
+    tr.solo = !tr.solo;
+    if (tr.solo) tr.muted = false;
+    syncTrackBuses();
+    emit();
+    return getState();
+  }
+
+  function toggleMute(idx) {
+    const tr = normalizedTracks[idx];
+    if (!tr) return getState();
+    tr.muted = !tr.muted;
+    if (tr.muted) tr.solo = false;
+    syncTrackBuses();
+    emit();
+    return getState();
+  }
+
+  function setMute(idx, muted) {
+    const tr = normalizedTracks[idx];
+    if (!tr) return getState();
+    tr.muted = Boolean(muted);
+    if (tr.muted) tr.solo = false;
+    syncTrackBuses();
+    emit();
+    return getState();
+  }
+
+  function clearSoloMute() {
+    for (const tr of normalizedTracks) {
+      tr.solo = false;
+      tr.muted = false;
+    }
+    syncTrackBuses();
+    emit();
+    return getState();
+  }
+
+  function destroy() {
+    if (isDestroyed) return;
+    pauseInternal(true);
+    isDestroyed = true;
+    for (const tr of normalizedTracks) {
+      try { tr.busFilter?.disconnect(); } catch {}
+      try { tr.busGain?.disconnect(); } catch {}
+      tr.busFilter = null;
+      tr.busGain = null;
+      tr.busCtx = null;
+    }
+  }
+
+  return {
+    play,
+    pause,
+    togglePlay,
+    stop,
+    seekTo,
+    setRate,
+    setTranspose,
+    toggleSolo,
+    toggleMute,
+    setMute,
+    clearSoloMute,
+    getState,
+    destroy,
+  };
+}
+
 

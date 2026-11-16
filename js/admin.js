@@ -145,6 +145,9 @@ function fillForm(index) {
   }
   if ($('song-musical-key')) $('song-musical-key').value = textValue(song.musicalKey);
   if ($('song-pitch-pipe')) $('song-pitch-pipe').value = textValue(song.pitchPipe);
+  if ($('song-bpm')) $('song-bpm').value = song.bpm != null ? String(song.bpm) : '';
+  if ($('song-duration')) $('song-duration').value = textValue(song.duration);
+  if ($('song-opening-cue')) $('song-opening-cue').value = textValue(song.openingCue);
   if ($('song-entry-order')) $('song-entry-order').value = Array.isArray(song.entryOrder) ? song.entryOrder.map(textValue).join(', ') : '';
   $('song-tags').value = Array.isArray(song.tags) ? song.tags.map(textValue).join(', ') : textValue(song.tags);
   setSelectValue($('song-difficulty'), index === null ? 2 : song.difficulty);
@@ -272,6 +275,21 @@ function readFormSong() {
     const pp = $('song-pitch-pipe').value.trim();
     if (pp) song.pitchPipe = pp;
     else delete song.pitchPipe;
+  }
+  if ($('song-bpm')) {
+    const bpmNum = Number($('song-bpm').value.trim());
+    if (Number.isFinite(bpmNum) && bpmNum >= 30 && bpmNum <= 260) song.bpm = Math.round(bpmNum);
+    else delete song.bpm;
+  }
+  if ($('song-duration')) {
+    const dur = $('song-duration').value.trim();
+    if (dur) song.duration = dur;
+    else delete song.duration;
+  }
+  if ($('song-opening-cue')) {
+    const oc = $('song-opening-cue').value.trim();
+    if (oc) song.openingCue = oc;
+    else delete song.openingCue;
   }
   if ($('song-entry-order')) {
     const eo = $('song-entry-order').value.split(',').map((s) => s.trim()).filter(Boolean);
@@ -563,9 +581,24 @@ function nwcPitchOf(clef, octShift, keyAcc, acc, pos) {
   return `${letter}${a}${octave}`;
 }
 
+function decodeSmartBytes(u8) {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(u8);
+  } catch {
+    try {
+      return new TextDecoder('euc-kr', { fatal: false }).decode(u8);
+    } catch {
+      return new TextDecoder('utf-8', { fatal: false }).decode(u8);
+    }
+  }
+}
+
 function parseNwcText(text) {
-  const staves = text.split('|AddStaff').slice(1);
-  return staves.map((s, i) => {
+  let detectedTempo = null;
+  let detectedKey = '';
+  const MAJOR_FLATS = { 1: 'F Major', 2: 'Bb Major', 3: 'Eb Major', 4: 'Ab Major', 5: 'Db Major', 6: 'Gb Major' };
+  const MAJOR_SHARPS = { 1: 'G Major', 2: 'D Major', 3: 'A Major', 4: 'E Major', 5: 'B Major', 6: 'F# Major' };
+  const staves = text.split('|AddStaff').slice(1).map((s, i) => {
     const name = s.match(/Name:"([^"]*)"/)?.[1] || `staff${i + 1}`;
     let t = 0;
     let barLen = 1;
@@ -575,20 +608,35 @@ function parseNwcText(text) {
     let octShift = 0;
     let keyAcc = {};
     for (const line of s.split(/\r?\n/)) {
+      const tp = line.match(/^\|Tempo\|.*?Tempo:(\d+)/);
+      if (tp && !detectedTempo) detectedTempo = Number(tp[1]);
       const sig = line.match(/^\|TimeSig\|Signature:(\d+)\/(\d+)/);
       if (sig) { barLen = Number(sig[1]) / Number(sig[2]); continue; }
       if (/^\|TimeSig\|Signature:(Common|AllaBreve)/.test(line)) { barLen = 1; continue; }
       const c = line.match(/^\|Clef\|Type:(\w+)/);
       if (c) { clef = c[1]; octShift = /Octave Down/.test(line) ? -1 : /Octave Up/.test(line) ? 1 : 0; continue; }
       const k = line.match(/^\|Key\|Signature:([^|]*)/);
-      if (k) { keyAcc = {}; k[1].split(',').forEach((a) => { if ((a[0] && a[0] !== 'C') || a.length > 1) keyAcc[a[0]] = a[1] || ''; }); continue; }
+      if (k) {
+        keyAcc = {};
+        let flats = 0, sharps = 0;
+        k[1].split(',').forEach((a) => {
+          const tok = a.trim();
+          if ((tok[0] && tok[0] !== 'C') || tok.length > 1) {
+            keyAcc[tok[0]] = tok[1] || '';
+            if (tok[1] === 'b') flats++;
+            else if (tok[1] === '#') sharps++;
+          }
+        });
+        if (!detectedKey) detectedKey = MAJOR_FLATS[flats] || MAJOR_SHARPS[sharps] || (k[1].trim() === 'C' ? 'C Major' : '');
+        continue;
+      }
       const mbr = line.match(/^\|RestMultiBar\|NumBars:(\d+)/);
       if (mbr) { t += Number(mbr[1]) * barLen; continue; }
       const m = line.match(/^\|(Rest|Note|Chord|RestChord)\|Dur:([^|]+)/);
       if (!m) continue;
       if (m[1] === 'Note' || m[1] === 'Chord' || m[1] === 'RestChord') {
         first = t;
-        const pm = line.match(/Pos:([#bnxv]?)(-?\d+)/);
+        const pm = line.match(/Pos:[^|]*?([#bnxv]?)(-?\d+)(?!.*,)/) || line.match(/Pos:([#bnxv]?)(-?\d+)/);
         if (pm) firstPitch = nwcPitchOf(clef, octShift, keyAcc, pm[1], Number(pm[2]));
         break;
       }
@@ -596,27 +644,156 @@ function parseNwcText(text) {
     }
     return { index: i + 1, name, firstNoteAt: first, firstPitch };
   });
+  return { staves, tempo: detectedTempo, musicalKey: detectedKey };
+}
+
+function parseBinaryNwcBytes(u8) {
+  const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  const KEY_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const FLAT_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  const SHARP_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  const MAJOR_FLATS = { 1: 'F Major', 2: 'Bb Major', 3: 'Eb Major', 4: 'Ab Major', 5: 'Db Major', 6: 'Gb Major' };
+  const MAJOR_SHARPS = { 1: 'G Major', 2: 'D Major', 3: 'A Major', 4: 'E Major', 5: 'B Major', 6: 'F# Major' };
+  const CENTER_STEPS = { 0: 6 + 4 * 7, 1: 1 + 3 * 7, 2: 0 + 4 * 7, 3: 5 + 3 * 7 }; // Treble B4, Bass D3, Alto C4, Tenor A3
+  const GROUPS = ['Standard\0', 'Vocal\0', 'Orch\0', 'Custom\0', 'Winds\0', 'Brass\0', 'Strings\0', 'Choir\0', 'Percussion\0', 'Piano\0'];
+
+  const groupHits = [];
+  for (let i = 20; i < u8.length - 12; i++) {
+    for (const g of GROUPS) {
+      let ok = true;
+      for (let k = 0; k < g.length; k++) {
+        if (u8[i + k] !== g.charCodeAt(k)) { ok = false; break; }
+      }
+      if (ok && u8[i - 1] === 0) {
+        const prevStrings = [];
+        let p = i - 1;
+        for (let sIdx = 0; sIdx < 3 && p > 4; sIdx++) {
+          let start = p - 1;
+          while (start > 0 && p - 1 - start < 64 && u8[start] >= 0x20) start--;
+          if (u8[start] === 0 || start === 0) {
+            const rawSlice = u8.slice(start + 1, p);
+            if (rawSlice.length > 0) prevStrings.unshift(decodeSmartBytes(rawSlice).trim());
+            p = start;
+          } else break;
+        }
+        groupHits.push({ pos: i, end: i + g.length, name: prevStrings.find(Boolean) || `staff${groupHits.length + 1}` });
+        i += g.length - 1;
+        break;
+      }
+    }
+  }
+
+  const staves = [];
+  let detectedTempo = null;
+  let detectedKey = '';
+
+  for (let sIdx = 0; sIdx < groupHits.length; sIdx++) {
+    const cur = groupHits[sIdx];
+    const nextPos = sIdx + 1 < groupHits.length ? Math.max(cur.end, groupHits[sIdx + 1].pos - 48) : u8.length;
+    const slice = u8.slice(cur.end + 30, nextPos);
+    let clefType = 0, octShift = 0, keyFlats = [], keySharps = [], firstPitch = null;
+    let beatPos = 0, barBeats = 4, startedObjects = false;
+
+    for (let i = 0; i < slice.length - 10; i++) {
+      const op = slice[i];
+      if (!startedObjects) {
+        if ((op === 0x00 || op === 0x01 || op === 0x05) && slice[i + 1] === 0 && slice[i + 2] === 0) {
+          startedObjects = true;
+        } else continue;
+      }
+      if (op === 0x00 && slice[i + 1] === 0 && slice[i + 2] === 0 && slice[i + 3] <= 3 && slice[i + 5] <= 2) {
+        clefType = slice[i + 3]; octShift = slice[i + 5]; i += 5;
+      } else if (op === 0x01 && slice[i + 1] === 0 && slice[i + 2] === 0 && i + 12 < slice.length) {
+        keyFlats = []; keySharps = [];
+        for (let b = 0; b < 7; b++) {
+          if (slice[i + 3] & (1 << b)) keyFlats.push(KEY_LETTERS[b]);
+          if (slice[i + 5] & (1 << b)) keySharps.push(KEY_LETTERS[b]);
+        }
+        if (!detectedKey) detectedKey = MAJOR_FLATS[keyFlats.length] || MAJOR_SHARPS[keySharps.length] || 'C Major';
+        i += 12;
+      } else if (op === 0x05 && slice[i + 1] === 0 && slice[i + 2] === 0 && slice[i + 3] >= 1 && slice[i + 3] <= 16 && slice[i + 5] <= 4) {
+        barBeats = (slice[i + 3] * 4) / (1 << slice[i + 5]);
+        i += 8;
+      } else if (op === 0x06 && slice[i + 1] === 0 && slice[i + 2] === 0 && i + 8 < slice.length) {
+        const bpm = slice[i + 5] | (slice[i + 6] << 8);
+        if (bpm >= 35 && bpm <= 240 && !detectedTempo) detectedTempo = bpm;
+        i += 8;
+      } else if (op === 0x02 && slice[i + 1] === 0 && slice[i + 2] === 0 && slice[i + 3] <= 8) {
+        i += 4;
+      } else if (op === 0x09 && slice[i + 1] === 0 && slice[i + 2] === 0 && slice[i + 3] <= 6 && slice[i + 4] === 0 && i + 11 <= slice.length) {
+        const durCode = slice[i + 3];
+        const dotFlags = slice[i + 7];
+        const beats = durCode === 0 && !(dotFlags & 0x05)
+          ? barBeats
+          : (4 / Math.pow(2, durCode)) * ((dotFlags & 0x01) ? 1.75 : (dotFlags & 0x04) ? 1.5 : 1);
+        beatPos += beats;
+        i += 10;
+      } else if (op === 0x08 && slice[i + 1] === 0 && slice[i + 2] === 0 && slice[i + 3] <= 6 && slice[i + 4] === 0 && slice[i + 8] === 0 && i + 11 <= slice.length) {
+        const posVal = slice[i + 9] > 127 ? slice[i + 9] - 256 : slice[i + 9];
+        const accCode = slice[i + 10] & 0x07;
+        if (Math.abs(posVal) <= 20) {
+          const totalSteps = (CENTER_STEPS[clefType] ?? CENTER_STEPS[0]) - posVal;
+          const letter = NWC_LETTERS[((totalSteps % 7) + 7) % 7];
+          let oct = Math.floor(totalSteps / 7) + (octShift === 1 ? 1 : octShift === 2 ? -1 : 0);
+          let semi = SEMI[letter];
+          let flat = false;
+          if (accCode === 0) semi += 1;
+          else if (accCode === 1) { semi -= 1; flat = true; }
+          else if (accCode === 5) {
+            if (keyFlats.includes(letter)) { semi -= 1; flat = true; }
+            else if (keySharps.includes(letter)) semi += 1;
+          }
+          if (semi < 0) { semi += 12; oct -= 1; }
+          if (semi >= 12) { semi -= 12; oct += 1; }
+          firstPitch = `${(flat ? FLAT_NAMES : SHARP_NAMES)[semi]}${oct}`;
+          break;
+        }
+        i += 10;
+      }
+    }
+    staves.push({ index: staves.length + 1, name: cur.name, firstNoteAt: Number((beatPos / 4).toFixed(3)), firstPitch });
+  }
+  return { staves, tempo: detectedTempo, musicalKey: detectedKey };
 }
 
 async function importNwcFile(event) {
   const file = event.target.files?.[0];
   if (!file) return;
   try {
-    const buffer = new Uint8Array(await file.arrayBuffer());
-    let zStart = -1;
-    for (let i = 0; i < buffer.length - 1; i += 1) {
-      if (buffer[i] === 0x78 && [0x01, 0x5e, 0x9c, 0xda].includes(buffer[i + 1])) {
-        zStart = i;
-        break;
+    let buffer = new Uint8Array(await file.arrayBuffer());
+    const asciiHead = new TextDecoder('ascii').decode(buffer.slice(0, 24));
+    let parsedResult = { staves: [], tempo: null, musicalKey: '' };
+
+    if (asciiHead.startsWith('!NoteWorthyComposer')) {
+      const text = decodeSmartBytes(buffer);
+      parsedResult = parseNwcText(text);
+    } else {
+      let zStart = -1;
+      if (asciiHead.startsWith('[NWZ]')) zStart = 6;
+      else {
+        for (let i = 0; i < buffer.length - 1; i += 1) {
+          if (buffer[i] === 0x78 && [0x01, 0x5e, 0x9c, 0xda].includes(buffer[i + 1])) {
+            zStart = i;
+            break;
+          }
+        }
+      }
+      if (zStart >= 0 && typeof DecompressionStream !== 'undefined') {
+        const stream = new Blob([buffer.slice(zStart)]).stream().pipeThrough(new DecompressionStream('deflate'));
+        buffer = new Uint8Array(await new Response(stream).arrayBuffer());
+      }
+      const textTry = decodeSmartBytes(buffer);
+      const nwctxtIdx = textTry.indexOf('!NoteWorthyComposer');
+      if (nwctxtIdx >= 0) {
+        parsedResult = parseNwcText(textTry.slice(nwctxtIdx));
+      } else if (textTry.includes('|AddStaff')) {
+        parsedResult = parseNwcText(textTry);
+      } else {
+        parsedResult = parseBinaryNwcBytes(buffer);
       }
     }
-    if (zStart < 0 || typeof DecompressionStream === 'undefined') {
-      throw new Error('유효한 NWC 압축 스트림을 찾을 수 없거나 브라우저가 압축 해제를 지원하지 않습니다.');
-    }
-    const stream = new Blob([buffer.slice(zStart)]).stream().pipeThrough(new DecompressionStream('deflate'));
-    const decompressedBytes = new Uint8Array(await new Response(stream).arrayBuffer());
-    const text = new TextDecoder('utf-8', { fatal: false }).decode(decompressedBytes);
-    const parsedStaves = parseNwcText(text).filter((st) => st.firstPitch && st.index <= 7);
+
+    const parsedStaves = parsedResult.staves.filter((st) => st.firstPitch && st.index <= 7);
     if (!parsedStaves.length) throw new Error('악보에서 유효한 첫 음을 찾지 못했습니다.');
 
     const initialMap = { YS: '용석', SY: '선영', HY: '희엽', JW: '재우', HS: '휘소', MH: '명현' };
@@ -642,13 +819,20 @@ async function importNwcFile(event) {
     if (lastPitch && $('song-pitch-pipe') && !$('song-pitch-pipe').value.trim()) {
       $('song-pitch-pipe').value = lastPitch.replace(/[0-9]+$/, '');
     }
+    if (parsedResult.musicalKey && $('song-musical-key') && !$('song-musical-key').value.trim()) {
+      $('song-musical-key').value = parsedResult.musicalKey;
+    }
+    if (parsedResult.tempo && $('song-bpm') && !$('song-bpm').value.trim()) {
+      $('song-bpm').value = String(parsedResult.tempo);
+    }
     if ($('song-arrangement') && !$('song-arrangement').value.trim()) {
       $('song-arrangement').value = `${parsedStaves.length} Voices`;
     }
 
     state.formDirty = true;
     updateState();
-    notice(`“${file.name}” 악보에서 ${parsedStaves.length}개 파트의 첫 음(${parsedStaves.map((s) => `P${s.index}:${s.firstPitch}`).join(', ')})과 진입 순서를 자동 추출했습니다. “곡 추가” 또는 “변경사항 적용”을 눌러 반영하세요.`);
+    const tempoText = parsedResult.tempo ? ` · 템포 ${parsedResult.tempo} BPM` : '';
+    notice(`“${file.name}” 악보에서 ${parsedStaves.length}개 파트의 첫 음(${parsedStaves.map((s) => `P${s.index}:${s.firstPitch}`).join(', ')})${tempoText}과 진입 순서를 자동 추출했습니다. “곡 추가” 또는 “변경사항 적용”을 눌러 반영하세요.`);
   } catch (error) {
     notice(`NWC 악보를 분석하지 못했습니다: ${error.message}`, 'error');
   } finally {

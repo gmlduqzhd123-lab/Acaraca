@@ -505,3 +505,52 @@ export function deleteCustomAppreciation(videoId) {
   cachedAppreciation = null;
 }
 
+export function getAppreciationForSong(videos, songId) {
+  if (!Array.isArray(videos) || !songId) return [];
+  const baseId = String(songId).replace(/-[0-9]+$/, '');
+  return videos.filter((v) => v && (v.songId === songId || (baseId !== songId && v.songId === baseId)));
+}
+
+/**
+ * 선택한 악보·자료 URL 목록을 브라우저 Cache Storage에 미리 내려받아 오프라인(지하 연습실·무전파 공연장)에서도 즉시 열람되도록 보장
+ */
+export async function prefetchOfflineUrls(urls = [], onProgress = null) {
+  const uniqueUrls = [...new Set(
+    (Array.isArray(urls) ? urls : [])
+      .filter((u) => typeof u === 'string' && u.trim() && !u.startsWith('http') && !u.startsWith('blob:'))
+      .map((u) => encodeURI(decodeURI(u.trim())))
+  )];
+  if (!uniqueUrls.length) return { total: 0, succeeded: 0, failed: 0 };
+
+  let cache = null;
+  if (typeof caches !== 'undefined' && typeof caches.keys === 'function') {
+    try {
+      const keys = await caches.keys();
+      const activeKey = keys.find((k) => k.startsWith('acaroom-cache-v')) || 'acaroom-cache-v148';
+      cache = await caches.open(activeKey);
+    } catch {}
+  }
+
+  let succeeded = 0;
+  let failed = 0;
+  for (let i = 0; i < uniqueUrls.length; i++) {
+    const targetUrl = uniqueUrls[i];
+    try {
+      const res = await fetch(targetUrl, { cache: 'reload' });
+      if (res && res.ok) {
+        if (cache) {
+          try { await cache.put(targetUrl, res.clone()); } catch {}
+        }
+        succeeded++;
+      } else {
+        failed++;
+      }
+    } catch {
+      failed++;
+    }
+    if (typeof onProgress === 'function') {
+      onProgress({ done: i + 1, total: uniqueUrls.length, succeeded, failed });
+    }
+  }
+  return { total: uniqueUrls.length, succeeded, failed };
+}

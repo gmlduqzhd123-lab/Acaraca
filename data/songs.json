@@ -88,7 +88,10 @@
         "part4": "재우",
         "part5": "휘소"
       },
-      "pitchPipe": "F"
+      "pitchPipe": "F",
+      "bpm": 72,
+      "duration": "5:55",
+      "openingCue": "Is this the real life~ Is this just fantasy~ (무반주 5성부 합창 진입)"
     },
     {
       "id": "bohemian-rhapsody-6",
@@ -183,7 +186,10 @@
         "part5": "명현",
         "part6": "휘소"
       },
-      "pitchPipe": "Bb"
+      "pitchPipe": "Bb",
+      "bpm": 72,
+      "duration": "5:55",
+      "openingCue": "Is this the real life~ Is this just fantasy~ (무반주 6성부 합창 진입)"
     },
     {
       "id": "mujogeon",
@@ -265,7 +271,10 @@
         "part2",
         "part3",
         "part4"
-      ]
+      ],
+      "bpm": 127,
+      "duration": "3:30",
+      "openingCue": "내가 필요할 땐 나를 불러줘~ 언제든지 달려갈게 (브라스 스캣 인트로)"
     },
     {
       "id": "short-hair",
@@ -346,7 +355,10 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "G"
+      "pitchPipe": "G",
+      "bpm": 128,
+      "duration": "3:35",
+      "openingCue": "그 언젠가 나를 위해 꽃다발을 전해주던 그 소녀~ (리듬 스캣 인트로)"
     },
     {
       "id": "disney-medley-7",
@@ -455,7 +467,10 @@
         "part6": "명현",
         "part7": "용석"
       },
-      "pitchPipe": "F"
+      "pitchPipe": "F",
+      "bpm": 96,
+      "duration": "4:45",
+      "openingCue": "When you wish upon a star~ (7성부 오픈 화음 인트로)"
     },
     {
       "id": "disney-medley",
@@ -555,7 +570,10 @@
         "part4": "현",
         "part5": "명현",
         "part6": "용석"
-      }
+      },
+      "bpm": 96,
+      "duration": "4:40",
+      "openingCue": "When you wish upon a star~ (오픈 화음 인트로)"
     },
     {
       "id": "first-impression",
@@ -637,7 +655,10 @@
         "part2",
         "part3",
         "part4"
-      ]
+      ],
+      "bpm": 118,
+      "duration": "3:45",
+      "openingCue": "오늘 난 그녀를 보았네~ (베이스·VP 그루브 인트로 후 솔로 진입)"
     },
     {
       "id": "tobacco-shop-girl",
@@ -720,7 +741,10 @@
         "part3": "희엽",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "bpm": 132,
+      "duration": "3:50",
+      "openingCue": "우리 동네 담배가게에는 아가씨가 예쁘다네~ (베이스 워킹 인트로)"
     },
     {
       "id": "aloha",
@@ -803,7 +827,10 @@
         "part3": "희엽",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "bpm": 100,
+      "duration": "4:05",
+      "openingCue": "어두운 불빛 아래 촛불 하나~ 와인 잔에 담긴 약속 하나"
     },
     {
       "id": "tayo-pororo",
@@ -886,7 +913,10 @@
         "part4": "재우",
         "part5": "명현"
       },
-      "pitchPipe": "G"
+      "pitchPipe": "G",
+      "bpm": 136,
+      "duration": "2:55",
+      "openingCue": "부릉부릉 꼬마버스 타요~ / 노는 게 제일 좋아 친구들 모여라~"
     },
     {
       "id": "run-the-sky",
@@ -969,7 +999,10 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "Eb"
+      "pitchPipe": "Eb",
+      "bpm": 130,
+      "duration": "4:15",
+      "openingCue": "두근거렸지 누군가 나의 뒤를 쫓고 있었고~ (16비트 리듬 인트로)"
     },
     {
       "id": "acaroom-opening",
@@ -1066,7 +1099,10 @@
         "part5": "용석",
         "part6": "휘소",
         "tenor": "희엽"
-      }
+      },
+      "bpm": 110,
+      "duration": "1:15",
+      "openingCue": "아~카~라~카~ (밝은 오픈 화음 & 스캣 오프닝)"
     },
     {
       "id": "speechless",
@@ -1167,7 +1203,10 @@
         "part5": "명현",
         "part6": "용석"
       },
-      "pitchPipe": "D"
+      "pitchPipe": "D",
+      "bpm": 66,
+      "duration": "3:28",
+      "openingCue": "Here comes a wave meant to wash me away~ (솔로 루바토 진입)"
     },
     {
       "id": "in-your-arms",
@@ -1259,7 +1298,10 @@
         "part4": "재우",
         "part5": "휘소"
       },
-      "pitchPipe": "C#"
+      "pitchPipe": "C#",
+      "bpm": 68,
+      "duration": "3:45",
+      "openingCue": "별 헤는 밤이면 들려오는 그대의 음성~ (서정적 화음 패드 진입)"
     },
     {
       "id": "happy-school",
@@ -1349,7 +1391,10 @@
         "part3": "선영",
         "part4": "명현",
         "part5": "재우"
-      }
+      },
+      "bpm": 120,
+      "duration": "2:45",
+      "openingCue": "아침 햇살 가득한 교실 문을 열면~ 행복한 학교 (경쾌한 스캣 인트로)"
     },
     {
       "id": "go-to-school",
@@ -1440,7 +1485,10 @@
         "part3": "현 · 선영",
         "part4": "명현 · 희엽",
         "part5": "용석 · 재우"
-      }
+      },
+      "bpm": 135,
+      "duration": "2:50",
+      "openingCue": "가방 메고 신나게 학교 가자~ 친구들과 함께 웃으며 (바운스 인트로)"
     },
     {
       "id": "well-done-today",
@@ -1540,7 +1588,10 @@
         "part5": "명현",
         "part6": "용석"
       },
-      "pitchPipe": "A"
+      "pitchPipe": "A",
+      "bpm": 75,
+      "duration": "3:25",
+      "openingCue": "세상 사람들 모두 정답을 알긴 할까~ 힘든 일은 왜 한꺼번에 일어날까"
     },
     {
       "id": "bohemian-rhapsody",
@@ -1631,7 +1682,10 @@
         "part4": "재우",
         "part5": "휘소"
       },
-      "pitchPipe": "F"
+      "pitchPipe": "F",
+      "bpm": 72,
+      "duration": "5:55",
+      "openingCue": "Is this the real life~ Is this just fantasy~ (무반주 합창 진입)"
     },
     {
       "id": "daft-punk",
@@ -1709,7 +1763,10 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "D"
+      "pitchPipe": "D",
+      "bpm": 124,
+      "duration": "4:08",
+      "openingCue": "Buy it, use it, break it, fix it~ (VP·베이스 펄스 후 진입)"
     },
     {
       "id": "dansori",
@@ -1792,7 +1849,10 @@
         "part3": "희엽",
         "part4": "휘소",
         "baritone": "재우"
-      }
+      },
+      "bpm": 116,
+      "duration": "3:30",
+      "openingCue": "얼씨구 좋구나~ 장단 맞춰 흥겹게 열어보세 (국악 장단 스캣 인트로)"
     },
     {
       "id": "isnt-she-lovely",
@@ -1874,7 +1934,10 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "E"
+      "pitchPipe": "E",
+      "bpm": 120,
+      "duration": "3:20",
+      "openingCue": "Isn't she lovely~ Isn't she wonderful~ (스윙 워킹베이스 인트로)"
     },
     {
       "id": "lets-travel",
@@ -1974,7 +2037,10 @@
         "part3": "선영",
         "part4": "재우"
       },
-      "pitchPipe": "Eb"
+      "pitchPipe": "Eb",
+      "bpm": 138,
+      "duration": "3:25",
+      "openingCue": "푸른 언덕에 배낭을 메고~ 황금빛 태양 축제를 여는"
     },
     {
       "id": "love-song-medley",
@@ -2056,7 +2122,10 @@
         "part2",
         "part3",
         "part4"
-      ]
+      ],
+      "bpm": 108,
+      "duration": "4:30",
+      "openingCue": "달콤한 화음 인트로 후 첫 사랑 노래 메들리 솔로 진입"
     },
     {
       "id": "l-o-v-e",
@@ -2147,7 +2216,10 @@
         "part3": "희엽",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "bpm": 118,
+      "duration": "2:40",
+      "openingCue": "L is for the way you look at me~ (스윙 핑거스냅 & 워킹베이스)"
     },
     {
       "id": "old-pop-medley",
@@ -2232,7 +2304,10 @@
         "part4": "재우",
         "part5": "휘소"
       },
-      "pitchPipe": "E"
+      "pitchPipe": "E",
+      "bpm": 126,
+      "duration": "4:35",
+      "openingCue": "클래식 올드팝 오픈 화음 인트로 후 메인 멜로디 진입"
     },
     {
       "id": "beautiful-world",
@@ -2345,7 +2420,10 @@
         "part2": "용석",
         "part3": "희엽",
         "part5": "휘소"
-      }
+      },
+      "bpm": 112,
+      "duration": "3:30",
+      "openingCue": "문득 외로움에 젖어~ 홀로 슬픔에 잠길 때 (서정적 화음 인트로)"
     },
     {
       "id": "butterfly",
@@ -2461,7 +2539,10 @@
         "tenor": "희엽",
         "baritone": "재우",
         "bass": "휘소"
-      }
+      },
+      "bpm": 112,
+      "duration": "3:55",
+      "openingCue": "어리숙하다 해도 나약하다 해도~ 강인하다 해도 지혜롭다 해도"
     },
     {
       "id": "cherry-blossom-ending",
@@ -2554,7 +2635,10 @@
         "part4": "재우",
         "part5": "휘소",
         "vp": "명현"
-      }
+      },
+      "bpm": 120,
+      "duration": "4:20",
+      "openingCue": "그대여 그대여 그대여 그대여 그대여~ 오늘은 우리 같이 걸어요"
     },
     {
       "id": "love-love",
@@ -2667,7 +2751,10 @@
         "part3": "희엽",
         "part4": "재우",
         "part5": "휘소"
-      }
+      },
+      "bpm": 112,
+      "duration": "2:50",
+      "openingCue": "사랑해 사랑해 너를 사랑해~ 하늘만큼 땅만큼 (경쾌한 화음 진입)"
     },
     {
       "id": "carol-medley",
@@ -2729,7 +2816,10 @@
         "part2": "선영",
         "part3": "희엽",
         "part4": "재우"
-      }
+      },
+      "bpm": 128,
+      "duration": "4:15",
+      "openingCue": "종소리 스캣 인트로 후 Jingle Bell / 캐롤 메인 테마 진입"
     },
     {
       "id": "same-place",
@@ -2792,7 +2882,10 @@
         "part3": "희엽",
         "part4": "휘소",
         "baritone": "재우"
-      }
+      },
+      "bpm": 80,
+      "duration": "3:45",
+      "openingCue": "우연이라 하기엔 모두 다 정해진 듯이~ (아련한 패드 화음 인트로)"
     },
     {
       "id": "would-be-good",
@@ -2855,7 +2948,10 @@
         "part3": "희엽",
         "part4": "휘소",
         "baritone": "재우"
-      }
+      },
+      "bpm": 70,
+      "duration": "4:10",
+      "openingCue": "부드러운 화음 패드 인트로 후 솔로 진입 (우~ 내 곁에 있으면 좋겠다)"
     },
     {
       "id": "ditto",
@@ -2920,7 +3016,10 @@
         "part5": "휘소",
         "baritone": "재우",
         "vp": "명현"
-      }
+      },
+      "bpm": 134,
+      "duration": "3:06",
+      "openingCue": "Hoo-oo-oo-oo~ Stay in the middle, like you a little~ (허밍 인트로)"
     },
     {
       "id": "if-you-dont-dream",
@@ -2983,7 +3082,10 @@
         "part3": "희엽",
         "part4": "휘소"
       },
-      "pitchPipe": "F"
+      "pitchPipe": "F",
+      "bpm": 72,
+      "duration": "3:15",
+      "openingCue": "꿈꾸지 않으면 사는 게 아니라고~ 별 헤는 맘으로 없는 길 가려네"
     },
     {
       "id": "white-christmas",
@@ -3046,7 +3148,10 @@
         "part3": "희엽",
         "part4": "재우"
       },
-      "pitchPipe": "D"
+      "pitchPipe": "D",
+      "bpm": 80,
+      "duration": "2:55",
+      "openingCue": "I'm dreaming of a white Christmas~ Just like the ones I used to know"
     }
   ]
 }

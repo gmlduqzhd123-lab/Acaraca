@@ -2,7 +2,7 @@ import { parseYouTube, createPlayer, createSectionLooper, formatPlayerTime } fro
 import { validateData, availableParts, preferredPart, PARTS } from '../js/data.js';
 import { filterSongs, toChoseong } from '../js/search.js';
 import * as storage from '../js/storage.js';
-import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, isPitchPlaying, DEFAULT_PITCH_DURATION, frequencyToPitchInfo, autoCorrelatePitch, setMetronomeBpm, getMetronomeBpm } from '../js/pitch.js';
+import { getNoteFrequency, NOTES, parseNoteString, subscribePitchState, playPitch, playPitchSequence, stopPitchSequence, isPitchSequencePlaying, isPitchPlaying, DEFAULT_PITCH_DURATION, frequencyToPitchInfo, autoCorrelatePitch, setMetronomeBpm, getMetronomeBpm, transposeNoteString, transposeMusicalKey, createMultiTrackScorePlayer } from '../js/pitch.js';
 import {
   getAllFeedbacks,
   initFeedbacksFromData,
@@ -11,6 +11,8 @@ import {
   getPerformancesForSong,
   getRehearsalsForSong,
   getScoresForSong,
+  getAppreciationForSong,
+  prefetchOfflineUrls,
   toggleMemoryLike,
   addCustomEducation,
   deleteCustomEducation,
@@ -798,6 +800,123 @@ export function runCoreTests() {
       if (!nodeFs.existsSync('./.github/workflows/ci.yml')) return false;
       const ciYml = nodeFs.readFileSync('./.github/workflows/ci.yml', 'utf8');
       return ciYml.includes('npm run validate') && ciYml.includes('npm test') && ciYml.includes('npm run audit');
+    });
+    check('전 곡 BPM 템포 등록 및 validateData 보존 검증', () => {
+      const rawSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8'));
+      const validated = validateData(rawSongs);
+      return (
+        validated.errors.length === 0 &&
+        validated.songs.length > 0 &&
+        validated.songs.length === rawSongs.songs.length &&
+        validated.songs.every(s => Number.isFinite(s.bpm) && s.bpm >= 30 && s.bpm <= 260)
+      );
+    });
+    check('scores.json 꿈꾸지 않으면(if-you-dont-dream) 누락 악보 6건 포함 총 7건 교차 연결 검증', () => {
+      const allScores = JSON.parse(nodeFs.readFileSync('./data/scores.json', 'utf8')).scores;
+      const linked = getScoresForSong(allScores, 'if-you-dont-dream');
+      return linked.length >= 7 && linked.some(s => s.id === 'score-research-180-pdf') && linked.some(s => s.id === 'score-research-175-mid');
+    });
+    check('appreciation.json 커버·레퍼런스 영상 songId 교차 연결 및 getAppreciationForSong 검증', () => {
+      const allApprec = JSON.parse(nodeFs.readFileSync('./data/appreciation.json', 'utf8')).videos;
+      const samePlace = getAppreciationForSong(allApprec, 'same-place');
+      const daftPunk = getAppreciationForSong(allApprec, 'daft-punk');
+      const beautifulWorld = getAppreciationForSong(allApprec, 'beautiful-world');
+      return samePlace.length >= 2 && daftPunk.length >= 1 && beautifulWorld.length >= 1;
+    });
+    check('인앱 오선보(SVG)·PDF·MSCZ 악보 뷰어 및 오프라인 일괄 저장 구현 검증', () => {
+      return (
+        typeof prefetchOfflineUrls === 'function' &&
+        appJsContent.includes('function renderStaffSvg') &&
+        appJsContent.includes('async function parseMsczScoreDetail') &&
+        appJsContent.includes('score-pdf-frame') &&
+        appJsContent.includes('현재 목록 오프라인 보관') &&
+        styleCssContent.includes('.score-staff-svg') &&
+        styleCssContent.includes('.score-pdf-frame')
+      );
+    });
+    check('연습실 내 목소리 셀프 녹음기·개인 연습 노트(타임스탬프 점프)·키보드 단축키 구현 검증', () => {
+      return (
+        appJsContent.includes('function renderVoiceRecorderPanel') &&
+        appJsContent.includes('function openQuickRecordRehearsalModal') &&
+        appJsContent.includes('function renderPersonalNotePanel') &&
+        appJsContent.includes('my_practice_notes') &&
+        appJsContent.includes('onPracticeKeydown') &&
+        styleCssContent.includes('.voice-recorder-panel') &&
+        styleCssContent.includes('.personal-note-panel')
+      );
+    });
+    check('실시간 반음 조바꿈(transposeNoteString · transposeMusicalKey) 옥타브·이명동음·무옥타브 기준음 변환 검증', () => {
+      return (
+        transposeNoteString('C4', -1) === 'B3' &&
+        transposeNoteString('B4', 1) === 'C5' &&
+        transposeNoteString('Ab4', -2) === 'Gb4' &&
+        transposeNoteString('F#3', 2) === 'G#3' &&
+        transposeNoteString('Eb', 2) === 'F' &&
+        transposeMusicalKey('Eb Major', 2) === 'F Major' &&
+        transposeMusicalKey('C# Minor', -1) === 'C Minor' &&
+        transposeMusicalKey('Bb Major', 0) === 'Bb Major'
+      );
+    });
+    check('createMultiTrackScorePlayer 성부별 Solo·Mute 마이너스원 믹서·배속·조바꿈·시크바 동작 검증', () => {
+      const mp = createMultiTrackScorePlayer([
+        { id: 'sop', name: 'Soprano', notes: [{ note: 'E5', startSec: 0, durationSec: 0.6 }, { note: 'G5', startSec: 0.6, durationSec: 0.8 }] },
+        { id: 'alt', name: 'Alto', notes: [{ note: 'C5', startSec: 0, durationSec: 1.4 }] },
+        { id: 'bas', name: 'Bass', notes: [{ note: 'C3', startSec: 0, durationSec: 1.4 }] }
+      ]);
+      const st0 = mp.getState();
+      if (Math.abs(st0.duration - 1.4) > 0.01 || st0.tracks.length !== 3) { mp.destroy(); return false; }
+      mp.toggleSolo(0);
+      const stSolo = mp.getState();
+      const soloOk = stSolo.tracks[0].audible === true && stSolo.tracks[1].audible === false && stSolo.tracks[2].audible === false;
+      mp.clearSoloMute();
+      mp.toggleMute(1);
+      const stMute = mp.getState();
+      const muteOk = stMute.tracks[0].audible === true && stMute.tracks[1].audible === false && stMute.tracks[2].audible === true;
+      mp.setRate(0.75);
+      mp.setTranspose(-2);
+      mp.seekTo(0.8);
+      const stCfg = mp.getState();
+      const cfgOk = stCfg.rate === 0.75 && stCfg.transpose === -2 && Math.abs(stCfg.currentTime - 0.8) < 0.05;
+      mp.stop();
+      mp.destroy();
+      return soloOk && muteOk && cfgOk;
+    });
+    check('파트 숙련도 3단계(state.progress) 필터링(unstarted · learning · ready · 1~3) 검증', () => {
+      const progMap = {
+        night: { level: 3, practiceSec: 420 },
+        jazz: { level: 1, practiceSec: 60 }
+      };
+      const ready = filterSongs(songs, { mastery: 'ready', progress: progMap });
+      const learning = filterSongs(songs, { mastery: 'learning', progress: progMap });
+      const unstarted = filterSongs(songs, { mastery: 'unstarted', progress: progMap });
+      const lv1 = filterSongs(songs, { mastery: '1', progress: progMap });
+      return ready.length === 1 && ready[0].id === 'night' &&
+        learning.length === 1 && learning[0].id === 'jazz' &&
+        unstarted.length === 0 &&
+        lv1.length === 1 && lv1[0].id === 'jazz';
+    });
+    check('전 곡 duration · openingCue 완비 및 validateData 보존 검증', () => {
+      const rawSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8'));
+      const validated = validateData(rawSongs);
+      return (
+        validated.errors.length === 0 &&
+        validated.songs.length > 0 &&
+        validated.songs.length === rawSongs.songs.length &&
+        validated.songs.every(s => /^\d{1,2}:\d{2}$/.test(s.duration) && typeof s.openingCue === 'string' && s.openingCue.length >= 4)
+      );
+    });
+    check('인앱 멀티트랙 하모니 플레이어·NWC 2.75/바이너리 호환·교육 자료 인앱 PDF 뷰어·숙련도 패널 구현 검증', () => {
+      const adminJsContent = nodeFs.readFileSync('./js/admin.js', 'utf8');
+      return (
+        appJsContent.includes('createMultiTrackScorePlayer') &&
+        appJsContent.includes('multitrack-player-panel') &&
+        appJsContent.includes('function openEducationPdfModal') &&
+        appJsContent.includes('교재 PDF 오프라인 보관') &&
+        appJsContent.includes('function renderMasteryControlPanel') &&
+        adminJsContent.includes('!NoteWorthyComposer') &&
+        styleCssContent.includes('.multitrack-player-panel') &&
+        styleCssContent.includes('.mastery-panel')
+      );
     });
   }
 

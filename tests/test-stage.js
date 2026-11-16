@@ -267,7 +267,59 @@ for (const song of songsData.songs) {
 const styleCssSource = fs.readFileSync('css/style.css', 'utf8');
 assert(styleCssSource.includes('@media print') && styleCssSource.includes('.stage-print-sheet'), 'css/style.css must include @media print rules for .stage-print-sheet');
 
+// 15. Test Silent Stage Visual Tempo Pulse, Offline Cue-Sheet Score Prefetch, and Shortcuts
+import { prefetchStageScoresOffline } from '../js/stage.js';
+assert.strictEqual(typeof prefetchStageScoresOffline, 'function', 'prefetchStageScoresOffline must be exported');
+assert(Number.isFinite(STAGE_EXTRA_SONG_METADATA['stand-by-me'].bpm), 'stand-by-me extra metadata must include bpm');
+assert(Number.isFinite(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'].bpm), 'the-lion-sleeps-tonight extra metadata must include bpm');
+assert(stageJsSource.includes('toggleStageVisualTempo'), 'stage.js must include silent visual tempo pulse toggle');
+assert(stageJsSource.includes('무음 템포'), 'stage.js must render silent tempo pulse button');
+assert(stageJsSource.includes('큐시트 악보 오프라인 저장'), 'stage.js must include offline cue-sheet score prefetch button');
+assert(styleCssSource.includes('.stage-tempo-btn.pulsing'), 'css/style.css must include .stage-tempo-btn.pulsing styles');
+
+// 16. Test Runtime Estimation, Stage Transposition Round-Trip, Stopwatch, In-App Score, Opening Cue & Large Prompter
+import { parseDurationSeconds, estimateSetlistDurationSeconds } from '../js/stage.js';
+assert.strictEqual(parseDurationSeconds('3:45'), 225, 'parseDurationSeconds("3:45") must return 225');
+assert.strictEqual(parseDurationSeconds('1:02:05'), 3725, 'parseDurationSeconds("1:02:05") must return 3725');
+assert.strictEqual(parseDurationSeconds(''), 0, 'parseDurationSeconds("") must return 0');
+
+const estJeonnam = estimateSetlistDurationSeconds(DEFAULT_STAGE_HISTORY[0], songsData.songs);
+assert(estJeonnam.musicSeconds > 600, 'Estimated music seconds for 6-song setlist must exceed 10 minutes');
+assert(estJeonnam.totalSeconds === estJeonnam.musicSeconds + estJeonnam.mcSeconds, 'Total seconds must equal music + MC transition seconds');
+assert(estJeonnam.formatted.startsWith('약 ') && estJeonnam.formatted.endsWith('분'), 'Formatted runtime must be in Korean minutes');
+
+// Verify per-item transpose (-6 ~ +6) round-trip in JSON export/import and ?cuesheet= share param
+const transposedSession = {
+  ...JSON.parse(JSON.stringify(DEFAULT_STAGE_HISTORY[0])),
+  songs: DEFAULT_STAGE_HISTORY[0].songs.map((s, idx) => ({
+    ...s,
+    ...(idx === 0 ? { transpose: -2 } : idx === 1 ? { transpose: 3 } : {})
+  }))
+};
+const exportedWithKey = serializeStageSession(transposedSession);
+const reimportedWithKey = parseImportedStageSession(exportedWithKey);
+assert.strictEqual(reimportedWithKey.songs[0].transpose, -2, 'Imported JSON cue sheet must preserve -2 transpose');
+assert.strictEqual(reimportedWithKey.songs[1].transpose, 3, 'Imported JSON cue sheet must preserve +3 transpose');
+assert.strictEqual(reimportedWithKey.songs[2].transpose, undefined, 'Zero transpose should remain omitted');
+
+const shareWithKey = encodeStageSessionShareParam(transposedSession);
+const decodedWithKey = decodeStageSessionShareParam(shareWithKey);
+assert.strictEqual(decodedWithKey.songs[0].transpose, -2, 'Decoded share param must preserve -2 transpose');
+assert.strictEqual(decodedWithKey.songs[1].transpose, 3, 'Decoded share param must preserve +3 transpose');
+
+// Verify extra stage songs & all 34 songs have duration & openingCue
+assert(STAGE_EXTRA_SONG_METADATA['stand-by-me'].duration && STAGE_EXTRA_SONG_METADATA['stand-by-me'].openingCue, 'stand-by-me must include duration and openingCue');
+assert(STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'].duration && STAGE_EXTRA_SONG_METADATA['the-lion-sleeps-tonight'].openingCue, 'the-lion-sleeps-tonight must include duration and openingCue');
+for (const song of songsData.songs) {
+  assert(parseDurationSeconds(song.duration) >= 60, `Song '${song.id}' must have valid duration >= 60s`);
+  assert(typeof song.openingCue === 'string' && song.openingCue.length >= 4, `Song '${song.id}' must have openingCue`);
+}
+
+// Verify Stage Live View UI hooks (stopwatch, in-app score, openingCue, transpose, large prompter)
+assert(stageJsSource.includes('stage-stopwatch-pill'), 'stage.js must include stage stopwatch');
+assert(stageJsSource.includes('stage-inapp-score-btn'), 'stage.js must include in-app stage score button');
+assert(stageJsSource.includes('stage-opening-cue-bar'), 'stage.js must include opening cue bar');
+assert(stageJsSource.includes('stage-transpose-group'), 'stage.js must include stage key transposition controls');
+assert(stageJsSource.includes('prompter-expanded') && stageJsSource.includes('대형 프롬프터'), 'stage.js must include expandable large MC prompter');
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');
-
-
-
