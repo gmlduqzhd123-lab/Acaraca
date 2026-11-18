@@ -1310,7 +1310,13 @@ export function createMultiTrackScorePlayer(tracks = [], options = {}) {
   let lastClockTime = 0;
   let scheduledNodes = [];
   const LOOKAHEAD_SEC = 0.24;
+  // 화면이 꺼지거나 다른 앱으로 가면 브라우저가 타이머를 약 1초 간격으로 늦춘다.
+  // 그때는 음을 더 멀리 미리 예약해 두어야 반 속도·음 빠짐 없이 이어진다.
+  const HIDDEN_LOOKAHEAD_SEC = 2.5;
+  // 한 번에 진행할 수 있는 최대 시간(오디오 시계 기준). 실제 흐른 시간만큼 진행하되 비정상적인 큰 점프만 막는다.
+  const MAX_STEP_SEC = 10;
   const TICK_MS = 75;
+  const isPageHidden = () => typeof document !== 'undefined' && document.visibilityState === 'hidden';
 
   function isTrackAudible(idx) {
     const tr = normalizedTracks[idx];
@@ -1468,7 +1474,8 @@ export function createMultiTrackScorePlayer(tracks = [], options = {}) {
     if (!isPlaying || isDestroyed) return;
     const ctx = getAudioContext();
     const nowClock = getClockNow(ctx);
-    const dt = Math.max(0, Math.min(0.5, nowClock - lastClockTime));
+    const dt = Math.max(0, Math.min(MAX_STEP_SEC, nowClock - lastClockTime));
+    const lookahead = isPageHidden() ? HIDDEN_LOOKAHEAD_SEC : LOOKAHEAD_SEC;
     lastClockTime = nowClock;
     positionSec += dt * playbackRate;
 
@@ -1488,7 +1495,7 @@ export function createMultiTrackScorePlayer(tracks = [], options = {}) {
       while (tr.nextIdx < tr.events.length) {
         const ev = tr.events[tr.nextIdx];
         const deltaRealSec = (ev.startSec - positionSec) / playbackRate;
-        if (deltaRealSec > LOOKAHEAD_SEC) break;
+        if (deltaRealSec > lookahead) break;
         if (deltaRealSec >= -0.06 && ctx) {
           const startAt = Math.max(ctx.currentTime + 0.005, ctx.currentTime + deltaRealSec);
           const realDur = Math.max(0.05, ev.durSec / playbackRate);
@@ -1538,6 +1545,12 @@ export function createMultiTrackScorePlayer(tracks = [], options = {}) {
     schedulerTimer = setInterval(schedulerStep, TICK_MS);
     emit();
     return true;
+  }
+
+  // 화면이 꺼지는 순간 곧바로 더 길게 예약해 둔다 (다음 타이머가 1초 뒤에야 올 수 있으므로)
+  const onVisibilityChange = () => { if (isPlaying && !isDestroyed) schedulerStep(); };
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('visibilitychange', onVisibilityChange);
   }
 
   function pause() {
@@ -1645,6 +1658,9 @@ export function createMultiTrackScorePlayer(tracks = [], options = {}) {
     if (isDestroyed) return;
     pauseInternal(true);
     isDestroyed = true;
+    if (typeof document !== 'undefined' && typeof document.removeEventListener === 'function') {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    }
     for (const tr of normalizedTracks) {
       try { tr.busFilter?.disconnect(); } catch {}
       try { tr.busGain?.disconnect(); } catch {}
