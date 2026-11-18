@@ -881,6 +881,11 @@ export function runCoreTests() {
       mp.destroy();
       return soloOk && muteOk && cfgOk;
     });
+    check('예전 백업의 숫자형 숙련도(progress[id] = 3)도 필터가 곡 카드와 같게 인식', () => {
+      const progMap = { night: 3, jazz: 0 };
+      return filterSongs(songs, { mastery: 'ready', progress: progMap }).map(s => s.id).join() === 'night' &&
+        filterSongs(songs, { mastery: 'unstarted', progress: progMap }).map(s => s.id).join() === 'jazz';
+    });
     check('파트 숙련도 3단계(state.progress) 필터링(unstarted · learning · ready · 1~3) 검증', () => {
       const progMap = {
         night: { level: 3, practiceSec: 420 },

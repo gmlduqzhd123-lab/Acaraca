@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
-import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, nextStage, daysUntil} from './practiceLogic.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, nextStage, daysUntil, resolveStageItemTranspose} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -857,7 +857,7 @@ function renderUpcomingStageCard() {
     const song = state.songs.find(s => s.id === id);
     const part = song ? songMyPart(song) : '';
     const name = song?.partNames?.[part];
-    const itemSemi = Number.isFinite(Number(item.transpose)) ? Math.max(-6, Math.min(6, Math.round(Number(item.transpose)))) : (song ? getSongTranspose(song.id) : 0);
+    const itemSemi = resolveStageItemTranspose(item, state.songTranspositions);
     const practiceBtn = button([
       el('span', {class: 'setlist-num', text: String(i + 1)}),
       el('span', {class: 'setlist-title', text: song?.title || item.title || id}),
@@ -3645,10 +3645,12 @@ async function parseMsczScoreDetail(buffer, fallbackTitle = '') {
   };
 }
 
-function renderStaffSvg(st, musicalKey = 'C Major') {
-  const rawNotes = Array.isArray(st?.melodyNotes) && st.melodyNotes.length
+function renderStaffSvg(st, musicalKey = 'C Major', semitones = 0) {
+  // 조바꿈 중이면 오선 위치·음 이름·클릭 소리 모두 바뀐 키 기준으로 맞춘다.
+  const rawNotes = (Array.isArray(st?.melodyNotes) && st.melodyNotes.length
     ? st.melodyNotes.slice(0, 16)
-    : (st?.firstNote ? [st.firstNote] : []);
+    : (st?.firstNote ? [st.firstNote] : [])
+  ).map(n => (semitones ? transposeNoteString(n, semitones) : n));
   const parsedNotes = rawNotes.map(n => ({ raw: n, parsed: parseNoteString(n) })).filter(x => x.parsed);
   if (!parsedNotes.length || typeof document === 'undefined' || typeof document.createElementNS !== 'function') {
     return null;
@@ -4023,6 +4025,8 @@ async function openScorePreviewModal(score) {
     );
 
     const staffCardRefs = [];
+    let syncMultiTrackUiRef = null;
+    let rerenderStaffCards = () => {};
     let multiTrackPanel = null;
 
     if (hasMultiTrackNotes) {
@@ -4088,6 +4092,7 @@ async function openScorePreviewModal(score) {
         if (keyMetaBadge && detail.musicalKey) {
           keyMetaBadge.textContent = `조성: ${transposeMusicalKey(detail.musicalKey, scoreSemi)}${scoreSemi ? ` (${formatTransposeBadgeText(scoreSemi)})` : ''}`;
         }
+        rerenderStaffCards();
         toast(scoreSemi === 0 ? '🎹 원키(0)로 되돌렸습니다.' : `🎹 악보 하모니 키: ${formatTransposeBadgeText(scoreSemi)}`);
       };
 
@@ -4126,6 +4131,7 @@ async function openScorePreviewModal(score) {
       });
 
       const syncMultiTrackUi = (st) => {
+        syncMultiTrackUiRef = syncMultiTrackUi;
         playToggleBtn.textContent = st.isPlaying ? '⏸ 일시정지' : '▶ 전 성부 하모니 재생';
         playToggleBtn.classList.toggle('playing', st.isPlaying);
         seekSlider.max = String(Math.max(1, Number(st.duration.toFixed(2))));
@@ -4199,8 +4205,7 @@ async function openScorePreviewModal(score) {
       syncMultiTrackUi(multiPlayer.getState());
     }
 
-    const staffList = el('div', { class: 'score-preview-staff-list' },
-      ...(validStaves.length ? validStaves.map((st, idx) => {
+    const buildStaffCards = () => (validStaves.length ? validStaves.map((st, idx) => {
         const parsedFirst = st.firstNote ? parseNoteString(transposeNoteString(st.firstNote, scoreSemi)) : null;
         const hasTimed = Array.isArray(st.timedNotes) && st.timedNotes.length > 0;
 
@@ -4255,18 +4260,19 @@ async function openScorePreviewModal(score) {
             }, 'button secondary small', null, { 'data-pitch-trigger': 'true' })
           : null;
 
-        const staffSvgEl = renderStaffSvg(st, detail.musicalKey);
+        const staffSvgEl = renderStaffSvg(st, detail.musicalKey ? transposeMusicalKey(detail.musicalKey, scoreSemi) : 'C Major', scoreSemi);
 
         const notesRow = st.melodyNotes && st.melodyNotes.length
           ? el('div', { class: 'score-preview-notes-row' },
               ...st.melodyNotes.map((n, nIdx) => {
-                const p = parseNoteString(n);
+                const shifted = transposeNoteString(n, scoreSemi);
+                const p = parseNoteString(shifted);
                 return el('button', {
                   type: 'button',
                   class: `score-note-pill${nIdx === 0 ? ' first' : ''}`,
-                  title: `${n} 클릭하여 소리 듣기`,
-                  onclick: () => playNoteString(transposeNoteString(n, scoreSemi))
-                }, p ? p.displayNote : n);
+                  title: `${p ? p.displayNote : shifted} 클릭하여 소리 듣기`,
+                  onclick: () => playNoteString(shifted)
+                }, p ? p.displayNote : shifted);
               })
             )
           : null;
@@ -4299,8 +4305,14 @@ async function openScorePreviewModal(score) {
         return card;
       }) : [
         el('p', { style: 'padding: 20px; text-align: center; color: var(--muted);', text: '이 악보 파일에서 개별 성부 노트를 찾지 못했습니다. 아래 버튼으로 원본 파일을 다운로드해 확인해 주세요.' })
-      ])
-    );
+      ]);
+    const staffList = el('div', { class: 'score-preview-staff-list' }, ...buildStaffCards());
+    // 악보 창 안에서 키를 바꾸면 성부 카드(첫 음 버튼·오선·음 버튼)를 새 키로 다시 그린다.
+    rerenderStaffCards = () => {
+      staffCardRefs.length = 0;
+      staffList.replaceChildren(...buildStaffCards());
+      if (multiPlayer && syncMultiTrackUiRef) syncMultiTrackUiRef(multiPlayer.getState());
+    };
 
     const footerBar = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);' },
       el('div', { style: 'display: flex; gap: 8px; flex-wrap: wrap;' },
@@ -4764,6 +4776,11 @@ function openUploadEducationModal() {
 function openEducationPdfModal(edu) {
   const fileUrl = edu.blobUrl || edu.fileUrl;
   if (!fileUrl) return;
+  // 직접 입력한 주소가 javascript: 같은 스크립트 주소면 열지 않는다 (http/https, 상대 경로, 기기에 저장한 blob·PDF data만 허용)
+  if (/^[a-z][a-z0-9+.-]*:/i.test(fileUrl) && !/^(https?:|blob:|data:application\/pdf[;,])/i.test(fileUrl)) {
+    toast('이 자료 주소는 열 수 없습니다. http(s) 주소인지 확인해 주세요.');
+    return;
+  }
   const safeUrl = (fileUrl.startsWith('blob:') || fileUrl.startsWith('data:') || fileUrl.includes('%'))
     ? fileUrl
     : encodeURI(fileUrl);
@@ -7521,13 +7538,19 @@ function renderPractice(song, part, record = true) {
     text: '⌨️ 키보드·블루투스 페달 단축키: Space 재생/정지 · ←/→ ±5초 이동 · [ / ] 구간 A·B 설정 · \\ 구간반복 토글 · P 내 파트 첫음'
   });
 
+  // 누적 연습 시간: 영상이 실제로 재생 중일 때만 센다(화면이 꺼진 백그라운드 재생 포함).
+  // 화면이 꺼지면 타이머가 느려지므로 고정 5초 대신 실제로 지난 시간(최대 60초)을 더한다.
+  let lastPracticeTick = Date.now();
   const practiceTimerId = setInterval(() => {
     if (!controller.isConnected) {
       clearInterval(practiceTimerId);
       return;
     }
-    if (typeof document !== 'undefined' && !document.hidden) {
-      addSongPracticeSeconds(song.id, 5);
+    const now = Date.now();
+    const elapsedSec = Math.min(60, Math.max(0, (now - lastPracticeTick) / 1000));
+    lastPracticeTick = now;
+    if (state.player?.isPlaying?.() && elapsedSec >= 1) {
+      addSongPracticeSeconds(song.id, Math.round(elapsedSec));
       const timeBadge = masteryPanel.querySelector?.('.mastery-time-badge');
       if (timeBadge) {
         const curProg = getSongProgress(song.id);

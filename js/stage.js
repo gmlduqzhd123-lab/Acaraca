@@ -9,7 +9,8 @@
 
 import { el, icon, button, toast } from './ui.js';
 import { resolveSongId } from './data.js';
-import { entryRank, nextStage } from './practiceLogic.js';
+import { entryRank, nextStage, resolveStageItemTranspose } from './practiceLogic.js';
+import { read as readStorage } from './storage.js';
 import { qrDataUrl } from './qr.js';
 import {
   parseNoteString,
@@ -34,6 +35,25 @@ import { loadScores, getScoresForSong, prefetchOfflineUrls } from './archive.js'
 export const STAGE_HISTORY_KEY = 'acaroom_stage_history_v2';
 export const STAGE_ACTIVE_KEY = 'acaroom_stage_active_v2';
 export const STAGE_DELETED_KEY = 'acaroom_stage_deleted_ids_v1';
+export const STAGE_STOPWATCH_KEY = 'acaroom_stage_stopwatch_v1';
+
+/** 공연 스톱워치 상태 { startedAt: 시작 시각(ms) | null, accumulatedMs: 일시정지 전까지 쌓인 시간 } */
+export function readStageStopwatch() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STAGE_STOPWATCH_KEY) || 'null');
+    const startedAt = Number(raw?.startedAt);
+    const accumulatedMs = Number(raw?.accumulatedMs);
+    return {
+      startedAt: Number.isFinite(startedAt) && startedAt > 0 ? startedAt : null,
+      accumulatedMs: Number.isFinite(accumulatedMs) && accumulatedMs > 0 ? accumulatedMs : 0
+    };
+  } catch {
+    return { startedAt: null, accumulatedMs: 0 };
+  }
+}
+export function writeStageStopwatch(state) {
+  try { localStorage.setItem(STAGE_STOPWATCH_KEY, JSON.stringify(state)); } catch {}
+}
 
 /**
  * 33개 전 곡에 대한 고품질 AI 추천 멘트 데이터베이스 (유쾌/위트, 감성/스토리, 초간단)
@@ -1106,13 +1126,19 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
   let prompterExpanded = false;
   const customComments = {}; // songId -> custom edited comment
 
-  const getItemTranspose = (it) => Math.max(-6, Math.min(6, Math.trunc(Number(it?.transpose) || 0)));
+  // 큐시트 곡별 값 → 없으면 연습실에서 저장한 곡 조바꿈 (홈 '다음 무대' 카드와 같은 규칙)
+  const getItemTranspose = (it) => resolveStageItemTranspose(it, readStorage('song_transpositions', {}));
   const formatTransposeTag = (semi) => (semi === 0 ? '원키' : semi > 0 ? `♯ +${semi}` : `♭ ${semi}`);
 
-  let stageTimerRunning = false;
-  let stageTimerElapsedSec = 0;
+  // 공연 스톱워치: 시작 시각·누적 시간을 저장해 두고 시계(Date.now)로 계산한다.
+  // 화면을 다시 그리거나 다른 탭에 다녀와도, 화면이 꺼져 타이머가 느려져도 시간이 맞는다.
   let stageTimerInterval = null;
   let stopwatchBtnEl = null;
+  const isStageTimerRunning = () => Boolean(readStageStopwatch().startedAt);
+  const stageTimerElapsedSecNow = () => {
+    const t = readStageStopwatch();
+    return (t.accumulatedMs + (t.startedAt ? Date.now() - t.startedAt : 0)) / 1000;
+  };
 
   const formatStopwatch = (sec) => {
     const s = Math.max(0, Math.floor(sec));
@@ -1123,31 +1149,35 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
 
   function syncStopwatchText() {
     if (!stopwatchBtnEl) return;
-    stopwatchBtnEl.textContent = `⏱️ ${formatStopwatch(stageTimerElapsedSec)} ${stageTimerRunning ? '⏸' : '▶'}`;
-    stopwatchBtnEl.classList.toggle('running', stageTimerRunning);
+    const running = isStageTimerRunning();
+    stopwatchBtnEl.textContent = `⏱️ ${formatStopwatch(stageTimerElapsedSecNow())} ${running ? '⏸' : '▶'}`;
+    stopwatchBtnEl.classList.toggle('running', running);
   }
 
-  function stopStageTimer() {
+  // 화면 표시만 갱신하는 타이머 (멈춰도 스톱워치 시간 자체는 저장된 시각으로 계속 흐른다)
+  function startStopwatchTicker() {
+    if (stageTimerInterval || !isStageTimerRunning()) return;
+    stageTimerInterval = setInterval(syncStopwatchText, 500);
+  }
+  function stopStopwatchTicker() {
     if (stageTimerInterval) {
       clearInterval(stageTimerInterval);
       stageTimerInterval = null;
     }
-    stageTimerRunning = false;
-    syncStopwatchText();
   }
 
   function toggleStageTimer() {
-    if (stageTimerRunning) {
-      stopStageTimer();
-      toast(`⏱️ 공연 경과 타이머 일시정지 (${formatStopwatch(stageTimerElapsedSec)})`);
+    const t = readStageStopwatch();
+    if (t.startedAt) {
+      writeStageStopwatch({ startedAt: null, accumulatedMs: t.accumulatedMs + (Date.now() - t.startedAt) });
+      stopStopwatchTicker();
+      syncStopwatchText();
+      toast(`⏱️ 공연 경과 타이머 일시정지 (${formatStopwatch(stageTimerElapsedSecNow())})`);
       return;
     }
-    stageTimerRunning = true;
+    writeStageStopwatch({ startedAt: Date.now(), accumulatedMs: t.accumulatedMs });
     syncStopwatchText();
-    stageTimerInterval = setInterval(() => {
-      stageTimerElapsedSec += 1;
-      syncStopwatchText();
-    }, 1000);
+    startStopwatchTicker();
     toast('⏱️ 실전 공연 경과 스톱워치를 시작했습니다.');
   }
 
@@ -1408,21 +1438,22 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
     );
 
     stopwatchBtnEl = button(
-      `⏱️ ${formatStopwatch(stageTimerElapsedSec)} ${stageTimerRunning ? '⏸' : '▶'}`,
+      `⏱️ ${formatStopwatch(stageTimerElapsedSecNow())} ${isStageTimerRunning() ? '⏸' : '▶'}`,
       toggleStageTimer,
-      `stage-stopwatch-pill${stageTimerRunning ? ' running' : ''}`,
+      `stage-stopwatch-pill${isStageTimerRunning() ? ' running' : ''}`,
       null,
       { title: '실전 무대 경과 시간 스톱워치 시작/일시정지' }
     );
 
     const stopwatchResetBtn = button('↺', () => {
-      stopStageTimer();
-      stageTimerElapsedSec = 0;
+      stopStopwatchTicker();
+      writeStageStopwatch({ startedAt: null, accumulatedMs: 0 });
       syncStopwatchText();
       toast('⏱️ 공연 스톱워치를 00:00으로 초기화했습니다.');
     }, 'stage-stopwatch-reset-btn', null, { title: '스톱워치 00:00 초기화', 'aria-label': '스톱워치 초기화' });
 
     const stopwatchWrap = el('div', { class: 'stage-stopwatch-wrap' }, stopwatchBtnEl, stopwatchResetBtn);
+    startStopwatchTicker(); // 다시 그려진 화면에서도 진행 중이던 스톱워치 표시를 이어 간다
 
     const runtimeEst = estimateSetlistDurationSeconds(session, songs);
     const titleEl = el('h2', { class: 'stage-event-title', text: session.eventTitle || '2026 아카라카 공연' });
@@ -1806,8 +1837,8 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
       const clamped = Math.max(-6, Math.min(6, nextSemi));
       clearStagePitchAutoStop();
       stopPitch(true);
-      if (clamped === 0) delete curItem.transpose;
-      else curItem.transpose = clamped;
+      // 무대에서 정한 키는 0(원키)까지 그대로 저장한다. 지우면 연습실에서 저장한 곡 조바꿈으로 돌아가 버린다.
+      curItem.transpose = clamped;
       saveActiveStageSession(session);
       renderCurrentSong();
       const rawKey = songData?.musicalKey || songData?.startingPitches?.key || '';
@@ -2531,7 +2562,7 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
   activeStageLiveCleanup = () => {
     clearStagePitchAutoStop();
     stopStageVisualTempo();
-    stopStageTimer();
+    stopStopwatchTicker(); // 표시만 멈춘다. 진행 중인 스톱워치는 저장돼 있어 돌아오면 이어서 보인다.
     unsubscribePitch();
     stopPitch(true);
     releaseWakeLock();
@@ -2556,6 +2587,14 @@ export function cleanupStageLive() {
 /**
  * 무대 큐시트(셋리스트 및 커스텀 멘트)를 공유용 JSON 문자열로 직렬화
  */
+// 큐시트 곡의 조바꿈을 저장·공유할 값: 큐시트에서 정한 값(0 포함) 또는 이 기기에서 쓰는 곡 조바꿈.
+// 받는 쪽도 같은 키로 보이도록 실제로 적용 중인 값을 담는다. 담을 필요가 없으면 null.
+function stageItemTransposeForExport(s) {
+  const hasOwn = s && s.transpose !== null && s.transpose !== undefined && s.transpose !== '' && Number.isFinite(Number(s.transpose));
+  const semi = resolveStageItemTranspose(s, readStorage('song_transpositions', {}));
+  return hasOwn || semi !== 0 ? semi : null;
+}
+
 export function serializeStageSession(session) {
   if (!session || typeof session !== 'object') return '';
   const payload = {
@@ -2569,13 +2608,13 @@ export function serializeStageSession(session) {
       venue: session.venue || '',
       currentIndex: 0,
       songs: Array.isArray(session.songs) ? session.songs.map((s) => {
-        const semi = Math.max(-6, Math.min(6, Math.trunc(Number(s?.transpose) || 0)));
+        const semi = stageItemTransposeForExport(s);
         return {
           songId: s.songId || '',
           title: s.title || '',
           note: s.note || '',
           commentTone: s.commentTone || 'story',
-          ...(semi !== 0 ? { transpose: semi } : {}),
+          ...(semi !== null ? { transpose: semi } : {}),
           ...(s.customComment ? { customComment: s.customComment } : {}),
           ...(typeof s.commentVariationIndex === 'number' ? { commentVariationIndex: s.commentVariationIndex } : {})
         };
@@ -2604,13 +2643,14 @@ export function parseImportedStageSession(input) {
     songs: target.songs
       .filter((s) => s && typeof s === 'object' && (s.songId || s.title))
       .map((s) => {
-        const semi = Math.max(-6, Math.min(6, Math.trunc(Number(s?.transpose) || 0)));
+        const hasOwnSemi = s?.transpose !== null && s?.transpose !== undefined && s?.transpose !== '' && Number.isFinite(Number(s?.transpose));
+        const semi = hasOwnSemi ? Math.max(-6, Math.min(6, Math.round(Number(s.transpose)))) : null;
         return {
           songId: typeof s.songId === 'string' ? resolveSongId(s.songId.trim()) : '',
           title: typeof s.title === 'string' ? s.title.trim() : '연습곡',
           note: typeof s.note === 'string' ? s.note.trim() : '',
           commentTone: ['wit', 'story', 'brief'].includes(s.commentTone) ? s.commentTone : 'story',
-          ...(semi !== 0 ? { transpose: semi } : {}),
+          ...(semi !== null ? { transpose: semi } : {}),
           ...(typeof s.customComment === 'string' && s.customComment.trim() ? { customComment: s.customComment.trim() } : {}),
           ...(typeof s.commentVariationIndex === 'number' ? { commentVariationIndex: s.commentVariationIndex } : {})
         };
@@ -2647,12 +2687,12 @@ export function encodeStageSessionShareParam(session) {
     v: session.venue || '',
     s: Array.isArray(session.songs)
       ? session.songs.map((s) => {
-          const semi = Math.max(-6, Math.min(6, Math.trunc(Number(s?.transpose) || 0)));
+          const semi = stageItemTransposeForExport(s);
           return {
             id: s.songId || '',
             t: s.title || '',
             ...(s.note ? { n: s.note } : {}),
-            ...(semi !== 0 ? { k: semi } : {}),
+            ...(semi !== null ? { k: semi } : {}),
             ...(s.commentTone && s.commentTone !== 'story' ? { c: s.commentTone } : {}),
             ...(s.customComment ? { m: s.customComment } : {})
           };
@@ -2689,7 +2729,7 @@ export function decodeStageSessionShareParam(param) {
           title: item.t || item.id || '연습곡',
           note: item.n || '',
           commentTone: item.c || 'story',
-          ...(typeof item.k === 'number' && item.k !== 0 ? { transpose: item.k } : {}),
+          ...(typeof item.k === 'number' ? { transpose: item.k } : {}),
           ...(item.m ? { customComment: item.m } : {})
         }))
       });
@@ -2730,7 +2770,7 @@ export function printStageCueSheet(session, songs = []) {
 
   const rows = (Array.isArray(session.songs) ? session.songs : []).map((item, idx) => {
     const songData = resolveSongData(songs, item.songId, item.title);
-    const semi = Math.max(-6, Math.min(6, Math.trunc(Number(item?.transpose) || 0)));
+    const semi = resolveStageItemTranspose(item, readStorage('song_transpositions', {}));
     const semiTag = semi === 0 ? '' : (semi > 0 ? `♯ +${semi}` : `♭ ${semi}`);
     const rawKey = songData?.musicalKey || songData?.startingPitches?.key || '';
     const keyStr = rawKey

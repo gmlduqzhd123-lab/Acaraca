@@ -5146,3 +5146,15 @@ html[data-theme="dark"] .button.danger { color: #fff; }
     align-items: stretch;
   }
 }
+
+/* 휴대폰 폭에서 가로로 밀리지 않게: 무대 '파트별 첫 음 조율' 줄(조바꿈·스톱워치·정지)은 줄바꿈 허용 */
+.stage-pitch-header { flex-wrap: wrap; gap: 8px; }
+.stage-pitch-title { flex-wrap: wrap; min-width: 0; }
+/* 연주자 이름처럼 긴 글자가 들어가는 배지는 화면 폭 안에서 줄바꿈 */
+.badge.status-badge { white-space: normal; max-width: 100%; overflow-wrap: anywhere; }
+
+/* 새 조작 버튼 터치 영역: 조바꿈(원키·±), 무대 스톱워치·초기화 */
+.pitch-transpose-btn { min-height: 40px; min-width: 40px; }
+.stage-stopwatch-pill { min-height: 44px; }
+.stage-stopwatch-reset-btn { width: 44px; height: 44px; }
+.stage-live-badge-row { flex-wrap: wrap; }

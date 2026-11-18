@@ -514,20 +514,26 @@ export function getAppreciationForSong(videos, songId) {
 /**
  * 선택한 악보·자료 URL 목록을 브라우저 Cache Storage에 미리 내려받아 오프라인(지하 연습실·무전파 공연장)에서도 즉시 열람되도록 보장
  */
+// '오프라인 저장'한 악보·PDF 전용 캐시. 앱 캐시(acaroom-cache-v*)는 업데이트 때마다 통째로 지워지므로
+// 이름이 그 규칙에 걸리지 않는 별도 캐시에 둔다. 서비스워커는 오프라인일 때 모든 캐시에서 찾아 준다.
+export const OFFLINE_FILES_CACHE = 'acaroom-offline-files';
+
+const safeEncodePath = (u) => {
+  try { return encodeURI(decodeURI(u)); } catch { return encodeURI(u); }
+};
+
 export async function prefetchOfflineUrls(urls = [], onProgress = null) {
   const uniqueUrls = [...new Set(
     (Array.isArray(urls) ? urls : [])
       .filter((u) => typeof u === 'string' && u.trim() && !u.startsWith('http') && !u.startsWith('blob:'))
-      .map((u) => encodeURI(decodeURI(u.trim())))
+      .map((u) => safeEncodePath(u.trim()))
   )];
   if (!uniqueUrls.length) return { total: 0, succeeded: 0, failed: 0 };
 
   let cache = null;
   if (typeof caches !== 'undefined' && typeof caches.keys === 'function') {
     try {
-      const keys = await caches.keys();
-      const activeKey = keys.find((k) => k.startsWith('acaroom-cache-v')) || 'acaroom-cache-v148';
-      cache = await caches.open(activeKey);
+      cache = await caches.open(OFFLINE_FILES_CACHE);
     } catch {}
   }
 
