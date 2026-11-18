@@ -2322,6 +2322,7 @@ function openQuickRecordRehearsalModal(defaultSongId = '') {
   let recordedUrl = '';
   let timerId = null;
   let elapsedSec = 0;
+  let disposed = false; // 창을 닫은 뒤 늦게 도착하는 녹음 완료(onstop)는 무시해 재생 주소가 새지 않게 한다
 
   const stopStream = () => {
     if (timerId) { clearInterval(timerId); timerId = null; }
@@ -2428,6 +2429,7 @@ function openQuickRecordRehearsalModal(defaultSongId = '') {
       };
       recorder.onstop = () => {
         stopStream();
+        if (disposed) return;
         timerBadge.classList.remove('recording');
         recToggleBtn.textContent = '🔴 다시 녹음';
         recToggleBtn.className = 'button secondary small';
@@ -2478,8 +2480,10 @@ function openQuickRecordRehearsalModal(defaultSongId = '') {
 
   dialog.append(header, body);
   dialog.addEventListener('close', () => {
+    disposed = true;
     stopStream();
     if (recordedUrl) URL.revokeObjectURL(recordedUrl);
+    recordedUrl = '';
     dialog.remove();
   });
   document.body.append(dialog);
@@ -7244,6 +7248,7 @@ function renderVoiceRecorderPanel(song, part) {
   let recordedUrl = null;
   let timerId = null;
   let elapsedSec = 0;
+  let disposed = false; // 화면을 떠난 뒤 늦게 도착하는 녹음 완료(onstop)는 무시
 
   const timerBadge = el('span', { class: 'voice-rec-timer', text: '0:00' });
   const previewWrap = el('div', { class: 'voice-rec-preview' });
@@ -7284,6 +7289,7 @@ function renderVoiceRecorderPanel(song, part) {
       };
       recorder.onstop = () => {
         stopStream();
+        if (disposed) return;
         timerBadge.classList.remove('recording');
         recBtn.textContent = '🔴 다시 셀프 녹음';
         recBtn.className = 'button secondary small';
@@ -7371,6 +7377,7 @@ function renderVoiceRecorderPanel(song, part) {
 
   const observer = new MutationObserver(() => {
     if (!panel.isConnected) {
+      disposed = true;
       stopStream();
       if (recordedUrl) { URL.revokeObjectURL(recordedUrl); recordedUrl = null; }
       observer.disconnect();
