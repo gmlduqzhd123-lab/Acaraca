@@ -593,9 +593,31 @@ function decodeSmartBytes(u8) {
   }
 }
 
+function formatSecondsToMmSs(sec) {
+  if (!Number.isFinite(sec) || sec <= 0) return '';
+  const rounded = Math.max(15, Math.min(900, Math.round(sec)));
+  const m = Math.floor(rounded / 60);
+  const s = rounded % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+function cleanNwcLyricSnippet(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  const cleaned = raw
+    .replace(/\\n|\\r/g, ' ')
+    .replace(/[\r\n_]+/g, ' ')
+    .replace(/\s*-\s*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (cleaned.length < 2) return '';
+  return cleaned.length > 42 ? `${cleaned.slice(0, 40).trim()}…` : cleaned;
+}
+
 function parseNwcText(text) {
   let detectedTempo = null;
   let detectedKey = '';
+  let maxWholeUnits = 0;
+  let detectedLyricCue = '';
   const MAJOR_FLATS = { 1: 'F Major', 2: 'Bb Major', 3: 'Eb Major', 4: 'Ab Major', 5: 'Db Major', 6: 'Gb Major' };
   const MAJOR_SHARPS = { 1: 'G Major', 2: 'D Major', 3: 'A Major', 4: 'E Major', 5: 'B Major', 6: 'F# Major' };
   const staves = text.split('|AddStaff').slice(1).map((s, i) => {
@@ -608,6 +630,13 @@ function parseNwcText(text) {
     let octShift = 0;
     let keyAcc = {};
     for (const line of s.split(/\r?\n/)) {
+      if (!detectedLyricCue && line.startsWith('|Lyric1|')) {
+        const lm = line.match(/Text:"([^"]+)"/);
+        if (lm) {
+          const cand = cleanNwcLyricSnippet(lm[1]);
+          if (cand.length >= 4) detectedLyricCue = cand;
+        }
+      }
       const tp = line.match(/^\|Tempo\|.*?Tempo:(\d+)/);
       if (tp && !detectedTempo) detectedTempo = Number(tp[1]);
       const sig = line.match(/^\|TimeSig\|Signature:(\d+)\/(\d+)/);
@@ -634,17 +663,21 @@ function parseNwcText(text) {
       if (mbr) { t += Number(mbr[1]) * barLen; continue; }
       const m = line.match(/^\|(Rest|Note|Chord|RestChord)\|Dur:([^|]+)/);
       if (!m) continue;
-      if (m[1] === 'Note' || m[1] === 'Chord' || m[1] === 'RestChord') {
+      if ((m[1] === 'Note' || m[1] === 'Chord' || m[1] === 'RestChord') && firstPitch === null) {
         first = t;
         const pm = line.match(/Pos:[^|]*?([#bnxv]?)(-?\d+)(?!.*,)/) || line.match(/Pos:([#bnxv]?)(-?\d+)/);
         if (pm) firstPitch = nwcPitchOf(clef, octShift, keyAcc, pm[1], Number(pm[2]));
-        break;
       }
       t += m[2].startsWith('Whole') && !m[2].includes('Dotted') ? barLen : nwcDurOf(m[2]);
     }
+    if (t > maxWholeUnits) maxWholeUnits = t;
     return { index: i + 1, name, firstNoteAt: first, firstPitch };
   });
-  return { staves, tempo: detectedTempo, musicalKey: detectedKey };
+  const bpm = detectedTempo || 100;
+  const duration = maxWholeUnits > 0 ? formatSecondsToMmSs((maxWholeUnits * 4 * 60) / bpm) : '';
+  const validPitches = staves.map((s) => s.firstPitch).filter(Boolean);
+  const openingCue = detectedLyricCue || (validPitches.length ? `도입부 첫 화음 (${validPitches.slice(0, 5).join('·')}) 진입` : '');
+  return { staves, tempo: detectedTempo, musicalKey: detectedKey, duration, openingCue };
 }
 
 function parseBinaryNwcBytes(u8) {
@@ -686,13 +719,14 @@ function parseBinaryNwcBytes(u8) {
   const staves = [];
   let detectedTempo = null;
   let detectedKey = '';
+  let maxQuarterBeats = 0;
 
   for (let sIdx = 0; sIdx < groupHits.length; sIdx++) {
     const cur = groupHits[sIdx];
     const nextPos = sIdx + 1 < groupHits.length ? Math.max(cur.end, groupHits[sIdx + 1].pos - 48) : u8.length;
     const slice = u8.slice(cur.end + 30, nextPos);
     let clefType = 0, octShift = 0, keyFlats = [], keySharps = [], firstPitch = null;
-    let beatPos = 0, barBeats = 4, startedObjects = false;
+    let firstNoteBeat = 0, beatPos = 0, barBeats = 4, startedObjects = false;
 
     for (let i = 0; i < slice.length - 10; i++) {
       const op = slice[i];
@@ -729,9 +763,12 @@ function parseBinaryNwcBytes(u8) {
         beatPos += beats;
         i += 10;
       } else if (op === 0x08 && slice[i + 1] === 0 && slice[i + 2] === 0 && slice[i + 3] <= 6 && slice[i + 4] === 0 && slice[i + 8] === 0 && i + 11 <= slice.length) {
+        const durCode = slice[i + 3];
+        const dotFlags = slice[i + 7];
+        const beats = (4 / Math.pow(2, durCode)) * ((dotFlags & 0x01) ? 1.75 : (dotFlags & 0x04) ? 1.5 : 1);
         const posVal = slice[i + 9] > 127 ? slice[i + 9] - 256 : slice[i + 9];
         const accCode = slice[i + 10] & 0x07;
-        if (Math.abs(posVal) <= 20) {
+        if (Math.abs(posVal) <= 20 && !firstPitch) {
           const totalSteps = (CENTER_STEPS[clefType] ?? CENTER_STEPS[0]) - posVal;
           const letter = NWC_LETTERS[((totalSteps % 7) + 7) % 7];
           let oct = Math.floor(totalSteps / 7) + (octShift === 1 ? 1 : octShift === 2 ? -1 : 0);
@@ -746,14 +783,20 @@ function parseBinaryNwcBytes(u8) {
           if (semi < 0) { semi += 12; oct -= 1; }
           if (semi >= 12) { semi -= 12; oct += 1; }
           firstPitch = `${(flat ? FLAT_NAMES : SHARP_NAMES)[semi]}${oct}`;
-          break;
+          firstNoteBeat = beatPos;
         }
+        beatPos += beats;
         i += 10;
       }
     }
-    staves.push({ index: staves.length + 1, name: cur.name, firstNoteAt: Number((beatPos / 4).toFixed(3)), firstPitch });
+    if (beatPos > maxQuarterBeats) maxQuarterBeats = beatPos;
+    staves.push({ index: staves.length + 1, name: cur.name, firstNoteAt: Number((firstNoteBeat / 4).toFixed(3)), firstPitch });
   }
-  return { staves, tempo: detectedTempo, musicalKey: detectedKey };
+  const bpm = detectedTempo || 100;
+  const duration = maxQuarterBeats > 0 ? formatSecondsToMmSs((maxQuarterBeats * 60) / bpm) : '';
+  const validPitches = staves.map((s) => s.firstPitch).filter(Boolean);
+  const openingCue = validPitches.length ? `도입부 첫 화음 (${validPitches.slice(0, 5).join('·')}) 진입` : '';
+  return { staves, tempo: detectedTempo, musicalKey: detectedKey, duration, openingCue };
 }
 
 async function importNwcFile(event) {
@@ -762,7 +805,7 @@ async function importNwcFile(event) {
   try {
     let buffer = new Uint8Array(await file.arrayBuffer());
     const asciiHead = new TextDecoder('ascii').decode(buffer.slice(0, 24));
-    let parsedResult = { staves: [], tempo: null, musicalKey: '' };
+    let parsedResult = { staves: [], tempo: null, musicalKey: '', duration: '', openingCue: '' };
 
     if (asciiHead.startsWith('!NoteWorthyComposer')) {
       const text = decodeSmartBytes(buffer);
@@ -796,6 +839,10 @@ async function importNwcFile(event) {
     const parsedStaves = parsedResult.staves.filter((st) => st.firstPitch && st.index <= 7);
     if (!parsedStaves.length) throw new Error('악보에서 유효한 첫 음을 찾지 못했습니다.');
 
+    for (let idx = 1; idx <= 7; idx += 1) {
+      if ($(`media-part${idx}-pitch`)) $(`media-part${idx}-pitch`).value = '';
+    }
+
     const initialMap = { YS: '용석', SY: '선영', HY: '희엽', JW: '재우', HS: '휘소', MH: '명현' };
     parsedStaves.forEach((st) => {
       const partKey = `part${st.index}`;
@@ -809,6 +856,10 @@ async function importNwcFile(event) {
     if (parsedStaves[0]?.firstPitch && $('media-soprano-pitch') && !$('media-soprano-pitch').value.trim()) $('media-soprano-pitch').value = parsedStaves[0].firstPitch;
     if (parsedStaves[1]?.firstPitch && $('media-alto-pitch') && !$('media-alto-pitch').value.trim()) $('media-alto-pitch').value = parsedStaves[1].firstPitch;
     if (parsedStaves[2]?.firstPitch && $('media-tenor-pitch') && !$('media-tenor-pitch').value.trim()) $('media-tenor-pitch').value = parsedStaves[2].firstPitch;
+    if (parsedStaves.length >= 5) {
+      const bariPitch = parsedStaves[parsedStaves.length - 2]?.firstPitch;
+      if (bariPitch && $('media-baritone-pitch') && !$('media-baritone-pitch').value.trim()) $('media-baritone-pitch').value = bariPitch;
+    }
     const lastPitch = parsedStaves[parsedStaves.length - 1]?.firstPitch;
     if (lastPitch && $('media-bass-pitch') && !$('media-bass-pitch').value.trim()) $('media-bass-pitch').value = lastPitch;
 
@@ -825,6 +876,12 @@ async function importNwcFile(event) {
     if (parsedResult.tempo && $('song-bpm') && !$('song-bpm').value.trim()) {
       $('song-bpm').value = String(parsedResult.tempo);
     }
+    if (parsedResult.duration && $('song-duration') && !$('song-duration').value.trim()) {
+      $('song-duration').value = parsedResult.duration;
+    }
+    if (parsedResult.openingCue && $('song-opening-cue') && !$('song-opening-cue').value.trim()) {
+      $('song-opening-cue').value = parsedResult.openingCue;
+    }
     if ($('song-arrangement') && !$('song-arrangement').value.trim()) {
       $('song-arrangement').value = `${parsedStaves.length} Voices`;
     }
@@ -832,7 +889,8 @@ async function importNwcFile(event) {
     state.formDirty = true;
     updateState();
     const tempoText = parsedResult.tempo ? ` · 템포 ${parsedResult.tempo} BPM` : '';
-    notice(`“${file.name}” 악보에서 ${parsedStaves.length}개 파트의 첫 음(${parsedStaves.map((s) => `P${s.index}:${s.firstPitch}`).join(', ')})${tempoText}과 진입 순서를 자동 추출했습니다. “곡 추가” 또는 “변경사항 적용”을 눌러 반영하세요.`);
+    const durText = parsedResult.duration ? ` · 연주시간 약 ${parsedResult.duration}` : '';
+    notice(`“${file.name}” 악보에서 ${parsedStaves.length}개 파트의 첫 음(${parsedStaves.map((s) => `P${s.index}:${s.firstPitch}`).join(', ')})${tempoText}${durText}과 진입 순서를 자동 추출했습니다. “곡 추가” 또는 “변경사항 적용”을 눌러 반영하세요.`);
   } catch (error) {
     notice(`NWC 악보를 분석하지 못했습니다: ${error.message}`, 'error');
   } finally {

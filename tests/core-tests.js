@@ -923,6 +923,123 @@ export function runCoreTests() {
         styleCssContent.includes('.mastery-panel')
       );
     });
+    check('butterfly · acaroom-opening 등 번호 파트 영상 보유 곡 partNames 번호 키 매핑 및 VP 역할 배지 표시 검증', () => {
+      const allSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
+      const butterfly = allSongs.find(s => s.id === 'butterfly');
+      const opening = allSongs.find(s => s.id === 'acaroom-opening');
+      return (
+        butterfly && butterfly.partNames.part1 === '선영' && butterfly.partNames.part5 === '휘소' &&
+        opening && opening.partNames.part1 === '희엽' && opening.partNames.part6 === '휘소' &&
+        appJsContent.includes('🥁 VP: ') &&
+        appJsContent.includes('개별 영상이 없어 전체 합주(Full) 영상으로 안내합니다.')
+      );
+    });
+    check('scores.json 임을 위한 행진곡(march-for-the-beloved) 4성부 NWC 악보 4건 교차 연결 검증', () => {
+      const allScores = JSON.parse(nodeFs.readFileSync('./data/scores.json', 'utf8')).scores;
+      const linked = getScoresForSong(allScores, 'march-for-the-beloved');
+      return linked.length >= 4 && linked.some(s => s.id === 'score-desk-156');
+    });
+    check('admin.js NWC 악보 불러오기 시 연주 시간(duration) 및 첫 소절 큐(openingCue) 자동 추출 검증', () => {
+      const adminJsContent = nodeFs.readFileSync('./js/admin.js', 'utf8');
+      return (
+        adminJsContent.includes('function formatSecondsToMmSs') &&
+        adminJsContent.includes('function cleanNwcLyricSnippet') &&
+        adminJsContent.includes("$('song-duration')") &&
+        adminJsContent.includes("$('song-opening-cue')") &&
+        adminJsContent.includes("$('media-baritone-pitch')")
+      );
+    });
+    check('4부·6부·7부 편곡 동적 성부 매핑(getSongVoicePartMapping) 및 FULL 영상 재생 시 내 파트 첫 음 폴백 검증', () => {
+      return (
+        appJsContent.includes('function getSongVoicePartMapping(song)') &&
+        appJsContent.includes("const effectiveCurrentPart = (currentPart && currentPart !== 'full') ? currentPart : (songMyPart(song) || null);") &&
+        appJsContent.includes("const targetPitchPart = (part && part !== 'full') ? part : (songMyPart(song) || part);")
+      );
+    });
+    check('다중 편곡 곡(bohemian-rhapsody · disney-medley) 양방향 아카이브(악보·감상·합주 일지) 교차 조회 검증', () => {
+      const allScores = JSON.parse(nodeFs.readFileSync('./data/scores.json', 'utf8')).scores;
+      const allApprec = JSON.parse(nodeFs.readFileSync('./data/appreciation.json', 'utf8')).videos;
+      const allRehs = JSON.parse(nodeFs.readFileSync('./data/rehearsals.json', 'utf8')).rehearsals;
+      const bhScores = getScoresForSong(allScores, 'bohemian-rhapsody');
+      const bhApprec = getAppreciationForSong(allApprec, 'bohemian-rhapsody');
+      const bh6Rehs = getRehearsalsForSong(allRehs, 'bohemian-rhapsody-6');
+      const dmScores = getScoresForSong(allScores, 'disney-medley');
+      return (
+        bhScores.some(s => s.id === 'score-bohemian-rhapsody-6p') &&
+        bhApprec.length >= 2 &&
+        bhApprec.some(v => v.songId === 'bohemian-rhapsody-6') &&
+        bh6Rehs.some(r => r.id === 'reh-bohemian-rhapsody') &&
+        dmScores.some(s => s.id === 'score-disney-medley-edit3-2025')
+      );
+    });
+    check('White Christmas 및 주요 연습곡 미연결 악보 24건 · 연습 영상 · 합주 피드백 아카이브 연결 검증', () => {
+      const allScores = JSON.parse(nodeFs.readFileSync('./data/scores.json', 'utf8')).scores;
+      const pVids = JSON.parse(nodeFs.readFileSync('./data/practice_videos.json', 'utf8')).videos;
+      const rehs = JSON.parse(nodeFs.readFileSync('./data/rehearsals.json', 'utf8')).rehearsals;
+      const wcScores = getScoresForSong(allScores, 'white-christmas');
+      const balloonScores = getScoresForSong(allScores, 'balloon');
+      const dittoScores = getScoresForSong(allScores, 'ditto');
+      return (
+        wcScores.length >= 8 &&
+        balloonScores.some(s => s.id === 'score-research-61-mid') &&
+        dittoScores.some(s => s.id === 'score-research-100-nwc') &&
+        pVids.some(v => v.songId === 'white-christmas') &&
+        rehs.some(r => r.songId === 'white-christmas')
+      );
+    });
+    check('홈 공연 큐시트 카드 예상 러닝타임(est.formatted) · LIVE 큐시트 폴백 · 무대 전용 레퍼토리 연동 검증', () => {
+      return (
+        appJsContent.includes('getActiveStageSession') &&
+        appJsContent.includes('getSongStartingPitchEntries') &&
+        appJsContent.includes("const estLabel = est && est.totalSeconds > 0 ? est.formatted : '';") &&
+        !appJsContent.includes('est > 0') &&
+        appJsContent.includes('function upcomingPitchItems(meta, transposeSemi = 0)') &&
+        appJsContent.includes("isUpcoming ? 'NEXT STAGE' : 'ACTIVE CUE SHEET'") &&
+        appJsContent.includes("dday === 0 ? 'D-DAY' : `D-${dday}`) : 'LIVE 큐시트'")
+      );
+    });
+    check('홈 내 파트 맞춤 연습(myPanel) 나는 누구?(myName) 인식 및 실제 DOM 렌더링 복구 검증', () => {
+      const allSongs = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
+      const memberFiltered = filterSongs(allSongs, { query: '선영' });
+      return (
+        memberFiltered.length >= 1 &&
+        appJsContent.includes('const hasMyIdentity = Boolean(state.myName || state.myPart);') &&
+        appJsContent.includes("app.append(section('내 파트 맞춤 연습'") &&
+        appJsContent.includes('state.filters = {query: state.myName,')
+      );
+    });
+    check('연습 일지 검색·곡별 필터 · 곡 상세/연습 화면 필터 연동 · 피드백 작성자/파트 프리셋 · 파트 필터 칩 · 공감 버튼 검증', () => {
+      return (
+        appJsContent.includes("rehearsalFilters: {query: '', songId: ''}") &&
+        appJsContent.includes('function renderFeedbackSection(reh, playerInstance, audioCtrl, song = null)') &&
+        appJsContent.includes("const defaultAuthor = state.myName || read('last_feedback_author', '');") &&
+        appJsContent.includes("['part7', '7번 파트']") &&
+        appJsContent.includes("['lead', '리드 (LEAD)']") &&
+        appJsContent.includes('toggleFeedbackLike(fb.id)') &&
+        appJsContent.includes('feedback-like-btn') &&
+        appJsContent.includes('const rehearsalPlayers = [];') &&
+        appJsContent.includes("state.rehearsalFilters = { query: '', songId: song.id };")
+      );
+    });
+    check('설정 백업 내보내기/불러오기(myName·statusOverrides·커스텀 아카이브·공감 포함)·캐시 강제 리로드·초기화 즉시 갱신 검증', () => {
+      return (
+        appJsContent.includes('myName: state.myName') &&
+        appJsContent.includes("statusOverrides: read('statusOverrides', {})") &&
+        appJsContent.includes("likedFeedbacks: read('liked_feedbacks', [])") &&
+        appJsContent.includes("customScores: read('custom_scores', [])") &&
+        appJsContent.includes("customMemories: read('custom_memories', [])") &&
+        appJsContent.includes("customAppreciation: read('custom_appreciation', [])") &&
+        appJsContent.includes("customPracticeVideos: read('custom_practice_videos', [])") &&
+        appJsContent.includes("customEducation: read('custom_education', [])") &&
+        appJsContent.includes('loadScores(true)') &&
+        appJsContent.includes('loadMemories(true)') &&
+        appJsContent.includes('loadEducation(true)') &&
+        appJsContent.includes('loadPracticeVideos(true)') &&
+        appJsContent.includes('loadAppreciation(true)') &&
+        appJsContent.includes("write('feedbacks_seed_v', 2);") &&
+        appJsContent.includes('if (!song._defaultStatus) song._defaultStatus = song.status;')
+      );
+    });
   }
 
   return { passed: results.filter((result) => result.passed).length, failed: results.filter((result) => !result.passed).length, results };

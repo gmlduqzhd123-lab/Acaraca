@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
-import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, nextStage, daysUntil, resolveStageItemTranspose} from './practiceLogic.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -20,6 +20,7 @@ import {
   deleteCustomAppreciation,
   getAllFeedbacks,
   addFeedback,
+  toggleFeedbackLike,
   getPerformancesForSong,
   getRehearsalsForSong,
   getScoresForSong,
@@ -52,6 +53,8 @@ import {
   openStageHistoryModal,
   openSetlistEditModal,
   getStageHistory,
+  getActiveStageSession,
+  getSongStartingPitchEntries,
   saveActiveStageSession,
   createNewStageSession,
   deleteStageHistoryItem,
@@ -120,6 +123,7 @@ const state = {
   filters: {query: '', status: '', category: '', difficulty: '', part: '', mastery: ''},
   stageView: read('stageView', 'live'),
   stageFilters: {query: '', category: ''},
+  rehearsalFilters: {query: '', songId: ''},
   scoreFilters: {query: '', category: '', songId: '', year: '', format: ''},
   educationFilters: {query: '', category: '', target: ''},
   practiceVideoFilters: {query: '', part: '', songId: '', sourceType: ''},
@@ -165,12 +169,51 @@ function formatTransposeBadgeText(semi) {
   return s === 0 ? '원키' : `${s > 0 ? '+' : ''}${s}키`;
 }
 
+function getSongVoicePartMapping(song) {
+  const allKeys = [
+    ...Object.keys(song?.videos || {}).filter(k => song?.videos?.[k]?.url),
+    ...Object.keys(song?.startingPitches || {}),
+    ...Object.keys(song?.partNames || {})
+  ];
+  const numberedNums = allKeys
+    .filter(k => /^part\d+$/.test(k))
+    .map(k => parseInt(k.slice(4), 10))
+    .filter(n => Number.isFinite(n));
+  const maxPartNum = numberedNums.length ? Math.max(...numberedNums) : 5;
+
+  if (maxPartNum === 4) {
+    return {
+      voiceToPart: { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part4' },
+      partToVoice: { part1: 'soprano', part2: 'alto', part3: 'tenor', part4: 'bass' },
+      voiceHint: { part1: 'SOP', part2: 'ALTO', part3: 'TENOR', part4: 'BASS' }
+    };
+  }
+  if (maxPartNum === 6) {
+    return {
+      voiceToPart: { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part5', bass: 'part6' },
+      partToVoice: { part1: 'soprano', part2: 'alto', part3: 'tenor', part4: 'tenor', part5: 'baritone', part6: 'bass' },
+      voiceHint: { part1: 'SOP', part2: 'ALTO', part3: 'TENOR 1', part4: 'TENOR 2', part5: 'BARI', part6: 'BASS' }
+    };
+  }
+  if (maxPartNum >= 7) {
+    return {
+      voiceToPart: { soprano: 'part1', alto: 'part3', tenor: 'part4', baritone: 'part5', bass: 'part6' },
+      partToVoice: { part1: 'soprano', part2: 'soprano', part3: 'alto', part4: 'tenor', part5: 'baritone', part6: 'bass', part7: 'bass' },
+      voiceHint: { part1: 'SOP 1', part2: 'SOP 2', part3: 'ALTO', part4: 'TENOR', part5: 'BARI', part6: 'BASS 1', part7: 'BASS 2' }
+    };
+  }
+  return {
+    voiceToPart: { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' },
+    partToVoice: { part1: 'soprano', part2: 'alto', part3: 'tenor', part4: 'baritone', part5: 'bass' },
+    voiceHint: { part1: 'SOP', part2: 'ALTO', part3: 'TENOR', part4: 'BARI', part5: 'BASS' }
+  };
+}
+
 function getTransposedPartNote(song, partKey) {
   if (!song?.startingPitches || !partKey) return '';
   let raw = song.startingPitches[partKey];
   if (!raw) {
-    const voiceToPart = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
-    const partToVoice = { part1: 'soprano', part2: 'alto', part3: 'tenor', part4: 'baritone', part5: 'bass' };
+    const { voiceToPart, partToVoice } = getSongVoicePartMapping(song);
     if (voiceToPart[partKey]) raw = song.startingPitches[voiceToPart[partKey]];
     else if (partToVoice[partKey]) raw = song.startingPitches[partToVoice[partKey]];
   }
@@ -320,7 +363,20 @@ function myVoiceLabel() {
   if (state.myName) return state.myPart ? `${state.myName} · 그 외 ${PARTS[state.myPart]}` : state.myName;
   return state.myPart ? PARTS[state.myPart] : '';
 }
-function startPractice(song, part = preferredPart(song, songMyPart(song))) {
+function startPractice(song, explicitPart) {
+  const myPart = songMyPart(song);
+  const avail = availableParts(song);
+  let part = explicitPart;
+  if (!part) {
+    if (myPart && avail.includes(myPart)) {
+      part = myPart;
+    } else if (myPart && !avail.includes(myPart) && avail.includes('full')) {
+      part = 'full';
+      setTimeout(() => toast(`💡 담당 파트(${PARTS[myPart] || myPart}) 개별 영상이 없어 전체 합주(Full) 영상으로 안내합니다.`), 60);
+    } else {
+      part = preferredPart(song, myPart);
+    }
+  }
   if (part) navigate({song: song.id, part});
   else { openSong(song); toast('아직 등록된 연습 영상이 없습니다.'); }
 }
@@ -834,38 +890,86 @@ function recentList(limit) {
 }
 
 
-function upcomingStage() { return nextStage(getStageHistory()); }
+function upcomingStage() {
+  const next = nextStage(getStageHistory());
+  let activeSession = null;
+  try {
+    activeSession = getActiveStageSession(state.songs);
+  } catch {}
+  if (next) {
+    if (
+      activeSession &&
+      Array.isArray(activeSession.songs) &&
+      activeSession.songs.length &&
+      (activeSession.id === next.stage.id || activeSession.eventTitle === next.stage.eventTitle)
+    ) {
+      return { stage: activeSession, date: next.date, isUpcoming: true };
+    }
+    return { stage: next.stage, date: next.date, isUpcoming: true };
+  }
+  if (activeSession && Array.isArray(activeSession.songs) && activeSession.songs.length) {
+    return { stage: activeSession, date: parseStageDate(activeSession.date), isUpcoming: false };
+  }
+  return null;
+}
 function orderedPitchItems(song, transposeSemi = null) {
   const semi = Number.isFinite(transposeSemi) ? transposeSemi : getSongTranspose(song?.id);
   return orderedPitchItemsFor(song, PARTS, semi);
+}
+function upcomingPitchItems(meta, transposeSemi = 0) {
+  const fromNumbered = orderedPitchItems(meta, transposeSemi);
+  if (fromNumbered.length) return fromNumbered;
+  const semi = Number.isFinite(transposeSemi) ? transposeSemi : 0;
+  return getSongStartingPitchEntries(meta)
+    .map(([k, v]) => {
+      const shifted = semi ? transposeNoteString(v, semi) : v;
+      const parsed = parseNoteString(shifted);
+      if (!parsed) return null;
+      return {
+        partKey: k,
+        noteStr: shifted,
+        parsed,
+        label: `${PARTS[k] || k}${meta?.partNames?.[k] ? ` ${meta.partNames[k]}` : ''}`
+      };
+    })
+    .filter(Boolean);
 }
 function startSetlistPractice(stage, index) {
   const ids = stage.songs.map(item => item.songId || item.id);
   state.setlist = {title: stage.eventTitle, ids};
   const song = state.songs.find(s => s.id === ids[index]);
-  if (song) startPractice(song);
-  else toast('이 곡은 연습실에 등록되지 않은 무대 레퍼토리예요.');
+  if (song) {
+    startPractice(song);
+  } else {
+    saveActiveStageSession({ ...stage, currentIndex: index });
+    navigate({tab: 'stage', view: 'live'});
+    toast('무대 전용 레퍼토리입니다. LIVE 무대 큐시트로 이동했습니다.');
+  }
 }
 function renderUpcomingStageCard() {
   const next = upcomingStage();
   if (!next) return null;
-  const {stage, date} = next;
-  const dday = daysUntil(date);
-  const estTotalSec = estimateSetlistDurationSeconds(stage, state.songs);
+  const {stage, date, isUpcoming} = next;
+  const dday = (isUpcoming && date) ? daysUntil(date) : null;
+  const est = estimateSetlistDurationSeconds(stage, state.songs);
+  const estLabel = est && est.totalSeconds > 0 ? est.formatted : '';
   const items = stage.songs.map((item, i) => {
     const id = item.songId || item.id;
-    const song = state.songs.find(s => s.id === id);
+    const song = state.songs.find(s => s.id === id) || null;
+    const meta = song || resolveSongData(state.songs, id, item.title);
+    const displayTitle = song?.title || item.title || meta?.title || id;
     const part = song ? songMyPart(song) : '';
     const name = song?.partNames?.[part];
     const itemSemi = resolveStageItemTranspose(item, state.songTranspositions);
+    const titleLabel = `${displayTitle}${itemSemi !== 0 ? ` (${formatTransposeBadgeText(itemSemi)})` : ''}`;
     const practiceBtn = button([
       el('span', {class: 'setlist-num', text: String(i + 1)}),
-      el('span', {class: 'setlist-title', text: song?.title || item.title || id}),
+      el('span', {class: 'setlist-title', text: titleLabel}),
       el('span', {class: 'setlist-part', text: song ? (part ? `${PARTS[part] || part}${name ? ` · ${name}` : ''}` : '파트 선택') : '무대 전용'})
-    ], () => startSetlistPractice(stage, i), 'setlist-item', null, {'aria-label': `${i + 1}번째 곡 ${song?.title || item.title || id} 연습`});
+    ], () => startSetlistPractice(stage, i), 'setlist-item', null, {'aria-label': `${i + 1}번째 곡 ${displayTitle} 연습`});
     // 곡별 첫 음 전체 화음 (공연 직전 빠르게 음 잡기)
     // 첫 음 순서(악보 등장 순서 → 기본 2·4·1·3번)대로 아르페지오 후 마지막에 2초 화음
-    const seqItems = song ? orderedPitchItems(song, itemSemi) : [];
+    const seqItems = upcomingPitchItems(meta, itemSemi);
     const chordBtn = seqItems.length ? button([icon('music'), el('span', {text: '화음'})], () => {
       const wasMine = chordBtn.classList.contains('playing');
       document.querySelectorAll('.setlist-chord-btn.playing').forEach(n => n.classList.remove('playing'));
@@ -878,32 +982,37 @@ function renderUpcomingStageCard() {
         gapDuration: 120,
         chordDuration: 2000,
         onStep: (step) => {
-          if (step.type === 'note') toast(`🎵 ${song.title} · ${step.index + 1}/${step.total} ${step.label} ${step.parsed.displayNote}`);
-          else if (step.type === 'chord') toast(`✨ ${song.title} 화음 (${step.notes.map(n => parseNoteString(n)?.displayNote || n).join(' · ')})`);
+          if (step.type === 'note') toast(`🎵 ${displayTitle} · ${step.index + 1}/${step.total} ${step.label} ${step.parsed.displayNote}`);
+          else if (step.type === 'chord') toast(`✨ ${displayTitle} 화음 (${step.notes.map(n => parseNoteString(n)?.displayNote || n).join(' · ')})`);
           else if (step.type === 'finish') chordBtn.classList.remove('playing');
         }
       });
-    }, 'setlist-chord-btn', null, {'aria-label': `${song.title} 첫 음 순서대로 듣고 화음`, title: '첫 음 순서대로 + 화음'}) : null;
-    const rawPipe = song?.pitchPipe ? transposeNoteString(song.pitchPipe, itemSemi) : '';
+    }, 'setlist-chord-btn', null, {'aria-label': `${displayTitle} 첫 음 순서대로 듣고 화음`, title: '첫 음 순서대로 + 화음'}) : null;
+    const rawPipe = meta?.pitchPipe ? transposeNoteString(meta.pitchPipe, itemSemi) : '';
     const pp = pitchPipeInfo(rawPipe);
     const ppBtn = pp ? button([el('span', {class: 'pp-label', text: '피치파이프'}), el('strong', {text: pp.display}), el('span', {class: 'pp-kor', text: pp.korean})], () => {
-      if (playPitchPipe(pp.note)) toast(`🎵 ${song.title} 피치파이프 대표음 ${pp.display} (${pp.korean})`);
-    }, 'pitchpipe-badge', null, {'aria-label': `${song.title} 피치파이프 대표음 ${pp.display} ${pp.korean} 듣기`, title: '무대에서 피치파이프로 불어 줄 대표음'}) : null;
+      if (playPitchPipe(pp.note)) toast(`🎵 ${displayTitle} 피치파이프 대표음 ${pp.display} (${pp.korean})`);
+    }, 'pitchpipe-badge', null, {'aria-label': `${displayTitle} 피치파이프 대표음 ${pp.display} ${pp.korean} 듣기`, title: '무대에서 피치파이프로 불어 줄 대표음'}) : null;
     return el('div', {class: 'setlist-row'}, practiceBtn, ppBtn, chordBtn);
   });
-  return el('section', {class: 'upcoming-stage', 'aria-label': '다가오는 공연 연습'},
+  const metaText = [stage.date, stage.venue, `${stage.songs.length}곡`, estLabel].filter(Boolean).join(' · ');
+  const badgeText = dday !== null ? (dday === 0 ? 'D-DAY' : `D-${dday}`) : 'LIVE 큐시트';
+  return el('section', {class: 'upcoming-stage', 'aria-label': isUpcoming ? '다가오는 공연 연습' : '현재 활성 무대 큐시트'},
     el('div', {class: 'upcoming-stage-head'},
       el('div', {},
-        el('p', {class: 'eyebrow', text: 'NEXT STAGE'}),
+        el('p', {class: 'eyebrow', text: isUpcoming ? 'NEXT STAGE' : 'ACTIVE CUE SHEET'}),
         el('h2', {text: stage.eventTitle}),
-        el('p', {class: 'upcoming-stage-meta', text: `${stage.date}${stage.venue ? ` · ${stage.venue}` : ''} · ${stage.songs.length}곡${estTotalSec > 0 ? ` · 약 ${Math.max(1, Math.round(estTotalSec / 60))}분` : ''}`})
+        el('p', {class: 'upcoming-stage-meta', text: metaText})
       ),
-      el('span', {class: 'dday-badge', text: dday === 0 ? 'D-DAY' : `D-${dday}`})
+      el('span', {class: 'dday-badge', text: badgeText})
     ),
     el('div', {class: 'setlist-grid'}, items),
     el('div', {class: 'upcoming-stage-actions'},
       button('셋리스트 순서대로 연습 시작', () => startSetlistPractice(stage, 0), 'button primary small', 'play'),
-      button('무대 큐시트 보기', () => navigate({tab: 'stage', view: 'live'}), 'button secondary small', 'stage')
+      button('무대 큐시트 보기', () => {
+        saveActiveStageSession(stage);
+        navigate({tab: 'stage', view: 'live'});
+      }, 'button secondary small', 'stage')
     )
   );
 }
@@ -978,11 +1087,34 @@ function renderHome() {
     app.append(section('지금 연습 중', `${practicing.length}곡의 하모니를 완성해 가고 있어요`, hero, practiceHeaderActions));
     if (practicing.length > 1) app.append(songGrid(practicing.slice(1, 5)));
   }
-  const mine = (state.myName || state.myPart) ? state.songs.filter(song => availableParts(song).includes(songMyPart(song))) : [];
-  const myPanel = el('div', {class: 'quick-panel sage'}, el('div', {class: 'quick-panel-title'}, icon('mic'), el('h3', {text: state.myPart ? `내 파트 · ${PARTS[state.myPart]}` : '내 목소리를 찾아보세요'})),
-    el('p', {text: state.myPart ? `${PARTS[state.myPart]} 영상이 등록된 ${mine.length}곡을 바로 연습할 수 있어요.` : '기본 파트를 선택하면 내 연습 영상이 먼저 보여요.'}),
-    button(state.myPart ? '내 파트 곡 보기' : '내 파트 설정하기', () => { if (!state.myPart) navigate({tab: 'settings'}); else { state.filters = {query: '', status: '', category: '', difficulty: '', part: state.myPart, mastery: ''}; navigate({tab: 'songs'}); } }, 'button secondary', 'arrow')
+  const hasMyIdentity = Boolean(state.myName || state.myPart);
+  const mine = hasMyIdentity ? state.songs.filter(song => availableParts(song).includes(songMyPart(song))) : [];
+  const myTitleText = state.myName
+    ? `${state.myName}님의 맞춤 파트${state.myPart ? ` · 기본 ${PARTS[state.myPart]}` : ''}`
+    : state.myPart
+      ? `내 파트 · ${PARTS[state.myPart]}`
+      : '내 목소리를 찾아보세요';
+  const myDescText = state.myName
+    ? `${state.myName}님 담당 파트 영상이 등록된 ${mine.length}곡을 바로 연습할 수 있어요.`
+    : state.myPart
+      ? `${PARTS[state.myPart]} 영상이 등록된 ${mine.length}곡을 바로 연습할 수 있어요.`
+      : '단원 이름(나는 누구?)이나 기본 파트를 설정하면 내 연습 영상이 먼저 보여요.';
+  const myPanel = el('div', {class: 'quick-panel sage'},
+    el('div', {class: 'quick-panel-title'}, icon('mic'), el('h3', {text: myTitleText})),
+    el('p', {text: myDescText}),
+    button(hasMyIdentity ? '내 파트 곡 보기' : '내 파트 설정하기', () => {
+      if (!hasMyIdentity) {
+        navigate({tab: 'settings'});
+      } else if (state.myName) {
+        state.filters = {query: state.myName, status: '', category: '', difficulty: '', part: '', mastery: ''};
+        navigate({tab: 'songs'});
+      } else {
+        state.filters = {query: '', status: '', category: '', difficulty: '', part: state.myPart, mastery: ''};
+        navigate({tab: 'songs'});
+      }
+    }, 'button secondary', 'arrow')
   );
+  app.append(section('내 파트 맞춤 연습', hasMyIdentity ? '곡마다 내가 맡은 파트로 바로 들어가세요' : '이름이나 기본 파트를 한 번만 설정해 두면 편해요', myPanel));
   const recentHeaderActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
     validRecent().length ? button('최근 연습 비우기', confirmClearRecent, 'text-button danger-text', 'close', {title: '최근 연습한 곡 목록을 모두 비웁니다'}) : null,
     button('모두 보기', () => navigate({tab: 'recent'}), 'text-button', 'arrow')
@@ -997,7 +1129,7 @@ function renderHome() {
     } else randomPanel.append(el('p', {text: '익숙한 곡도, 새로운 곡도. 가볍게 한 곡 골라보세요.'}));
     randomPanel.append(button(state.random ? '다른 곡 뽑기' : '랜덤 곡 선택', () => {
       const candidates = state.songs.filter(song => songMyPart(song) ? availableParts(song).includes(songMyPart(song)) : availableParts(song).length);
-      if (!candidates.length) { toast(state.myPart ? '내 파트 영상이 등록된 곡이 없습니다.' : '아직 등록된 연습 영상이 없습니다.'); return; }
+      if (!candidates.length) { toast(hasMyIdentity ? '내 파트 영상이 등록된 곡이 없습니다.' : '아직 등록된 연습 영상이 없습니다.'); return; }
       state.random = candidates[Math.floor(Math.random() * candidates.length)]; updateRandom();
     }, 'button secondary', 'shuffle'));
   }
@@ -1425,7 +1557,7 @@ function renderStage() {
       songs: state.songs,
       scores: state.scores,
       navigate,
-      onOpenScore: (sc) => openOrDownloadScore(sc, false),
+      onOpenScore: (sc, opts) => openOrDownloadScore(sc, false, opts),
       onSwitchView: (v) => {
         switchStageSubView(v);
       }
@@ -1998,28 +2130,41 @@ function renderAudioPlayer(audioData, title = '현장 녹음본') {
   };
 }
 
-function renderFeedbackSection(reh, playerInstance, audioCtrl) {
+function renderFeedbackSection(reh, playerInstance, audioCtrl, song = null) {
   const section = el('div', {class: 'feedback-section'});
   const title = el('div', {class: 'feedback-section-title'}, icon('chat'), el('span', {text: '팀원 피드백 (누구나 작성 가능)'}));
 
-  const lastAuthor = read('last_feedback_author', '');
-  const authorInput = el('input', {class: 'feedback-input-sm', placeholder: '이름/닉네임 (예: 지은)', value: lastAuthor});
+  const defaultAuthor = state.myName || read('last_feedback_author', '');
+  const authorInput = el('input', {class: 'feedback-input-sm', placeholder: '이름/닉네임 (예: 지은)', value: defaultAuthor});
+
+  const feedbackPartOptions = [
+    ['all', '전체 공통'],
+    ['lead', '리드 (LEAD)'],
+    ['soprano', '소프라노 (SOP)'],
+    ['alto', '알토 (ALTO)'],
+    ['tenor', '테너 (TENOR)'],
+    ['baritone', '바리톤 (BARI)'],
+    ['bass', '베이스 (BASS)'],
+    ['vp', 'VP (보컬퍼커션)'],
+    ['part1', '1번 파트'],
+    ['part2', '2번 파트'],
+    ['part3', '3번 파트'],
+    ['part4', '4번 파트'],
+    ['part5', '5번 파트'],
+    ['part6', '6번 파트'],
+    ['part7', '7번 파트']
+  ];
+  const validPartKeys = new Set(feedbackPartOptions.map(([k]) => k));
+  const autoPart = (song && songMyPart(song)) || state.myPart || 'all';
+  const defaultPart = validPartKeys.has(autoPart) ? autoPart : 'all';
   const partSelect = el('select', {class: 'feedback-input-sm'},
-    el('option', {value: 'all', text: '전체 공통'}),
-    el('option', {value: 'soprano', text: '소프라노'}),
-    el('option', {value: 'alto', text: '알토'}),
-    el('option', {value: 'tenor', text: '테너'}),
-    el('option', {value: 'baritone', text: '바리톤'}),
-    el('option', {value: 'bass', text: '베이스'}),
-    el('option', {value: 'vp', text: 'VP'}),
-    el('option', {value: 'part1', text: '1번 파트'}),
-    el('option', {value: 'part2', text: '2번 파트'}),
-    el('option', {value: 'part3', text: '3번 파트'}),
-    el('option', {value: 'part4', text: '4번 파트'}),
-    el('option', {value: 'part5', text: '5번 파트'})
+    ...feedbackPartOptions.map(([val, label]) => el('option', {value: val, text: label}))
   );
+  partSelect.value = defaultPart;
 
   let selectedTime = 0;
+  let activePartFilter = 'all';
+
   const timeBtn = button('⏱️ 재생시간 가져오기', () => {
     let cur = 0;
     const targetPlayer = audioCtrl || playerInstance;
@@ -2051,6 +2196,9 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
     textArea.value = '';
     selectedTime = 0;
     timeBtn.textContent = '⏱️ 재생시간 가져오기';
+    if (activePartFilter !== 'all' && activePartFilter !== partSelect.value) {
+      activePartFilter = 'all';
+    }
     toast('피드백을 이 기기에 저장했어요. 다른 단원에게 보여주려면 설정 → 백업 내보내기 파일을 공유해 주세요.');
     updateFeed();
   }, 'button primary small');
@@ -2064,13 +2212,60 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
     )
   );
 
+  const partLabelFor = (partKey) => {
+    if (!partKey || partKey === 'all') return '전체';
+    return PARTS[partKey] || partKey;
+  };
+
+  const partFilterBar = el('div', {class: 'chip-group', style: 'margin-bottom: 10px;', hidden: true});
   const feedHost = el('div', {class: 'feedback-feed'});
   function updateFeed() {
-    const feedbacks = getAllFeedbacks(reh.id);
-    if (!feedbacks.length) {
+    const allFeedbacks = getAllFeedbacks(reh.id);
+    if (!allFeedbacks.length) {
+      partFilterBar.hidden = true;
+      partFilterBar.replaceChildren();
       feedHost.replaceChildren(el('p', {style: 'color: var(--muted); font-size: 12px; text-align: center; padding: 12px;', text: '아직 등록된 피드백이 없습니다. 첫 의견을 남겨보세요!'}));
       return;
     }
+
+    const partCounts = new Map();
+    for (const fb of allFeedbacks) {
+      const pk = fb.part || 'all';
+      partCounts.set(pk, (partCounts.get(pk) || 0) + 1);
+    }
+    if (activePartFilter !== 'all' && !partCounts.has(activePartFilter)) {
+      activePartFilter = 'all';
+    }
+
+    const specificParts = [...partCounts.keys()].filter(k => k !== 'all');
+    if (specificParts.length > 0) {
+      partFilterBar.hidden = false;
+      const chipEntries = [
+        ['all', `전체 (${allFeedbacks.length})`],
+        ...[...partCounts.entries()].map(([pk, cnt]) => [pk, `${partLabelFor(pk)} (${cnt})`])
+      ];
+      const deduped = [];
+      const seen = new Set();
+      for (const entry of chipEntries) {
+        if (seen.has(entry[0])) continue;
+        seen.add(entry[0]);
+        deduped.push(entry);
+      }
+      partFilterBar.replaceChildren(...deduped.map(([pk, label]) => button(label, () => {
+        activePartFilter = pk;
+        updateFeed();
+      }, `chip${activePartFilter === pk ? ' active' : ''}`)));
+    } else {
+      partFilterBar.hidden = true;
+      partFilterBar.replaceChildren();
+    }
+
+    const feedbacks = activePartFilter === 'all'
+      ? allFeedbacks
+      : allFeedbacks.filter(fb => (fb.part || 'all') === activePartFilter);
+
+    const likedSet = new Set(array(read('liked_feedbacks', [])));
+
     feedHost.replaceChildren(...feedbacks.map(fb => {
       const m = String(Math.floor((fb.time || 0) / 60)).padStart(2, '0');
       const s = String((fb.time || 0) % 60).padStart(2, '0');
@@ -2116,21 +2311,34 @@ function renderFeedbackSection(reh, playerInstance, audioCtrl) {
 
       const timeGroup = hasTime ? el('div', {class: 'feedback-time-group'}, timeNode, loopChip) : null;
 
+      const isLiked = likedSet.has(fb.id);
+      const likeBtn = el('button', {
+        type: 'button',
+        class: `feedback-like-btn${isLiked ? ' liked' : ''}`,
+        'aria-pressed': String(isLiked),
+        title: isLiked ? '공감 취소' : '이 피드백에 공감하기',
+        onclick: () => {
+          toggleFeedbackLike(fb.id);
+          updateFeed();
+        }
+      }, `${isLiked ? '❤️' : '🤍'} 공감 ${fb.likes || 0}`);
+
       return el('div', {class: 'feedback-bubble'},
         el('div', {class: 'feedback-bubble-top'},
-          el('span', {class: 'feedback-author'}, `${fb.author} (${fb.part === 'all' ? '전체' : (PARTS[fb.part] || fb.part)})`),
+          el('span', {class: 'feedback-author'}, `${fb.author} (${partLabelFor(fb.part)})`),
           timeGroup
         ),
         el('p', {class: 'feedback-text', text: fb.content}),
         el('div', {class: 'feedback-bottom-row'},
-          el('span', {text: fb.createdAt ? new Date(fb.createdAt).toLocaleDateString('ko-KR', {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : ''})
+          el('span', {text: fb.createdAt ? new Date(fb.createdAt).toLocaleDateString('ko-KR', {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : ''}),
+          likeBtn
         )
       );
     }));
   }
 
   updateFeed();
-  section.append(title, formBox, feedHost);
+  section.append(title, formBox, partFilterBar, feedHost);
   return section;
 }
 
@@ -2512,102 +2720,209 @@ function renderRehearsal() {
     return;
   }
 
-  const list = el('div', {class: 'rehearsal-grid'}, state.rehearsals.map(reh => {
-    const song = state.songs.find(s => s.id === reh.songId);
-    let activePlayerInstance = null;
-    let audioCtrl = null;
+  const findRehearsalSong = (songId) => {
+    if (!songId) return null;
+    const exact = state.songs.find(s => s.id === songId);
+    if (exact) return exact;
+    const baseId = String(songId).replace(/-[0-9]+$/, '');
+    return state.songs.find(s => String(s.id).replace(/-[0-9]+$/, '') === baseId) || null;
+  };
 
-    const mediaBox = el('div', {class: 'rehearsal-media-box'});
-    const hasAudio = Boolean(reh.audio?.url && reh.audio.url.trim());
-    const hasLocalVideo = Boolean(reh.video?.type === 'local-video' && reh.video?.url);
+  const searchInput = el('input', {
+    type: 'search',
+    class: 'search-input',
+    placeholder: '연습 일지 제목, 곡명, 메모, 피드백 작성자·내용 검색...',
+    value: state.rehearsalFilters.query || '',
+    oninput: (e) => {
+      state.rehearsalFilters.query = e.target.value;
+      updateRehearsalList();
+    }
+  });
 
-    if (hasAudio) {
-      audioCtrl = renderAudioPlayer(reh.audio, reh.title);
-      activePlayerInstance = audioCtrl;
-      activePlayers.push(audioCtrl);
-      mediaBox.append(audioCtrl.element);
-      mediaBox.append(
-        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
-          button('📁 녹음본 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
-        )
-      );
-    } else if (hasLocalVideo) {
-      const videoEl = el('video', {
-        controls: true,
-        src: reh.video.url,
-        style: 'width: 100%; border-radius: 12px; max-height: 480px; background: #000; margin-bottom: 12px;'
+  const songSelect = el('select', {
+    class: 'search-select',
+    style: 'padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 12.5px;',
+    onchange: (e) => {
+      state.rehearsalFilters.songId = e.target.value;
+      updateRehearsalList();
+    }
+  }, [
+    el('option', { value: '', text: '전체 곡' }),
+    ...state.songs.map(s => el('option', { value: s.id, text: s.title }))
+  ]);
+  songSelect.value = state.rehearsalFilters.songId || '';
+
+  const countBadge = el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'});
+  const resetFilters = () => {
+    state.rehearsalFilters = { query: '', songId: '' };
+    searchInput.value = '';
+    songSelect.value = '';
+    updateRehearsalList();
+  };
+  const resetBtn = button('필터 초기화', resetFilters, 'button ghost small', 'refresh');
+
+  const filterRow = el('div', {style: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;'},
+    el('div', {style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap;'},
+      el('span', {style: 'font-size: 12px; color: var(--muted); font-weight: 600;'}, '곡 필터:'),
+      songSelect,
+      resetBtn
+    ),
+    countBadge
+  );
+
+  const filterPanel = el('div', {class: 'search-box', style: 'margin-bottom: 20px;'},
+    el('div', {class: 'search-input-wrap'}, icon('search'), searchInput),
+    filterRow
+  );
+
+  const listHost = el('div', {class: 'rehearsal-grid'});
+  const rehearsalPlayers = [];
+
+  function getFilteredRehearsals() {
+    const q = (state.rehearsalFilters.query || '').trim().toLowerCase();
+    const songId = state.rehearsalFilters.songId || '';
+    let items = songId ? getRehearsalsForSong(state.rehearsals, songId) : [...state.rehearsals];
+    if (q) {
+      items = items.filter(reh => {
+        const song = findRehearsalSong(reh.songId);
+        const feedbacks = getAllFeedbacks(reh.id);
+        const haystack = [
+          reh.title,
+          reh.date,
+          reh.notes,
+          song?.title,
+          song?.artist,
+          ...feedbacks.flatMap(fb => [fb.author, fb.content, PARTS[fb.part] || fb.part])
+        ].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(q);
       });
-      activePlayerInstance = {
-        element: videoEl,
-        play: () => videoEl.play().catch(() => {}),
-        pause: () => videoEl.pause(),
-        seekTo: (sec) => {
-          try {
-            videoEl.currentTime = sec;
-          } catch (e) {
-            videoEl.addEventListener('loadedmetadata', () => { videoEl.currentTime = sec; }, { once: true });
-          }
-        },
-        getCurrentTime: () => videoEl.currentTime || 0,
-        destroy: () => { videoEl.pause(); videoEl.src = ''; }
-      };
-      activePlayers.push(activePlayerInstance);
-      mediaBox.append(videoEl);
-      mediaBox.append(
-        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
-          button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
-        )
+    }
+    return items;
+  }
+
+  function updateRehearsalList() {
+    for (const p of rehearsalPlayers) {
+      try { p.destroy?.(); } catch {}
+      const idx = activePlayers.indexOf(p);
+      if (idx >= 0) activePlayers.splice(idx, 1);
+    }
+    rehearsalPlayers.length = 0;
+
+    const filtered = getFilteredRehearsals();
+    const hasFilter = Boolean((state.rehearsalFilters.query || '').trim() || state.rehearsalFilters.songId);
+    resetBtn.hidden = !hasFilter;
+    countBadge.textContent = hasFilter
+      ? `검색 결과 ${filtered.length} / 전체 ${state.rehearsals.length}건`
+      : `총 ${state.rehearsals.length}건`;
+
+    if (!filtered.length) {
+      listHost.replaceChildren(
+        emptyState('조건에 맞는 연습 일지가 없어요', '검색어나 선택한 곡 필터를 초기화해 보세요.', button('필터 초기화', resetFilters, 'button secondary small'))
       );
-    } else if (reh.video?.url) {
-      const ytPlayer = createPlayer(mediaBox, reh.video, reh.title);
-      activePlayerInstance = ytPlayer;
-      activePlayers.push(ytPlayer);
-      mediaBox.append(
-        el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
-          button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
-        )
-      );
-    } else {
-      mediaBox.append(
-        el('div', {style: 'padding: 24px 16px; border: 2px dashed var(--border); border-radius: 12px; text-align: center; background: var(--surface-soft); margin-bottom: 16px;'},
-          el('div', {style: 'font-size: 28px; margin-bottom: 6px;'}, '🎙️'),
-          el('h3', {style: 'font-size: 15px; font-weight: 700; margin-bottom: 4px;'}, '연습 녹음본을 올려보세요'),
-          el('p', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 14px;'}, '컴퓨터의 녹음 파일(.mp3, .m4a, .wav 등)을 올리면 바로 메인 음원으로 재생되며 아래 구간별 피드백과 싱크를 맞출 수 있습니다.'),
-          button('🎙️ 내 컴퓨터에서 녹음본 파일 올리기', () => openAttachMediaModal(reh), 'button primary small', 'music')
-        )
-      );
+      return;
     }
 
-    const feedbackSection = renderFeedbackSection(reh, audioCtrl || activePlayerInstance, audioCtrl);
+    listHost.replaceChildren(...filtered.map(reh => {
+      const song = findRehearsalSong(reh.songId);
+      let activePlayerInstance = null;
+      let audioCtrl = null;
 
-    const topActions = el('div', {style: 'display: flex; gap: 8px; align-items: center; flex-wrap: wrap;'},
-      song ? button('파트 연습실 이동 ↗', () => openSong(song), 'button primary small', 'play') : null,
-      reh.isCustom ? button('삭제', async () => {
-        if (confirm(`'${reh.title}' 연습 일지를 삭제할까요?`)) {
-          await deleteCustomRehearsal(reh.id);
-          state.rehearsals = await loadRehearsals(true);
-          render();
-          toast('연습 일지를 삭제했습니다.');
-        }
-      }, 'button secondary small danger') : null
-    );
+      const mediaBox = el('div', {class: 'rehearsal-media-box'});
+      const hasAudio = Boolean(reh.audio?.url && reh.audio.url.trim());
+      const hasLocalVideo = Boolean(reh.video?.type === 'local-video' && reh.video?.url);
 
-    return el('article', {class: 'rehearsal-card'},
-      el('div', {class: 'rehearsal-top'},
-        el('div', {},
-          el('span', {class: 'rehearsal-song-tag'}, icon('music'), el('span', {text: song?.title || '전체 합주'})),
-          el('h2', {style: 'margin-top: 6px; font-size: 20px;', text: reh.title}),
-          el('p', {class: 'stage-meta', text: `📅 ${reh.date}`})
+      if (hasAudio) {
+        audioCtrl = renderAudioPlayer(reh.audio, reh.title);
+        activePlayerInstance = audioCtrl;
+        activePlayers.push(audioCtrl);
+        rehearsalPlayers.push(audioCtrl);
+        mediaBox.append(audioCtrl.element);
+        mediaBox.append(
+          el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+            button('📁 녹음본 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+          )
+        );
+      } else if (hasLocalVideo) {
+        const videoEl = el('video', {
+          controls: true,
+          src: reh.video.url,
+          style: 'width: 100%; border-radius: 12px; max-height: 480px; background: #000; margin-bottom: 12px;'
+        });
+        activePlayerInstance = {
+          element: videoEl,
+          play: () => videoEl.play().catch(() => {}),
+          pause: () => videoEl.pause(),
+          seekTo: (sec) => {
+            try {
+              videoEl.currentTime = sec;
+            } catch (e) {
+              videoEl.addEventListener('loadedmetadata', () => { videoEl.currentTime = sec; }, { once: true });
+            }
+          },
+          getCurrentTime: () => videoEl.currentTime || 0,
+          destroy: () => { videoEl.pause(); videoEl.src = ''; }
+        };
+        activePlayers.push(activePlayerInstance);
+        rehearsalPlayers.push(activePlayerInstance);
+        mediaBox.append(videoEl);
+        mediaBox.append(
+          el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+            button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+          )
+        );
+      } else if (reh.video?.url) {
+        const ytPlayer = createPlayer(mediaBox, reh.video, reh.title);
+        activePlayerInstance = ytPlayer;
+        activePlayers.push(ytPlayer);
+        rehearsalPlayers.push(ytPlayer);
+        mediaBox.append(
+          el('div', {style: 'display: flex; justify-content: flex-end; margin-top: 8px; margin-bottom: 12px;'},
+            button('📁 녹음본/영상 교체', () => openAttachMediaModal(reh), 'button ghost small', 'upload')
+          )
+        );
+      } else {
+        mediaBox.append(
+          el('div', {style: 'padding: 24px 16px; border: 2px dashed var(--border); border-radius: 12px; text-align: center; background: var(--surface-soft); margin-bottom: 16px;'},
+            el('div', {style: 'font-size: 28px; margin-bottom: 6px;'}, '🎙️'),
+            el('h3', {style: 'font-size: 15px; font-weight: 700; margin-bottom: 4px;'}, '연습 녹음본을 올려보세요'),
+            el('p', {style: 'font-size: 12px; color: var(--muted); margin-bottom: 14px;'}, '컴퓨터의 녹음 파일(.mp3, .m4a, .wav 등)을 올리면 바로 메인 음원으로 재생되며 아래 구간별 피드백과 싱크를 맞출 수 있습니다.'),
+            button('🎙️ 내 컴퓨터에서 녹음본 파일 올리기', () => openAttachMediaModal(reh), 'button primary small', 'music')
+          )
+        );
+      }
+
+      const feedbackSection = renderFeedbackSection(reh, audioCtrl || activePlayerInstance, audioCtrl, song);
+
+      const topActions = el('div', {style: 'display: flex; gap: 8px; align-items: center; flex-wrap: wrap;'},
+        song ? button('파트 연습실 이동 ↗', () => openSong(song), 'button primary small', 'play') : null,
+        reh.isCustom ? button('삭제', async () => {
+          if (confirm(`'${reh.title}' 연습 일지를 삭제할까요?`)) {
+            await deleteCustomRehearsal(reh.id);
+            state.rehearsals = await loadRehearsals(true);
+            render();
+            toast('연습 일지를 삭제했습니다.');
+          }
+        }, 'button secondary small danger') : null
+      );
+
+      return el('article', {class: 'rehearsal-card'},
+        el('div', {class: 'rehearsal-top'},
+          el('div', {},
+            el('span', {class: 'rehearsal-song-tag'}, icon('music'), el('span', {text: song?.title || '전체 합주'})),
+            el('h2', {style: 'margin-top: 6px; font-size: 20px;', text: reh.title}),
+            el('p', {class: 'stage-meta', text: `📅 ${reh.date}`})
+          ),
+          topActions
         ),
-        topActions
-      ),
-      reh.notes && el('div', {class: 'rehearsal-notes', text: reh.notes}),
-      mediaBox,
-      feedbackSection
-    );
-  }));
+        reh.notes && el('div', {class: 'rehearsal-notes', text: reh.notes}),
+        mediaBox,
+        feedbackSection
+      );
+    }));
+  }
 
-  app.append(list);
+  app.append(filterPanel, listHost);
+  updateRehearsalList();
 }
 
 /* -------------------------------------------------------------
@@ -3845,7 +4160,7 @@ function getScoreFormatLabel(sc) {
   return '클라우드 악보';
 }
 
-async function openScorePreviewModal(score) {
+async function openScorePreviewModal(score, options = {}) {
   const existing = document.getElementById('score-preview-dialog');
   if (existing) existing.remove();
 
@@ -3853,6 +4168,10 @@ async function openScorePreviewModal(score) {
   const linkedSong = state.songs.find(s => s.id === score.songId || String(s.id).replace(/-[0-9]+$/, '') === score.songId);
   const siblingScores = score.songId ? getScoresForSong(state.scores, score.songId) : [];
   const fmtKey = getScoreFormatKey(score);
+  const hasExplicitTranspose = options && options.transpose !== undefined && options.transpose !== null && Number.isFinite(Number(options.transpose));
+  const initialSemi = hasExplicitTranspose
+    ? Math.max(-6, Math.min(6, Math.round(Number(options.transpose))))
+    : (linkedSong ? getSongTranspose(linkedSong.id) : 0);
   let multiPlayer = null;
 
   const cleanupPreviewAudio = () => {
@@ -3902,7 +4221,7 @@ async function openScorePreviewModal(score) {
             if (sib.id === score.id) return;
             cleanupPreviewAudio();
             dialog.close();
-            openOrDownloadScore(sib, false);
+            openOrDownloadScore(sib, false, options);
           },
           `chip${sib.id === score.id ? ' active' : ''}`
         ))
@@ -3924,7 +4243,7 @@ async function openScorePreviewModal(score) {
 
   // PDF In-App Viewer Mode
   if (fmtKey === 'pdf') {
-    const songSemi = linkedSong ? getSongTranspose(linkedSong.id) : 0;
+    const songSemi = initialSemi;
     const songPitches = linkedSong?.startingPitches
       ? Object.entries(linkedSong.startingPitches)
           .filter(([k, v]) => k !== 'key' && typeof v === 'string' && parseNoteString(v))
@@ -3984,7 +4303,7 @@ async function openScorePreviewModal(score) {
       : await parseNwcScoreDetail(buf, score.title);
 
     const validStaves = detail.staves.filter(st => st.firstNote || st.lyrics || st.name);
-    let scoreSemi = linkedSong ? getSongTranspose(linkedSong.id) : 0;
+    let scoreSemi = initialSemi;
     const getTransposedFirstNotes = () => validStaves.map(st => st.firstNote ? transposeNoteString(st.firstNote, scoreSemi) : null).filter(Boolean);
     const effectiveTempo = detail.tempo || linkedSong?.bpm || null;
     const hasMultiTrackNotes = validStaves.some(st => Array.isArray(st.timedNotes) && st.timedNotes.length > 0);
@@ -4351,7 +4670,7 @@ async function openScorePreviewModal(score) {
   }
 }
 
-function openOrDownloadScore(score, isDownload = false) {
+function openOrDownloadScore(score, isDownload = false, options = {}) {
   const fileUrl = score.blobUrl || score.fileUrl || score.driveUrl;
   if (!fileUrl) {
     toast('첨부된 악보 파일이 없습니다. 새 악보를 등록해 주세요.');
@@ -4363,7 +4682,7 @@ function openOrDownloadScore(score, isDownload = false) {
   const isInAppPreviewable = Boolean(!score.driveUrl && ['nwc', 'midi', 'mscz', 'pdf'].includes(fmtKey));
 
   if (!isDownload && isInAppPreviewable) {
-    openScorePreviewModal(score);
+    openScorePreviewModal(score, options);
     return;
   }
 
@@ -6437,12 +6756,12 @@ function renderStartingPitchPanel(song, currentPart = null) {
   }
 
   const semi = getSongTranspose(song.id);
+  const { voiceToPart, partToVoice, voiceHint } = getSongVoicePartMapping(song);
+  const effectiveCurrentPart = (currentPart && currentPart !== 'full') ? currentPart : (songMyPart(song) || null);
   const partItems = [];
   partKeys.forEach(p => {
     let rawNote = song.startingPitches[p];
     if (!rawNote) {
-      const voiceToPart = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
-      const partToVoice = { part1: 'soprano', part2: 'alto', part3: 'tenor', part4: 'baritone', part5: 'bass' };
       if (voiceToPart[p]) rawNote = song.startingPitches[voiceToPart[p]];
       else if (partToVoice[p]) rawNote = song.startingPitches[partToVoice[p]];
     }
@@ -6452,7 +6771,6 @@ function renderStartingPitchPanel(song, currentPart = null) {
       const parsed = parseNoteString(noteStr);
       if (parsed) {
         let label = PARTS[p] || p.toUpperCase();
-        const voiceHint = { part1: 'SOP', part2: 'ALTO', part3: 'TENOR', part4: 'BARI', part5: 'BASS' };
         if (voiceHint[p] && label === PARTS[p]) {
           label = `${label} (${voiceHint[p]})`;
         }
@@ -6520,6 +6838,8 @@ function renderStartingPitchPanel(song, currentPart = null) {
   );
 
   const displayedKey = song.musicalKey ? transposeMusicalKey(song.musicalKey, semi) : '';
+  const vpSinger = song.partNames?.vp;
+  const isMyVp = Boolean(vpSinger && (currentPart === 'vp' || songMyPart(song) === 'vp'));
   const metaWrap = el('div', {class: 'starting-pitch-meta'},
     displayedKey ? el('span', {class: 'pitch-key-badge', text: `${semi ? '조바꿈 조성' : '원곡/편곡 조성'}: ${displayedKey}${semi ? ` (${formatTransposeBadgeText(semi)})` : ''}`}) : null,
     transposeGroup,
@@ -6528,7 +6848,12 @@ function renderStartingPitchPanel(song, currentPart = null) {
       class: 'pitch-key-badge pitch-bpm-badge',
       title: '클릭하면 이 곡의 템포로 메트로놈을 엽니다',
       onclick: () => openPitchPipe(song.bpm)
-    }, `⏱️ 템포: ♩=${song.bpm}`) : null
+    }, `⏱️ 템포: ♩=${song.bpm}`) : null,
+    vpSinger ? el('span', {
+      class: 'pitch-key-badge',
+      title: '보컬퍼커션(VP) 담당 단원',
+      text: `🥁 VP: ${vpSinger}${isMyVp ? ' (내 파트)' : ''}`
+    }) : null
   );
 
   const header = el('div', {class: 'starting-pitch-header'}, titleWrap, metaWrap);
@@ -6663,21 +6988,12 @@ function renderStartingPitchPanel(song, currentPart = null) {
   }
 
   partItems.forEach(({ partKey, label, noteStr, parsed }) => {
-    const voiceToPartKey = { soprano: 'part1', alto: 'part2', tenor: 'part3', baritone: 'part4', bass: 'part5' };
-    const singer = song.partNames?.[partKey] || song.partNames?.[voiceToPartKey[partKey]] || '';
-    const isCur = currentPart && (
-      currentPart === partKey ||
-      (currentPart === 'soprano' && partKey === 'part1') ||
-      (currentPart === 'part1' && partKey === 'soprano') ||
-      (currentPart === 'alto' && partKey === 'part2') ||
-      (currentPart === 'part2' && partKey === 'alto') ||
-      (currentPart === 'tenor' && partKey === 'part3') ||
-      (currentPart === 'part3' && partKey === 'tenor') ||
-      (currentPart === 'baritone' && partKey === 'part4') ||
-      (currentPart === 'part4' && partKey === 'baritone') ||
-      (currentPart === 'bass' && partKey === 'part5') ||
-      (currentPart === 'part5' && partKey === 'bass')
-    );
+    const singer = song.partNames?.[partKey] || song.partNames?.[voiceToPart[partKey]] || song.partNames?.[partToVoice[partKey]] || '';
+    const isCur = Boolean(effectiveCurrentPart && (
+      effectiveCurrentPart === partKey ||
+      voiceToPart[effectiveCurrentPart] === partKey ||
+      partToVoice[effectiveCurrentPart] === partKey
+    ));
 
     const chip = el('button', {
       type: 'button',
@@ -7060,7 +7376,8 @@ function renderPlayerController(player, song, part) {
   );
 
   // 큰 버튼 모드: 악보를 보며 한 손으로 조작할 수 있게 핵심 버튼 4개를 화면 아래에 고정
-  const hasMyFirst = Boolean(getTransposedPartNote(song, part));
+  const targetPitchPart = (part && part !== 'full') ? part : (songMyPart(song) || part);
+  const hasMyFirst = Boolean(getTransposedPartNote(song, targetPitchPart));
   const bigPlayBtn = button('재생', () => player.togglePlay(), 'big-bar-btn primary', 'play', {'aria-label': '재생 또는 일시정지'});
   const bigLoopBtn = button('구간 반복', () => { loopToggleBtn.click(); bigLoopBtn.classList.toggle('active', Boolean(looper.getState().isLooping)); }, 'big-bar-btn', 'repeat', {'aria-label': '구간 반복 켜기/끄기'});
   const bigBar = el('div', {class: 'big-practice-bar', role: 'toolbar', 'aria-label': '큰 버튼 연습 모드', hidden: true},
@@ -7068,9 +7385,9 @@ function renderPlayerController(player, song, part) {
     bigPlayBtn,
     bigLoopBtn,
     button('첫 음', () => {
-      const curFirst = getTransposedPartNote(song, part);
+      const curFirst = getTransposedPartNote(song, targetPitchPart);
       if (curFirst && playNoteString(curFirst)) {
-        toast(`🎵 ${PARTS[part]} 첫 음 ${parseNoteString(curFirst)?.displayNote || curFirst}`);
+        toast(`🎵 ${PARTS[targetPitchPart] || targetPitchPart} 첫 음 ${parseNoteString(curFirst)?.displayNote || curFirst}`);
       } else {
         toast('등록된 첫 음이 없습니다.');
       }
@@ -7137,7 +7454,10 @@ function renderDetail(song) {
           navigate({tab: 'scores'});
         }, 'button secondary', 'document') : null,
         songPerformances.length ? button(`무대 영상 (${songPerformances.length})`, () => navigate({tab: 'stage'}), 'button secondary', 'stage') : null,
-        songRehearsals.length ? button(`연습 일지 & 피드백 (${songRehearsals.length})`, () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes') : null,
+        songRehearsals.length ? button(`연습 일지 & 피드백 (${songRehearsals.length})`, () => {
+          state.rehearsalFilters = { query: '', songId: song.id };
+          navigate({tab: 'rehearsal'});
+        }, 'button secondary', 'notes') : null,
         songAppreciations.length ? button(`감상 레퍼런스 (${songAppreciations.length})`, () => {
           state.appreciationFilters.query = song.title;
           navigate({tab: 'appreciation'});
@@ -7168,7 +7488,7 @@ function renderDetail(song) {
   button('+ 영상 추가 / 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'text-button', 'external'));
   app.append(partsSection);
   // 파트 선택 바로 아래에 파트별 첫 음
-  app.append(renderStartingPitchPanel(song, myPartHere || preferredPart(song, myPartHere)));
+  app.append(renderStartingPitchPanel(song, myPartHere || null));
 
   if (songScores.length) {
     app.append(section('이 곡의 악보', '총보 및 파트보 악보를 바로 열람하거나 다운로드하세요.',
@@ -7595,9 +7915,10 @@ function renderPractice(song, part, record = true) {
       controller.querySelector('[data-loop-action="toggle"]')?.click();
     } else if (e.key === 'p' || e.key === 'P') {
       e.preventDefault();
-      const firstNote = getTransposedPartNote(song, part);
+      const targetPitchPart = (part && part !== 'full') ? part : (songMyPart(song) || part);
+      const firstNote = getTransposedPartNote(song, targetPitchPart);
       if (firstNote && playNoteString(firstNote)) {
-        toast(`🎵 ${PARTS[part] || part} 첫 음 ${parseNoteString(firstNote)?.displayNote || firstNote}`);
+        toast(`🎵 ${PARTS[targetPitchPart] || targetPitchPart} 첫 음 ${parseNoteString(firstNote)?.displayNote || firstNote}`);
       } else {
         openPitchPipe(song.bpm);
       }
@@ -7690,7 +8011,10 @@ function renderPractice(song, part, record = true) {
     }, 'button secondary', 'document') : null,
     button('영상 수정', () => openAdmin(`./admin.html?song=${encodeURIComponent(song.id)}`), 'button secondary', 'external'),
     songPerformances.length ? button('무대 실황', () => navigate({tab: 'stage'}), 'button secondary', 'stage', {'aria-label': '이 곡의 무대 실황 영상 보기'}) : null,
-    songRehearsals.length ? button('연습 일지 & 피드백', () => navigate({tab: 'rehearsal'}), 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null,
+    songRehearsals.length ? button('연습 일지 & 피드백', () => {
+      state.rehearsalFilters = { query: '', songId: song.id };
+      navigate({tab: 'rehearsal'});
+    }, 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null,
     favoriteButton(song)
   );
   const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => switchPartAtSameTime(parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
@@ -7812,38 +8136,83 @@ function renderSettings() {
         const raw = JSON.parse((await file.text()).replace(/^\uFEFF/, ''));
         if (!raw || typeof raw !== 'object') throw new Error('유효한 백업 JSON 형식이 아닙니다.');
         if (Array.isArray(raw.favorites)) {
-          write('favorites', raw.favorites);
-          state.favorites = new Set(raw.favorites);
+          const cleanFavs = raw.favorites.filter(v => typeof v === 'string');
+          write('favorites', cleanFavs);
+          state.favorites = new Set(cleanFavs);
         }
         if (Array.isArray(raw.recent)) {
           write('recent', raw.recent);
           state.recent = raw.recent;
         }
-        if (raw.progress && typeof raw.progress === 'object') {
+        if (raw.progress && typeof raw.progress === 'object' && !Array.isArray(raw.progress)) {
           write('progress', raw.progress);
           state.progress = raw.progress;
         }
-        if (raw.songTranspositions && typeof raw.songTranspositions === 'object') {
+        if (raw.songTranspositions && typeof raw.songTranspositions === 'object' && !Array.isArray(raw.songTranspositions)) {
           write('song_transpositions', raw.songTranspositions);
           state.songTranspositions = raw.songTranspositions;
         }
         if (typeof raw.myPart === 'string') {
-          write('myPart', raw.myPart);
-          state.myPart = raw.myPart;
+          const validPart = raw.myPart === '' || Object.keys(PARTS).filter(p => p !== 'full').includes(raw.myPart);
+          if (validPart) {
+            state.myPart = raw.myPart;
+            if (raw.myPart) write('myPart', raw.myPart);
+            else remove('myPart');
+          }
         }
-        if (typeof raw.singerName === 'string') {
-          write('singer_name', raw.singerName);
+        if (typeof raw.myName === 'string') {
+          state.myName = raw.myName.trim();
+          if (state.myName) write('myName', state.myName);
+          else remove('myName');
+        } else if (typeof raw.singerName === 'string' && raw.singerName.trim()) {
+          state.myName = raw.singerName.trim();
+          write('myName', state.myName);
+        }
+        if (raw.statusOverrides && typeof raw.statusOverrides === 'object' && !Array.isArray(raw.statusOverrides)) {
+          const validStatuses = new Set(['practice', 'complete', 'archive']);
+          const cleanOverrides = Object.fromEntries(
+            Object.entries(raw.statusOverrides).filter(([, v]) => validStatuses.has(v))
+          );
+          write('statusOverrides', cleanOverrides);
+          state.songs.forEach(song => {
+            song.status = cleanOverrides[song.id] || song._defaultStatus || song.status;
+          });
         }
         if (Array.isArray(raw.customRehearsals)) {
           write('custom_rehearsals', raw.customRehearsals);
         }
         if (Array.isArray(raw.teamFeedbacks)) {
           write('team_feedbacks', raw.teamFeedbacks);
+          write('feedbacks_seed_v', 2);
         }
-        if (raw.myPracticeNotes && typeof raw.myPracticeNotes === 'object') {
+        if (Array.isArray(raw.likedFeedbacks)) {
+          write('liked_feedbacks', raw.likedFeedbacks);
+        }
+        if (Array.isArray(raw.customScores)) {
+          write('custom_scores', raw.customScores);
+        }
+        if (Array.isArray(raw.customMemories)) {
+          write('custom_memories', raw.customMemories);
+        }
+        if (Array.isArray(raw.likedMemories)) {
+          write('liked_memories', raw.likedMemories);
+        }
+        if (raw.memoryLikeCounts && typeof raw.memoryLikeCounts === 'object' && !Array.isArray(raw.memoryLikeCounts)) {
+          write('memory_like_counts', raw.memoryLikeCounts);
+        }
+        if (Array.isArray(raw.customAppreciation)) {
+          write('custom_appreciation', raw.customAppreciation);
+        }
+        if (Array.isArray(raw.customPracticeVideos)) {
+          write('custom_practice_videos', raw.customPracticeVideos);
+        }
+        if (Array.isArray(raw.customEducation)) {
+          write('custom_education', raw.customEducation);
+        }
+        if (raw.myPracticeNotes && typeof raw.myPracticeNotes === 'object' && !Array.isArray(raw.myPracticeNotes)) {
           write('my_practice_notes', raw.myPracticeNotes);
         }
-        if (raw.savedLoops && typeof raw.savedLoops === 'object') {
+        if (raw.savedLoops && typeof raw.savedLoops === 'object' && !Array.isArray(raw.savedLoops)) {
           write('savedLoops', raw.savedLoops);
         }
         if (raw.stageHistory) {
@@ -7852,8 +8221,23 @@ function renderSettings() {
         if (raw.stageActive) {
           try { localStorage.setItem('acaroom_stage_active_v2', JSON.stringify(raw.stageActive)); } catch {}
         }
+        const [rehRes, scoresRes, memoriesRes, eduRes, practiceVidRes, apprecRes] = await Promise.all([
+          loadRehearsals(true),
+          loadScores(true),
+          loadMemories(true),
+          loadEducation(true),
+          loadPracticeVideos(true),
+          loadAppreciation(true)
+        ]);
+        state.rehearsals = rehRes;
+        state.scores = scoresRes;
+        state.memories = memoriesRes;
+        state.education = eduRes;
+        state.practiceVideos = practiceVidRes;
+        state.appreciation = apprecRes;
+        refreshChrome();
         render();
-        toast('📥 연습 기록과 무대 큐시트 백업 데이터를 복원했습니다.');
+        toast('📥 연습 기록, 내 프로필, 무대 큐시트 및 커스텀 아카이브 백업을 복원했습니다.');
       } catch (err) {
         toast(`백업 파일을 불러오지 못했습니다: ${err.message}`);
       } finally {
@@ -7861,7 +8245,7 @@ function renderSettings() {
       }
     }
   });
-  const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록 · 백업 공유'}), el('p', {text: '즐겨찾기, 최근 연습, 숙련도·연습시간, 반음 조바꿈, 개인 연습 노트, 저장 구간, 무대 큐시트, 연습 피드백은 이 브라우저에 저장됩니다. JSON 백업 파일로 내보내어 다른 기기나 단원과 공유할 수 있습니다.'}),
+  const privacyPanel = el('section', {class: 'settings-panel'}, icon('heart'), el('h2', {text: '나의 연습 기록 · 백업 공유'}), el('p', {text: '단원 이름·기본 파트, 즐겨찾기, 최근 연습, 숙련도·연습시간, 반음 조바꿈, 개인 연습 노트, 저장 구간, 무대 큐시트, 연습 피드백 및 직접 등록한 악보·기록·영상 자료는 이 브라우저에 저장됩니다. JSON 백업 파일로 내보내어 다른 기기나 단원과 공유할 수 있습니다.'}),
     !isAvailable() && el('p', {class: 'notice warning', text: '브라우저 저장소를 사용할 수 없어 현재 세션에서만 기록됩니다.'}),
     backupFileInput,
     el('div', {style: 'display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;'},
@@ -7874,16 +8258,25 @@ function renderSettings() {
         } catch {}
         const payload = {
           type: 'acaraca-backup',
-          version: 1,
+          version: 2,
           exportedAt: new Date().toISOString(),
+          myName: state.myName,
+          myPart: state.myPart,
           favorites: [...state.favorites],
           recent: state.recent,
           progress: state.progress,
           songTranspositions: state.songTranspositions,
-          myPart: state.myPart,
-          singerName: read('singer_name', ''),
+          statusOverrides: read('statusOverrides', {}),
           customRehearsals: read('custom_rehearsals', []),
           teamFeedbacks: read('team_feedbacks', []),
+          likedFeedbacks: read('liked_feedbacks', []),
+          customScores: read('custom_scores', []),
+          customMemories: read('custom_memories', []),
+          likedMemories: read('liked_memories', []),
+          memoryLikeCounts: read('memory_like_counts', {}),
+          customAppreciation: read('custom_appreciation', []),
+          customPracticeVideos: read('custom_practice_videos', []),
+          customEducation: read('custom_education', []),
           myPracticeNotes: read('my_practice_notes', {}),
           savedLoops: read('savedLoops', {}),
           stageHistory,
@@ -7896,14 +8289,16 @@ function renderSettings() {
         link.click();
         link.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-        toast('📤 연습 기록 및 무대 큐시트 백업 파일을 다운로드했습니다.');
+        toast('📤 연습 기록, 아카이브 및 무대 큐시트 백업 파일을 다운로드했습니다.');
       }, 'button secondary'),
       button('📥 백업 파일 불러오기', () => backupFileInput.click(), 'button secondary')
     ),
     button('개인 연습 기록 초기화', () => {
-      if (!confirm('즐겨찾기, 최근 연습, 파트 숙련도 기록을 모두 지울까요? 곡 자료와 내 파트 설정은 유지됩니다.')) return;
+      if (!confirm('즐겨찾기, 최근 연습, 파트 숙련도·조바꿈 기록을 모두 지울까요? 곡 자료와 내 파트 설정은 유지됩니다.')) return;
       for (const key of ['favorites', 'recent', 'progress', 'song_transpositions', 'timer']) remove(key);
       state.favorites.clear(); state.recent = []; state.progress = {}; state.songTranspositions = {};
+      refreshChrome();
+      render();
       toast('개인 연습 기록을 초기화했어요.');
     }, 'button secondary danger'));
   app.append(el('div', {class: 'settings-grid'}, namePanel, partPanel, themePanel, bgPlayPanel, dataPanel, privacyPanel));
@@ -8014,13 +8409,12 @@ async function initialize() {
     ]);
     state.songs = songRes.songs;
     const savedOverrides = read('statusOverrides', {});
-    if (savedOverrides && typeof savedOverrides === 'object') {
-      state.songs.forEach(song => {
-        if (savedOverrides[song.id]) {
-          song.status = savedOverrides[song.id];
-        }
-      });
-    }
+    state.songs.forEach(song => {
+      if (!song._defaultStatus) song._defaultStatus = song.status;
+      song.status = (savedOverrides && typeof savedOverrides === 'object' && savedOverrides[song.id])
+        ? savedOverrides[song.id]
+        : song._defaultStatus;
+    });
     state.performances = perfRes;
     state.rehearsals = rehRes;
     state.scores = scoresRes;

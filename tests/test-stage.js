@@ -323,4 +323,12 @@ assert(stageJsSource.includes('stage-opening-cue-bar'), 'stage.js must include o
 assert(stageJsSource.includes('stage-transpose-group'), 'stage.js must include stage key transposition controls');
 assert(stageJsSource.includes('prompter-expanded') && stageJsSource.includes('대형 프롬프터'), 'stage.js must include expandable large MC prompter');
 
+// 17. Test march-for-the-beloved extra stage metadata, MC comments & stage transpose forwarding to in-app score modal
+assert(STAGE_EXTRA_SONG_METADATA['march-for-the-beloved'], 'march-for-the-beloved must be registered in STAGE_EXTRA_SONG_METADATA');
+assert.strictEqual(STAGE_EXTRA_SONG_METADATA['march-for-the-beloved'].bpm, 76, 'march-for-the-beloved bpm must be 76');
+assert(STAGE_AI_COMMENTS['march-for-the-beloved']?.wit && STAGE_AI_COMMENTS['march-for-the-beloved']?.story && STAGE_AI_COMMENTS['march-for-the-beloved']?.brief, 'march-for-the-beloved must have wit/story/brief STAGE_AI_COMMENTS');
+assert(stageJsSource.includes("openStageSongScore(targetSongId, songTitle = '악보', transposeSemi = 0)"), 'openStageSongScore must accept transposeSemi and forward it to onOpenScore');
+assert(appJsSource.includes('openScorePreviewModal(score, options = {})'), 'openScorePreviewModal must accept options.transpose from stage mode');
+
 console.log('✓ Stage Mode logic unit tests passed successfully!');
+

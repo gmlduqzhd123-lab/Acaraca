@@ -173,14 +173,23 @@ export function getPerformancesForSong(performances, songId) {
   return performances.filter((perf) =>
     Array.isArray(perf.setlist) && perf.setlist.some((item) => {
       const itemSongId = typeof item === 'string' ? item : item?.songId;
-      return itemSongId === songId || (baseId !== songId && itemSongId === baseId);
+      if (!itemSongId) return false;
+      const itemBase = String(itemSongId).replace(/-[0-9]+$/, '');
+      return itemSongId === songId || itemBase === baseId;
     })
   );
 }
 
 export function getRehearsalsForSong(rehearsals, songId) {
   if (!Array.isArray(rehearsals) || !songId) return [];
-  return rehearsals.filter((reh) => reh.songId === songId);
+  const baseId = String(songId).replace(/-[0-9]+$/, '');
+  return rehearsals
+    .filter((reh) => {
+      if (!reh?.songId) return false;
+      const itemBase = String(reh.songId).replace(/-[0-9]+$/, '');
+      return reh.songId === songId || itemBase === baseId;
+    })
+    .sort((a, b) => (a.songId === songId ? 0 : 1) - (b.songId === songId ? 0 : 1));
 }
 
 export function addCustomRehearsal(newReh) {
@@ -268,7 +277,13 @@ export async function deleteCustomScore(scoreId) {
 export function getScoresForSong(scores, songId) {
   if (!Array.isArray(scores) || !songId) return [];
   const baseId = String(songId).replace(/-[0-9]+$/, '');
-  return scores.filter(s => s.songId === songId || (baseId !== songId && s.songId === baseId));
+  return scores
+    .filter((s) => {
+      if (!s?.songId) return false;
+      const itemBase = String(s.songId).replace(/-[0-9]+$/, '');
+      return s.songId === songId || itemBase === baseId;
+    })
+    .sort((a, b) => (a.songId === songId ? 0 : 1) - (b.songId === songId ? 0 : 1));
 }
 
 export async function loadMemories(forceReload = false) {
@@ -508,7 +523,13 @@ export function deleteCustomAppreciation(videoId) {
 export function getAppreciationForSong(videos, songId) {
   if (!Array.isArray(videos) || !songId) return [];
   const baseId = String(songId).replace(/-[0-9]+$/, '');
-  return videos.filter((v) => v && (v.songId === songId || (baseId !== songId && v.songId === baseId)));
+  return videos
+    .filter((v) => {
+      if (!v?.songId) return false;
+      const itemBase = String(v.songId).replace(/-[0-9]+$/, '');
+      return v.songId === songId || itemBase === baseId;
+    })
+    .sort((a, b) => (a.songId === songId ? 0 : 1) - (b.songId === songId ? 0 : 1));
 }
 
 /**

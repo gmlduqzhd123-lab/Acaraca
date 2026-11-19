@@ -209,6 +209,11 @@ export const STAGE_AI_COMMENTS = {
     story: `“아이들과 선생님의 웃음소리가 피어나는 교실을 노래한 별의별의 '행복한 학교'입니다.\n맑고 따뜻한 혼성 4성부 화음으로 기분 좋은 에너지를 선물합니다.”`,
     brief: `“밝고 따뜻한 교실의 풍경을 담은 창작 동요,\n'행복한 학교'입니다.”`
   },
+  'march-for-the-beloved': {
+    wit: `“오월의 푸른 하늘 아래, 마음을 하나로 모아 부르는 노래입니다.\n네 성부의 단단하고 묵직한 울림에 귀 기울여 주세요.”`,
+    story: `“역사의 아픔을 넘어 희망과 연대의 상징으로 불려 온 '임을 위한 행진곡'입니다.\n오직 사람의 목소리만으로 쌓아 올린 장중하고 진심 어린 4성부 하모니를 바칩니다.”`,
+    brief: `“장중한 울림과 깊은 울림의 4성부 아카펠라,\n'임을 위한 행진곡'입니다.”`
+  },
   'go-to-school': {
     wit: `“오늘만큼은 지각 걱정 없는 즐거운 등굣길입니다!\n다섯 목소리의 발랄한 발걸음에 맞춰 가볍게 리듬을 타보세요!”`,
     story: `“아침 햇살처럼 상쾌한 등굣길의 설렘을 담은 별의별의 '학교 가자'입니다.\n경쾌한 리듬과 다섯 성부의 산뜻한 호흡이 어우러지는 무대입니다.”`,
@@ -635,6 +640,41 @@ export const STAGE_EXTRA_SONG_METADATA = {
       pitches: {
         lead: 'E4',
         soprano: 'G#4'
+      }
+    }
+  },
+  'march-for-the-beloved': {
+    id: 'march-for-the-beloved',
+    title: '임을 위한 행진곡',
+    artist: '아카라카 · 이솝 편곡',
+    category: '기념 / 합창',
+    arrangement: '혼성 4부',
+    musicalKey: 'C Minor / Eb Major',
+    pitchPipe: 'C',
+    bpm: 76,
+    duration: '3:20',
+    openingCue: '사랑도 명예도 이름도 남김없이~ 한평생 나가자던 뜨거운 맹세',
+    difficulty: 2,
+    status: 'archive',
+    tags: ['무대 레퍼토리', '4부', '기념공연'],
+    videos: {
+      full: {
+        type: 'video',
+        url: 'https://www.youtube.com/watch?v=FrZsv-Z77fU'
+      }
+    },
+    entryOrder: ['part1', 'part2', 'part3', 'part4'],
+    startingPitches: {
+      key: 'C Minor / Eb Major',
+      pitches: {
+        part1: 'C4',
+        part2: 'C4',
+        part3: 'G3',
+        part4: 'C3',
+        soprano: 'C4',
+        alto: 'C4',
+        tenor: 'G3',
+        bass: 'C3'
       }
     }
   }
@@ -1181,15 +1221,16 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
     toast('⏱️ 실전 공연 경과 스톱워치를 시작했습니다.');
   }
 
-  function openStageSongScore(targetSongId, songTitle = '악보') {
+  function openStageSongScore(targetSongId, songTitle = '악보', transposeSemi = 0) {
     if (!targetSongId || typeof onOpenScore !== 'function') return;
     const matched = getScoresForSong(scores, targetSongId);
     if (!matched.length) {
       toast('이 곡에 연결된 악보 파일이 없습니다.');
       return;
     }
+    const semiOpt = Number.isFinite(Number(transposeSemi)) ? { transpose: Number(transposeSemi) } : {};
     if (matched.length === 1) {
-      onOpenScore(matched[0]);
+      onOpenScore(matched[0], semiOpt);
       return;
     }
     const existing = document.getElementById('stage-score-picker-dialog');
@@ -1212,7 +1253,7 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
         class: 'stage-score-pick-item',
         onclick: () => {
           dialog.close();
-          onOpenScore(sc);
+          onOpenScore(sc, semiOpt);
         }
       },
         el('strong', { text: sc.title || sc.fileName || songTitle }),
@@ -1768,7 +1809,7 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
 
     const scoreBtn = (matchedScores.length > 0 && typeof onOpenScore === 'function')
       ? button(`🎼 인앱 악보${matchedScores.length > 1 ? ` (${matchedScores.length})` : ''}`, () => {
-          openStageSongScore(targetSongId, resolvedSong?.title || item?.title || '악보');
+          openStageSongScore(targetSongId, resolvedSong?.title || item?.title || '악보', semi);
         }, 'stage-practice-video-btn stage-inapp-score-btn', null, { title: '무대 화면을 벗어나지 않고 바로 악보 미리보기 모달을 띄웁니다' })
       : null;
 
@@ -2354,7 +2395,7 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
       const ovScoreBtn = (matchedScores.length > 0 && typeof onOpenScore === 'function')
         ? button('🎼 인앱 악보', (e) => {
             e.stopPropagation();
-            openStageSongScore(targetSongId, item.title || resolvedSong?.title || '악보');
+            openStageSongScore(targetSongId, item.title || resolvedSong?.title || '악보', semi);
           }, 'button secondary small stage-overview-score-btn', null, { title: '무대 모드를 벗어나지 않고 바로 악보 열기' })
         : null;
 
@@ -3382,7 +3423,11 @@ export function openSongPracticeVideoModal({ song, songs, navigate }) {
   }, '✕');
 
   const categoryBadge = fullSong.category ? el('span', { class: 'stage-hero-badge', text: fullSong.category }) : null;
-  const keyStr = fullSong.musicalKey || fullSong.startingPitches?.key;
+  const rawKeyStr = fullSong.musicalKey || fullSong.startingPitches?.key;
+  const modalSemi = getItemTranspose(song);
+  const keyStr = rawKeyStr
+    ? (modalSemi !== 0 ? `${transposeMusicalKey(rawKeyStr, modalSemi)} (${formatTransposeTag(modalSemi)})` : rawKeyStr)
+    : (modalSemi !== 0 ? formatTransposeTag(modalSemi) : '');
   const keyBadge = keyStr ? el('span', { class: 'stage-key-badge', text: `Key: ${keyStr}` }) : null;
 
   const header = el('div', { class: 'stage-modal-header' },

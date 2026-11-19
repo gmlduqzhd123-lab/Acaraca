@@ -72,6 +72,66 @@
       "videoUrl": "https://www.youtube.com/watch?v=DUwM7EAkJNs",
       "thumbnail": "https://img.youtube.com/vi/DUwM7EAkJNs/hqdefault.jpg",
       "description": "인트로 코러스, 발라드 솔로, 오페라 파트 전조, 하드록 피날레까지 이어지는 5인용 전체 합주 연습 영상입니다."
+    },
+    {
+      "id": "prac-white-christmas-full",
+      "title": "White Christmas · 4성부 전체 합주 레퍼런스 (엑시트)",
+      "songId": "white-christmas",
+      "part": "전체 합주",
+      "date": "2026-11-10",
+      "author": "엑시트 (E.X.I.T.) · 아카라카",
+      "sourceType": "youtube",
+      "videoUrl": "https://www.youtube.com/watch?v=28vlYD7Toew",
+      "thumbnail": "https://img.youtube.com/vi/28vlYD7Toew/hqdefault.jpg",
+      "description": "D Major에서 시작해 후반부 Eb Major로 반음 전조되는 4성부(1번 용석 · 2번 선영 · 3번 희엽 · 4번 재우) 크리스마스 캐롤 합주 레퍼런스 영상입니다."
+    },
+    {
+      "id": "prac-white-christmas-p1",
+      "title": "White Christmas · 1번 파트 (용석) 가이드",
+      "songId": "white-christmas",
+      "part": "소프라노",
+      "date": "2026-11-10",
+      "author": "용석",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/YJBvofCb9pQ",
+      "thumbnail": "https://img.youtube.com/vi/YJBvofCb9pQ/hqdefault.jpg",
+      "description": "1번 파트(용석) 주선율 및 후반부 반음 전조(Eb Major) 고음 연결 연습 영상 (첫 음 D4)."
+    },
+    {
+      "id": "prac-white-christmas-p2",
+      "title": "White Christmas · 2번 파트 (선영) 가이드",
+      "songId": "white-christmas",
+      "part": "알토",
+      "date": "2026-11-10",
+      "author": "선영",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/PseV6bxEd5E",
+      "thumbnail": "https://img.youtube.com/vi/PseV6bxEd5E/hqdefault.jpg",
+      "description": "2번 파트(선영) 재즈 화성 내성 블렌딩 및 스윙 리듬 반주 연습 영상 (첫 음 B3)."
+    },
+    {
+      "id": "prac-white-christmas-p3",
+      "title": "White Christmas · 3번 파트 (희엽) 가이드",
+      "songId": "white-christmas",
+      "part": "테너",
+      "date": "2026-11-10",
+      "author": "희엽",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/KiWCNEdSJZ8",
+      "thumbnail": "https://img.youtube.com/vi/KiWCNEdSJZ8/hqdefault.jpg",
+      "description": "3번 파트(희엽) 테너 화성 진행 및 전조 구간 브릿지 코드 연습 영상 (첫 음 A3)."
+    },
+    {
+      "id": "prac-white-christmas-p4",
+      "title": "White Christmas · 4번 파트 (재우) 가이드",
+      "songId": "white-christmas",
+      "part": "베이스",
+      "date": "2026-11-10",
+      "author": "재우",
+      "sourceType": "youtube",
+      "videoUrl": "https://youtu.be/HfqqtoxdIfE",
+      "thumbnail": "https://img.youtube.com/vi/HfqqtoxdIfE/hqdefault.jpg",
+      "description": "4번 파트(재우) 워킹 베이스 라인 및 전조 루트 음정 유지 연습 영상 (첫 음 G2)."
     }
   ]
 }

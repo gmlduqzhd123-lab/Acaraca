@@ -632,7 +632,8 @@
         "alto": "F#4",
         "tenor": "D#4",
         "bass": "G#2",
-        "full": "D3"
+        "full": "D3",
+        "part5": "F#2"
       },
       "musicalKey": "E Major",
       "pitchPipe": "G#",
@@ -640,7 +641,8 @@
         "part4",
         "part1",
         "part2",
-        "part3"
+        "part3",
+        "part5"
       ],
       "partNames": {
         "part1": "선영",
@@ -718,14 +720,16 @@
         "alto": "A3",
         "tenor": "A3",
         "bass": "D3",
-        "full": "D4"
+        "full": "D4",
+        "part5": "E2"
       },
       "musicalKey": "D Major",
       "entryOrder": [
         "part3",
         "part2",
         "part4",
-        "part1"
+        "part1",
+        "part5"
       ],
       "pitchPipe": "D",
       "partNames": {
@@ -804,14 +808,16 @@
         "alto": "E3",
         "tenor": "G3",
         "bass": "D2",
-        "full": "Db3"
+        "full": "Db3",
+        "part5": "D2"
       },
       "musicalKey": "G Major",
       "entryOrder": [
         "part4",
         "part2",
         "part1",
-        "part3"
+        "part3",
+        "part5"
       ],
       "partNames": {
         "part1": "선영",
@@ -1002,10 +1008,12 @@
       ],
       "pitchPipe": "E",
       "partNames": {
+        "part1": "희엽",
+        "part2": "명현",
+        "part3": "재우",
         "part4": "선영",
         "part5": "용석",
-        "part6": "휘소",
-        "tenor": "희엽"
+        "part6": "휘소"
       },
       "bpm": 110,
       "duration": "1:15",
@@ -1754,8 +1762,7 @@
         "part1": "선영",
         "part2": "용석",
         "part3": "희엽",
-        "part4": "휘소",
-        "baritone": "재우"
+        "part4": "재우 · 휘소"
       },
       "bpm": 116,
       "duration": "3:30",
@@ -2326,6 +2333,7 @@
         "part1": "선영",
         "part2": "용석",
         "part3": "희엽",
+        "part4": "재우",
         "part5": "휘소"
       },
       "bpm": 112,
@@ -2441,11 +2449,11 @@
         "part5"
       ],
       "partNames": {
-        "soprano": "선영",
-        "alto": "용석",
-        "tenor": "희엽",
-        "baritone": "재우",
-        "bass": "휘소"
+        "part1": "선영",
+        "part2": "용석",
+        "part3": "희엽",
+        "part4": "재우",
+        "part5": "휘소"
       },
       "bpm": 112,
       "duration": "3:55",
@@ -2787,8 +2795,7 @@
         "part1": "선영",
         "part2": "용석",
         "part3": "희엽",
-        "part4": "휘소",
-        "baritone": "재우"
+        "part4": "재우 · 휘소"
       },
       "bpm": 80,
       "duration": "3:45",
@@ -2853,8 +2860,7 @@
         "part1": "선영",
         "part2": "용석",
         "part3": "희엽",
-        "part4": "휘소",
-        "baritone": "재우"
+        "part4": "재우 · 휘소"
       },
       "bpm": 70,
       "duration": "4:10",
@@ -2906,13 +2912,16 @@
         "alto": "A4",
         "tenor": "F#4",
         "bass": "F#2",
-        "full": "F#3"
+        "full": "F#3",
+        "part4": "A3",
+        "baritone": "A3"
       },
       "musicalKey": "F# Minor",
       "pitchPipe": "F#",
       "entryOrder": [
         "part2",
         "part3",
+        "part4",
         "part5",
         "part1"
       ],
@@ -2920,8 +2929,8 @@
         "part1": "선영",
         "part2": "용석",
         "part3": "희엽",
+        "part4": "재우",
         "part5": "휘소",
-        "baritone": "재우",
         "vp": "명현"
       },
       "bpm": 134,

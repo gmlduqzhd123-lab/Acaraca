@@ -264,6 +264,51 @@
           "likes": 1
         }
       ]
+    },
+    {
+      "id": "reh-white-christmas",
+      "songId": "white-christmas",
+      "date": "2026-11-10",
+      "title": "White Christmas (4성부) 합주 & 후반부 반음 전조(D→E♭) 밸런스 체크",
+      "notes": "D Major 4성부(1번 용석 · 2번 선영 · 3번 희엽 · 4번 재우) 합주 체크 포인트: 인트로 첫 화음(G2-A3-B3-D4) 따뜻한 공명, 'I'm dreaming of a white Christmas' 레가토 프레이징, 후반부 E♭ Major 반음 전조 구간 음정 정확도 및 엔딩 벨 코드 블렌딩.",
+      "video": {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=28vlYD7Toew",
+        "label": "White Christmas 합주 레퍼런스 영상"
+      },
+      "audio": null,
+      "initialFeedbacks": [
+        {
+          "id": "fb-wc-1",
+          "author": "팀 피드백",
+          "part": "all",
+          "section": "intro",
+          "time": 3,
+          "content": "[intro] 첫 화음(G2-A3-B3-D4) 진입 시 포근한 톤으로 숨을 모아 부드럽게 열기",
+          "createdAt": "2026-11-10T19:00:00.000Z",
+          "likes": 1
+        },
+        {
+          "id": "fb-wc-2",
+          "author": "용석 · 선영",
+          "part": "soprano",
+          "section": "verse1",
+          "time": 18,
+          "content": "[verse1] 'I'm dreaming of a white Christmas' 롱톤에서 비브라토를 줄이고 스트레이트 톤으로 화음 밀착하기",
+          "createdAt": "2026-11-10T19:04:00.000Z",
+          "likes": 2
+        },
+        {
+          "id": "fb-wc-3",
+          "author": "희엽 · 재우",
+          "part": "bass",
+          "section": "modulation",
+          "time": 92,
+          "content": "[modulation] D Major에서 E♭ Major로 반음 올라가는 전조 브릿지에서 3·4번 파트가 리딩 톤을 명확히 짚어주기",
+          "createdAt": "2026-11-10T19:08:00.000Z",
+          "likes": 2
+        }
+      ]
     }
   ]
 }

@@ -1615,7 +1615,7 @@
     },
     {
       "id": "score-research-61-mid",
-      "songId": "",
+      "songId": "balloon",
       "title": "풍선(2021_교육용 4부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -1632,7 +1632,7 @@
     },
     {
       "id": "score-research-62-pdf",
-      "songId": "",
+      "songId": "balloon",
       "title": "풍선(2021_교육용 4부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -2074,7 +2074,7 @@
     },
     {
       "id": "score-research-88-nwc",
-      "songId": "",
+      "songId": "magic-carpet-ride",
       "title": "마법의 성(더 클래식_혼성6부)arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -2278,7 +2278,7 @@
     },
     {
       "id": "score-research-100-nwc",
-      "songId": "",
+      "songId": "ditto",
       "title": "Ditto(NewJeans_혼성5부_교육용)arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -6341,7 +6341,7 @@
     },
     {
       "id": "score-research-339-nwc",
-      "songId": "",
+      "songId": "way-back-home",
       "title": "Way Back Home(SHAUN_남성6부)arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -6358,7 +6358,7 @@
     },
     {
       "id": "score-research-340-mid",
-      "songId": "",
+      "songId": "way-back-home",
       "title": "Way Back Home(교육용 4부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -6375,7 +6375,7 @@
     },
     {
       "id": "score-research-341-pdf",
-      "songId": "",
+      "songId": "way-back-home",
       "title": "Way Back Home(교육용 4부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -7242,7 +7242,7 @@
     },
     {
       "id": "score-research-392-mid",
-      "songId": "",
+      "songId": "magic-carpet-ride",
       "title": "마법의 성(교육용 6부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -7259,7 +7259,7 @@
     },
     {
       "id": "score-research-393-pdf",
-      "songId": "",
+      "songId": "magic-carpet-ride",
       "title": "마법의 성(교육용 6부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -9554,7 +9554,7 @@
     },
     {
       "id": "score-research-528-nwc",
-      "songId": "",
+      "songId": "would-be-good",
       "title": "좋을텐데(스윗소로우+바버래츠_혼성6부 순한맛)채보 arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -9571,7 +9571,7 @@
     },
     {
       "id": "score-research-529-nwc",
-      "songId": "",
+      "songId": "would-be-good",
       "title": "좋을텐데(스윗소로우+바버래츠_혼성6부)채보 김승호",
       "team": "연구회",
       "category": "가요",
@@ -9928,7 +9928,7 @@
     },
     {
       "id": "score-research-550-nwc",
-      "songId": "",
+      "songId": "cocktail-love",
       "title": "칵테일사랑(마로니에_혼성6부)arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -10183,7 +10183,7 @@
     },
     {
       "id": "score-research-565-mid",
-      "songId": "",
+      "songId": "balloon",
       "title": "풍선(교육용 4부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -10200,7 +10200,7 @@
     },
     {
       "id": "score-research-566-pdf",
-      "songId": "",
+      "songId": "balloon",
       "title": "풍선(교육용 4부)arr 한승모",
       "team": "연구회",
       "category": "가요",
@@ -10812,7 +10812,7 @@
     },
     {
       "id": "score-research-602-mid",
-      "songId": "",
+      "songId": "white-christmas",
       "title": "White Christmas(혼성5부)arr 이슬기",
       "team": "연구회",
       "category": "캐롤",
@@ -10829,7 +10829,7 @@
     },
     {
       "id": "score-research-603-pdf",
-      "songId": "",
+      "songId": "white-christmas",
       "title": "White Christmas(혼성5부)arr 이슬기",
       "team": "연구회",
       "category": "캐롤",
@@ -10846,7 +10846,7 @@
     },
     {
       "id": "score-research-604-pdf",
-      "songId": "",
+      "songId": "white-christmas",
       "title": "White christmas(혼성5부)arr 한승모",
       "team": "연구회",
       "category": "캐롤",
@@ -14416,7 +14416,7 @@
     },
     {
       "id": "score-research-814-mid",
-      "songId": "",
+      "songId": "ditto",
       "title": "Ditto(NewJeans_혼성5부_교육용)arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -14433,7 +14433,7 @@
     },
     {
       "id": "score-research-815-pdf",
-      "songId": "",
+      "songId": "ditto",
       "title": "Ditto(NewJeans_혼성5부_교육용)arr 김승호",
       "team": "연구회",
       "category": "가요",
@@ -14902,7 +14902,7 @@
     },
     {
       "id": "score-desk-008",
-      "songId": null,
+      "songId": "magic-carpet-ride",
       "title": "160728마법의성(The_Present)",
       "team": "아카라카",
       "category": "가요",
@@ -16022,7 +16022,7 @@
     },
     {
       "id": "score-desk-078",
-      "songId": "carol-medley",
+      "songId": "white-christmas",
       "title": "White Christmas",
       "team": "아카라카",
       "category": "캐롤",
@@ -16438,7 +16438,7 @@
     },
     {
       "id": "score-desk-104",
-      "songId": "carol-medley",
+      "songId": "white-christmas",
       "title": "White Christmas(남성5부)",
       "team": "남성팀",
       "category": "캐롤",
@@ -16454,7 +16454,7 @@
     },
     {
       "id": "score-desk-105",
-      "songId": "carol-medley",
+      "songId": "white-christmas",
       "title": "White Christmas(혼성5부)",
       "team": "혼성팀",
       "category": "캐롤",
@@ -16966,7 +16966,7 @@
     },
     {
       "id": "score-desk-137",
-      "songId": "carol-medley",
+      "songId": "white-christmas",
       "title": "White Christmas",
       "team": "아카라카",
       "category": "캐롤",
@@ -17222,7 +17222,7 @@
     },
     {
       "id": "score-desk-153",
-      "songId": null,
+      "songId": "march-for-the-beloved",
       "title": "임을위한행진곡(4성부)(이솝)(교육용)",
       "team": "아카라카",
       "category": "창작",
@@ -17238,7 +17238,7 @@
     },
     {
       "id": "score-desk-154",
-      "songId": null,
+      "songId": "march-for-the-beloved",
       "title": "임을위한행진곡(4성부)(이솝)(수정)",
       "team": "아카라카",
       "category": "창작",
@@ -17254,7 +17254,7 @@
     },
     {
       "id": "score-desk-155",
-      "songId": null,
+      "songId": "march-for-the-beloved",
       "title": "임을위한행진곡(4성부)(이솝)(교육용)",
       "team": "아카라카",
       "category": "창작",
@@ -17270,7 +17270,7 @@
     },
     {
       "id": "score-desk-156",
-      "songId": null,
+      "songId": "march-for-the-beloved",
       "title": "임을위한행진곡(4성부)(이솝)",
       "team": "아카라카",
       "category": "창작",
