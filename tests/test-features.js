@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import { parseNoteString, pitchPipeInfo, lowNoteRecipe, chordVoices, synthesizeWav, isInAppUserAgent } from '../js/pitch.js';
 import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
-  entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose
+  entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose,
+  sortSongs, classifyHorizontalSwipe
 } from '../js/practiceLogic.js';
 import { PARTS, resolveSongId } from '../js/data.js';
 import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage, resolveSongData, parseImportedStageSession } from '../js/stage.js';
@@ -109,6 +110,30 @@ eq(resolveStageItemTranspose({ songId: 'a', transpose: 0 }, { a: 2 }), 0, '큐�
 eq(resolveStageItemTranspose({ songId: 'a', transpose: null }, { a: 2 }), 2, 'null은 값 없음으로 취급');
 eq(resolveStageItemTranspose({ songId: 'a' }, { a: 9 }), 6, '±6으로 제한');
 eq(resolveStageItemTranspose({ songId: 'b' }, { a: 2 }), 0, '저장값 없으면 0');
+
+// 6. 연습실 정렬 (sortSongs) · LIVE 무대 스와이프 판별 (classifyHorizontalSwipe)
+const sampleSortSongs = [
+  { id: 'c', title: '풍선', difficulty: 2 },
+  { id: 'a', title: '가을 우체국 앞에서', difficulty: 1 },
+  { id: 'b', title: '보헤미안 랩소디', difficulty: 3 }
+];
+const sampleProg = { c: { level: 3 }, b: { level: 1 } };
+const sampleRecent = [
+  { songId: 'b', timestamp: 100 },
+  { songId: 'c', timestamp: 500 },
+  { songId: 'b', timestamp: 800 }
+];
+eq(sortSongs(sampleSortSongs, '').map(s => s.id), ['c', 'a', 'b'], '기본 정렬은 원래 순서 유지');
+eq(sortSongs(sampleSortSongs, 'title').map(s => s.id), ['a', 'b', 'c'], '가나다순 정렬');
+eq(sortSongs(sampleSortSongs, 'mastery-asc', { progress: sampleProg }).map(s => s.id), ['a', 'b', 'c'], '덜 익힌 순(0→1→3) 정렬');
+eq(sortSongs(sampleSortSongs, 'recent', { recent: sampleRecent }).map(s => s.id), ['b', 'c', 'a'], '최근 연습순(최신 timestamp 우선) 정렬');
+eq(sortSongs(sampleSortSongs, 'difficulty-desc').map(s => s.id), ['b', 'c', 'a'], '난이도 높은 순 정렬');
+eq(sortSongs(sampleSortSongs, 'difficulty-asc').map(s => s.id), ['a', 'c', 'b'], '난이도 낮은 순 정렬');
+
+eq(classifyHorizontalSwipe(-80, 10), 'next', '왼쪽으로 충분히 밀면 다음 곡');
+eq(classifyHorizontalSwipe(80, -15), 'prev', '오른쪽으로 충분히 밀면 이전 곡');
+eq(classifyHorizontalSwipe(-30, 5), null, '짧은 이동은 스와이프 무시');
+eq(classifyHorizontalSwipe(-70, 90), null, '세로 스크롤이 더 크면 스와이프 무시');
 
 for (const w of warnings) console.warn(`⚠ ${w}`);
 console.log(`✓ Recent feature tests passed (${checks} checks${warnings.length ? `, ${warnings.length} warnings` : ''})`);

@@ -252,7 +252,10 @@ export function runCoreTests() {
     check('모든 로컬 교육 자료 파일 존재 및 영상 리소스 유효성 검증', () => eduRaw.resources.every(r => (r.format === 'video' || r.fileUrl.startsWith('http')) ? (r.videoUrl && r.thumbnail) : nodeFs.existsSync(r.fileUrl)));
 
     check('네비게이션 12개 탭 아이콘 이미지 파일 실제 존재 검증', () => ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'].every(t => nodeFs.existsSync(`./assets/icons/nav/${t}.png`)));
-    check('모바일 하단 네비게이션 12개 전체 탭 연동 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes('const mobileTabs = Object.keys(labels);'));
+    check('모바일 하단 네비게이션 5탭(핵심 4탭 + 더보기 시트 8탭 = 12개 전체) 연동 검증', () => {
+      const src = nodeFs.readFileSync('./js/app.js', 'utf8');
+      return src.includes('mobilePrimaryTabs') && src.includes('mobileMoreTabs') && src.includes('openMobileMoreSheet');
+    });
     check('공연 아카이브 탭 레이블 반영 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '공연 아카이브'") || nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '아카라카 영상'"));
     check('PARTS 객체 최상단에 1번~7번 파트 순서 배치 검증', () => Object.keys(PARTS).slice(0, 7).join() === 'part1,part2,part3,part4,part5,part6,part7');
     check('Pretendard 웹폰트 링크 삽입 검증', () => nodeFs.readFileSync('./index.html', 'utf8').includes('pretendardvariable-dynamic-subset.min.css') && nodeFs.readFileSync('./admin.html', 'utf8').includes('pretendardvariable-dynamic-subset.min.css'));
@@ -791,7 +794,7 @@ export function runCoreTests() {
       return (
         appJsContent.includes('savedLoops') &&
         appJsContent.includes('switchPartAtSameTime') &&
-        appJsContent.includes('🎼 인앱 악보 보기') &&
+        appJsContent.includes('openOrDownloadScore(songScores[0], false)') &&
         indexHtmlContent.includes('id="pitch-tuner-box"') &&
         indexHtmlContent.includes('id="pitch-metro-box"')
       );
@@ -1038,6 +1041,29 @@ export function runCoreTests() {
         appJsContent.includes('loadAppreciation(true)') &&
         appJsContent.includes("write('feedbacks_seed_v', 2);") &&
         appJsContent.includes('if (!song._defaultStatus) song._defaultStatus = song.status;')
+      );
+    });
+    check('UI/UX 개선 ①~⑥ (모바일 5탭+더보기 시트 · 연습 화면 핵심4버튼/아코디언 · 홈 원탭 온보딩/이어하기 · 접이식 필터/정렬 · LIVE 스와이프/큰글씨) 검증', () => {
+      const stageJsContent = nodeFs.readFileSync('./js/stage.js', 'utf8');
+      return (
+        appJsContent.includes('mobilePrimaryTabs') &&
+        appJsContent.includes('function openMobileMoreSheet()') &&
+        appJsContent.includes('nav-group-label') &&
+        appJsContent.includes('home-onboarding-card') &&
+        appJsContent.includes('home-resume-banner') &&
+        appJsContent.includes('song-grid-carousel') &&
+        appJsContent.includes('browse-sort-select') &&
+        appJsContent.includes('browse-detail-toggle') &&
+        appJsContent.includes('practice-primary-actions') &&
+        appJsContent.includes('practice-more-tools') &&
+        appJsContent.includes('practice-loop-accordion') &&
+        stageJsContent.includes('classifyHorizontalSwipe') &&
+        stageJsContent.includes('stage-large-text') &&
+        stageJsContent.includes('acaroom_stage_swipe_locked') &&
+        styleCssContent.includes('.mobile-more-sheet') &&
+        styleCssContent.includes('.home-resume-banner') &&
+        styleCssContent.includes('.practice-primary-actions') &&
+        styleCssContent.includes('.stage-live-shell.stage-large-text')
       );
     });
   }

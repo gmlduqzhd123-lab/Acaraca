@@ -91,3 +91,63 @@ export function resolveStageItemTranspose(item, songTranspositions = {}) {
   const saved = Number(songTranspositions?.[songId]);
   return songId && Number.isFinite(saved) ? clampSemi(saved) : 0;
 }
+
+/**
+ * 연습실 곡 목록 정렬 (순수 함수).
+ * - 'mastery-asc': 덜 익힌 순 (숙련도 0→3, 같으면 가나다순)
+ * - 'recent': 최근 연습순 (최근 기록이 있는 곡 우선, 최신순)
+ * - 'title': 가나다순
+ * - 'difficulty-desc': 난이도 높은 순
+ * - 'difficulty-asc': 난이도 낮은 순
+ * - 그 외: 원래 목록 순서 유지
+ */
+export function sortSongs(songs = [], sortKey = '', { progress = {}, recent = [] } = {}) {
+  const list = Array.isArray(songs) ? [...songs] : [];
+  if (!sortKey || sortKey === 'default') return list;
+  const prog = progress && typeof progress === 'object' ? progress : {};
+  const byTitle = (a, b) => String(a?.title || '').localeCompare(String(b?.title || ''), 'ko');
+
+  if (sortKey === 'title') {
+    return list.sort(byTitle);
+  }
+  if (sortKey === 'mastery-asc') {
+    return list.sort((a, b) => {
+      const la = Number(prog[a?.id]?.level) || 0;
+      const lb = Number(prog[b?.id]?.level) || 0;
+      return (la - lb) || byTitle(a, b);
+    });
+  }
+  if (sortKey === 'recent') {
+    const lastTs = new Map();
+    for (const item of Array.isArray(recent) ? recent : []) {
+      if (!item?.songId || !Number.isFinite(item.timestamp)) continue;
+      const prev = lastTs.get(item.songId) || 0;
+      if (item.timestamp > prev) lastTs.set(item.songId, item.timestamp);
+    }
+    const indexMap = new Map(list.map((s, i) => [s?.id, i]));
+    return list.sort((a, b) => {
+      const ta = lastTs.get(a?.id) || 0;
+      const tb = lastTs.get(b?.id) || 0;
+      if (ta !== tb) return tb - ta;
+      return (indexMap.get(a?.id) ?? 0) - (indexMap.get(b?.id) ?? 0);
+    });
+  }
+  if (sortKey === 'difficulty-desc') {
+    return list.sort((a, b) => ((Number(b?.difficulty) || 0) - (Number(a?.difficulty) || 0)) || byTitle(a, b));
+  }
+  if (sortKey === 'difficulty-asc') {
+    return list.sort((a, b) => ((Number(a?.difficulty) || 0) - (Number(b?.difficulty) || 0)) || byTitle(a, b));
+  }
+  return list;
+}
+
+/**
+ * LIVE 무대 화면의 가로 스와이프 판별 (세로 스크롤과 구분).
+ * 왼쪽으로 밀면 'next'(다음 곡), 오른쪽으로 밀면 'prev'(이전 곡), 기준 미달이면 null.
+ */
+export function classifyHorizontalSwipe(dx, dy, threshold = 52) {
+  if (!Number.isFinite(dx) || !Number.isFinite(dy)) return null;
+  if (Math.abs(dx) < threshold) return null;
+  if (Math.abs(dx) <= Math.abs(dy) * 1.25) return null;
+  return dx < 0 ? 'next' : 'prev';
+}
