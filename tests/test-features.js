@@ -6,7 +6,7 @@ import { parseNoteString, pitchPipeInfo, lowNoteRecipe, chordVoices, synthesizeW
 import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
   entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose,
-  sortSongs, classifyHorizontalSwipe, localDateString
+  sortSongs, classifyHorizontalSwipe, localDateString, isLightRoute, getScoreFormatKey, getScoreFormatLabel
 } from '../js/practiceLogic.js';
 import { PARTS, resolveSongId } from '../js/data.js';
 import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage, resolveSongData, parseImportedStageSession } from '../js/stage.js';
@@ -138,7 +138,7 @@ eq(classifyHorizontalSwipe(-70, 90), null, '세로 스크롤이 더 크면 스�
 // 7. 현지 시각 기준 날짜 (새벽에 하루 전 날짜가 찍히지 않음)
 eq(localDateString(new Date(2026, 10, 20, 0, 30)), '2026-11-20', '자정 직후도 오늘 날짜');
 eq(localDateString(new Date(2026, 0, 5, 8, 59), '.'), '2026.01.05', '오전 9시 전도 오늘 날짜 · 점 구분');
-for (const file of ['js/app.js', 'js/stage.js']) {
+for (const file of ['js/app.js', 'js/stage.js', 'js/stageStore.js', 'js/scoreViewer.js', 'js/archivePages.js']) {
   ok(!/toISOString\(\)\.slice\(0,\s*10\)/.test(fs.readFileSync(file, 'utf8')), `${file}: 날짜 기본값은 세계 표준시(toISOString)가 아닌 localDateString 사용`);
 }
 
@@ -159,8 +159,8 @@ ok(!allScores.some(s => s.songId === 'would-be-good' && /좋을텐데/.test(s.ti
 
 // 9. 휴대폰 사용감 보정 (무대 도구 접기 · 이전/다음 고정 · 영상 먼저 · 홈 3곡 · 한 줄 머리글 · 아이폰 전체화면 · 뒤로가기)
 {
-  const stageSrc = fs.readFileSync('js/stage.js', 'utf8');
-  const appSrc = fs.readFileSync('js/app.js', 'utf8');
+  const stageSrc = ['js/stage.js', 'js/stageStore.js'].map((f) => fs.readFileSync(f, 'utf8')).join('\n');
+  const appSrc = ['js/app.js', 'js/scoreViewer.js', 'js/archivePages.js'].map((f) => fs.readFileSync(f, 'utf8')).join('\n');
   const cssSrc = fs.readFileSync('css/style.css', 'utf8');
   ok(stageSrc.includes("el('details', { class: 'stage-tools-drawer' }"), '무대 큐시트: 보조 도구를 접는 무대 도구 서랍');
   ok(stageSrc.includes("matchMedia('(min-width: 601px)')"), '무대 도구 서랍은 휴대폰에서 기본으로 접힘');
@@ -174,6 +174,57 @@ ok(!allScores.some(s => s.songId === 'would-be-good' && /좋을텐데/.test(s.ti
   ok(/\.loop-nudge-btn \{ min-width: 44px; min-height: 38px; \}/.test(cssSrc), '구간 반복 ±1초 버튼 터치 크기 확대');
   ok(appSrc.includes('acaMoreSheet: true') && appSrc.includes("closeMobileMoreSheet({history: 'none'});\n    return;"), '휴대폰 뒤로가기는 더보기 메뉴만 닫음');
   ok(appSrc.includes('function navigateFromMoreSheet(route)'), '더보기 메뉴에서 이동하면 메뉴 기록을 새 화면이 대신함');
+}
+
+// 10. 첫 화면 속도: 홈·곡 목록은 큰 자료 없이 먼저 그리고, 무대·악보 미리보기·자료실 화면 코드는 필요할 때 불러온다
+{
+  eq(isLightRoute({ tab: 'home' }), true, '홈은 큰 자료 없이 바로 그림');
+  eq(isLightRoute({ tab: 'songs' }), true, '곡 목록은 큰 자료 없이 바로 그림');
+  eq(isLightRoute({ tab: 'favorites' }), true, '즐겨찾기는 큰 자료 없이 바로 그림');
+  eq(isLightRoute({ tab: 'recent' }), true, '최근 연습은 큰 자료 없이 바로 그림');
+  eq(isLightRoute({}), true, '주소가 비어 있으면 홈');
+  eq(isLightRoute({ tab: 'home', song: 'bohemian-rhapsody' }), false, '곡 화면은 악보·감상 자료가 필요');
+  eq(isLightRoute({ tab: 'stage', view: 'live' }), false, '무대 화면은 악보 자료가 필요');
+  eq(isLightRoute({ tab: 'stage', cuesheet: 'abc' }), false, '공유받은 큐시트는 무대 화면');
+  for (const tab of ['scores', 'appreciation', 'memories', 'education', 'practiceVideos', 'rehearsal', 'settings']) {
+    eq(isLightRoute({ tab }), false, `${tab} 화면은 큰 자료를 받은 뒤 그림`);
+  }
+  eq(getScoreFormatKey({ fileName: 'a.NWC' }), 'nwc', 'NWC 악보 형식');
+  eq(getScoreFormatKey({ format: 'nwctxt' }), 'nwc', 'NWC 텍스트 악보 형식');
+  eq(getScoreFormatKey({ fileUrl: './x/y.pdf' }), 'pdf', 'PDF 악보 형식');
+  eq(getScoreFormatKey({ fileName: 'a.midi' }), 'midi', 'MIDI 형식');
+  eq(getScoreFormatKey({ fileName: 'a.mscz' }), 'mscz', '뮤즈스코어 형식');
+  eq(getScoreFormatKey({ fileName: 'a.hwp' }), 'etc', '그 밖의 형식');
+  eq(getScoreFormatKey(null), 'etc', '빈 악보도 오류 없이');
+  eq(getScoreFormatLabel({ fileName: 'a.nwc' }), '🎵 NWC 악보', 'NWC 악보 표시 이름');
+  eq(getScoreFormatLabel({ format: 'audio' }), '🎙️ 가이드 음원', '가이드 음원 표시 이름');
+
+  const appOnly = fs.readFileSync('js/app.js', 'utf8');
+  const indexHtml = fs.readFileSync('index.html', 'utf8');
+  const swSrc = fs.readFileSync('sw.js', 'utf8');
+  const staticImports = [...appOnly.matchAll(/^import[\s\S]*?from '(\.\/[^']+)';/gm)].map((m) => m[1]);
+  for (const lazy of ['./stage.js', './scoreViewer.js', './archivePages.js']) {
+    ok(!staticImports.includes(lazy), `app.js는 ${lazy}를 시작할 때 받지 않음 (필요할 때 불러옴)`);
+    ok(appOnly.includes(`import('${lazy}')`), `app.js가 ${lazy}를 필요할 때 불러옴`);
+  }
+  ok(staticImports.includes('./stageStore.js'), '홈 공연 카드에 필요한 무대 자료(stageStore.js)는 시작할 때 받음');
+  // 시작할 때 받는 모듈은 모두 미리 받기(modulepreload) 목록에 있어야 순서대로 기다리지 않는다
+  const preloads = new Set([...indexHtml.matchAll(/<link rel="modulepreload" href="\.\/js\/([^"?]+)/g)].map((m) => m[1]));
+  ok(preloads.has('app.js'), 'app.js 미리 받기');
+  for (const mod of staticImports) ok(preloads.has(mod.replace('./', '')), `시작 모듈 ${mod} 미리 받기`);
+  for (const lazy of ['stage.js', 'scoreViewer.js', 'archivePages.js']) ok(!preloads.has(lazy), `필요할 때 불러오는 ${lazy}는 미리 받지 않음`);
+  // 오프라인(지하 연습실·공연장)에서도 열리도록 모든 모듈을 저장
+  for (const f of fs.readdirSync('js').filter((f) => f.endsWith('.js') && f !== 'admin.js')) {
+    ok(swSrc.includes(`'./js/${f}'`), `오프라인 저장 목록(sw.js)에 js/${f} 포함`);
+  }
+  ok(!/<script src="\.\/js\/vendor\/qrcode-generator[^>]*><\/script>/.test(indexHtml), 'QR 라이브러리는 첫 화면을 막지 않게 나중에 받음');
+  ok(/<script src="\.\/ys-qr\.js" defer><\/script>/.test(indexHtml), 'QR 접속 도우미는 defer로 실행');
+  ok(/pretendardvariable-dynamic-subset\.min\.css" media="print" onload="this\.media='all'"/.test(indexHtml), '글꼴은 첫 화면을 막지 않게 받은 뒤 적용');
+  ok(appOnly.includes("class: 'home-archive-summary'"), '홈 자료 요약은 자료를 받으면 그 자리에서 갱신');
+  // 메뉴 아이콘은 화면 크기(20~24px)에 맞게 작게 (예전 150px대 · 25~35KB)
+  for (const f of fs.readdirSync('assets/icons/nav').filter((f) => f.endsWith('.png'))) {
+    ok(fs.statSync(`assets/icons/nav/${f}`).size < 12000, `메뉴 아이콘 ${f}는 12KB 미만`);
+  }
 }
 
 for (const w of warnings) console.warn(`⚠ ${w}`);

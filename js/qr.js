@@ -1,5 +1,24 @@
 // QR 코드를 기기 안에서 직접 만든다 (인터넷이 없어도 동작하고, 공유 주소가 외부 서비스로 나가지 않는다).
-// 실제 인코딩은 index.html에서 불러오는 js/vendor/qrcode-generator-1.4.4.js(MIT, 전역 qrcode)가 맡는다.
+// 실제 인코딩은 js/vendor/qrcode-generator-1.4.4.js(MIT, 전역 qrcode)가 맡는다.
+// 첫 화면을 빨리 띄우려고 이 라이브러리는 앱이 뜬 뒤 loadQrLibrary()로 받는다.
+
+let qrLibraryPromise = null;
+/** QR 라이브러리를 한 번만 불러온다 (이미 있으면 바로 끝). */
+export function loadQrLibrary() {
+  if (typeof globalThis.qrcode === 'function') return Promise.resolve(true);
+  if (typeof document === 'undefined') return Promise.resolve(false);
+  if (!qrLibraryPromise) {
+    qrLibraryPromise = new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = new URL('./vendor/qrcode-generator-1.4.4.js', import.meta.url).href;
+      script.async = true;
+      script.onload = () => resolve(typeof globalThis.qrcode === 'function');
+      script.onerror = () => { qrLibraryPromise = null; script.remove(); resolve(false); };
+      document.head.append(script);
+    });
+  }
+  return qrLibraryPromise;
+}
 
 /**
  * text를 담은 QR 코드 SVG data URL을 돌려준다. 만들 수 없으면 null.

@@ -43,6 +43,10 @@ if (typeof process !== 'undefined' && process.versions?.node) {
     nodeFs = fsMod.default || fsMod;
   } catch (e) {}
 }
+// 화면 코드는 app.js와 필요할 때 불러오는 모듈(악보 미리보기·자료실, 무대 화면·무대 자료)로 나뉘어 있다.
+const APP_SOURCE_FILES = ['js/app.js', 'js/scoreViewer.js', 'js/archivePages.js'];
+const STAGE_SOURCE_FILES = ['js/stage.js', 'js/stageStore.js'];
+const readSources = (files) => files.map((f) => nodeFs.readFileSync(f, 'utf8')).join('\n');
 
 /** Run from an HTTP browser console: (await import('./tests/core-tests.js')).runCoreTests() */
 export function runCoreTests() {
@@ -253,13 +257,13 @@ export function runCoreTests() {
 
     check('네비게이션 12개 탭 아이콘 이미지 파일 실제 존재 검증', () => ['home', 'songs', 'appreciation', 'stage', 'scores', 'memories', 'rehearsal', 'practiceVideos', 'education', 'favorites', 'recent', 'settings'].every(t => nodeFs.existsSync(`./assets/icons/nav/${t}.png`)));
     check('모바일 하단 네비게이션 5탭(핵심 4탭 + 더보기 시트 8탭 = 12개 전체) 연동 검증', () => {
-      const src = nodeFs.readFileSync('./js/app.js', 'utf8');
+      const src = readSources(APP_SOURCE_FILES);
       return src.includes('mobilePrimaryTabs') && src.includes('mobileMoreTabs') && src.includes('openMobileMoreSheet');
     });
-    check('공연 아카이브 탭 레이블 반영 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '공연 아카이브'") || nodeFs.readFileSync('./js/app.js', 'utf8').includes("stage: '아카라카 영상'"));
+    check('공연 아카이브 탭 레이블 반영 검증', () => readSources(APP_SOURCE_FILES).includes("stage: '공연 아카이브'") || readSources(APP_SOURCE_FILES).includes("stage: '아카라카 영상'"));
     check('PARTS 객체 최상단에 1번~7번 파트 순서 배치 검증', () => Object.keys(PARTS).slice(0, 7).join() === 'part1,part2,part3,part4,part5,part6,part7');
     check('Pretendard 웹폰트 링크 삽입 검증', () => nodeFs.readFileSync('./index.html', 'utf8').includes('pretendardvariable-dynamic-subset.min.css') && nodeFs.readFileSync('./admin.html', 'utf8').includes('pretendardvariable-dynamic-subset.min.css'));
-    check('체크리스트 및 집중 연습 타이머 제거 검증', () => !nodeFs.readFileSync('./js/app.js', 'utf8').includes('오늘의 연습 체크') && !nodeFs.readFileSync('./js/app.js', 'utf8').includes('10분 집중 연습'));
+    check('체크리스트 및 집중 연습 타이머 제거 검증', () => !readSources(APP_SOURCE_FILES).includes('오늘의 연습 체크') && !readSources(APP_SOURCE_FILES).includes('10분 집중 연습'));
     check('신규 브랜드 로고 파일 실제 존재 검증', () => nodeFs.existsSync('./assets/icons/logo.png') && nodeFs.existsSync('./assets/icons/logo.svg'));
     check('모든 연습곡의 첫 음(startingPitches) 유효성 및 주파수 산출 검증', () => {
       const songsRaw = JSON.parse(nodeFs.readFileSync('./data/songs.json', 'utf8')).songs;
@@ -320,7 +324,7 @@ export function runCoreTests() {
   check('최근 연습 개별 항목 삭제 검증', () => storage.read('recent', []).length === 1 && storage.read('recent', [])[0].songId === 'aloha');
   storage.remove('recent');
   check('최근 연습 전체 비우기 검증', () => storage.read('recent', []).length === 0);
-  check('최근 연습 비우기 UI 함수 구현 검증', () => nodeFs.readFileSync('./js/app.js', 'utf8').includes('clearRecentPractice') && nodeFs.readFileSync('./js/app.js', 'utf8').includes('confirmClearRecent'));
+  check('최근 연습 비우기 UI 함수 구현 검증', () => readSources(APP_SOURCE_FILES).includes('clearRecentPractice') && readSources(APP_SOURCE_FILES).includes('confirmClearRecent'));
 
   const fbFallback = addFeedback({
 
@@ -713,7 +717,7 @@ export function runCoreTests() {
   }
 
   if (nodeFs) {
-    const appJsContent = nodeFs.readFileSync('./js/app.js', 'utf8');
+    const appJsContent = readSources(APP_SOURCE_FILES);
     const indexHtmlContent = nodeFs.readFileSync('./index.html', 'utf8');
     const styleCssContent = nodeFs.readFileSync('./css/style.css', 'utf8');
 
@@ -1045,7 +1049,7 @@ export function runCoreTests() {
       );
     });
     check('UI/UX 개선 ①~⑥ (모바일 5탭+더보기 시트 · 연습 화면 핵심4버튼/아코디언 · 홈 원탭 온보딩/이어하기 · 접이식 필터/정렬 · LIVE 스와이프/큰글씨) 검증', () => {
-      const stageJsContent = nodeFs.readFileSync('./js/stage.js', 'utf8');
+      const stageJsContent = readSources(STAGE_SOURCE_FILES);
       return (
         appJsContent.includes('mobilePrimaryTabs') &&
         appJsContent.includes('function openMobileMoreSheet()') &&
