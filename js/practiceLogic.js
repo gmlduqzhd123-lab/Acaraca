@@ -63,6 +63,16 @@ export function parseStageDate(value) {
   return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
 }
 
+/**
+ * 휴대폰에 설정된 현지 시각 기준 오늘 날짜 문자열 ("2026-11-20" / sep='.'이면 "2026.11.20").
+ * toISOString()은 세계 표준시라 한국에서는 새벽 0시~오전 9시에 하루 전 날짜가 찍히므로 이것을 쓴다.
+ */
+export function localDateString(date = new Date(), sep = '-') {
+  const d = date instanceof Date ? date : new Date(date);
+  const pad = (n) => String(n).padStart(2, '0');
+  return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join(sep);
+}
+
 /** 오늘 또는 가장 가까운 다가오는 공연과 그 날짜 ({stage, date}), 없으면 null */
 export function nextStage(history = [], today = new Date()) {
   const base = new Date(today); base.setHours(0, 0, 0, 0);

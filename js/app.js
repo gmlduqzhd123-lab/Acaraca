@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
-import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs} from './practiceLogic.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs, localDateString} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -1722,7 +1722,7 @@ function renderStageHistoryPage(container) {
             const cloned = JSON.parse(JSON.stringify(item));
             cloned.id = `stage-${Date.now()}`;
             cloned.eventTitle = `${item.eventTitle} (복사본)`;
-            cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+            cloned.date = localDateString(new Date(), '.');
             cloned.updatedAt = Date.now();
             saveStageHistory([cloned, ...getStageHistory()]);
             toast('셋리스트가 복제되었습니다.');
@@ -2670,7 +2670,7 @@ function openNewRehearsalModal() {
   );
 
   titleInput.value = '';
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = localDateString();
   notesInput.value = '';
   fileInput.value = '';
   urlInput.value = '';
@@ -2722,7 +2722,7 @@ function openNewRehearsalModal() {
       const newReh = {
         id: rehId,
         songId: songSelect.value || '',
-        date: dateInput.value || new Date().toISOString().slice(0, 10),
+        date: dateInput.value || localDateString(),
         title,
         notes: notesInput.value.trim(),
         video: videoObj,
@@ -2826,7 +2826,7 @@ function openQuickRecordRehearsalModal(defaultSongId = '') {
       addCustomRehearsal({
         id: rehId,
         songId: songSelect.value || '',
-        date: new Date().toISOString().slice(0, 10),
+        date: localDateString(),
         title: titleInput.value.trim() || '합주 현장 녹음',
         notes: notesInput.value.trim(),
         video: null,
@@ -3269,7 +3269,7 @@ function openUploadScoreModal(defaultSongId = '') {
         fileUrl: url || '',
         mediaId,
         isCustom: true,
-        uploadedAt: new Date().toISOString().slice(0, 10)
+        uploadedAt: localDateString()
       };
 
       addCustomScore(newScore);
@@ -5311,7 +5311,7 @@ function openUploadEducationModal() {
         format,
         target,
         author,
-        date: new Date().toISOString().slice(0, 10),
+        date: localDateString(),
         description,
         fileName,
         fileSize,
@@ -5689,7 +5689,7 @@ function openUploadPracticeVideoModal() {
   let currentSource = 'youtube';
 
   titleInput.value = '';
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = localDateString();
   authorInput.value = read('last_practice_author', '아카라카 단원');
   descInput.value = '';
   urlInput.value = '';
@@ -5739,7 +5739,7 @@ function openUploadPracticeVideoModal() {
 
     const songId = songSelect.value || '';
     const part = partSelect.value;
-    const date = dateInput.value || new Date().toISOString().slice(0, 10);
+    const date = dateInput.value || localDateString();
     const author = authorInput.value.trim() || '아카라카 단원';
     const description = descInput.value.trim();
 
@@ -6093,7 +6093,7 @@ function openUploadAppreciationModal() {
       artist,
       category,
       uploader,
-      date: new Date().toISOString().slice(0, 10),
+      date: localDateString(),
       description,
       isCustom: true
     };
@@ -6448,7 +6448,7 @@ function openUploadMemoryModal(defaultSongId = '') {
 
   titleInput.value = '';
   categorySelect.value = '숏츠 영상';
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = localDateString();
   venueInput.value = '';
   authorInput.value = read('last_feedback_author', '아카라카');
   descInput.value = '';
@@ -6514,7 +6514,7 @@ function openUploadMemoryModal(defaultSongId = '') {
         title,
         category: categorySelect.value || '기록',
         type,
-        date: dateInput.value || new Date().toISOString().slice(0, 10),
+        date: dateInput.value || localDateString(),
         venue: venueInput.value.trim(),
         author: authorInput.value.trim() || '아카라카',
         description: descInput.value.trim(),
@@ -7871,7 +7871,7 @@ function renderVoiceRecorderPanel(song, part) {
         recordedBlob = new Blob(chunks, { type });
         recordedUrl = URL.createObjectURL(recordedBlob);
         const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
-        const dateStr = new Date().toISOString().slice(0, 10);
+        const dateStr = localDateString();
         const fileBase = `${song.title}_${PARTS[part] || part}_셀프녹음_${dateStr}.${ext}`;
 
         const audioEl = el('audio', { controls: true, src: recordedUrl, class: 'voice-rec-audio' });
@@ -8626,7 +8626,7 @@ function renderSettings() {
         };
         const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {type: 'application/json;charset=utf-8'});
         const url = URL.createObjectURL(blob);
-        const link = el('a', {href: url, download: `acaraca-backup-${new Date().toISOString().slice(0, 10)}.json`});
+        const link = el('a', {href: url, download: `acaraca-backup-${localDateString()}.json`});
         document.body.append(link);
         link.click();
         link.remove();

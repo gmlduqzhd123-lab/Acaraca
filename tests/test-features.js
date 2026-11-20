@@ -6,7 +6,7 @@ import { parseNoteString, pitchPipeInfo, lowNoteRecipe, chordVoices, synthesizeW
 import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
   entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose,
-  sortSongs, classifyHorizontalSwipe
+  sortSongs, classifyHorizontalSwipe, localDateString
 } from '../js/practiceLogic.js';
 import { PARTS, resolveSongId } from '../js/data.js';
 import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage, resolveSongData, parseImportedStageSession } from '../js/stage.js';
@@ -134,6 +134,28 @@ eq(classifyHorizontalSwipe(-80, 10), 'next', '왼쪽으로 충분히 밀면 다�
 eq(classifyHorizontalSwipe(80, -15), 'prev', '오른쪽으로 충분히 밀면 이전 곡');
 eq(classifyHorizontalSwipe(-30, 5), null, '짧은 이동은 스와이프 무시');
 eq(classifyHorizontalSwipe(-70, 90), null, '세로 스크롤이 더 크면 스와이프 무시');
+
+// 7. 현지 시각 기준 날짜 (새벽에 하루 전 날짜가 찍히지 않음)
+eq(localDateString(new Date(2026, 10, 20, 0, 30)), '2026-11-20', '자정 직후도 오늘 날짜');
+eq(localDateString(new Date(2026, 0, 5, 8, 59), '.'), '2026.01.05', '오전 9시 전도 오늘 날짜 · 점 구분');
+for (const file of ['js/app.js', 'js/stage.js']) {
+  ok(!/toISOString\(\)\.slice\(0,\s*10\)/.test(fs.readFileSync(file, 'utf8')), `${file}: 날짜 기본값은 세계 표준시(toISOString)가 아닌 localDateString 사용`);
+}
+
+// 8. 악보 데이터: 파일이 실제로 있고, 엉뚱한 곡에 연결되지 않음
+const allScores = JSON.parse(fs.readFileSync('data/scores.json', 'utf8')).scores;
+for (const sc of allScores) {
+  if (!sc.fileUrl || /^https?:/i.test(sc.fileUrl)) continue;
+  ok(!/%[0-9A-F]{2}/i.test(sc.fileUrl), `${sc.id}: 파일 경로에 깨진 글자(%28 등)가 없어야 함`);
+  ok(fs.existsSync(sc.fileUrl.replace(/^\.\//, '')), `${sc.id}: 악보 파일이 실제로 있어야 함 (${sc.fileUrl})`);
+}
+const scoreById = Object.fromEntries(allScores.map(s => [s.id, s]));
+eq(scoreById['score-desk-014'].songId, 'isnt-she-lovely', "Isn't she lovely 악보는 Isn't She Lovely 곡에 연결");
+eq(scoreById['score-desk-079'].songId, 'white-christmas', 'White Christmas 악보는 White Christmas 곡에 연결');
+for (const sc of allScores.filter(s => s.songId === 'l-o-v-e')) {
+  ok(!/(dive|open.?door|i love you|perhaps|tender|lover|lovely|this.?love|need is love|falling|tell)/i.test(sc.title), `L.O.V.E.에 다른 곡 악보가 섞이지 않음: ${sc.title}`);
+}
+ok(!allScores.some(s => s.songId === 'would-be-good' && /좋을텐데/.test(s.title)), "'좋겠다'에 다른 곡 '좋을텐데' 악보가 섞이지 않음");
 
 for (const w of warnings) console.warn(`⚠ ${w}`);
 console.log(`✓ Recent feature tests passed (${checks} checks${warnings.length ? `, ${warnings.length} warnings` : ''})`);

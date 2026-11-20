@@ -9,7 +9,7 @@
 
 import { el, icon, button, toast } from './ui.js';
 import { resolveSongId } from './data.js';
-import { entryRank, nextStage, resolveStageItemTranspose, classifyHorizontalSwipe } from './practiceLogic.js';
+import { entryRank, nextStage, resolveStageItemTranspose, classifyHorizontalSwipe, localDateString } from './practiceLogic.js';
 import { read as readStorage } from './storage.js';
 import { qrDataUrl } from './qr.js';
 import {
@@ -1009,7 +1009,7 @@ export function createNewStageSession(title = '새로운 아카라카 공연') {
   const newSession = {
     id: `stage-${Date.now()}`,
     eventTitle: title,
-    date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    date: localDateString(new Date(), '.'),
     venue: '메인 무대',
     notes: '새 큐시트',
     updatedAt: Date.now(),
@@ -2749,7 +2749,7 @@ export function serializeStageSession(session) {
     session: {
       id: session.id || `stage-${Date.now()}`,
       eventTitle: session.eventTitle || '아카라카 공연',
-      date: session.date || new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+      date: session.date || localDateString(new Date(), '.'),
       venue: session.venue || '',
       currentIndex: 0,
       songs: Array.isArray(session.songs) ? session.songs.map((s) => {
@@ -2781,7 +2781,7 @@ export function parseImportedStageSession(input) {
   return {
     id: target.id || `stage-${Date.now()}`,
     eventTitle: typeof target.eventTitle === 'string' && target.eventTitle.trim() ? target.eventTitle.trim() : '가져온 아카라카 공연',
-    date: typeof target.date === 'string' ? target.date.trim() : new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    date: typeof target.date === 'string' ? target.date.trim() : localDateString(new Date(), '.'),
     venue: typeof target.venue === 'string' ? target.venue.trim() : '',
     currentIndex: 0,
     updatedAt: Date.now(),
@@ -3249,7 +3249,7 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
             const cloned = JSON.parse(JSON.stringify(item));
             cloned.id = `stage-${Date.now()}`;
             cloned.eventTitle = `${item.eventTitle} (복사본)`;
-            cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+            cloned.date = localDateString(new Date(), '.');
             cloned.updatedAt = Date.now();
             const currentHist = getStageHistory();
             saveStageHistory([cloned, ...currentHist]);

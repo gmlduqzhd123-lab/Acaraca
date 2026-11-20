@@ -108,14 +108,16 @@ const songMatchMap = [
   { match: /수고했어.*오늘도/i, id: 'well-done-today' },
   { match: /보헤미안.*랩소디|bohemian/i, id: 'bohemian-rhapsody' },
   { match: /단소리/i, id: 'dansori' },
-  { match: /isn'?t.*she.*lovely/i, id: 'isnt-she-lovely' },
+  { match: /isn.?t.*she.*lovely/i, id: 'isnt-she-lovely' },
   { match: /여행을.*떠나요/i, id: 'lets-travel' },
-  { match: /l\.?o\.?v\.?e/i, id: 'l-o-v-e' },
+  // 'Love Dive', 'This Love', 'Isn't she lovely'처럼 love가 들어간 다른 곡이 붙지 않도록 곡명 전체가 L.O.V.E.일 때만 연결
+  { match: /^\d*\s*l[.\-]?o[.\-]?v[.\-]?e\.?\s*(수정|_\d+_?|\(.*\))?$/i, id: 'l-o-v-e' },
   { match: /아름다운.*세상/i, id: 'beautiful-world' },
   { match: /butterfly/i, id: 'butterfly' },
   { match: /벚꽃.*엔딩/i, id: 'cherry-blossom-ending' },
   { match: /사랑해.*사랑해/i, id: 'love-love' },
-  { match: /white.*christmas|화이트.*크리스마스|캐롤.*메들리/i, id: 'carol-medley' },
+  { match: /캐롤.*메들리/i, id: 'carol-medley' },
+  { match: /white.*christmas|화이트.*크리스마스/i, id: 'white-christmas' },
   { match: /ditto|디토/i, id: 'ditto' },
 ];
 
@@ -215,7 +217,8 @@ toImport.forEach((srcPath, idx) => {
     arranger = '스윙글 싱어즈';
   }
 
-  const songId = findSongId(base + ' ' + title);
+  // 곡명만으로 먼저 찾고(곡명 전체를 보는 규칙용), 없으면 폴더 이름까지 함께 본다
+  const songId = findSongId(title) || findSongId(base + ' ' + title);
 
   const posixUrl = './' + path.relative('.', destPath).replace(/\\/g, '/');
 
