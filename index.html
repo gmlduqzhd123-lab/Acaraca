@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AcaRaca">
   <link rel="manifest" href="./manifest.json">
-  <script src="./ys-qr.js"></script>
-  <script src="./js/vendor/qrcode-generator-1.4.4.js"></script>
+  <!-- QR 도구는 화면을 그리는 것을 막지 않도록 나중에 실행(defer). QR 그림 라이브러리는 js/qr.js가 앱이 뜬 뒤 받는다 -->
+  <script src="./ys-qr.js" defer></script>
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png">
   <meta name="description" content="곡을 찾고, 내 파트를 고르고, 함께 하모니를 만드는 아카펠라 연습실 AcaRaca.">
   <title>AcaRaca · 우리의 아카펠라 연습실</title>
@@ -30,8 +30,25 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icons/logo.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="./css/style.css?v=116">
+  <!-- 글꼴은 첫 화면을 막지 않게 받은 뒤 적용 (받기 전엔 기기 기본 글꼴) -->
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
+  <link rel="stylesheet" href="./css/style.css?v=117">
+  <!-- 앱 코드를 HTML과 동시에 미리 받기 (아래 app.js 실행 시 기다리지 않도록) -->
+  <link rel="modulepreload" href="./js/app.js?v=117">
+  <link rel="modulepreload" href="./js/data.js">
+  <link rel="modulepreload" href="./js/practiceLogic.js">
+  <link rel="modulepreload" href="./js/player.js">
+  <link rel="modulepreload" href="./js/storage.js">
+  <link rel="modulepreload" href="./js/search.js">
+  <link rel="modulepreload" href="./js/router.js">
+  <link rel="modulepreload" href="./js/ui.js">
+  <link rel="modulepreload" href="./js/pitch.js">
+  <link rel="modulepreload" href="./js/archive.js">
+  <link rel="modulepreload" href="./js/mediaStorage.js">
+  <link rel="modulepreload" href="./js/qr.js">
+  <link rel="modulepreload" href="./js/backgroundPlay.js">
+  <link rel="modulepreload" href="./js/stageStore.js">
 
 
 </head>
@@ -40,7 +57,7 @@
   <div class="app-shell">
     <aside class="sidebar" aria-label="주 내비게이션">
       <a class="brand" href="./index.html">
-        <img class="brand-mark" src="./assets/icons/logo.svg" width="42" height="42" alt="">
+        <img class="brand-mark" src="./assets/icons/logo-128.png" width="42" height="42" alt="">
         <span><strong class="brand-name">AcaRaca</strong><span class="brand-caption">우리의 아카펠라 연습실</span></span>
       </a>
       <p class="sidebar-label">MY PRACTICE ROOM</p>
@@ -51,7 +68,7 @@
       <header class="topbar">
         <div class="topbar-brand-wrap">
           <button id="mobile-settings-btn" class="icon-button mobile-settings-btn" type="button" aria-label="설정 열기"></button>
-          <a class="mobile-brand" href="./index.html" aria-label="AcaRaca 홈"><img src="./assets/icons/logo.svg" width="32" height="32" alt=""><strong>AcaRaca</strong></a>
+          <a class="mobile-brand" href="./index.html" aria-label="AcaRaca 홈"><img src="./assets/icons/logo-128.png" width="32" height="32" alt=""><strong>AcaRaca</strong></a>
         </div>
         <div class="topbar-copy"><p class="topbar-kicker">A LITTLE PRACTICE, A LITTLE HARMONY</p><p class="topbar-title">우리의 목소리가 모이는 곳</p></div>
         <div class="topbar-actions" id="topbar-actions"></div>
@@ -938,7 +955,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=116';
+      script.src = './js/app.js?v=117';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);

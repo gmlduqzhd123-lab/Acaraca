@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const appJs = fs.readFileSync('js/app.js', 'utf8');
+const appJs = ['js/app.js', 'js/scoreViewer.js', 'js/archivePages.js', 'js/stage.js', 'js/stageStore.js'].map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 const indexHtml = fs.readFileSync('index.html', 'utf8');
 
 // Find all document.getElementById('...')

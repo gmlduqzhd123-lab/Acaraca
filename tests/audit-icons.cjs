@@ -16,7 +16,7 @@ function checkFile(filePath) {
   }
 }
 
-['js/app.js', 'js/admin.js', 'js/player.js', 'js/archive.js', 'js/data.js', 'js/pitch.js', 'js/ui.js'].forEach(checkFile);
+['js/app.js', 'js/scoreViewer.js', 'js/archivePages.js', 'js/stage.js', 'js/stageStore.js', 'js/admin.js', 'js/player.js', 'js/archive.js', 'js/data.js', 'js/pitch.js', 'js/ui.js'].forEach(checkFile);
 
 // Check specific known buttons with icons
 const appLines = fs.readFileSync('js/app.js', 'utf8').split('\n');

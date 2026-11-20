@@ -161,3 +161,37 @@ export function classifyHorizontalSwipe(dx, dy, threshold = 52) {
   if (Math.abs(dx) <= Math.abs(dy) * 1.25) return null;
   return dx < 0 ? 'next' : 'prev';
 }
+
+/**
+ * 첫 화면을 빨리 띄우기 위해, 큰 자료(악보 목록·감상 영상·기록·교육 자료) 없이 그릴 수 있는 화면인지.
+ * 홈·곡 목록·즐겨찾기·최근 연습만 해당한다. 곡 상세·연습·무대·자료실 화면은 큰 자료가 필요하다.
+ */
+export function isLightRoute(route = {}) {
+  if (!route || typeof route !== 'object') return true;
+  if (route.song || route.cuesheet) return false;
+  return !route.tab || ['home', 'songs', 'favorites', 'recent'].includes(route.tab);
+}
+
+/** 악보 파일 형식 구분 (nwc·pdf·midi·mscz·etc) — 목록 표시와 미리보기 판단에 쓴다. */
+export function getScoreFormatKey(sc) {
+  const fmt = String(sc?.format || sc?.fileType || '').toLowerCase();
+  const ext = String(sc?.fileName || sc?.fileUrl || '').toLowerCase();
+  if (fmt === 'nwc' || fmt === 'nwctxt' || ext.endsWith('.nwc') || ext.endsWith('.nwctxt')) return 'nwc';
+  if (fmt === 'pdf' || ext.endsWith('.pdf')) return 'pdf';
+  if (fmt === 'mid' || fmt === 'midi' || ext.endsWith('.mid') || ext.endsWith('.midi')) return 'midi';
+  if (fmt === 'mscz' || ext.endsWith('.mscz')) return 'mscz';
+  return 'etc';
+}
+
+export function getScoreFormatLabel(sc) {
+  const fmt = String(sc?.format || sc?.fileType || '').toLowerCase();
+  const ext = String(sc?.fileName || sc?.fileUrl || '').toLowerCase();
+  if (fmt === 'nwctxt' || ext.endsWith('.nwctxt')) return '📝 NWC 텍스트 악보';
+  if (fmt === 'nwc' || ext.endsWith('.nwc')) return '🎵 NWC 악보';
+  if (fmt === 'mid' || fmt === 'midi' || ext.endsWith('.mid') || ext.endsWith('.midi')) return '🎹 MIDI 음원';
+  if (fmt === 'pdf' || ext.endsWith('.pdf')) return '📄 PDF 악보';
+  if (fmt === 'mscz' || ext.endsWith('.mscz')) return '🎼 뮤즈스코어 (.mscz)';
+  if (fmt === 'audio') return '🎙️ 가이드 음원';
+  if (fmt === 'image') return '악보 이미지';
+  return '클라우드 악보';
+}
