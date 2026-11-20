@@ -5158,3 +5158,579 @@ html[data-theme="dark"] .button.danger { color: #fff; }
 .stage-stopwatch-pill { min-height: 44px; }
 .stage-stopwatch-reset-btn { width: 44px; height: 44px; }
 .stage-live-badge-row { flex-wrap: wrap; }
+
+/* =============================================================
+ *  UI/UX Overhaul (6 Improvements: Mobile 5-Tab + More Sheet,
+ *  Practice Diet & Accordions, Home Onboarding & Quick Resume,
+ *  Collapsible Browse Filters & Sort, LIVE Swipe & Large Text)
+ * ============================================================= */
+
+/* 1. Desktop sidebar nav group labels */
+.nav-group-label {
+  margin: 14px 12px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.nav-group-label:first-child { margin-top: 2px; }
+
+/* 1. Mobile fixed 5-tab bottom navigation */
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2px;
+    overflow-x: visible;
+    padding: 6px 6px max(12px, calc(8px + env(safe-area-inset-bottom, 0px)));
+  }
+  .bottom-nav .nav-link {
+    min-width: 0;
+    width: 100%;
+    padding: 6px 2px;
+    min-height: 52px;
+    font-size: 11px;
+    gap: 3px;
+    border-radius: 12px;
+  }
+  .bottom-nav .nav-link span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
+
+/* 1. Mobile '더보기' Bottom Sheet */
+.mobile-more-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(13, 24, 21, 0.56);
+  backdrop-filter: blur(3px);
+  animation: fadeIn .16s ease-out;
+}
+.mobile-more-panel {
+  width: 100%;
+  max-width: 540px;
+  max-height: 82vh;
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  border-radius: 22px 22px 0 0;
+  padding: 10px 18px calc(22px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.22);
+}
+.mobile-more-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  margin: 0 auto 12px;
+}
+.mobile-more-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.mobile-more-header h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.mobile-more-header p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.mobile-more-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: var(--sage);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.mobile-more-profile-copy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.mobile-more-profile-copy .icon {
+  color: var(--primary);
+}
+.mobile-more-profile-kicker {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.mobile-more-profile-copy strong {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+}
+.mobile-more-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+.mobile-more-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 74px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 650;
+  text-align: center;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+.mobile-more-item:active { transform: scale(0.97); }
+.mobile-more-item .nav-icon-img,
+.mobile-more-item .icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+.mobile-more-item.active {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 750;
+}
+@media (max-width: 350px) {
+  .mobile-more-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 3. Home 1-Tap Member Onboarding Card */
+.home-onboarding-card {
+  background: var(--sage);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.home-onboarding-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.home-onboarding-head h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.home-onboarding-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.home-onboarding-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.home-onboarding-chip {
+  background: var(--surface);
+  color: var(--primary);
+  border: 1px solid var(--border-strong);
+  font-weight: 700;
+  min-height: 40px;
+  padding: 8px 15px;
+}
+.home-onboarding-chip:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+html[data-theme="dark"] .home-onboarding-chip:hover {
+  color: #0b1b18;
+}
+
+/* 4. Home Quick Resume Banner */
+.home-resume-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background: var(--primary);
+  color: #ffffff;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(25, 77, 70, 0.16);
+  transition: transform .12s ease, opacity .15s ease;
+}
+.home-resume-banner:hover { opacity: 0.95; }
+.home-resume-banner:active { transform: scale(0.99); }
+html[data-theme="dark"] .home-resume-banner {
+  color: #081d1a;
+}
+.home-resume-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.home-resume-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.88;
+}
+.home-resume-title {
+  font-size: 15px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-resume-play {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+html[data-theme="dark"] .home-resume-play {
+  background: rgba(8, 29, 26, 0.16);
+}
+
+/* 4. Home Mobile Horizontal Carousel for preview grids */
+@media (max-width: 767px) {
+  .song-grid.song-grid-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    gap: 12px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .song-grid.song-grid-carousel::-webkit-scrollbar { display: none; }
+  .song-grid.song-grid-carousel .song-card {
+    flex: 0 0 220px;
+    scroll-snap-align: start;
+  }
+}
+@media (max-width: 350px) {
+  .song-grid.song-grid-carousel .song-card {
+    flex: 0 0 198px;
+  }
+}
+
+/* 5. Browse Collapsible Toolbar & Sort Dropdown */
+.browse-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.browse-status-chips {
+  flex: 1 1 auto;
+}
+.browse-toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.browse-sort-select {
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.browse-sort-select.active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+.browse-detail-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.browse-detail-toggle .icon {
+  width: 14px;
+  height: 14px;
+}
+.filter-panel .filter-selects {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 600px) {
+  .browse-toolbar-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .browse-sort-select {
+    flex: 1;
+    min-height: 42px;
+  }
+}
+
+/* 2. Practice Primary 4 Action Buttons & Collapsible Accordions */
+.practice-primary-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+.practice-quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 60px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+.practice-quick-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-soft);
+}
+.practice-quick-btn:active { transform: scale(0.97); }
+.practice-quick-btn .icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+}
+.practice-quick-btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+.practice-quick-btn.primary .icon {
+  color: #ffffff;
+}
+html[data-theme="dark"] .practice-quick-btn.primary,
+html[data-theme="dark"] .practice-quick-btn.primary .icon {
+  color: #081d1a;
+}
+.practice-quick-btn.is-fav {
+  background: rgba(214, 69, 69, 0.1);
+  border-color: rgba(214, 69, 69, 0.4);
+  color: #c93b3b;
+}
+.practice-quick-btn.is-fav .icon {
+  color: #d64545;
+  fill: #d64545;
+}
+html[data-theme="dark"] .practice-quick-btn.is-fav {
+  color: #fca5a5;
+  border-color: rgba(252, 165, 165, 0.45);
+}
+
+.practice-accordion {
+  margin-top: 12px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+details.practice-accordion.voice-recorder-panel,
+details.practice-accordion.personal-note-panel {
+  padding: 0;
+}
+.practice-loop-accordion {
+  margin-top: 12px;
+  background: var(--surface-soft);
+  border-radius: 12px;
+}
+.practice-accordion-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  min-height: 48px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--ink);
+}
+.practice-accordion-summary::-webkit-details-marker { display: none; }
+.practice-accordion-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  min-width: 0;
+}
+.practice-accordion-title .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+.practice-accordion-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+.practice-accordion-chevron {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  transition: transform .18s ease;
+  flex: none;
+}
+.practice-accordion[open] > .practice-accordion-summary .practice-accordion-chevron {
+  transform: rotate(180deg);
+}
+.practice-accordion-body {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.practice-accordion-body > .practice-loop-panel {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+.practice-more-tools .player-actions {
+  margin-top: 0;
+}
+
+/* Hide PC keyboard shortcut hint on touch/mobile screens */
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+  .practice-shortcut-hint {
+    display: none;
+  }
+}
+
+/* 6. LIVE Stage UX Pills, Next-Song Preview Bar & Large Text Mode */
+.stage-ux-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e6f2ee;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  transition: background .15s, border-color .15s;
+}
+.stage-ux-pill.active {
+  background: #3fb8a6;
+  color: #061c19;
+  border-color: #3fb8a6;
+}
+.stage-ux-pill.locked {
+  background: rgba(234, 179, 8, 0.22);
+  color: #fde047;
+  border-color: rgba(250, 204, 21, 0.55);
+}
+.stage-next-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  margin-top: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(124, 214, 199, 0.22);
+  font-size: 12.5px;
+  color: #d7eae4;
+}
+.stage-next-preview-text {
+  font-weight: 700;
+}
+.stage-swipe-hint {
+  font-size: 11.5px;
+  color: #8fd9cc;
+  font-weight: 600;
+}
+
+/* Stage Large Text Mode ('가+ 큰 글씨 ON') */
+.stage-live-shell.stage-large-text .stage-hero-title {
+  font-size: clamp(28px, 6.5vw, 44px);
+  line-height: 1.2;
+}
+.stage-live-shell.stage-large-text .stage-opening-cue-text {
+  font-size: clamp(19px, 4.6vw, 28px);
+  line-height: 1.45;
+}
+.stage-live-shell.stage-large-text .stage-pitch-note {
+  font-size: clamp(22px, 5vw, 32px);
+}
+.stage-live-shell.stage-large-text .stage-pitch-part {
+  font-size: 15px;
+}
+.stage-live-shell.stage-large-text .stage-pitchpipe-chip {
+  font-size: 15px;
+  padding: 9px 14px;
+}
+.stage-live-shell.stage-large-text .stage-mc-content {
+  font-size: clamp(18px, 4.2vw, 24px);
+  line-height: 1.65;
+}
+.stage-live-shell.stage-large-text .stage-overview-song-title {
+  font-size: 20px;
+}
+.stage-live-shell.stage-large-text .stage-overview-pitch-chip {
+  font-size: 14px;
+  padding: 6px 11px;
+}
+@media (max-width: 380px) {
+  .practice-primary-actions {
+    gap: 6px;
+  }
+  .practice-quick-btn {
+    font-size: 11px;
+    padding: 8px 4px;
+    min-height: 56px;
+  }
+}

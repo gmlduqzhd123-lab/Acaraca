@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
-import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose} from './practiceLogic.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -121,6 +121,8 @@ const state = {
   progress: storedProgress,
   songTranspositions: object(read('song_transpositions', {})),
   filters: {query: '', status: '', category: '', difficulty: '', part: '', mastery: ''},
+  browseSort: typeof read('browseSort', '') === 'string' ? read('browseSort', '') : '',
+  browseFilterOpen: typeof window !== 'undefined' ? window.innerWidth > 900 : false,
   stageView: read('stageView', 'live'),
   stageFilters: {query: '', category: ''},
   rehearsalFilters: {query: '', songId: ''},
@@ -136,7 +138,14 @@ const state = {
 };
 const activeAudios = new Set();
 const activePlayers = [];
-const mobileTabs = Object.keys(labels);
+const desktopNavGroups = [
+  { title: '연습 & 무대', tabs: ['home', 'songs', 'stage', 'scores'] },
+  { title: '아카이브', tabs: ['rehearsal', 'practiceVideos', 'appreciation', 'memories', 'education'] },
+  { title: '나의 연습', tabs: ['favorites', 'recent', 'settings'] }
+];
+const mobilePrimaryTabs = ['home', 'songs', 'stage', 'scores'];
+const mobileMoreTabs = ['rehearsal', 'practiceVideos', 'appreciation', 'memories', 'education', 'favorites', 'recent', 'settings'];
+const mobileShortLabels = { home: '홈', songs: '연습실', stage: '무대', scores: '악보' };
 let theme = ['system', 'light', 'dark'].includes(read('theme', 'system')) ? read('theme', 'system') : 'system';
 const colorPreference = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
@@ -635,23 +644,135 @@ function openBackgroundGuideModal() {
 
 let topbarMoreRefs = null;
 let topbarMoreListenerAdded = false;
+let mobileMoreKeyHandler = null;
+
+function closeMobileMoreSheet() {
+  const sheet = document.getElementById('mobile-more-sheet');
+  if (sheet) sheet.remove();
+  if (mobileMoreKeyHandler) {
+    window.removeEventListener('keydown', mobileMoreKeyHandler);
+    mobileMoreKeyHandler = null;
+  }
+  const moreBtn = document.querySelector('#mobile-nav .mobile-more-trigger');
+  if (moreBtn) {
+    moreBtn.setAttribute('aria-expanded', 'false');
+    const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
+    moreBtn.classList.toggle('active', mobileMoreTabs.includes(activeTab));
+  }
+}
+
+function openMobileMoreSheet() {
+  if (document.getElementById('mobile-more-sheet')) {
+    closeMobileMoreSheet();
+    return;
+  }
+  const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
+  const voiceText = myVoiceLabel() || '단원 이름·파트 미설정';
+
+  const sheetGrid = el('div', {class: 'mobile-more-grid'},
+    mobileMoreTabs.map(tab => el('a', {
+      class: `mobile-more-item${tab === activeTab ? ' active' : ''}`,
+      href: routeUrl({tab}).href,
+      'aria-current': tab === activeTab ? 'page' : null,
+      onclick: (event) => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        closeMobileMoreSheet();
+        navigate({tab});
+      }
+    }, renderNavIcon(tab), el('span', {text: labels[tab]})))
+  );
+
+  const profileStrip = el('div', {class: 'mobile-more-profile'},
+    el('div', {class: 'mobile-more-profile-copy'},
+      icon('mic'),
+      el('div', {},
+        el('span', {class: 'mobile-more-profile-kicker', text: '나의 목소리'}),
+        el('strong', {text: voiceText})
+      )
+    ),
+    button('변경', () => {
+      closeMobileMoreSheet();
+      navigate({tab: 'settings'});
+    }, 'button secondary small')
+  );
+
+  const panel = el('div', {class: 'mobile-more-panel'},
+    el('div', {class: 'mobile-more-handle', 'aria-hidden': 'true'}),
+    el('div', {class: 'mobile-more-header'},
+      el('div', {},
+        el('h2', {text: '전체 메뉴'}),
+        el('p', {text: '아카이브와 개인 연습 메뉴를 한눈에 열어보세요'})
+      ),
+      button('', closeMobileMoreSheet, 'icon-button mobile-more-close', 'close', {'aria-label': '메뉴 닫기'})
+    ),
+    profileStrip,
+    sheetGrid
+  );
+
+  const overlay = el('div', {
+    id: 'mobile-more-sheet',
+    class: 'mobile-more-sheet',
+    role: 'dialog',
+    'aria-modal': 'true',
+    'aria-label': '전체 메뉴',
+    onclick: (e) => {
+      if (e.target === overlay) closeMobileMoreSheet();
+    }
+  }, panel);
+
+  mobileMoreKeyHandler = (e) => {
+    if (e.key === 'Escape') closeMobileMoreSheet();
+  };
+  window.addEventListener('keydown', mobileMoreKeyHandler);
+  document.body.append(overlay);
+
+  const moreBtn = document.querySelector('#mobile-nav .mobile-more-trigger');
+  if (moreBtn) {
+    moreBtn.setAttribute('aria-expanded', 'true');
+    moreBtn.classList.add('active');
+  }
+}
+
 function refreshChrome() {
   const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
   const desktopNav = document.getElementById('desktop-nav');
   if (desktopNav) {
-    desktopNav.replaceChildren(...Object.entries(labels).map(([tab, label]) => el('a', {
-      class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
-      'aria-current': tab === activeTab ? 'page' : null,
-      onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
-    }, renderNavIcon(tab), el('span', {text: label}))));
+    const groupedNodes = [];
+    for (const group of desktopNavGroups) {
+      groupedNodes.push(el('p', {class: 'nav-group-label', text: group.title}));
+      for (const tab of group.tabs) {
+        groupedNodes.push(el('a', {
+          class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
+          'aria-current': tab === activeTab ? 'page' : null,
+          onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
+        }, renderNavIcon(tab), el('span', {text: labels[tab]})));
+      }
+    }
+    desktopNav.replaceChildren(...groupedNodes);
   }
   const mobileNav = document.getElementById('mobile-nav');
   if (mobileNav) {
-    mobileNav.replaceChildren(...mobileTabs.map(tab => el('a', {
+    const isMoreActive = mobileMoreTabs.includes(activeTab) || Boolean(document.getElementById('mobile-more-sheet'));
+    const primaryLinks = mobilePrimaryTabs.map(tab => el('a', {
       class: `nav-link${tab === activeTab ? ' active' : ''}`, href: routeUrl({tab}).href,
       'aria-current': tab === activeTab ? 'page' : null,
-      onclick: event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate({tab}); }
-    }, renderNavIcon(tab), el('span', {text: labels[tab]}))));
+      onclick: event => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        closeMobileMoreSheet();
+        navigate({tab});
+      }
+    }, renderNavIcon(tab), el('span', {text: mobileShortLabels[tab] || labels[tab]})));
+    const moreTabBtn = el('button', {
+      type: 'button',
+      class: `nav-link mobile-more-trigger${isMoreActive ? ' active' : ''}`,
+      'aria-label': '전체 메뉴 더보기',
+      'aria-haspopup': 'dialog',
+      'aria-expanded': String(Boolean(document.getElementById('mobile-more-sheet'))),
+      onclick: () => openMobileMoreSheet()
+    }, icon('more'), el('span', {text: '더보기'}));
+    mobileNav.replaceChildren(...primaryLinks, moreTabBtn);
   }
   document.getElementById('sidebar-bottom').replaceChildren(
     button('🎤 무대 전용 큐시트', () => navigate({tab: 'stage', view: 'live'}), 'button primary small', 'stage', {style: 'width: 100%; margin-bottom: 8px; font-weight: 700;'}),
@@ -811,7 +932,8 @@ function songCard(song, options = {}) {
   );
 }
 function songGrid(songs, emptyTitle = '등록된 곡이 없어요', emptyDescription = '데이터 편집기에서 첫 연습곡을 추가해 주세요.', options = {}) {
-  return songs.length ? el('div', {class: 'song-grid'}, songs.map(s => songCard(s, options))) : emptyState(emptyTitle, emptyDescription);
+  const cls = options.carousel ? 'song-grid song-grid-carousel' : 'song-grid';
+  return songs.length ? el('div', {class: cls}, songs.map(s => songCard(s, options))) : emptyState(emptyTitle, emptyDescription);
 }
 function heading(title, note = '', action = null) {
   return el('div', {class: 'section-heading'}, el('div', {}, el('h2', {text: title}), note && el('p', {class: 'section-note', text: note})), action);
@@ -1047,8 +1169,56 @@ function renderHomeMasterySummary() {
 }
 function renderHome() {
   const practicing = state.songs.filter(song => song.status === 'practice');
+  const hasMyIdentity = Boolean(state.myName || state.myPart);
   const intro = el('div', {class: 'home-intro'}, el('div', {}, el('p', {class: 'eyebrow', text: 'WELCOME TO YOUR PRACTICE ROOM'}), el('h1', {}, '오늘도, 우리의 ', el('span', {text: '하모니를.'})), el('p', {text: '한 곡씩, 한 파트씩. 함께 만드는 더 좋은 소리.'})), el('span', {class: 'intro-date', text: new Date().toLocaleDateString('ko-KR', {month: 'long', day: 'numeric', weekday: 'long'})}));
   app.append(intro);
+
+  if (!hasMyIdentity) {
+    const memberNames = allMemberNames();
+    if (memberNames.length) {
+      const onboardingCard = el('section', {class: 'home-onboarding-card', 'aria-label': '단원 이름 빠른 선택'},
+        el('div', {class: 'home-onboarding-head'},
+          el('div', {},
+            el('p', {class: 'eyebrow', text: 'QUICK PROFILE SETUP'}),
+            el('h2', {text: '👋 반가워요! 누구신가요?'}),
+            el('p', {class: 'home-onboarding-desc', text: '이름을 한 번만 누르면 곡마다 내 파트와 첫 음이 자동으로 맞춰져요.'})
+          ),
+          button('기본 파트로 고르기 →', () => navigate({tab: 'settings'}), 'text-button')
+        ),
+        el('div', {class: 'home-onboarding-chips'},
+          memberNames.map(name => button(name, () => {
+            state.myName = name;
+            write('myName', name);
+            refreshChrome();
+            render();
+            toast(`🎤 ${name}님으로 설정했어요! 곡마다 ${name}님의 파트가 먼저 보여요.`);
+          }, 'chip home-onboarding-chip'))
+        )
+      );
+      app.append(onboardingCard);
+    }
+  }
+
+  const recentItems = validRecent();
+  const latestRecent = recentItems[0];
+  const latestSong = latestRecent ? state.songs.find(s => s.id === latestRecent.songId) : null;
+  if (latestRecent && latestSong) {
+    const singer = latestSong.partNames?.[latestRecent.part];
+    const resumeBanner = el('button', {
+      type: 'button',
+      class: 'home-resume-banner',
+      'aria-label': `방금 연습하던 ${latestSong.title} ${PARTS[latestRecent.part] || latestRecent.part} 바로 이어하기`,
+      onclick: () => startPractice(latestSong, latestRecent.part)
+    },
+      el('div', {class: 'home-resume-copy'},
+        el('span', {class: 'home-resume-kicker', text: '▶ 방금 연습하던 곡 바로 이어하기'}),
+        el('strong', {class: 'home-resume-title', text: `${latestSong.title} · ${PARTS[latestRecent.part] || latestRecent.part}${singer ? ` (${singer})` : ''}`})
+      ),
+      el('span', {class: 'home-resume-play', 'aria-hidden': 'true'}, icon('play'))
+    );
+    app.append(resumeBanner);
+  }
+
   const upcoming = renderUpcomingStageCard();
   if (upcoming) app.append(upcoming);
   app.append(searchBar(true));
@@ -1085,9 +1255,8 @@ function renderHome() {
       button('모두 보기', () => { state.filters = {query: '', status: 'practice', category: '', difficulty: '', part: '', mastery: ''}; navigate({tab: 'songs'}); }, 'text-button', 'arrow')
     );
     app.append(section('지금 연습 중', `${practicing.length}곡의 하모니를 완성해 가고 있어요`, hero, practiceHeaderActions));
-    if (practicing.length > 1) app.append(songGrid(practicing.slice(1, 5)));
+    if (practicing.length > 1) app.append(songGrid(practicing.slice(1, 5), undefined, undefined, {carousel: true}));
   }
-  const hasMyIdentity = Boolean(state.myName || state.myPart);
   const mine = hasMyIdentity ? state.songs.filter(song => availableParts(song).includes(songMyPart(song))) : [];
   const myTitleText = state.myName
     ? `${state.myName}님의 맞춤 파트${state.myPart ? ` · 기본 ${PARTS[state.myPart]}` : ''}`
@@ -1114,12 +1283,6 @@ function renderHome() {
       }
     }, 'button secondary', 'arrow')
   );
-  app.append(section('내 파트 맞춤 연습', hasMyIdentity ? '곡마다 내가 맡은 파트로 바로 들어가세요' : '이름이나 기본 파트를 한 번만 설정해 두면 편해요', myPanel));
-  const recentHeaderActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
-    validRecent().length ? button('최근 연습 비우기', confirmClearRecent, 'text-button danger-text', 'close', {title: '최근 연습한 곡 목록을 모두 비웁니다'}) : null,
-    button('모두 보기', () => navigate({tab: 'recent'}), 'text-button', 'arrow')
-  );
-  app.append(section('최근 연습', '마지막으로 부르던 파트부터 이어서', recentList(5), recentHeaderActions));
 
   const randomPanel = el('div', {class: 'quick-panel sand'});
   function updateRandom() {
@@ -1133,8 +1296,16 @@ function renderHome() {
       state.random = candidates[Math.floor(Math.random() * candidates.length)]; updateRandom();
     }, 'button secondary', 'shuffle'));
   }
-  updateRandom(); app.append(section('오늘의 랜덤 연습', '새로운 하모니와 만나는 작은 계기', randomPanel));
-  app.append(section('연습 라이브러리', `${state.songs.length}곡, 하나의 연습실`, songGrid(state.songs.slice(0, 4)), button('아카라카 연습실 바로가기', () => navigate({tab: 'songs'}), 'text-button', 'arrow')));
+  updateRandom();
+  app.append(section('내 파트 맞춤 연습', hasMyIdentity ? '내 파트 곡과 오늘의 랜덤 추천을 한눈에' : '이름이나 기본 파트를 설정하고 가볍게 시작해 보세요', el('div', {class: 'quick-grid'}, myPanel, randomPanel)));
+
+  const recentHeaderActions = el('div', {style: 'display: flex; gap: 8px; align-items: center;'},
+    recentItems.length ? button('최근 연습 비우기', confirmClearRecent, 'text-button danger-text', 'close', {title: '최근 연습한 곡 목록을 모두 비웁니다'}) : null,
+    button('모두 보기', () => navigate({tab: 'recent'}), 'text-button', 'arrow')
+  );
+  app.append(section('최근 연습', '마지막으로 부르던 파트부터 이어서', recentList(3), recentHeaderActions));
+
+  app.append(section('연습 라이브러리', `${state.songs.length}곡, 하나의 연습실`, songGrid(state.songs.slice(0, 4), undefined, undefined, {carousel: true}), button('아카라카 연습실 바로가기', () => navigate({tab: 'songs'}), 'text-button', 'arrow')));
 
   const archivePanel = el('div', {class: 'quick-panel sage', style: 'margin-top: 16px;'},
     el('div', {class: 'quick-panel-title'}, icon('academic'), el('h3', {text: '아카라카 라운지 & 아카이브'})),
@@ -1167,16 +1338,73 @@ function renderBrowse(favoritesOnly = false) {
   const filterContainer = el('div', {class: 'filter-panel'});
   const results = el('div', {id: 'song-results', 'aria-live': 'polite'});
   const base = () => favoritesOnly ? state.songs.filter(song => state.favorites.has(song.id)) : state.songs;
+  const hasDetailFilter = () => Boolean(state.filters.part || state.filters.category || state.filters.mastery);
+  if (hasDetailFilter()) state.browseFilterOpen = true;
+
   function updateResults() {
-    const matches = filterSongs(base(), {...state.filters, favorites: [...state.favorites], progress: state.progress});
+    const filtered = filterSongs(base(), {...state.filters, favorites: [...state.favorites], progress: state.progress});
+    const matches = sortSongs(filtered, state.browseSort, {progress: state.progress, recent: state.recent});
     const active = Object.values(state.filters).filter(value => String(value).trim()).length;
-    const summary = el('div', {class: 'filter-summary'}, el('span', {}, el('strong', {text: String(matches.length)}), '곡', active ? ` · 필터 ${active}개 적용` : ''), active && button('필터 초기화', () => { state.filters = {query: '', status: '', category: '', difficulty: '', part: '', mastery: ''}; document.getElementById('song-search').value = ''; updateFilters(); updateResults(); }, 'text-button', 'close'));
+    const summary = el('div', {class: 'filter-summary'}, el('span', {}, el('strong', {text: String(matches.length)}), '곡', active ? ` · 필터 ${active}개 적용` : ''), active && button('필터 초기화', () => {
+      state.filters = {query: '', status: '', category: '', difficulty: '', part: '', mastery: ''};
+      const sf = document.getElementById('song-search');
+      if (sf) sf.value = '';
+      updateFilters();
+      updateResults();
+    }, 'text-button', 'close'));
     results.replaceChildren(el('h2', {class: 'sr-only', text: favoritesOnly ? '즐겨찾기 곡 목록' : '곡 검색 결과'}), summary, songGrid(matches,
       favoritesOnly && !state.favorites.size ? '즐겨찾기가 아직 없어요' : '찾는 곡이 없어요', favoritesOnly && !state.favorites.size ? '곡의 하트 버튼을 눌러 즐겨찾기에 담아보세요.' : '다른 검색어를 입력하거나 필터를 초기화해 보세요.'));
   }
+
   function updateFilters() {
     const statusOptions = [['', '전체'], ['practice', '현재 연습'], ['complete', '완료'], ['favorite', '즐겨찾기']];
-    const statusRow = el('div', {class: 'filter-row'}, el('span', {class: 'filter-label', text: '상태'}), el('div', {class: 'chip-group'}, statusOptions.map(([value, label]) => button(label, () => { state.filters.status = value; updateFilters(); updateResults(); }, `chip${state.filters.status === value ? ' active' : ''}`, null, {'aria-pressed': String(state.filters.status === value)}))));
+    const sortOptions = [
+      ['', '기본 순서'],
+      ['mastery-asc', '덜 익힌 순'],
+      ['recent', '최근 연습순'],
+      ['title', '가나다순'],
+      ['difficulty-desc', '난이도 높은 순'],
+      ['difficulty-asc', '난이도 낮은 순']
+    ];
+    const detailCount = [state.filters.part, state.filters.category, state.filters.mastery].filter(Boolean).length;
+
+    const statusChips = el('div', {class: 'chip-group browse-status-chips'},
+      statusOptions.map(([value, label]) => button(label, () => {
+        state.filters.status = value;
+        updateFilters();
+        updateResults();
+      }, `chip${state.filters.status === value ? ' active' : ''}`, null, {'aria-pressed': String(state.filters.status === value)}))
+    );
+
+    const sortSelect = el('select', {
+      id: 'browse-sort-select',
+      class: `browse-sort-select${state.browseSort ? ' active' : ''}`,
+      'aria-label': '곡 정렬 순서',
+      onchange: (event) => {
+        state.browseSort = event.target.value;
+        write('browseSort', state.browseSort);
+        event.target.classList.toggle('active', Boolean(state.browseSort));
+        updateResults();
+      }
+    }, sortOptions.map(([value, text]) => el('option', {value, text})));
+    sortSelect.value = state.browseSort || '';
+
+    const detailToggleBtn = button(
+      `상세 필터${detailCount ? ` (${detailCount})` : ''}`,
+      () => {
+        state.browseFilterOpen = !state.browseFilterOpen;
+        updateFilters();
+      },
+      `chip browse-detail-toggle${(state.browseFilterOpen || detailCount) ? ' active' : ''}`,
+      state.browseFilterOpen ? 'chevron-up' : 'chevron-down',
+      {'aria-expanded': String(Boolean(state.browseFilterOpen))}
+    );
+
+    const toolbarRow = el('div', {class: 'browse-toolbar-row'},
+      statusChips,
+      el('div', {class: 'browse-toolbar-controls'}, sortSelect, detailToggleBtn)
+    );
+
     const fields = [
       ['part', '파트', Object.entries(PARTS)],
       ['category', '장르', [...new Set(state.songs.map(song => song.category).filter(Boolean))].sort().map(value => [value, value])],
@@ -1188,10 +1416,22 @@ function renderBrowse(favoritesOnly = false) {
         ['unstarted', '○ 아직 미시작']
       ]]
     ];
-    filterContainer.replaceChildren(statusRow, el('div', {class: 'filter-selects'}, fields.map(([key, label, options]) => {
-      const select = el('select', {id: `filter-${key}`, class: state.filters[key] ? 'active' : '', onchange: event => { state.filters[key] = event.target.value; event.target.classList.toggle('active', Boolean(event.target.value)); updateResults(); }}, el('option', {value: '', text: `모든 ${label}`}), options.map(([value, text]) => el('option', {value, text, selected: String(state.filters[key]) === String(value)})));
+    const selectsRow = el('div', {class: 'filter-selects', hidden: !state.browseFilterOpen}, fields.map(([key, label, options]) => {
+      const select = el('select', {
+        id: `filter-${key}`,
+        class: state.filters[key] ? 'active' : '',
+        onchange: event => {
+          state.filters[key] = event.target.value;
+          event.target.classList.toggle('active', Boolean(event.target.value));
+          updateFilters();
+          updateResults();
+        }
+      }, el('option', {value: '', text: `모든 ${label}`}), options.map(([value, text]) => el('option', {value, text})));
+      select.value = state.filters[key] || '';
       return el('label', {for: `filter-${key}`}, el('span', {text: label}), select);
-    })));
+    }));
+
+    filterContainer.replaceChildren(toolbarRow, selectsRow);
   }
   app.append(searchBar(false, updateResults), filterContainer, results); updateFilters(); updateResults();
 }
@@ -7267,9 +7507,11 @@ function renderPlayerController(player, song, part) {
     write('savedLoops', all);
   };
 
+  const loopCountBadge = el('span', {class: 'practice-accordion-badge'});
   const loopBookmarksBar = el('div', {class: 'loop-bookmarks-bar'});
   function renderLoopBookmarks() {
     const items = getSongSavedLoops();
+    loopCountBadge.textContent = items.length ? `저장 ${items.length}개` : 'A-B 집중 반복';
     if (!items.length) {
       loopBookmarksBar.hidden = true;
       loopBookmarksBar.replaceChildren();
@@ -7341,7 +7583,6 @@ function renderPlayerController(player, song, part) {
   const loopPanel = el('div', {class: 'practice-loop-panel', role: 'region', 'aria-label': '구간 반복 연습 (A-B Loop)'},
     el('div', {class: 'practice-loop-header'},
       el('div', {class: 'practice-loop-title-box'},
-        el('span', {class: 'practice-loop-title'}, icon('repeat'), el('strong', {text: '구간 반복 연습'})),
         loopStatusBadge
       ),
       el('div', {class: 'practice-loop-presets'},
@@ -7375,6 +7616,17 @@ function renderPlayerController(player, song, part) {
     loopBookmarksBar
   );
 
+  const loopAccordion = el('details', {
+    class: 'practice-accordion practice-loop-accordion',
+    open: typeof window !== 'undefined' ? window.innerWidth > 900 : false
+  },
+    el('summary', {class: 'practice-accordion-summary'},
+      el('span', {class: 'practice-accordion-title'}, icon('repeat'), el('strong', {text: '구간 반복 연습 (A-B)'}), loopCountBadge),
+      el('span', {class: 'practice-accordion-chevron', 'aria-hidden': 'true'}, icon('chevron-down'))
+    ),
+    el('div', {class: 'practice-accordion-body'}, loopPanel)
+  );
+
   // 큰 버튼 모드: 악보를 보며 한 손으로 조작할 수 있게 핵심 버튼 4개를 화면 아래에 고정
   const targetPitchPart = (part && part !== 'full') ? part : (songMyPart(song) || part);
   const hasMyFirst = Boolean(getTransposedPartNote(song, targetPitchPart));
@@ -7405,7 +7657,7 @@ function renderPlayerController(player, song, part) {
   const bigModeBtn = button('큰 버튼 모드', () => setBigMode(bigBar.hidden), 'button secondary small big-mode-toggle', 'presentation', {'aria-pressed': 'false', 'aria-label': '큰 버튼 연습 모드 (화면 켜짐 유지)'});
 
   const panel = el('div', {class: 'practice-controller-panel', role: 'region', 'aria-label': '연습 플레이어 컨트롤러'},
-    el('div', {class: 'big-mode-row'}, bigModeBtn), controlRow, subrow, loopPanel
+    el('div', {class: 'big-mode-row'}, bigModeBtn), controlRow, subrow, loopAccordion
   );
   // 고정 바는 body에 붙여야 부모 transform 영향 없이 화면 하단에 고정됨
   document.querySelectorAll('.big-practice-bar').forEach(n => n.remove());
@@ -7684,15 +7936,22 @@ function renderVoiceRecorderPanel(song, part) {
     }
   }, 'button primary small', 'mic');
 
-  const panel = el('section', { class: 'voice-recorder-panel', 'aria-label': '내 목소리 셀프 녹음기' },
-    el('div', { class: 'voice-rec-header' },
-      el('div', {},
-        el('h3', { class: 'voice-rec-title', text: '🎙️ 내 목소리 셀프 녹음 · 즉시 모니터' }),
-        el('p', { class: 'voice-rec-desc', text: '이어폰으로 파트 가이드를 들으며 내 목소리를 녹음해 음정·호흡·박자를 바로 점검하세요.' })
+  const panel = el('details', { class: 'practice-accordion voice-recorder-panel', 'aria-label': '내 목소리 셀프 녹음기' },
+    el('summary', { class: 'practice-accordion-summary' },
+      el('span', { class: 'practice-accordion-title' },
+        icon('mic'),
+        el('strong', { text: '내 목소리 셀프 녹음 · 즉시 모니터' }),
+        el('span', { class: 'practice-accordion-badge', text: '마이크 점검' })
       ),
-      el('div', { class: 'voice-rec-controls-row' }, recBtn, timerBadge)
+      el('span', { class: 'practice-accordion-chevron', 'aria-hidden': 'true' }, icon('chevron-down'))
     ),
-    previewWrap
+    el('div', { class: 'practice-accordion-body' },
+      el('div', { class: 'voice-rec-header' },
+        el('p', { class: 'voice-rec-desc', text: '이어폰으로 파트 가이드를 들으며 내 목소리를 녹음해 음정·호흡·박자를 바로 점검하세요.' }),
+        el('div', { class: 'voice-rec-controls-row' }, recBtn, timerBadge)
+      ),
+      previewWrap
+    )
   );
 
   const observer = new MutationObserver(() => {
@@ -7712,6 +7971,11 @@ function renderPersonalNotePanel(song, part) {
   const getAllNotes = () => object(read('my_practice_notes', {}));
   const currentEntry = object(getAllNotes()[song.id]);
   const initialText = typeof currentEntry.text === 'string' ? currentEntry.text : '';
+
+  const noteBadge = el('span', {
+    class: 'practice-accordion-badge',
+    text: initialText.trim() ? '메모 있음' : '비어 있음'
+  });
 
   const saveStatus = el('span', {
     class: 'personal-note-status',
@@ -7735,6 +7999,10 @@ function renderPersonalNotePanel(song, part) {
         matches.push({ sec, label });
       }
     }
+    const trimmed = String(text || '').trim();
+    noteBadge.textContent = matches.length
+      ? `구간 ${matches.length}개`
+      : (trimmed ? '메모 있음' : '비어 있음');
     if (!matches.length) {
       tsChipsBox.hidden = true;
       tsChipsBox.replaceChildren();
@@ -7793,19 +8061,30 @@ function renderPersonalNotePanel(song, part) {
 
   refreshTimestampChips(initialText);
 
-  return el('section', { class: 'personal-note-panel', 'aria-label': '나만의 개인 연습 노트' },
-    el('div', { class: 'personal-note-header' },
-      el('div', {},
-        el('h3', { class: 'personal-note-title', text: '📝 나만의 개인 연습 노트' }),
-        el('p', { class: 'personal-note-desc', text: '숨표·발음·음정 주의 구간을 자유롭게 적어두세요. [0:42]처럼 시간을 적으면 원탭 점프 버튼이 생깁니다.' })
+  return el('details', {
+    class: 'practice-accordion personal-note-panel',
+    'aria-label': '나만의 개인 연습 노트',
+    open: Boolean(initialText.trim())
+  },
+    el('summary', { class: 'practice-accordion-summary' },
+      el('span', { class: 'practice-accordion-title' },
+        icon('notes'),
+        el('strong', { text: '나만의 개인 연습 노트' }),
+        noteBadge
       ),
-      el('div', { style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap;' },
-        saveStatus,
-        insertTsBtn
-      )
+      el('span', { class: 'practice-accordion-chevron', 'aria-hidden': 'true' }, icon('chevron-down'))
     ),
-    textarea,
-    tsChipsBox
+    el('div', { class: 'practice-accordion-body' },
+      el('div', { class: 'personal-note-header' },
+        el('p', { class: 'personal-note-desc', text: '숨표·발음·음정 주의 구간을 자유롭게 적어두세요. [0:42]처럼 시간을 적으면 원탭 점프 버튼이 생깁니다.' }),
+        el('div', { style: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap;' },
+          saveStatus,
+          insertTsBtn
+        )
+      ),
+      textarea,
+      tsChipsBox
+    )
   );
 }
 
@@ -7974,21 +8253,71 @@ function renderPractice(song, part, record = true) {
     );
   }
 
-  const actions = el('div', {class: 'player-actions'},
-    songScores.length ? button('🎼 인앱 악보 보기', () => openOrDownloadScore(songScores[0], false), 'button primary', 'document', {'aria-label': '연습 화면을 벗어나지 않고 악보 바로 열기'}) : null,
-    button('🎙️ 튜너·메트로놈', () => openPitchPipe(song.bpm), 'button secondary', 'music', {'aria-label': '실시간 음정 튜너 및 합주 메트로놈 열기'}),
+  const isFavNow = state.favorites.has(song.id);
+  const favActionBtn = el('button', {
+    type: 'button',
+    class: `practice-quick-btn${isFavNow ? ' is-fav' : ''}`,
+    'aria-pressed': String(isFavNow),
+    'aria-label': isFavNow ? '즐겨찾기에서 빼기' : '즐겨찾기에 추가',
+    onclick: () => {
+      if (state.favorites.has(song.id)) state.favorites.delete(song.id);
+      else state.favorites.add(song.id);
+      write('favorites', [...state.favorites]);
+      const nextFav = state.favorites.has(song.id);
+      favActionBtn.classList.toggle('is-fav', nextFav);
+      favActionBtn.setAttribute('aria-pressed', String(nextFav));
+      favActionBtn.setAttribute('aria-label', nextFav ? '즐겨찾기에서 빼기' : '즐겨찾기에 추가');
+      favActionBtn.replaceChildren(icon('heart'), el('span', {text: nextFav ? '저장됨' : '즐겨찾기'}));
+      toast(nextFav ? `'${song.title}'을 즐겨찾기에 담았어요.` : `'${song.title}'을 즐겨찾기에서 뺐어요.`);
+    }
+  }, icon('heart'), el('span', {text: isFavNow ? '저장됨' : '즐겨찾기'}));
+
+  const scoreQuickBtn = songScores.length
+    ? el('button', {
+        type: 'button',
+        class: 'practice-quick-btn primary',
+        'aria-label': '연습 화면을 벗어나지 않고 악보 바로 열기',
+        onclick: () => openOrDownloadScore(songScores[0], false)
+      }, icon('document'), el('span', {text: '악보 보기'}))
+    : el('button', {
+        type: 'button',
+        class: 'practice-quick-btn',
+        'aria-label': '악보 창고 열기',
+        onclick: () => {
+          state.scoreFilters.songId = song.id;
+          navigate({tab: 'scores'});
+        }
+      }, icon('document'), el('span', {text: '악보 창고'}));
+
+  const primaryActions = el('div', {class: 'practice-primary-actions', role: 'group', 'aria-label': '핵심 연습 도구'},
+    scoreQuickBtn,
+    el('button', {
+      type: 'button',
+      class: 'practice-quick-btn',
+      'aria-label': '실시간 음정 튜너 및 합주 메트로놈 열기',
+      onclick: () => openPitchPipe(song.bpm)
+    }, icon('music'), el('span', {text: '튜너·박자'})),
+    el('button', {
+      type: 'button',
+      class: 'practice-quick-btn',
+      'aria-label': '화면 잠금 및 주머니 절전 모드',
+      onclick: () => {
+        if (state.player && !state.player.isMounted()) {
+          state.player.play();
+        }
+        enterPocketMode({
+          title: `${song.title} (${PARTS[part]})`,
+          partLabel: `${song.artist || 'AcaRaca'} · 포켓 절전 모드`
+        });
+        toast('🔒 화면 절전 모드가 켜졌습니다. 화면을 두 번 탭하면 잠금이 해제됩니다.');
+      }
+    }, icon('eye'), el('span', {text: '포켓 절전'})),
+    favActionBtn
+  );
+
+  const secondaryToolButtons = [
     button('처음부터', () => state.player?.restart(), 'button secondary', 'clock'),
     button('가로 확대', () => state.player?.toggleLandscape?.(), 'button secondary', 'presentation', {'aria-label': '영상 가로로 확대해서 크게 보기'}),
-    button('화면 절전 (포켓)', () => {
-      if (state.player && !state.player.isMounted()) {
-        state.player.play();
-      }
-      enterPocketMode({
-        title: `${song.title} (${PARTS[part]})`,
-        partLabel: `${song.artist || 'AcaRaca'} · 포켓 절전 모드`
-      });
-      toast('🔒 화면 절전 모드가 켜졌습니다. 화면을 두 번 탭하면 잠금이 해제됩니다.');
-    }, 'button secondary', 'eye', {'aria-label': '화면 잠금 및 주머니 절전 모드'}),
     button('화면 켜짐 유지', async () => {
       if (isWakeLockActive()) {
         await releaseWakeLock();
@@ -8014,8 +8343,21 @@ function renderPractice(song, part, record = true) {
     songRehearsals.length ? button('연습 일지 & 피드백', () => {
       state.rehearsalFilters = { query: '', songId: song.id };
       navigate({tab: 'rehearsal'});
-    }, 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null,
-    favoriteButton(song)
+    }, 'button secondary', 'notes', {'aria-label': '이 곡의 연습 일지 및 피드백 보기'}) : null
+  ].filter(Boolean);
+
+  const moreToolsDrawer = el('details', {class: 'practice-accordion practice-more-tools'},
+    el('summary', {class: 'practice-accordion-summary'},
+      el('span', {class: 'practice-accordion-title'},
+        icon('more'),
+        el('strong', {text: '보조 도구 더보기 (공유 · QR · 아카이브 · 설정)'}),
+        el('span', {class: 'practice-accordion-badge', text: `${secondaryToolButtons.length}개`})
+      ),
+      el('span', {class: 'practice-accordion-chevron', 'aria-hidden': 'true'}, icon('chevron-down'))
+    ),
+    el('div', {class: 'practice-accordion-body'},
+      el('div', {class: 'player-actions'}, ...secondaryToolButtons)
+    )
   );
   const switches = el('div', {class: 'part-switcher'}, button('이전 파트', () => switchPartAtSameTime(parts[index - 1]), 'button secondary', 'back', {disabled: index <= 0}),
     el('span', {text: `${Math.max(index + 1, 1)} / ${Math.max(parts.length, 1)} 파트`}), button('다음 파트', () => switchPartAtSameTime(parts[index + 1]), 'button secondary', 'arrow', {disabled: index < 0 || index >= parts.length - 1}));
@@ -8040,7 +8382,7 @@ function renderPractice(song, part, record = true) {
 
   if (abSwitcher) app.append(abSwitcher);
   if (setlistNav) app.append(setlistNav);
-  app.append(...[startingPitchPanel, partSyncBar, playerLayout, controller, shortcutHint, masteryPanel, voiceRecorderPanel, personalNotePanel, actions, switches].filter(Boolean));
+  app.append(...[startingPitchPanel, partSyncBar, playerLayout, controller, primaryActions, shortcutHint, masteryPanel, voiceRecorderPanel, personalNotePanel, moreToolsDrawer, switches].filter(Boolean));
 }
 
 function renderSettings() {
@@ -8337,6 +8679,7 @@ function normalizeRoute() {
 }
 let lastPractice = '';
 function render() {
+  closeMobileMoreSheet();
   stopPitch();
   for (const p of activePlayers) { try { p.destroy(); } catch {} }
   activePlayers.length = 0;

@@ -9,7 +9,7 @@
 
 import { el, icon, button, toast } from './ui.js';
 import { resolveSongId } from './data.js';
-import { entryRank, nextStage, resolveStageItemTranspose } from './practiceLogic.js';
+import { entryRank, nextStage, resolveStageItemTranspose, classifyHorizontalSwipe } from './practiceLogic.js';
 import { read as readStorage } from './storage.js';
 import { qrDataUrl } from './qr.js';
 import {
@@ -1422,14 +1422,66 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
   window.addEventListener('keydown', handleKeyDown);
 
   // Shell 컴포넌트들
+  let stageLargeText = false;
+  let stageSwipeLocked = false;
+  try {
+    stageLargeText = localStorage.getItem('acaroom_stage_large_text') === '1';
+    stageSwipeLocked = localStorage.getItem('acaroom_stage_swipe_locked') === '1';
+  } catch {}
+  shell.classList.toggle('stage-large-text', stageLargeText);
+
   const header = el('div', { class: 'stage-live-header' });
   const focusViewArea = el('div', { class: 'stage-focus-view-area' });
   const setlistBar = el('div', { class: 'stage-setlist-bar', role: 'tablist', 'aria-label': '곡 순서 셋리스트' });
   const heroCard = el('div', { class: 'stage-hero-card' });
   const pitchCard = el('div', { class: 'stage-pitch-card' });
   const mcCard = el('div', { class: 'stage-mc-card' });
+  const nextPreviewBar = el('div', { class: 'stage-next-preview', hidden: true });
   const navBar = el('div', { class: 'stage-nav-bar' });
-  focusViewArea.append(setlistBar, heroCard, pitchCard, mcCard, navBar);
+  focusViewArea.append(setlistBar, heroCard, pitchCard, mcCard, nextPreviewBar, navBar);
+
+  let swipeStart = null;
+  function handleFocusTouchStart(e) {
+    if (stageSwipeLocked || liveMode !== 'focus' || !e.touches || e.touches.length !== 1) {
+      swipeStart = null;
+      return;
+    }
+    const target = e.target;
+    if (target?.closest?.('.stage-setlist-bar, input, textarea, select, dialog')) {
+      swipeStart = null;
+      return;
+    }
+    swipeStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+  function handleFocusTouchEnd(e) {
+    if (!swipeStart || stageSwipeLocked || liveMode !== 'focus' || !e.changedTouches || !e.changedTouches.length) {
+      swipeStart = null;
+      return;
+    }
+    const dx = e.changedTouches[0].clientX - swipeStart.x;
+    const dy = e.changedTouches[0].clientY - swipeStart.y;
+    swipeStart = null;
+    const dir = classifyHorizontalSwipe(dx, dy, 52);
+    if (dir === 'next' && activeIndex < session.songs.length - 1) {
+      stopPitch(true);
+      stopStageVisualTempo();
+      activeIndex++;
+      session.currentIndex = activeIndex;
+      saveActiveStageSession(session);
+      renderCurrentSong();
+      toast(`▶ 다음 곡: ${activeIndex + 1}. ${session.songs[activeIndex]?.title || ''}`);
+    } else if (dir === 'prev' && activeIndex > 0) {
+      stopPitch(true);
+      stopStageVisualTempo();
+      activeIndex--;
+      session.currentIndex = activeIndex;
+      saveActiveStageSession(session);
+      renderCurrentSong();
+      toast(`◀ 이전 곡: ${activeIndex + 1}. ${session.songs[activeIndex]?.title || ''}`);
+    }
+  }
+  focusViewArea.addEventListener('touchstart', handleFocusTouchStart, { passive: true });
+  focusViewArea.addEventListener('touchend', handleFocusTouchEnd, { passive: true });
 
   const overviewViewArea = el('div', { class: 'stage-overview-view-area' });
 
@@ -1589,8 +1641,36 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
       modeFocusBtn, modeOverviewBtn
     );
 
+    const largeTextBtn = button(
+      stageLargeText ? '가+ 큰 글씨 ON' : '가 글자 크게',
+      () => {
+        stageLargeText = !stageLargeText;
+        shell.classList.toggle('stage-large-text', stageLargeText);
+        try { localStorage.setItem('acaroom_stage_large_text', stageLargeText ? '1' : '0'); } catch {}
+        renderHeader();
+        toast(stageLargeText ? '가+ 무대 큰 글씨 모드를 켰습니다.' : '기본 글씨 크기로 돌아왔습니다.');
+      },
+      `stage-ux-pill${stageLargeText ? ' active' : ''}`,
+      null,
+      { 'aria-pressed': String(stageLargeText), title: '곡명·첫 소절 큐·파트 첫 음을 크게 표시합니다' }
+    );
+
+    const swipeLockBtn = button(
+      stageSwipeLocked ? '🔒 밀기 잠금' : '👆 밀어 넘기기',
+      () => {
+        stageSwipeLocked = !stageSwipeLocked;
+        try { localStorage.setItem('acaroom_stage_swipe_locked', stageSwipeLocked ? '1' : '0'); } catch {}
+        renderHeader();
+        if (liveMode === 'focus') renderNavBar();
+        toast(stageSwipeLocked ? '🔒 스와이프 곡 넘김을 잠갔습니다. 버튼으로만 이동합니다.' : '👆 화면을 좌우로 밀어 이전/다음 곡을 넘길 수 있습니다.');
+      },
+      `stage-ux-pill${stageSwipeLocked ? ' locked' : ''}`,
+      null,
+      { 'aria-pressed': String(stageSwipeLocked), title: '모바일에서 화면 좌우 스와이프로 곡을 넘길지 잠글지 전환합니다' }
+    );
+
     const headerLeft = el('div', { class: 'stage-header-left' },
-      el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn, stopwatchWrap, modeSwitcher),
+      el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn, stopwatchWrap, modeSwitcher, largeTextBtn, swipeLockBtn),
       titleRow,
       metaEl
     );
@@ -2212,12 +2292,34 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
       }, 'stage-nav-btn next', null, { title: '다음 순서 곡으로 이동' });
     }
 
+    const nextItem = !isLast ? session.songs[activeIndex + 1] : null;
+    if (nextItem) {
+      const nextSongData = resolveSongData(songs, nextItem.songId, nextItem.title);
+      const nextSemi = getItemTranspose(nextItem);
+      const rawNextPp = nextSongData?.pitchPipe ? (nextSemi !== 0 ? transposeNoteString(nextSongData.pitchPipe, nextSemi) : nextSongData.pitchPipe) : '';
+      const nextPp = pitchPipeInfo(rawNextPp);
+      nextPreviewBar.hidden = false;
+      nextPreviewBar.replaceChildren(
+        el('span', { class: 'stage-next-preview-text', text: `다음 곡: ${activeIndex + 2}. ${nextItem.title}${nextPp ? ` · 피치파이프 ${nextPp.display}` : ''}` }),
+        el('span', { class: 'stage-swipe-hint', text: stageSwipeLocked ? '🔒 밀기 잠금' : '👆 좌우로 밀어 전환' })
+      );
+    } else if (session.songs.length > 0) {
+      nextPreviewBar.hidden = false;
+      nextPreviewBar.replaceChildren(
+        el('span', { class: 'stage-next-preview-text', text: '마지막 곡입니다 ✨' }),
+        el('span', { class: 'stage-swipe-hint', text: stageSwipeLocked ? '🔒 밀기 잠금' : '👆 오른쪽으로 밀어 이전 곡' })
+      );
+    } else {
+      nextPreviewBar.hidden = true;
+    }
+
     navBar.replaceChildren(prevBtn, nextBtn);
   }
 
   function renderCurrentSong() {
     if (!session.songs || session.songs.length === 0) {
       setlistBar.replaceChildren();
+      nextPreviewBar.hidden = true;
       heroCard.replaceChildren(
         el('h3', { class: 'stage-hero-title', text: '등록된 셋리스트 곡이 없습니다' }),
         el('p', { class: 'stage-hero-artist', text: '상단의 [⚙️ 셋리스트 편집] 버튼을 눌러 공연 곡들을 추가해 주세요.' })
@@ -2608,6 +2710,8 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
     stopPitch(true);
     releaseWakeLock();
     window.removeEventListener('keydown', handleKeyDown);
+    focusViewArea.removeEventListener('touchstart', handleFocusTouchStart);
+    focusViewArea.removeEventListener('touchend', handleFocusTouchEnd);
     document.removeEventListener('fullscreenchange', updateFsBtn);
     document.removeEventListener('webkitfullscreenchange', updateFsBtn);
   };
