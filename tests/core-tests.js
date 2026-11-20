@@ -997,8 +997,9 @@ export function runCoreTests() {
         appJsContent.includes("const estLabel = est && est.totalSeconds > 0 ? est.formatted : '';") &&
         !appJsContent.includes('est > 0') &&
         appJsContent.includes('function upcomingPitchItems(meta, transposeSemi = 0)') &&
-        appJsContent.includes("isUpcoming ? 'NEXT STAGE' : 'ACTIVE CUE SHEET'") &&
-        appJsContent.includes("dday === 0 ? 'D-DAY' : `D-${dday}`) : 'LIVE 큐시트'")
+        appJsContent.includes("isUpcoming ? 'NEXT STAGE' : (isPast ? 'LAST STAGE · 지난 공연' : 'ACTIVE CUE SHEET')") &&
+        appJsContent.includes("dday === 0 ? 'D-DAY' : `D-${dday}`) : (isPast ? '지난 공연' : 'LIVE 큐시트')") &&
+        appJsContent.includes('const HOME_SETLIST_PREVIEW = 3;')
       );
     });
     check('홈 내 파트 맞춤 연습(myPanel) 나는 누구?(myName) 인식 및 실제 DOM 렌더링 복구 검증', () => {
