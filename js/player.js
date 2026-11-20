@@ -138,7 +138,7 @@ export function createPlayer(container, media, title = 'AcaRaca 연습 영상') 
   expandBtn.type = 'button';
   expandBtn.className = 'player-expand-btn';
   expandBtn.setAttribute('aria-label', '가로로 확대해서 큰 화면으로 보기');
-  expandBtn.innerHTML = '<span class="expand-icon" aria-hidden="true">⛶</span><span>가로 확대</span>';
+  expandBtn.innerHTML = '<span class="expand-icon" aria-hidden="true">↔️</span><span>가로 확대</span>';
 
   const exitBtn = document.createElement('button');
   exitBtn.type = 'button';

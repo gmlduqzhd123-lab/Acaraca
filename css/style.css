@@ -3890,29 +3890,30 @@ body.big-practice-on .mobile-nav, body.big-practice-on #mobile-nav { display: no
 .setlist-chord-btn.playing { background: var(--primary); color: #fff; border-color: var(--primary); }
 .setlist-chord-btn { flex-direction: column; gap: 2px; font-size: 11px; font-weight: 700; }
 
-/* ===== 휴대폰 맨 윗줄: [설정] ……… [앱설치][QR] / 둘째 줄: [AcaRaca] ……… [첫 음 잡기][검색][⋯] ===== */
+/* ===== 휴대폰 머리글 한 줄: [로고][앱설치][QR] ……… [첫 음 잡기][검색][⋯] =====
+   설정은 아래 '더보기' 메뉴에 있으므로 머리글의 중복 설정 버튼은 숨겨 화면 한 줄을 확보한다. */
 @media (max-width: 767px) {
-  header.topbar { flex-wrap: wrap; position: relative; row-gap: 6px; }
+  header.topbar { flex-wrap: nowrap; position: relative; min-height: 0; padding-top: 8px; padding-bottom: 8px; }
   header.topbar .topbar-brand-wrap, header.topbar #topbar-actions { display: contents; }
-  header.topbar .mobile-settings-btn { order: 1; }
-  header.topbar .topbar-key { order: 2; }
-  header.topbar .topbar-key:first-of-type, header.topbar #topbar-actions > .topbar-key:not(.topbar-key + .topbar-key) { margin-left: auto; }
-  header.topbar::after { content: ""; order: 3; flex-basis: 100%; height: 0; }
-  header.topbar .mobile-brand { order: 4; }
-  header.topbar #topbar-actions > :not(.topbar-key) { order: 5; }
+  header.topbar .mobile-settings-btn { display: none; }
+  header.topbar .mobile-brand { order: 1; flex-shrink: 0; }
+  header.topbar .mobile-brand strong { display: none; }
+  header.topbar .topbar-key { order: 2; flex-shrink: 0; }
+  header.topbar #topbar-actions > :not(.topbar-key) { order: 5; flex-shrink: 0; }
   header.topbar #topbar-actions > .topbar-pitch { margin-left: auto; }
   header.topbar .topbar-more-menu { top: 100%; }
   header.topbar { column-gap: 6px; }
 }
 @media (max-width: 380px) {
-  header.topbar { column-gap: 4px; padding-left: 12px; padding-right: 12px; }
-  header.topbar .mobile-brand { gap: 6px; }
+  header.topbar { column-gap: 4px; padding-left: 10px; padding-right: 10px; }
   header.topbar .mobile-brand img { width: 28px; height: 28px; }
-  header.topbar .mobile-brand strong { font-size: 18px; }
   header.topbar .topbar-pitch { padding-left: 7px; padding-right: 7px; }
+  header.topbar .topbar-key { padding-left: 7px; padding-right: 7px; }
+  header.topbar .topbar-key .icon { display: none; }
 }
 @media (max-width: 340px) {
   header.topbar .topbar-pitch .icon { display: none; }
+  header.topbar .mobile-brand img { width: 26px; height: 26px; }
 }
 
 /* 피치파이프 대표음 배지 (셋리스트·무대 큐시트) */
@@ -5733,4 +5734,123 @@ details.practice-accordion.personal-note-panel {
     padding: 8px 4px;
     min-height: 56px;
   }
+}
+
+/* ===== 2026-11 휴대폰 사용감 보정: 무대 도구 접기 · 이전/다음 고정 · 연습실 첫 음 줄 · 홈 셋리스트 접기 · 터치 크기 ===== */
+
+/* 무대 큐시트: 자주 안 쓰는 도구를 '🛠 무대 도구'로 접기 */
+.stage-tools-drawer {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  min-width: 0;
+}
+.stage-tools-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 44px;
+  padding: 8px 14px;
+  cursor: pointer;
+  list-style: none;
+  color: #e5ece8;
+  font-weight: 750;
+  font-size: 13px;
+}
+.stage-tools-summary::-webkit-details-marker { display: none; }
+.stage-tools-summary::after {
+  content: '▾';
+  margin-left: auto;
+  opacity: .7;
+  transition: transform .18s;
+}
+.stage-tools-drawer[open] > .stage-tools-summary::after { transform: rotate(180deg); }
+.stage-tools-summary small {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(229, 236, 232, 0.62);
+}
+.stage-tools-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+.stage-tools-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (min-width: 601px) {
+  .stage-tools-drawer { flex: 1 1 100%; }
+  .stage-tools-body { flex-direction: row; flex-wrap: wrap; align-items: center; }
+}
+
+/* 무대 큐시트: 휴대폰에서 이전/다음 곡 버튼을 화면 아래(하단 메뉴 바로 위)에 고정 */
+@media (max-width: 767px) {
+  .stage-nav-bar {
+    position: sticky;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    bottom: max(80px, calc(70px + env(safe-area-inset-bottom, 0px)));
+    z-index: 6;
+    margin: 0 -4px;
+    padding: 8px 4px;
+    background: linear-gradient(to bottom, rgba(15, 22, 20, 0.6), #0f1614 30%);
+    border-radius: 14px;
+  }
+  .stage-nav-bar .stage-nav-btn { min-height: 52px; padding: 10px 12px; }
+}
+.stage-live-shell:fullscreen .stage-nav-bar,
+.stage-live-shell:-webkit-full-screen .stage-nav-bar { bottom: 0; }
+
+/* 연습실: 영상 위 '내 파트 첫 음' 한 줄 */
+.practice-first-note-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+}
+.practice-first-note-strip .button { min-height: 40px; }
+.practice-first-note-play { flex: 1 1 auto; justify-content: center; }
+.practice-first-note-more { flex: 0 0 auto; }
+
+/* 홈: 셋리스트 3곡 이후 펼치기 */
+.setlist-expand-btn {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  margin-top: 6px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+}
+.upcoming-stage.is-past .dday-badge { opacity: .78; }
+
+/* 휴대폰 터치 크기: 너무 작아 누르기 어려웠던 버튼 키우기 */
+@media (pointer: coarse), (max-width: 767px) {
+  .feedback-time-chip,
+  .feedback-loop-chip,
+  .feedback-like-btn {
+    min-height: 36px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-size: 12px;
+  }
+  .feedback-loop-chip { min-width: 52px; }
+  .loop-preset-chip { min-height: 38px; }
+  .loop-nudge-btn { min-width: 44px; min-height: 38px; }
+  .recent-info .title-button { min-height: 32px; }
+}
+
+/* 더보기 메뉴가 열려 있을 때 뒤 화면이 같이 스크롤되지 않게 */
+body.mobile-more-open { overflow: hidden; }
+
+/* 휴대폰 무대 큐시트: 소개 문구를 숨겨 지금 곡 카드가 첫 화면에 보이게 */
+@media (max-width: 600px) {
+  .stage-live-page .stage-page-heading { display: none; }
+  .stage-live-page .stage-controls-panel { margin-bottom: 10px !important; }
+  .stage-live-badge-row .stage-wake-pill,
+  .stage-live-badge-row .stage-stopwatch-pill { padding: 5px 10px; font-size: 11.5px; }
 }

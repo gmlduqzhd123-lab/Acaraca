@@ -9,7 +9,7 @@
 
 import { el, icon, button, toast } from './ui.js';
 import { resolveSongId } from './data.js';
-import { entryRank, nextStage, resolveStageItemTranspose, classifyHorizontalSwipe } from './practiceLogic.js';
+import { entryRank, nextStage, resolveStageItemTranspose, classifyHorizontalSwipe, localDateString } from './practiceLogic.js';
 import { read as readStorage } from './storage.js';
 import { qrDataUrl } from './qr.js';
 import {
@@ -1009,7 +1009,7 @@ export function createNewStageSession(title = '새로운 아카라카 공연') {
   const newSession = {
     id: `stage-${Date.now()}`,
     eventTitle: title,
-    date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    date: localDateString(new Date(), '.'),
     venue: '메인 무대',
     notes: '새 큐시트',
     updatedAt: Date.now(),
@@ -1498,10 +1498,20 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
     wakeLockBtn.setAttribute('aria-pressed', String(active));
   }
 
+  // 아이폰 Safari는 화면 일부를 전체화면으로 만드는 기능이 없다 → 버튼을 '홈 화면에 추가' 안내로 바꾼다
+  const fullscreenSupported = Boolean(shell.requestFullscreen || shell.webkitRequestFullscreen);
+  let stageToolsOpen = (() => {
+    try {
+      const saved = localStorage.getItem('acaroom_stage_tools_open');
+      if (saved === '1' || saved === '0') return saved === '1';
+    } catch {}
+    return typeof matchMedia === 'function' ? matchMedia('(min-width: 601px)').matches : true;
+  })();
+
   function updateFsBtn() {
-    if (!fullscreenBtn) return;
+    if (!fullscreenBtn || !fullscreenSupported) return;
     const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
-    fullscreenBtn.textContent = isFs ? '🗗' : '⛶';
+    fullscreenBtn.textContent = isFs ? '✕ 전체화면 끄기' : '🔲 전체화면';
     fullscreenBtn.title = isFs ? '전체화면 나가기' : '전체화면 전환';
   }
   document.addEventListener('fullscreenchange', updateFsBtn);
@@ -1670,7 +1680,7 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
     );
 
     const headerLeft = el('div', { class: 'stage-header-left' },
-      el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn, stopwatchWrap, modeSwitcher, largeTextBtn, swipeLockBtn),
+      el('div', { class: 'stage-live-badge-row' }, liveBadge, wakeLockBtn, stopwatchWrap, modeSwitcher),
       titleRow,
       metaEl
     );
@@ -1716,7 +1726,16 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
       });
     }, 'button secondary small', null, { title: '곡 순서 변경 및 추가/삭제' });
 
-    fullscreenBtn = button('⛶', () => {
+    const isFsNow = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+    fullscreenBtn = button(fullscreenSupported ? (isFsNow ? '✕ 전체화면 끄기' : '🔲 전체화면') : '📲 전체화면 안내', () => {
+      if (!fullscreenSupported) {
+        const standalone = (typeof navigator !== 'undefined' && navigator.standalone) ||
+          (typeof matchMedia === 'function' && matchMedia('(display-mode: standalone)').matches);
+        toast(standalone
+          ? '이미 홈 화면 앱으로 실행 중이라 주소창 없이 넓게 보고 있습니다.'
+          : '아이폰은 Safari 아래쪽 공유 버튼(⬆️) → "홈 화면에 추가"로 설치해 열면 주소창 없이 전체화면처럼 쓸 수 있습니다.');
+        return;
+      }
       const isFs = document.fullscreenElement || document.webkitFullscreenElement;
       if (!isFs) {
         if (shell.requestFullscreen) {
@@ -1731,13 +1750,33 @@ export function renderStageLiveView({ container, songs, scores = [], navigate, o
           document.webkitExitFullscreen();
         }
       }
-    }, 'button secondary small icon-only', null, { title: '전체화면 전환', 'aria-label': '전체화면' });
+    }, 'button secondary small stage-fullscreen-btn', null, {
+      title: fullscreenSupported ? '전체화면 전환' : '아이폰에서 전체화면처럼 쓰는 방법 안내',
+      'aria-label': '전체화면'
+    });
 
     const actions = el('div', { class: 'stage-header-actions' }, copyBtn, historyBtn, archiveBtn, editBtn, fullscreenBtn);
     actions.insertBefore(qrShareBtn, historyBtn);
     actions.insertBefore(printBtn, historyBtn);
 
-    header.replaceChildren(headerLeft, actions);
+    // 자주 안 쓰는 도구는 접어 두어 휴대폰에서 지금 곡 카드가 바로 보이게 한다
+    const toolsDrawer = el('details', { class: 'stage-tools-drawer' },
+      el('summary', { class: 'stage-tools-summary' },
+        el('span', { text: '🛠 무대 도구' }),
+        el('small', { text: '글씨 크기 · 밀어 넘기기 · 공유 · 인쇄 · 편집' })
+      ),
+      el('div', { class: 'stage-tools-body' },
+        el('div', { class: 'stage-tools-pills' }, largeTextBtn, swipeLockBtn),
+        actions
+      )
+    );
+    toolsDrawer.open = stageToolsOpen;
+    toolsDrawer.addEventListener('toggle', () => {
+      stageToolsOpen = toolsDrawer.open;
+      try { localStorage.setItem('acaroom_stage_tools_open', stageToolsOpen ? '1' : '0'); } catch {}
+    });
+
+    header.replaceChildren(headerLeft, toolsDrawer);
   }
 
   function renderSetlistBar() {
@@ -2749,7 +2788,7 @@ export function serializeStageSession(session) {
     session: {
       id: session.id || `stage-${Date.now()}`,
       eventTitle: session.eventTitle || '아카라카 공연',
-      date: session.date || new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+      date: session.date || localDateString(new Date(), '.'),
       venue: session.venue || '',
       currentIndex: 0,
       songs: Array.isArray(session.songs) ? session.songs.map((s) => {
@@ -2781,7 +2820,7 @@ export function parseImportedStageSession(input) {
   return {
     id: target.id || `stage-${Date.now()}`,
     eventTitle: typeof target.eventTitle === 'string' && target.eventTitle.trim() ? target.eventTitle.trim() : '가져온 아카라카 공연',
-    date: typeof target.date === 'string' ? target.date.trim() : new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    date: typeof target.date === 'string' ? target.date.trim() : localDateString(new Date(), '.'),
     venue: typeof target.venue === 'string' ? target.venue.trim() : '',
     currentIndex: 0,
     updatedAt: Date.now(),
@@ -3249,7 +3288,7 @@ export function openStageHistoryModal({ songs, onSelectSession }) {
             const cloned = JSON.parse(JSON.stringify(item));
             cloned.id = `stage-${Date.now()}`;
             cloned.eventTitle = `${item.eventTitle} (복사본)`;
-            cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+            cloned.date = localDateString(new Date(), '.');
             cloned.updatedAt = Date.now();
             const currentHist = getStageHistory();
             saveStageHistory([cloned, ...currentHist]);

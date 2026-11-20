@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
-import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs} from './practiceLogic.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs, localDateString} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -645,20 +645,43 @@ function openBackgroundGuideModal() {
 let topbarMoreRefs = null;
 let topbarMoreListenerAdded = false;
 let mobileMoreKeyHandler = null;
+// 휴대폰 '뒤로가기'로 더보기 메뉴만 닫히도록, 메뉴를 열 때 같은 주소의 기록을 하나 쌓는다
+let mobileMoreHistoryEntry = false;
+let suppressNextPopstate = false;
 
-function closeMobileMoreSheet() {
+/**
+ * 더보기 메뉴 닫기.
+ * - history: 'back'(기본) → 메뉴용 기록을 되돌린다 (X·바깥·Esc로 닫을 때)
+ * - history: 'keep' → 기록은 그대로 두고, 바로 이어지는 화면 이동이 그 기록을 덮어쓴다 (반환값 true면 replace로 이동)
+ * - history: 'none' → 뒤로가기로 이미 기록이 빠졌거나 화면을 다시 그리는 중
+ */
+function closeMobileMoreSheet({history: historyMode = 'back'} = {}) {
   const sheet = document.getElementById('mobile-more-sheet');
   if (sheet) sheet.remove();
   if (mobileMoreKeyHandler) {
     window.removeEventListener('keydown', mobileMoreKeyHandler);
     mobileMoreKeyHandler = null;
   }
+  document.body.classList.remove('mobile-more-open');
   const moreBtn = document.querySelector('#mobile-nav .mobile-more-trigger');
   if (moreBtn) {
     moreBtn.setAttribute('aria-expanded', 'false');
     const activeTab = state.route.song ? 'songs' : state.route.tab || 'home';
     moreBtn.classList.toggle('active', mobileMoreTabs.includes(activeTab));
   }
+  const hadEntry = mobileMoreHistoryEntry && Boolean(history.state?.acaMoreSheet);
+  mobileMoreHistoryEntry = false;
+  if (hadEntry && historyMode === 'back') {
+    suppressNextPopstate = true;
+    history.back();
+  }
+  return hadEntry && historyMode === 'keep';
+}
+
+/** 더보기 메뉴에서 다른 화면으로 이동: 메뉴용 기록을 새 화면이 덮어써 뒤로가기 한 번에 이전 화면으로 돌아간다 */
+function navigateFromMoreSheet(route) {
+  const replace = closeMobileMoreSheet({history: 'keep'});
+  navigate(route, {replace});
 }
 
 function openMobileMoreSheet() {
@@ -677,8 +700,7 @@ function openMobileMoreSheet() {
       onclick: (event) => {
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
-        closeMobileMoreSheet();
-        navigate({tab});
+        navigateFromMoreSheet({tab});
       }
     }, renderNavIcon(tab), el('span', {text: labels[tab]})))
   );
@@ -692,8 +714,7 @@ function openMobileMoreSheet() {
       )
     ),
     button('변경', () => {
-      closeMobileMoreSheet();
-      navigate({tab: 'settings'});
+      navigateFromMoreSheet({tab: 'settings'});
     }, 'button secondary small')
   );
 
@@ -704,7 +725,7 @@ function openMobileMoreSheet() {
         el('h2', {text: '전체 메뉴'}),
         el('p', {text: '아카이브와 개인 연습 메뉴를 한눈에 열어보세요'})
       ),
-      button('', closeMobileMoreSheet, 'icon-button mobile-more-close', 'close', {'aria-label': '메뉴 닫기'})
+      button('', () => closeMobileMoreSheet(), 'icon-button mobile-more-close', 'close', {'aria-label': '메뉴 닫기'})
     ),
     profileStrip,
     sheetGrid
@@ -726,12 +747,20 @@ function openMobileMoreSheet() {
   };
   window.addEventListener('keydown', mobileMoreKeyHandler);
   document.body.append(overlay);
+  document.body.classList.add('mobile-more-open');
+  try {
+    history.pushState({...(history.state || {}), acaroom: true, acaMoreSheet: true}, '', location.href);
+    mobileMoreHistoryEntry = true;
+  } catch {
+    mobileMoreHistoryEntry = false;
+  }
 
   const moreBtn = document.querySelector('#mobile-nav .mobile-more-trigger');
   if (moreBtn) {
     moreBtn.setAttribute('aria-expanded', 'true');
     moreBtn.classList.add('active');
   }
+  panel.querySelector('.mobile-more-item.active, .mobile-more-item')?.focus?.({preventScroll: true});
 }
 
 function refreshChrome() {
@@ -760,8 +789,7 @@ function refreshChrome() {
       onclick: event => {
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
-        closeMobileMoreSheet();
-        navigate({tab});
+        navigateFromMoreSheet({tab});
       }
     }, renderNavIcon(tab), el('span', {text: mobileShortLabels[tab] || labels[tab]})));
     const moreTabBtn = el('button', {
@@ -1118,24 +1146,50 @@ function renderUpcomingStageCard() {
     return el('div', {class: 'setlist-row'}, practiceBtn, ppBtn, chordBtn);
   });
   const metaText = [stage.date, stage.venue, `${stage.songs.length}곡`, estLabel].filter(Boolean).join(' · ');
-  const badgeText = dday !== null ? (dday === 0 ? 'D-DAY' : `D-${dday}`) : 'LIVE 큐시트';
-  return el('section', {class: 'upcoming-stage', 'aria-label': isUpcoming ? '다가오는 공연 연습' : '현재 활성 무대 큐시트'},
+  // 다가오는 공연이 없고 고른 공연 날짜가 이미 지났으면 '지난 공연'으로 표시하고 다음 공연 만들기를 안내
+  const isPast = !isUpcoming && date instanceof Date && daysUntil(date) < 0;
+  const badgeText = dday !== null ? (dday === 0 ? 'D-DAY' : `D-${dday}`) : (isPast ? '지난 공연' : 'LIVE 큐시트');
+  // 첫 화면을 다 가리지 않도록 3곡까지만 보이고 나머지는 펼치기
+  const HOME_SETLIST_PREVIEW = 3;
+  const grid = el('div', {class: 'setlist-grid'}, items);
+  let expandBtn = null;
+  if (items.length > HOME_SETLIST_PREVIEW + 1) {
+    const hiddenRows = items.slice(HOME_SETLIST_PREVIEW);
+    hiddenRows.forEach(row => { row.hidden = true; });
+    expandBtn = button(`▾ 나머지 ${hiddenRows.length}곡 펼치기`, () => {
+      const willShow = hiddenRows[0].hidden;
+      hiddenRows.forEach(row => { row.hidden = !willShow; });
+      expandBtn.textContent = willShow ? '▴ 3곡만 보기' : `▾ 나머지 ${hiddenRows.length}곡 펼치기`;
+      expandBtn.setAttribute('aria-expanded', String(willShow));
+    }, 'text-button setlist-expand-btn', null, {'aria-expanded': 'false'});
+  }
+  const actionButtons = [
+    button('셋리스트 순서대로 연습 시작', () => startSetlistPractice(stage, 0), 'button primary small', 'play'),
+    button('무대 큐시트 보기', () => {
+      saveActiveStageSession(stage);
+      navigate({tab: 'stage', view: 'live'});
+    }, 'button secondary small', 'stage')
+  ];
+  if (isPast) {
+    actionButtons.push(button('+ 다음 공연 만들기', () => {
+      state.stageView = 'history';
+      write('stageView', 'history');
+      navigate({tab: 'stage', view: 'history'});
+      toast('공연 히스토리에서 "+ 새 공연 만들기" 또는 지난 공연 "📋 복제"로 다음 공연을 준비하세요.');
+    }, 'button secondary small', null, {'aria-label': '다음 공연 셋리스트 만들기'}));
+  }
+  return el('section', {class: `upcoming-stage${isPast ? ' is-past' : ''}`, 'aria-label': isUpcoming ? '다가오는 공연 연습' : (isPast ? '지난 공연 큐시트' : '현재 활성 무대 큐시트')},
     el('div', {class: 'upcoming-stage-head'},
       el('div', {},
-        el('p', {class: 'eyebrow', text: isUpcoming ? 'NEXT STAGE' : 'ACTIVE CUE SHEET'}),
+        el('p', {class: 'eyebrow', text: isUpcoming ? 'NEXT STAGE' : (isPast ? 'LAST STAGE · 지난 공연' : 'ACTIVE CUE SHEET')}),
         el('h2', {text: stage.eventTitle}),
         el('p', {class: 'upcoming-stage-meta', text: metaText})
       ),
       el('span', {class: 'dday-badge', text: badgeText})
     ),
-    el('div', {class: 'setlist-grid'}, items),
-    el('div', {class: 'upcoming-stage-actions'},
-      button('셋리스트 순서대로 연습 시작', () => startSetlistPractice(stage, 0), 'button primary small', 'play'),
-      button('무대 큐시트 보기', () => {
-        saveActiveStageSession(stage);
-        navigate({tab: 'stage', view: 'live'});
-      }, 'button secondary small', 'stage')
-    )
+    grid,
+    expandBtn,
+    el('div', {class: 'upcoming-stage-actions'}, ...actionButtons)
   );
 }
 function renderHomeMasterySummary() {
@@ -1722,7 +1776,7 @@ function renderStageHistoryPage(container) {
             const cloned = JSON.parse(JSON.stringify(item));
             cloned.id = `stage-${Date.now()}`;
             cloned.eventTitle = `${item.eventTitle} (복사본)`;
-            cloned.date = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+            cloned.date = localDateString(new Date(), '.');
             cloned.updatedAt = Date.now();
             saveStageHistory([cloned, ...getStageHistory()]);
             toast('셋리스트가 복제되었습니다.');
@@ -1767,7 +1821,7 @@ function renderStage() {
   const isVideoView = currentView === 'list' || currentView === 'cards';
 
   app.append(
-    el('div', {class: 'page-heading'},
+    el('div', {class: 'page-heading stage-page-heading'},
       el('p', {class: 'eyebrow', text: 'ACARACA STAGE & ARCHIVE'}),
       el('h1', {text: '공연 아카이브'}),
       el('p', {text: '실시간 무대 큐시트, 역대 공연 셋리스트 보관함, 감동의 실황 무대 영상을 한곳에서 모아봅니다.'})
@@ -2670,7 +2724,7 @@ function openNewRehearsalModal() {
   );
 
   titleInput.value = '';
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = localDateString();
   notesInput.value = '';
   fileInput.value = '';
   urlInput.value = '';
@@ -2722,7 +2776,7 @@ function openNewRehearsalModal() {
       const newReh = {
         id: rehId,
         songId: songSelect.value || '',
-        date: dateInput.value || new Date().toISOString().slice(0, 10),
+        date: dateInput.value || localDateString(),
         title,
         notes: notesInput.value.trim(),
         video: videoObj,
@@ -2826,7 +2880,7 @@ function openQuickRecordRehearsalModal(defaultSongId = '') {
       addCustomRehearsal({
         id: rehId,
         songId: songSelect.value || '',
-        date: new Date().toISOString().slice(0, 10),
+        date: localDateString(),
         title: titleInput.value.trim() || '합주 현장 녹음',
         notes: notesInput.value.trim(),
         video: null,
@@ -3269,7 +3323,7 @@ function openUploadScoreModal(defaultSongId = '') {
         fileUrl: url || '',
         mediaId,
         isCustom: true,
-        uploadedAt: new Date().toISOString().slice(0, 10)
+        uploadedAt: localDateString()
       };
 
       addCustomScore(newScore);
@@ -5311,7 +5365,7 @@ function openUploadEducationModal() {
         format,
         target,
         author,
-        date: new Date().toISOString().slice(0, 10),
+        date: localDateString(),
         description,
         fileName,
         fileSize,
@@ -5689,7 +5743,7 @@ function openUploadPracticeVideoModal() {
   let currentSource = 'youtube';
 
   titleInput.value = '';
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = localDateString();
   authorInput.value = read('last_practice_author', '아카라카 단원');
   descInput.value = '';
   urlInput.value = '';
@@ -5739,7 +5793,7 @@ function openUploadPracticeVideoModal() {
 
     const songId = songSelect.value || '';
     const part = partSelect.value;
-    const date = dateInput.value || new Date().toISOString().slice(0, 10);
+    const date = dateInput.value || localDateString();
     const author = authorInput.value.trim() || '아카라카 단원';
     const description = descInput.value.trim();
 
@@ -6093,7 +6147,7 @@ function openUploadAppreciationModal() {
       artist,
       category,
       uploader,
-      date: new Date().toISOString().slice(0, 10),
+      date: localDateString(),
       description,
       isCustom: true
     };
@@ -6448,7 +6502,7 @@ function openUploadMemoryModal(defaultSongId = '') {
 
   titleInput.value = '';
   categorySelect.value = '숏츠 영상';
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = localDateString();
   venueInput.value = '';
   authorInput.value = read('last_feedback_author', '아카라카');
   descInput.value = '';
@@ -6514,7 +6568,7 @@ function openUploadMemoryModal(defaultSongId = '') {
         title,
         category: categorySelect.value || '기록',
         type,
-        date: dateInput.value || new Date().toISOString().slice(0, 10),
+        date: dateInput.value || localDateString(),
         venue: venueInput.value.trim(),
         author: authorInput.value.trim() || '아카라카',
         description: descInput.value.trim(),
@@ -7871,7 +7925,7 @@ function renderVoiceRecorderPanel(song, part) {
         recordedBlob = new Blob(chunks, { type });
         recordedUrl = URL.createObjectURL(recordedBlob);
         const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
-        const dateStr = new Date().toISOString().slice(0, 10);
+        const dateStr = localDateString();
         const fileBase = `${song.title}_${PARTS[part] || part}_셀프녹음_${dateStr}.${ext}`;
 
         const audioEl = el('audio', { controls: true, src: recordedUrl, class: 'voice-rec-audio' });
@@ -8380,9 +8434,25 @@ function renderPractice(song, part, record = true) {
     );
   }
 
+  // 휴대폰에서 연습 영상이 바로 보이도록 영상을 맨 위로 올리고, 첫 음은 한 줄 요약으로 먼저 보여 준다
+  const quickPitchPart = (part && part !== 'full') ? part : (songMyPart(song) || part);
+  const quickFirstNote = getTransposedPartNote(song, quickPitchPart);
+  const quickNoteLabel = quickFirstNote ? (parseNoteString(quickFirstNote)?.displayNote || quickFirstNote) : '';
+  const firstNoteStrip = quickFirstNote
+    ? el('div', {class: 'practice-first-note-strip', role: 'group', 'aria-label': '내 파트 첫 음 바로 듣기'},
+        button(`🎵 ${PARTS[quickPitchPart] || '내 파트'} 첫 음 ${quickNoteLabel} 듣기`, () => {
+          if (playNoteString(quickFirstNote)) toast(`🎵 ${PARTS[quickPitchPart] || quickPitchPart} 첫 음 ${quickNoteLabel}`);
+          else openPitchPipe(song.bpm);
+        }, 'button primary small practice-first-note-play'),
+        button('전체 파트 첫 음 ↓', () => {
+          startingPitchPanel?.scrollIntoView?.({behavior: 'smooth', block: 'start'});
+        }, 'button secondary small practice-first-note-more')
+      )
+    : null;
+
   if (abSwitcher) app.append(abSwitcher);
   if (setlistNav) app.append(setlistNav);
-  app.append(...[startingPitchPanel, partSyncBar, playerLayout, controller, primaryActions, shortcutHint, masteryPanel, voiceRecorderPanel, personalNotePanel, moreToolsDrawer, switches].filter(Boolean));
+  app.append(...[firstNoteStrip, playerLayout, controller, primaryActions, startingPitchPanel, partSyncBar, shortcutHint, masteryPanel, voiceRecorderPanel, personalNotePanel, moreToolsDrawer, switches].filter(Boolean));
 }
 
 function renderSettings() {
@@ -8626,7 +8696,7 @@ function renderSettings() {
         };
         const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {type: 'application/json;charset=utf-8'});
         const url = URL.createObjectURL(blob);
-        const link = el('a', {href: url, download: `acaraca-backup-${new Date().toISOString().slice(0, 10)}.json`});
+        const link = el('a', {href: url, download: `acaraca-backup-${localDateString()}.json`});
         document.body.append(link);
         link.click();
         link.remove();
@@ -8679,7 +8749,7 @@ function normalizeRoute() {
 }
 let lastPractice = '';
 function render() {
-  closeMobileMoreSheet();
+  closeMobileMoreSheet({history: 'none'});
   stopPitch();
   for (const p of activePlayers) { try { p.destroy(); } catch {} }
   activePlayers.length = 0;
@@ -8771,6 +8841,16 @@ async function initialize() {
   state.loading = false; render();
 }
 window.addEventListener('popstate', () => {
+  // 더보기 메뉴를 X·바깥 터치로 닫으며 되돌린 기록이면 화면은 그대로 둔다
+  if (suppressNextPopstate) {
+    suppressNextPopstate = false;
+    return;
+  }
+  // 휴대폰 뒤로가기: 열린 더보기 메뉴만 닫고 지금 화면(재생 중인 영상 포함)은 유지
+  if (document.getElementById('mobile-more-sheet')) {
+    closeMobileMoreSheet({history: 'none'});
+    return;
+  }
   cleanupStageLive();
   stopPitch(true);
   app.classList.remove('stage-live-page');

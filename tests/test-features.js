@@ -6,7 +6,7 @@ import { parseNoteString, pitchPipeInfo, lowNoteRecipe, chordVoices, synthesizeW
 import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
   entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose,
-  sortSongs, classifyHorizontalSwipe
+  sortSongs, classifyHorizontalSwipe, localDateString
 } from '../js/practiceLogic.js';
 import { PARTS, resolveSongId } from '../js/data.js';
 import { DEFAULT_STAGE_HISTORY, STAGE_EXTRA_SONG_METADATA, getSongStartingPitchEntries, findUpcomingStage, resolveSongData, parseImportedStageSession } from '../js/stage.js';
@@ -134,6 +134,47 @@ eq(classifyHorizontalSwipe(-80, 10), 'next', '왼쪽으로 충분히 밀면 다�
 eq(classifyHorizontalSwipe(80, -15), 'prev', '오른쪽으로 충분히 밀면 이전 곡');
 eq(classifyHorizontalSwipe(-30, 5), null, '짧은 이동은 스와이프 무시');
 eq(classifyHorizontalSwipe(-70, 90), null, '세로 스크롤이 더 크면 스와이프 무시');
+
+// 7. 현지 시각 기준 날짜 (새벽에 하루 전 날짜가 찍히지 않음)
+eq(localDateString(new Date(2026, 10, 20, 0, 30)), '2026-11-20', '자정 직후도 오늘 날짜');
+eq(localDateString(new Date(2026, 0, 5, 8, 59), '.'), '2026.01.05', '오전 9시 전도 오늘 날짜 · 점 구분');
+for (const file of ['js/app.js', 'js/stage.js']) {
+  ok(!/toISOString\(\)\.slice\(0,\s*10\)/.test(fs.readFileSync(file, 'utf8')), `${file}: 날짜 기본값은 세계 표준시(toISOString)가 아닌 localDateString 사용`);
+}
+
+// 8. 악보 데이터: 파일이 실제로 있고, 엉뚱한 곡에 연결되지 않음
+const allScores = JSON.parse(fs.readFileSync('data/scores.json', 'utf8')).scores;
+for (const sc of allScores) {
+  if (!sc.fileUrl || /^https?:/i.test(sc.fileUrl)) continue;
+  ok(!/%[0-9A-F]{2}/i.test(sc.fileUrl), `${sc.id}: 파일 경로에 깨진 글자(%28 등)가 없어야 함`);
+  ok(fs.existsSync(sc.fileUrl.replace(/^\.\//, '')), `${sc.id}: 악보 파일이 실제로 있어야 함 (${sc.fileUrl})`);
+}
+const scoreById = Object.fromEntries(allScores.map(s => [s.id, s]));
+eq(scoreById['score-desk-014'].songId, 'isnt-she-lovely', "Isn't she lovely 악보는 Isn't She Lovely 곡에 연결");
+eq(scoreById['score-desk-079'].songId, 'white-christmas', 'White Christmas 악보는 White Christmas 곡에 연결');
+for (const sc of allScores.filter(s => s.songId === 'l-o-v-e')) {
+  ok(!/(dive|open.?door|i love you|perhaps|tender|lover|lovely|this.?love|need is love|falling|tell)/i.test(sc.title), `L.O.V.E.에 다른 곡 악보가 섞이지 않음: ${sc.title}`);
+}
+ok(!allScores.some(s => s.songId === 'would-be-good' && /좋을텐데/.test(s.title)), "'좋겠다'에 다른 곡 '좋을텐데' 악보가 섞이지 않음");
+
+// 9. 휴대폰 사용감 보정 (무대 도구 접기 · 이전/다음 고정 · 영상 먼저 · 홈 3곡 · 한 줄 머리글 · 아이폰 전체화면 · 뒤로가기)
+{
+  const stageSrc = fs.readFileSync('js/stage.js', 'utf8');
+  const appSrc = fs.readFileSync('js/app.js', 'utf8');
+  const cssSrc = fs.readFileSync('css/style.css', 'utf8');
+  ok(stageSrc.includes("el('details', { class: 'stage-tools-drawer' }"), '무대 큐시트: 보조 도구를 접는 무대 도구 서랍');
+  ok(stageSrc.includes("matchMedia('(min-width: 601px)')"), '무대 도구 서랍은 휴대폰에서 기본으로 접힘');
+  ok(!stageSrc.includes("'⛶'") && !stageSrc.includes("'🗗'") && !fs.readFileSync('js/player.js', 'utf8').includes('⛶'), '전체화면·가로 확대 버튼은 일부 폰에서 깨지는 기호(⛶) 대신 표시 가능한 글자로');
+  ok(stageSrc.includes('fullscreenSupported') && stageSrc.includes('홈 화면에 추가'), '아이폰처럼 전체화면을 지원하지 않으면 홈 화면 추가 안내');
+  ok(/\.stage-nav-bar \{\s*position: sticky;/.test(cssSrc), '휴대폰 무대 큐시트 이전/다음 버튼 화면 아래 고정');
+  ok(/app\.append\(\.\.\.\[firstNoteStrip, playerLayout, controller, primaryActions, startingPitchPanel/.test(appSrc), '연습실: 영상이 파트별 첫 음 패널보다 먼저');
+  ok(appSrc.includes('const HOME_SETLIST_PREVIEW = 3;') && appSrc.includes('나머지 ${hiddenRows.length}곡 펼치기'), '홈 셋리스트 3곡 미리보기 + 펼치기');
+  ok(appSrc.includes("daysUntil(date) < 0") && appSrc.includes('+ 다음 공연 만들기'), '지난 공연은 지난 공연으로 표시하고 다음 공연 만들기 안내');
+  ok(/header\.topbar \{ flex-wrap: nowrap;/.test(cssSrc) && cssSrc.includes('header.topbar .mobile-settings-btn { display: none; }'), '휴대폰 머리글 한 줄 · 중복 설정 버튼 숨김');
+  ok(/\.loop-nudge-btn \{ min-width: 44px; min-height: 38px; \}/.test(cssSrc), '구간 반복 ±1초 버튼 터치 크기 확대');
+  ok(appSrc.includes('acaMoreSheet: true') && appSrc.includes("closeMobileMoreSheet({history: 'none'});\n    return;"), '휴대폰 뒤로가기는 더보기 메뉴만 닫음');
+  ok(appSrc.includes('function navigateFromMoreSheet(route)'), '더보기 메뉴에서 이동하면 메뉴 기록을 새 화면이 대신함');
+}
 
 for (const w of warnings) console.warn(`⚠ ${w}`);
 console.log(`✓ Recent feature tests passed (${checks} checks${warnings.length ? `, ${warnings.length} warnings` : ''})`);
