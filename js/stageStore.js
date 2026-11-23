@@ -220,10 +220,39 @@ export function resolveSongData(songs, songId, fallbackTitle = '') {
 }
 
 /**
- * 사용자 직접 입력 공연 셋리스트 (최신순 3건 정렬)
+ * 사용자 직접 입력 공연 셋리스트 (최신순 정렬)
  * 사용자가 직접 입력하지 않은 임의 더미 공연은 기본 히스토리에 포함하지 않음
  */
 export const DEFAULT_STAGE_HISTORY = [
+  {
+    id: 'stage-2026-jeongdeok',
+    eventTitle: '2026 전학공 연말 공연',
+    date: '2026.12.18',
+    venue: '정덕유치원',
+    notes: '2026 전학공 연말 공연 큐시트 (일시: 12월 18일(금) 18:00, 장소: 정덕유치원)',
+    updatedAt: 1797584400000,
+    revision: 1,
+    currentIndex: 0,
+    songs: [
+      { songId: 'first-impression', title: '첫인상', note: '', commentTone: 'story' },
+      { songId: 'love-song-medley', title: '러브송 메들리', note: '', commentTone: 'story' },
+      { songId: 'old-pop-medley', title: '올드팝 메들리', note: '', commentTone: 'story' },
+      { songId: 'carol-medley', title: '캐롤 메들리', note: '', commentTone: 'story' }
+    ]
+  },
+  {
+    id: 'stage-2026-naju',
+    eventTitle: '2026 나주 공연 (광주교대 멘토링)',
+    date: '2026.12.12',
+    venue: '나주',
+    notes: '2026 나주 공연 (광주교대 멘토링) 큐시트 (일시: 12월 12일(토) 14:00, 장소: 나주)',
+    updatedAt: 1797051600000,
+    revision: 1,
+    currentIndex: 0,
+    songs: [
+      { songId: 'if-you-dont-dream', title: '꿈꾸지 않으면', note: '', commentTone: 'story' }
+    ]
+  },
   {
     id: 'stage-2026-jeonnam',
     eventTitle: '2026 전교조 전남지부 참교육실천대회 찬조 공연',
