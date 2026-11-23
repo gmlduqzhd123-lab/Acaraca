@@ -5854,3 +5854,7 @@ body.mobile-more-open { overflow: hidden; }
   .stage-live-badge-row .stage-wake-pill,
   .stage-live-badge-row .stage-stopwatch-pill { padding: 5px 10px; font-size: 11.5px; }
 }
+
+/* 다크 모드 홈 '다음 무대' 카드: D-day 배지(연한 초록 위 흰 글자 → 어두운 글자), '파트 선택' 글자 대비 보정 */
+html[data-theme="dark"] .dday-badge { color: #1c3524; }
+html[data-theme="dark"] .setlist-part { color: var(--muted-strong); }

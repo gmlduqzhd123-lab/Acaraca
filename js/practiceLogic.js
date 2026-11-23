@@ -195,3 +195,85 @@ export function getScoreFormatLabel(sc) {
   if (fmt === 'image') return '악보 이미지';
   return '클라우드 악보';
 }
+
+// ── 백업 파일 검사 ──────────────────────────────────────────────
+const isPlainObject = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
+// 링크 칸에 들어올 수 있는 값: http(s), 기기 안 파일(blob), 이미지·PDF data, 사이트 안 상대 경로
+const SAFE_URL_RE = /^(https?:|blob:|data:image\/|data:application\/pdf[;,])/i;
+const HAS_SCHEME_RE = /^[a-z][a-z0-9+.-]*:/i;
+const URL_FIELD_RE = /(url|href|thumbnail|src)$/i;
+
+/** 링크로 써도 안전한 주소인지 (javascript: 같은 스크립트 주소 차단) */
+export function isSafeLinkUrl(value) {
+  if (typeof value !== 'string') return false;
+  const v = value.trim();
+  if (!v) return false;
+  return !HAS_SCHEME_RE.test(v) || SAFE_URL_RE.test(v);
+}
+
+function cleanEntry(entry) {
+  if (!isPlainObject(entry) || typeof entry.id !== 'string' || !entry.id) return null;
+  const out = { ...entry };
+  for (const [key, value] of Object.entries(out)) {
+    if (URL_FIELD_RE.test(key) && typeof value === 'string' && value.trim() && !isSafeLinkUrl(value)) delete out[key];
+  }
+  return out;
+}
+
+/**
+ * 가져온 백업 파일을 적용 전에 검사·정리한다. 형식이 맞는 항목만 남기고, 깨진 항목·스크립트 링크는 버린다.
+ * 백업이 아니면 Error를 던진다(아무것도 적용하지 않도록). 반환값의 키만 적용하면 된다.
+ */
+export function sanitizeBackup(raw, { resolveSongId = (id) => id, validParts = [] } = {}) {
+  if (!isPlainObject(raw)) throw new Error('백업 파일 형식이 아닙니다.');
+  const known = ['favorites', 'recent', 'progress', 'songTranspositions', 'myPart', 'myName', 'singerName', 'statusOverrides',
+    'customRehearsals', 'teamFeedbacks', 'likedFeedbacks', 'customScores', 'customMemories', 'likedMemories', 'memoryLikeCounts',
+    'customAppreciation', 'customPracticeVideos', 'customEducation', 'myPracticeNotes', 'savedLoops', 'stageHistory', 'stageActive',
+    'stageDeletedIds', 'rehearsalMediaOverrides'];
+  if (raw.type !== 'acaraca-backup' && !known.some((k) => k in raw)) throw new Error('아카라카 백업 파일이 아닙니다.');
+
+  const out = {};
+  const strings = (v) => (Array.isArray(v) ? [...new Set(v.filter((x) => typeof x === 'string' && x))] : undefined);
+  const entries = (v) => (Array.isArray(v) ? v.map(cleanEntry).filter(Boolean) : undefined);
+  const plain = (v) => (isPlainObject(v) ? v : undefined);
+
+  if (Array.isArray(raw.favorites)) out.favorites = [...new Set(strings(raw.favorites).map(resolveSongId))];
+  if (Array.isArray(raw.recent)) {
+    out.recent = raw.recent
+      .filter((r) => isPlainObject(r) && typeof r.songId === 'string' && typeof r.part === 'string' && Number.isFinite(r.timestamp))
+      .map((r) => ({ ...r, songId: resolveSongId(r.songId) }));
+  }
+  if (isPlainObject(raw.progress)) {
+    out.progress = Object.fromEntries(Object.entries(raw.progress)
+      .filter(([, v]) => (typeof v === 'number' && [0, 1, 2, 3].includes(v)) || isPlainObject(v))
+      .map(([id, v]) => [resolveSongId(id), v]));
+  }
+  if (isPlainObject(raw.songTranspositions)) {
+    out.songTranspositions = Object.fromEntries(Object.entries(raw.songTranspositions)
+      .filter(([, v]) => Number.isFinite(Number(v)))
+      .map(([id, v]) => [resolveSongId(id), Math.max(-6, Math.min(6, Math.round(Number(v))))]));
+  }
+  if (typeof raw.myPart === 'string' && (raw.myPart === '' || validParts.includes(raw.myPart))) out.myPart = raw.myPart;
+  if (typeof raw.myName === 'string') out.myName = raw.myName.trim().slice(0, 40);
+  else if (typeof raw.singerName === 'string' && raw.singerName.trim()) out.myName = raw.singerName.trim().slice(0, 40);
+  if (isPlainObject(raw.statusOverrides)) {
+    const ok = new Set(['practice', 'complete', 'archive']);
+    out.statusOverrides = Object.fromEntries(Object.entries(raw.statusOverrides).filter(([, v]) => ok.has(v)).map(([id, v]) => [resolveSongId(id), v]));
+  }
+  for (const key of ['customRehearsals', 'teamFeedbacks', 'customScores', 'customMemories', 'customAppreciation', 'customPracticeVideos', 'customEducation']) {
+    const list = entries(raw[key]);
+    if (list) out[key] = list;
+  }
+  for (const key of ['likedFeedbacks', 'likedMemories', 'stageDeletedIds']) {
+    const list = strings(raw[key]);
+    if (list) out[key] = list;
+  }
+  for (const key of ['memoryLikeCounts', 'myPracticeNotes', 'savedLoops', 'rehearsalMediaOverrides']) {
+    const obj = plain(raw[key]);
+    if (obj) out[key] = obj;
+  }
+  const isStage = (s) => isPlainObject(s) && typeof s.id === 'string' && Array.isArray(s.songs);
+  if (Array.isArray(raw.stageHistory)) out.stageHistory = raw.stageHistory.filter(isStage);
+  if (isStage(raw.stageActive)) out.stageActive = raw.stageActive;
+  return out;
+}

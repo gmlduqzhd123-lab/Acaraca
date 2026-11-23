@@ -1,5 +1,5 @@
 import {loadSongs, PARTS, availableParts, preferredPart, resolveSongId} from './data.js';
-import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs, localDateString, isLightRoute, getScoreFormatKey, getScoreFormatLabel} from './practiceLogic.js';
+import {resolveMyPart, collectMemberNames, orderedPitchItems as orderedPitchItemsFor, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sortSongs, localDateString, isLightRoute, getScoreFormatKey, getScoreFormatLabel, sanitizeBackup, isSafeLinkUrl} from './practiceLogic.js';
 import {parseYouTube, createPlayer, createSectionLooper, formatPlayerTime, destroyDetachedPlayers} from './player.js';
 import {read, write, remove, isAvailable} from './storage.js';
 import {filterSongs} from './search.js';
@@ -52,13 +52,28 @@ import {
   estimateSetlistDurationSeconds
 } from './stageStore.js';
 
+// 나중에 불러오는 화면 코드: 한 번 실패한 import() 주소는 브라우저가 '실패'로 기억해 다시 요청하지 않는다.
+// 그래서 다시 시도할 때는 주소 끝에 표시를 붙여 새로 받는다(오프라인이면 서비스워커가 저장본을 준다).
+const lazyImportFailures = new Map();
+function importLazy(path) {
+  const failures = lazyImportFailures.get(path) || 0;
+  const url = failures ? `${path}?retry=${failures}-${Date.now()}` : path;
+  return import(url).then((mod) => {
+    lazyImportFailures.delete(path);
+    return mod;
+  }, (error) => {
+    lazyImportFailures.set(path, failures + 1);
+    throw error;
+  });
+}
+
 // 무대 화면(js/stage.js, 큰 파일)은 무대 탭을 처음 열 때 불러온다.
 let stageViewModule = null;
 let stageViewPromise = null;
 function loadStageView() {
   if (stageViewModule) return Promise.resolve(stageViewModule);
   if (!stageViewPromise) {
-    stageViewPromise = import('./stage.js').then((mod) => (stageViewModule = mod)).catch((error) => {
+    stageViewPromise = importLazy('./stage.js').then((mod) => (stageViewModule = mod)).catch((error) => {
       stageViewPromise = null;
       throw error;
     });
@@ -3350,7 +3365,7 @@ function openUploadScoreModal(defaultSongId = '') {
 let scoreViewerPromise = null;
 function loadScoreViewer() {
   if (!scoreViewerPromise) {
-    scoreViewerPromise = import('./scoreViewer.js').then((mod) => {
+    scoreViewerPromise = importLazy('./scoreViewer.js').then((mod) => {
       mod.bindApp({ state, getSongTranspose, formatTransposeBadgeText, openSong, openOrDownloadScore, openPitchPipe });
       return mod;
     }).catch((error) => {
@@ -3376,7 +3391,16 @@ function openOrDownloadScore(score, isDownload = false, options = {}) {
     toast('첨부된 악보 파일이 없습니다. 새 악보를 등록해 주세요.');
     return;
   }
-  const safeUrl = score.blobUrl ? score.blobUrl : (score.driveUrl || (score.fileUrl ? encodeURI(decodeURI(score.fileUrl)) : ''));
+  // 직접 등록·백업으로 들어온 주소가 javascript: 같은 스크립트 주소면 열지 않는다
+  if (!isSafeLinkUrl(fileUrl)) {
+    toast('이 악보 주소는 열 수 없습니다. 악보를 다시 등록해 주세요.');
+    return;
+  }
+  let encodedFileUrl = '';
+  if (score.fileUrl) {
+    try { encodedFileUrl = encodeURI(decodeURI(score.fileUrl)); } catch { encodedFileUrl = encodeURI(score.fileUrl); }
+  }
+  const safeUrl = score.blobUrl ? score.blobUrl : (score.driveUrl || encodedFileUrl);
   const fmtKey = getScoreFormatKey(score);
   const isPdf = fmtKey === 'pdf';
   const isInAppPreviewable = Boolean(!score.driveUrl && ['nwc', 'midi', 'mscz', 'pdf'].includes(fmtKey));
@@ -3406,7 +3430,7 @@ let archivePagesPromise = null;
 function loadArchivePages() {
   if (archivePagesModule) return Promise.resolve(archivePagesModule);
   if (!archivePagesPromise) {
-    archivePagesPromise = import('./archivePages.js').then((mod) => {
+    archivePagesPromise = importLazy('./archivePages.js').then((mod) => {
       mod.bindApp({ app, state, activePlayers, navigate, openSong, isProtectedAuthorized, openProtectedAuthDialog, renderProtectedLockScreen, openUploadScoreModal, openOrDownloadScore, openPitchPipe, render });
       archivePagesModule = mod;
       return mod;
@@ -5201,87 +5225,57 @@ function renderSettings() {
       const file = e.target.files?.[0];
       if (!file) return;
       try {
-        const raw = JSON.parse((await file.text()).replace(/^\uFEFF/, ''));
-        if (!raw || typeof raw !== 'object') throw new Error('유효한 백업 JSON 형식이 아닙니다.');
-        if (Array.isArray(raw.favorites)) {
-          const cleanFavs = raw.favorites.filter(v => typeof v === 'string');
-          write('favorites', cleanFavs);
-          state.favorites = new Set(cleanFavs);
+        const parsed = JSON.parse((await file.text()).replace(/^\uFEFF/, ''));
+        // 적용 전에 파일 전체를 검사·정리한다. 백업이 아니면 여기서 멈춰 아무것도 바뀌지 않는다.
+        const raw = sanitizeBackup(parsed, {
+          resolveSongId,
+          validParts: Object.keys(PARTS).filter(p => p !== 'full')
+        });
+        if (raw.favorites) {
+          write('favorites', raw.favorites);
+          state.favorites = new Set(raw.favorites);
         }
-        if (Array.isArray(raw.recent)) {
+        if (raw.recent) {
           write('recent', raw.recent);
           state.recent = raw.recent;
         }
-        if (raw.progress && typeof raw.progress === 'object' && !Array.isArray(raw.progress)) {
+        if (raw.progress) {
           write('progress', raw.progress);
           state.progress = raw.progress;
         }
-        if (raw.songTranspositions && typeof raw.songTranspositions === 'object' && !Array.isArray(raw.songTranspositions)) {
+        if (raw.songTranspositions) {
           write('song_transpositions', raw.songTranspositions);
           state.songTranspositions = raw.songTranspositions;
         }
         if (typeof raw.myPart === 'string') {
-          const validPart = raw.myPart === '' || Object.keys(PARTS).filter(p => p !== 'full').includes(raw.myPart);
-          if (validPart) {
-            state.myPart = raw.myPart;
-            if (raw.myPart) write('myPart', raw.myPart);
-            else remove('myPart');
-          }
+          state.myPart = raw.myPart;
+          if (raw.myPart) write('myPart', raw.myPart);
+          else remove('myPart');
         }
         if (typeof raw.myName === 'string') {
-          state.myName = raw.myName.trim();
+          state.myName = raw.myName;
           if (state.myName) write('myName', state.myName);
           else remove('myName');
-        } else if (typeof raw.singerName === 'string' && raw.singerName.trim()) {
-          state.myName = raw.singerName.trim();
-          write('myName', state.myName);
         }
-        if (raw.statusOverrides && typeof raw.statusOverrides === 'object' && !Array.isArray(raw.statusOverrides)) {
-          const validStatuses = new Set(['practice', 'complete', 'archive']);
-          const cleanOverrides = Object.fromEntries(
-            Object.entries(raw.statusOverrides).filter(([, v]) => validStatuses.has(v))
-          );
-          write('statusOverrides', cleanOverrides);
+        if (raw.statusOverrides) {
+          write('statusOverrides', raw.statusOverrides);
           state.songs.forEach(song => {
-            song.status = cleanOverrides[song.id] || song._defaultStatus || song.status;
+            song.status = raw.statusOverrides[song.id] || song._defaultStatus || song.status;
           });
         }
-        if (Array.isArray(raw.customRehearsals)) {
-          write('custom_rehearsals', raw.customRehearsals);
+        const listKeys = {
+          customRehearsals: 'custom_rehearsals', teamFeedbacks: 'team_feedbacks', likedFeedbacks: 'liked_feedbacks',
+          customScores: 'custom_scores', customMemories: 'custom_memories', likedMemories: 'liked_memories',
+          memoryLikeCounts: 'memory_like_counts', customAppreciation: 'custom_appreciation',
+          customPracticeVideos: 'custom_practice_videos', customEducation: 'custom_education',
+          myPracticeNotes: 'my_practice_notes', savedLoops: 'savedLoops', rehearsalMediaOverrides: 'rehearsal_media_overrides'
+        };
+        for (const [field, key] of Object.entries(listKeys)) {
+          if (raw[field] !== undefined) write(key, raw[field]);
         }
-        if (Array.isArray(raw.teamFeedbacks)) {
-          write('team_feedbacks', raw.teamFeedbacks);
-          write('feedbacks_seed_v', 2);
-        }
-        if (Array.isArray(raw.likedFeedbacks)) {
-          write('liked_feedbacks', raw.likedFeedbacks);
-        }
-        if (Array.isArray(raw.customScores)) {
-          write('custom_scores', raw.customScores);
-        }
-        if (Array.isArray(raw.customMemories)) {
-          write('custom_memories', raw.customMemories);
-        }
-        if (Array.isArray(raw.likedMemories)) {
-          write('liked_memories', raw.likedMemories);
-        }
-        if (raw.memoryLikeCounts && typeof raw.memoryLikeCounts === 'object' && !Array.isArray(raw.memoryLikeCounts)) {
-          write('memory_like_counts', raw.memoryLikeCounts);
-        }
-        if (Array.isArray(raw.customAppreciation)) {
-          write('custom_appreciation', raw.customAppreciation);
-        }
-        if (Array.isArray(raw.customPracticeVideos)) {
-          write('custom_practice_videos', raw.customPracticeVideos);
-        }
-        if (Array.isArray(raw.customEducation)) {
-          write('custom_education', raw.customEducation);
-        }
-        if (raw.myPracticeNotes && typeof raw.myPracticeNotes === 'object' && !Array.isArray(raw.myPracticeNotes)) {
-          write('my_practice_notes', raw.myPracticeNotes);
-        }
-        if (raw.savedLoops && typeof raw.savedLoops === 'object' && !Array.isArray(raw.savedLoops)) {
-          write('savedLoops', raw.savedLoops);
+        if (raw.teamFeedbacks) write('feedbacks_seed_v', 2);
+        if (raw.stageDeletedIds) {
+          try { localStorage.setItem('acaroom_stage_deleted_ids_v1', JSON.stringify(raw.stageDeletedIds)); } catch {}
         }
         if (raw.stageHistory) {
           try { localStorage.setItem('acaroom_stage_history_v2', JSON.stringify(raw.stageHistory)); } catch {}
@@ -5320,9 +5314,11 @@ function renderSettings() {
       button('📤 기록 · 큐시트 백업 내보내기', () => {
         let stageHistory = null;
         let stageActive = null;
+        let stageDeletedIds = [];
         try {
           stageHistory = JSON.parse(localStorage.getItem('acaroom_stage_history_v2') || 'null');
           stageActive = JSON.parse(localStorage.getItem('acaroom_stage_active_v2') || 'null');
+          stageDeletedIds = JSON.parse(localStorage.getItem('acaroom_stage_deleted_ids_v1') || '[]');
         } catch {}
         const payload = {
           type: 'acaraca-backup',
@@ -5345,6 +5341,8 @@ function renderSettings() {
           customAppreciation: read('custom_appreciation', []),
           customPracticeVideos: read('custom_practice_videos', []),
           customEducation: read('custom_education', []),
+          rehearsalMediaOverrides: read('rehearsal_media_overrides', {}),
+          stageDeletedIds: Array.isArray(stageDeletedIds) ? stageDeletedIds : [],
           myPracticeNotes: read('my_practice_notes', {}),
           savedLoops: read('savedLoops', {}),
           stageHistory,
@@ -5404,8 +5402,10 @@ function normalizeRoute() {
   }
 }
 let lastPractice = '';
-function render() {
-  closeMobileMoreSheet({history: 'none'});
+function render(options) {
+  // 불러오기가 끝나 같은 화면을 다시 그릴 때는 그 사이 열어 둔 더보기 메뉴를 닫지 않는다
+  // (닫으면 메뉴용 뒤로가기 기록만 남아 다음 뒤로가기가 아무 반응이 없게 된다)
+  if (!(options && options.keepMoreSheet === true)) closeMobileMoreSheet({history: 'none'});
   stopPitch();
   for (const p of activePlayers) { try { p.destroy(); } catch {} }
   activePlayers.length = 0;
@@ -5432,12 +5432,17 @@ function render() {
     pendingArchiveRender = true;
     app.append(el('div', {class: 'loading-state', role: 'status', text: '자료를 불러오고 있어요…'}));
     Promise.all([loadArchiveData(), needsStageView ? loadStageView() : null, needsArchivePages ? loadArchivePages() : null]).then(() => {
-      if (pendingArchiveRender) { pendingArchiveRender = false; render(); }
+      if (pendingArchiveRender) { pendingArchiveRender = false; render({keepMoreSheet: true}); }
     }).catch((error) => {
       console.warn('screen load error:', error);
       if (!pendingArchiveRender) return;
       pendingArchiveRender = false;
-      app.replaceChildren(el('div', {class: 'error-state', role: 'alert'}, el('h1', {text: '화면을 불러오지 못했어요'}), el('p', {text: '인터넷 연결을 확인한 뒤 다시 시도해 주세요.'}), button('다시 시도', render, 'button primary')));
+      app.replaceChildren(el('div', {class: 'error-state', role: 'alert'},
+        el('h1', {text: '화면을 불러오지 못했어요'}),
+        el('p', {text: '인터넷 연결을 확인한 뒤 다시 시도해 주세요. 계속 안 되면 새로고침을 눌러 주세요.'}),
+        button('다시 시도', render, 'button primary'),
+        // 사용자가 직접 누를 때만 새로고침한다 (자동 새로고침 금지 규칙)
+        button('새로고침', () => location.reload(), 'button secondary')));
     });
     return;
   }
