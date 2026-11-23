@@ -1,6 +1,17 @@
 import { read, write } from './storage.js';
 import { getMediaBlobUrl, deleteMediaFile } from './mediaStorage.js';
 
+// 직접 등록한 자료 목록을 읽을 때 깨진 항목(null, 객체가 아닌 값, id 없음)은 건너뛴다.
+// 잘못된 백업을 가져와 저장된 경우에도 화면이 멈추지 않고 정상 항목만 보이게 한다.
+function readEntries(key) {
+  const list = read(key, []);
+  return Array.isArray(list) ? list.filter((x) => x && typeof x === 'object' && !Array.isArray(x) && typeof x.id === 'string' && x.id) : [];
+}
+function readPlainObject(key) {
+  const obj = read(key, {});
+  return obj && typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
+}
+
 let cachedPerformances = null;
 let cachedRehearsals = null;
 
@@ -32,8 +43,8 @@ export async function loadRehearsals(forceReload = false) {
   }
 
   // Load custom rehearsals and attached media overrides from local storage
-  const customRehearsals = read('custom_rehearsals', []);
-  const mediaOverrides = read('rehearsal_media_overrides', {});
+  const customRehearsals = readEntries('custom_rehearsals');
+  const mediaOverrides = readPlainObject('rehearsal_media_overrides');
 
   const allRehearsals = [...(Array.isArray(customRehearsals) ? customRehearsals : []), ...serverRehearsals];
 
@@ -107,7 +118,7 @@ export function initFeedbacksFromData(rehearsals) {
     return;
   }
 
-  const existing = read('team_feedbacks', []);
+  const existing = readEntries('team_feedbacks');
   const currentList = Array.isArray(existing) ? existing : [];
   const existingIds = new Set(currentList.map((fb) => fb && fb.id).filter(Boolean));
   const missingSeeds = seedItems.filter((fb) => fb.id && !existingIds.has(fb.id));
@@ -117,7 +128,7 @@ export function initFeedbacksFromData(rehearsals) {
 }
 
 export function getAllFeedbacks(rehearsalId = null) {
-  const all = read('team_feedbacks', []);
+  const all = readEntries('team_feedbacks');
   if (!Array.isArray(all)) return [];
   if (rehearsalId) {
     return all.filter((fb) => fb.rehearsalId === rehearsalId);
@@ -193,7 +204,7 @@ export function getRehearsalsForSong(rehearsals, songId) {
 }
 
 export function addCustomRehearsal(newReh) {
-  const customList = read('custom_rehearsals', []);
+  const customList = readEntries('custom_rehearsals');
   const updated = [newReh, ...customList];
   write('custom_rehearsals', updated);
   cachedRehearsals = null;
@@ -201,18 +212,18 @@ export function addCustomRehearsal(newReh) {
 }
 
 export function attachMediaToRehearsal(rehearsalId, mediaInfo) {
-  const overrides = read('rehearsal_media_overrides', {});
+  const overrides = readPlainObject('rehearsal_media_overrides');
   overrides[rehearsalId] = mediaInfo;
   write('rehearsal_media_overrides', overrides);
   cachedRehearsals = null;
 }
 
 export async function deleteCustomRehearsal(rehearsalId) {
-  const customList = read('custom_rehearsals', []);
+  const customList = readEntries('custom_rehearsals');
   const updated = customList.filter(r => r.id !== rehearsalId);
   write('custom_rehearsals', updated);
 
-  const overrides = read('rehearsal_media_overrides', {});
+  const overrides = readPlainObject('rehearsal_media_overrides');
   const override = overrides[rehearsalId];
   if (override?.mediaId) {
     await deleteMediaFile(override.mediaId);
@@ -238,7 +249,7 @@ export async function loadScores(forceReload = false) {
     serverScores = [];
   }
 
-  const customScores = read('custom_scores', []);
+  const customScores = readEntries('custom_scores');
   const allScores = [...(Array.isArray(customScores) ? customScores : []), ...serverScores];
 
   // Resolve blob URLs for scores stored in IndexedDB
@@ -256,7 +267,7 @@ export async function loadScores(forceReload = false) {
 }
 
 export function addCustomScore(newScore) {
-  const customList = read('custom_scores', []);
+  const customList = readEntries('custom_scores');
   const updated = [newScore, ...customList];
   write('custom_scores', updated);
   cachedScores = null;
@@ -264,7 +275,7 @@ export function addCustomScore(newScore) {
 }
 
 export async function deleteCustomScore(scoreId) {
-  const customList = read('custom_scores', []);
+  const customList = readEntries('custom_scores');
   const target = customList.find(s => s.id === scoreId);
   const updated = customList.filter(s => s.id !== scoreId);
   write('custom_scores', updated);
@@ -299,7 +310,7 @@ export async function loadMemories(forceReload = false) {
     serverMemories = [];
   }
 
-  const customMemories = read('custom_memories', []);
+  const customMemories = readEntries('custom_memories');
   const allMemories = [...(Array.isArray(customMemories) ? customMemories : []), ...serverMemories];
 
   // Resolve blob URLs for memories stored in IndexedDB
@@ -328,7 +339,7 @@ export async function loadMemories(forceReload = false) {
 }
 
 export function addCustomMemory(newMemory) {
-  const customList = read('custom_memories', []);
+  const customList = readEntries('custom_memories');
   const updated = [newMemory, ...customList];
   write('custom_memories', updated);
   cachedMemories = null;
@@ -336,7 +347,7 @@ export function addCustomMemory(newMemory) {
 }
 
 export async function deleteCustomMemory(memoryId) {
-  const customList = read('custom_memories', []);
+  const customList = readEntries('custom_memories');
   const target = customList.find(m => m.id === memoryId);
   const updated = customList.filter(m => m.id !== memoryId);
   write('custom_memories', updated);
@@ -396,7 +407,7 @@ export async function loadEducation(forceReload = false) {
     serverResources = [];
   }
 
-  const customEdu = read('custom_education', []);
+  const customEdu = readEntries('custom_education');
   const allEdu = [...(Array.isArray(customEdu) ? customEdu : []), ...serverResources];
 
   // Resolve blob URLs for materials stored in IndexedDB
@@ -414,7 +425,7 @@ export async function loadEducation(forceReload = false) {
 }
 
 export function addCustomEducation(newEdu) {
-  const customList = read('custom_education', []);
+  const customList = readEntries('custom_education');
   const updated = [newEdu, ...customList];
   write('custom_education', updated);
   cachedEducation = null;
@@ -422,7 +433,7 @@ export function addCustomEducation(newEdu) {
 }
 
 export async function deleteCustomEducation(eduId) {
-  const customList = read('custom_education', []);
+  const customList = readEntries('custom_education');
   const target = customList.find(e => e.id === eduId);
   const updated = customList.filter(e => e.id !== eduId);
   write('custom_education', updated);
@@ -447,7 +458,7 @@ export async function loadPracticeVideos(forceReload = false) {
     serverVideos = [];
   }
 
-  const customVideos = read('custom_practice_videos', []);
+  const customVideos = readEntries('custom_practice_videos');
   const allVideos = [...(Array.isArray(customVideos) ? customVideos : []), ...serverVideos];
 
   // Resolve blob URLs for video files stored in IndexedDB
@@ -465,7 +476,7 @@ export async function loadPracticeVideos(forceReload = false) {
 }
 
 export function addCustomPracticeVideo(newVideo) {
-  const customList = read('custom_practice_videos', []);
+  const customList = readEntries('custom_practice_videos');
   const updated = [newVideo, ...customList];
   write('custom_practice_videos', updated);
   cachedPracticeVideos = null;
@@ -473,7 +484,7 @@ export function addCustomPracticeVideo(newVideo) {
 }
 
 export async function deleteCustomPracticeVideo(videoId) {
-  const customList = read('custom_practice_videos', []);
+  const customList = readEntries('custom_practice_videos');
   const target = customList.find(v => v.id === videoId);
   const updated = customList.filter(v => v.id !== videoId);
   write('custom_practice_videos', updated);
@@ -498,7 +509,7 @@ export async function loadAppreciation(forceReload = false) {
     serverVideos = [];
   }
 
-  const customVideos = read('custom_appreciation', []);
+  const customVideos = readEntries('custom_appreciation');
   const allVideos = [...(Array.isArray(customVideos) ? customVideos : []), ...serverVideos];
 
   cachedAppreciation = allVideos;
@@ -506,7 +517,7 @@ export async function loadAppreciation(forceReload = false) {
 }
 
 export function addCustomAppreciation(newVideo) {
-  const customList = read('custom_appreciation', []);
+  const customList = readEntries('custom_appreciation');
   const updated = [newVideo, ...customList];
   write('custom_appreciation', updated);
   cachedAppreciation = null;
@@ -514,7 +525,7 @@ export function addCustomAppreciation(newVideo) {
 }
 
 export function deleteCustomAppreciation(videoId) {
-  const customList = read('custom_appreciation', []);
+  const customList = readEntries('custom_appreciation');
   const updated = customList.filter(v => v.id !== videoId);
   write('custom_appreciation', updated);
   cachedAppreciation = null;

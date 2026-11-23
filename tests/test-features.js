@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { parseNoteString, pitchPipeInfo, lowNoteRecipe, chordVoices, synthesizeWav, isInAppUserAgent } from '../js/pitch.js';
 import {
   DEFAULT_ENTRY_ORDER, splitMemberNames, resolveMyPart, collectMemberNames,
-  entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose,
+  entryRank, orderedPitchItems, parseStageDate, nextStage, daysUntil, resolveStageItemTranspose, sanitizeBackup, isSafeLinkUrl,
   sortSongs, classifyHorizontalSwipe, localDateString, isLightRoute, getScoreFormatKey, getScoreFormatLabel
 } from '../js/practiceLogic.js';
 import { PARTS, resolveSongId } from '../js/data.js';
@@ -108,6 +108,36 @@ ok(isInAppUserAgent('Mozilla/5.0 (Linux; Android 14; wv) KAKAOTALK/10.9.5'), '�
 ok(!isInAppUserAgent('Mozilla/5.0 (Linux; Android 14) Chrome/129 Mobile Safari/537.36'), '일반 크롬은 인앱 아님');
 
 // 큐시트 곡 조바꿈: 큐시트 값(0 포함) 우선, 없으면 연습실에서 저장한 곡 조바꿈 (홈 카드·무대 화면 공통)
+// 백업 파일 검사: 깨진 항목·스크립트 링크는 버리고, 백업이 아니면 아무것도 적용하지 않음
+{
+  const bad = sanitizeBackup({
+    type: 'acaraca-backup',
+    customScores: [null, 'x', { title: 'id 없음' }, { id: 's1', fileUrl: 'javascript:alert(1)', driveUrl: 'https://drive.google.com/x' }],
+    customRehearsals: [null], teamFeedbacks: [null, { id: 'fb1', rehearsalId: 'r' }],
+    recent: [null, { songId: 'bohemian-rhapsody-5', part: 'part1', timestamp: 1 }],
+    favorites: ['bohemian-rhapsody-5', 'bohemian-rhapsody', 3],
+    progress: { a: 3, b: 'x', c: { level: 2 } }, songTranspositions: { a: 9, b: 'x' },
+    stageHistory: [null, { id: 's', songs: [] }], stageActive: { id: 'z' }, stageDeletedIds: ['stage-2026-yeosu', 1]
+  }, { resolveSongId: (id) => (id === 'bohemian-rhapsody-5' ? 'bohemian-rhapsody' : id), validParts: ['part1'] });
+  eq(bad.customScores.map(x => x.id), ['s1'], '백업: id 있는 정상 악보만 남김');
+  eq(bad.customScores[0].fileUrl, undefined, '백업: javascript: 링크 제거');
+  eq(bad.customScores[0].driveUrl, 'https://drive.google.com/x', '백업: 정상 링크 유지');
+  eq(bad.customRehearsals, [], '백업: 깨진 연습 일지 제거');
+  eq(bad.teamFeedbacks.map(x => x.id), ['fb1'], '백업: 깨진 피드백 제거');
+  eq(bad.recent.map(r => r.songId), ['bohemian-rhapsody'], '백업: 최근 연습 정리 + 예전 곡 id 변환');
+  eq(bad.favorites, ['bohemian-rhapsody'], '백업: 즐겨찾기 중복·잘못된 값 정리');
+  eq(Object.keys(bad.progress).sort(), ['a', 'c'], '백업: 숙련도 잘못된 값 제거');
+  eq(bad.songTranspositions, { a: 6 }, '백업: 조바꿈 ±6 제한, 숫자 아닌 값 제거');
+  eq(bad.stageHistory.map(s => s.id), ['s'], '백업: 깨진 공연 제거');
+  eq(bad.stageActive, undefined, '백업: 곡 목록 없는 현재 공연 무시');
+  eq(bad.stageDeletedIds, ['stage-2026-yeosu'], '백업: 지운 공연 목록 유지');
+  let rejected = 0;
+  for (const notBackup of [null, [1, 2], 'text', { hello: 1 }]) { try { sanitizeBackup(notBackup); } catch { rejected += 1; } }
+  eq(rejected, 4, '백업이 아닌 파일은 거부');
+}
+ok(!isSafeLinkUrl('javascript:alert(1)') && !isSafeLinkUrl(' JavaScript:x') && !isSafeLinkUrl('data:text/html,<b>'), '스크립트 링크 차단');
+ok(isSafeLinkUrl('https://a.b/c.pdf') && isSafeLinkUrl('./assets/scores/아로하.nwc') && isSafeLinkUrl('blob:https://x/1') && isSafeLinkUrl('data:application/pdf;base64,AA'), '정상 링크 허용');
+
 eq(resolveStageItemTranspose({ songId: 'a' }, { a: 2 }), 2, '큐시트 값 없으면 곡 조바꿈 사용');
 eq(resolveStageItemTranspose({ songId: 'a', transpose: -1 }, { a: 2 }), -1, '큐시트 값 우선');
 eq(resolveStageItemTranspose({ songId: 'a', transpose: 0 }, { a: 2 }), 0, '큐시트에서 원키(0)로 정하면 원키');
@@ -209,7 +239,8 @@ ok(!allScores.some(s => s.songId === 'would-be-good' && /좋을텐데/.test(s.ti
   const staticImports = [...appOnly.matchAll(/^import[\s\S]*?from '(\.\/[^']+)';/gm)].map((m) => m[1]);
   for (const lazy of ['./stage.js', './scoreViewer.js', './archivePages.js']) {
     ok(!staticImports.includes(lazy), `app.js는 ${lazy}를 시작할 때 받지 않음 (필요할 때 불러옴)`);
-    ok(appOnly.includes(`import('${lazy}')`), `app.js가 ${lazy}를 필요할 때 불러옴`);
+    // 다시 시도 시 새로 받아오도록 importLazy()를 거쳐 불러온다 (내부에서 import(url) 사용)
+    ok(appOnly.includes(`import('${lazy}')`) || appOnly.includes(`importLazy('${lazy}')`), `app.js가 ${lazy}를 필요할 때 불러옴`);
   }
   ok(staticImports.includes('./stageStore.js'), '홈 공연 카드에 필요한 무대 자료(stageStore.js)는 시작할 때 받음');
   // 시작할 때 받는 모듈은 모두 미리 받기(modulepreload) 목록에 있어야 순서대로 기다리지 않는다

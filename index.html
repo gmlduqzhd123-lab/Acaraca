@@ -33,9 +33,9 @@
   <!-- 글꼴은 첫 화면을 막지 않게 받은 뒤 적용 (받기 전엔 기기 기본 글꼴) -->
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
-  <link rel="stylesheet" href="./css/style.css?v=117">
+  <link rel="stylesheet" href="./css/style.css?v=118">
   <!-- 앱 코드를 HTML과 동시에 미리 받기 (아래 app.js 실행 시 기다리지 않도록) -->
-  <link rel="modulepreload" href="./js/app.js?v=117">
+  <link rel="modulepreload" href="./js/app.js?v=118">
   <link rel="modulepreload" href="./js/data.js">
   <link rel="modulepreload" href="./js/practiceLogic.js">
   <link rel="modulepreload" href="./js/player.js">
@@ -955,7 +955,7 @@
     } else {
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = './js/app.js?v=117';
+      script.src = './js/app.js?v=118';
 
       script.onerror = (e) => {
         console.error('Failed to load app.js:', e);
