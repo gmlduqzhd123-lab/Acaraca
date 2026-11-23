@@ -83,18 +83,44 @@ for (const s of testSongs) {
 
 // 3. Test Stage History (Only user entered performances, zero dummy items)
 assert(Array.isArray(DEFAULT_STAGE_HISTORY), 'DEFAULT_STAGE_HISTORY must be an array');
-assert(DEFAULT_STAGE_HISTORY.length === 3, 'Exactly 3 user-entered performances in DEFAULT_STAGE_HISTORY');
+assert(DEFAULT_STAGE_HISTORY.length === 5, 'Exactly 5 user-entered performances in DEFAULT_STAGE_HISTORY');
 assert(DEFAULT_STAGE_HISTORY.every(h => !isDummyStage(h)), 'No dummy performances in DEFAULT_STAGE_HISTORY');
 for (const dummyId of ['stage-2026-spring', 'stage-2025-busking', 'stage-2024-suncheon']) {
   assert(DUMMY_STAGE_IDS.has(dummyId), `DUMMY_STAGE_IDS must track ${dummyId}`);
   assert(!DEFAULT_STAGE_HISTORY.some(h => h.id === dummyId), `Dummy ${dummyId} must not be in default history`);
 }
 
-// 3-0. Verify chronological sorting (newest first: 10.24 > 10.23 > 10.16)
-assert.strictEqual(DEFAULT_STAGE_HISTORY[0].id, 'stage-2026-jeonnam', '1st should be 10.24 Jeonnam');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[0].date, '2026.10.24', '1st date matches');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[0].venue, '광주교육연수원', '1st venue matches');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[0].songs.length, 6, 'Jeonnam performance must have 6 songs');
+// 3-0. Verify chronological sorting (newest first: 12.18 > 12.12 > 10.24 > 10.23 > 10.16)
+const stageById = (id) => DEFAULT_STAGE_HISTORY.find(h => h.id === id);
+const jeonnam = stageById('stage-2026-jeonnam');
+const gyowon = stageById('stage-2026-gyowon');
+assert.deepStrictEqual(
+  DEFAULT_STAGE_HISTORY.map(h => h.id),
+  ['stage-2026-jeongdeok', 'stage-2026-naju', 'stage-2026-jeonnam', 'stage-2026-gyowon', 'stage-2026-yeosu'],
+  'default stages must be listed newest first'
+);
+assert(DEFAULT_STAGE_HISTORY.every((h, i, arr) => i === 0 || (arr[i - 1].updatedAt || 0) >= (h.updatedAt || 0)), 'updatedAt must be newest first');
+
+// 3-0a. 2026 전학공 연말 공연 (12.18 금 18:00, 정덕유치원)
+const jeongdeok = stageById('stage-2026-jeongdeok');
+assert(jeongdeok, 'stage-2026-jeongdeok must exist');
+assert.strictEqual(jeongdeok.eventTitle, '2026 전학공 연말 공연');
+assert.strictEqual(jeongdeok.date, '2026.12.18');
+assert.strictEqual(jeongdeok.venue, '정덕유치원');
+assert(jeongdeok.notes.includes('18:00'), 'start time 18:00 must be noted');
+assert.deepStrictEqual(jeongdeok.songs.map(s => s.songId), ['first-impression', 'love-song-medley', 'old-pop-medley', 'carol-medley']);
+
+// 3-0b. 2026 나주 공연 (광주교대 멘토링, 12.12 토 14:00)
+const naju = stageById('stage-2026-naju');
+assert(naju, 'stage-2026-naju must exist');
+assert.strictEqual(naju.date, '2026.12.12');
+assert(naju.eventTitle.includes('나주') && naju.eventTitle.includes('광주교대 멘토링'));
+assert(naju.notes.includes('14:00'), 'start time 14:00 must be noted');
+assert.deepStrictEqual(naju.songs.map(s => s.songId), ['if-you-dont-dream']);
+assert(jeonnam, 'stage-2026-jeonnam must exist');
+assert.strictEqual(jeonnam.date, '2026.10.24', '1st date matches');
+assert.strictEqual(jeonnam.venue, '광주교육연수원', '1st venue matches');
+assert.strictEqual(jeonnam.songs.length, 6, 'Jeonnam performance must have 6 songs');
 const expectedJeonnamSongIds = [
   'love-song-medley',
   'isnt-she-lovely',
@@ -103,18 +129,17 @@ const expectedJeonnamSongIds = [
   'short-hair',
   'lets-travel'
 ];
-assert.deepStrictEqual(DEFAULT_STAGE_HISTORY[0].songs.map(s => s.songId), expectedJeonnamSongIds);
+assert.deepStrictEqual(jeonnam.songs.map(s => s.songId), expectedJeonnamSongIds);
 
-assert.strictEqual(DEFAULT_STAGE_HISTORY[1].id, 'stage-2026-gyowon', '2nd should be 10.23 Gyowon');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[1].date, '2026.10.23', '2nd date matches');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[1].venue, '장흥문화예술회관', '2nd venue matches');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs.length, 1, 'Gyowon performance must have 1 song');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[1].songs[0].songId, 'bohemian-rhapsody');
+assert(gyowon, 'stage-2026-gyowon must exist');
+assert.strictEqual(gyowon.date, '2026.10.23', '2nd date matches');
+assert.strictEqual(gyowon.venue, '장흥문화예술회관', '2nd venue matches');
+assert.strictEqual(gyowon.songs.length, 1, 'Gyowon performance must have 1 song');
+assert.strictEqual(gyowon.songs[0].songId, 'bohemian-rhapsody');
 
 // 3-1. Verify 2026 여수 생활문화한마당 performance (3rd)
 const yeosu = DEFAULT_STAGE_HISTORY.find(h => h.id === 'stage-2026-yeosu');
 assert(yeosu, 'stage-2026-yeosu must exist in DEFAULT_STAGE_HISTORY');
-assert.strictEqual(DEFAULT_STAGE_HISTORY[2].id, 'stage-2026-yeosu', '3rd should be 10.16 Yeosu');
 assert.strictEqual(yeosu.eventTitle, '2026 여수 생활문화한마당', 'Yeosu eventTitle matches');
 assert.strictEqual(yeosu.date, '2026.10.16', 'Yeosu date matches');
 assert.strictEqual(yeosu.venue, '웅천친수공원', 'Yeosu venue matches');
@@ -244,18 +269,18 @@ import {
   openStageShareModal,
   printStageCueSheet
 } from '../js/stage.js';
-const exportedJson = serializeStageSession(DEFAULT_STAGE_HISTORY[0]);
+const exportedJson = serializeStageSession(jeonnam);
 assert(exportedJson.includes('"type": "acaraca-stage-cuesheet"'), 'Exported JSON must contain acaraca-stage-cuesheet type');
 const reimported = parseImportedStageSession(exportedJson);
-assert.strictEqual(reimported.eventTitle, DEFAULT_STAGE_HISTORY[0].eventTitle, 'Reimported eventTitle must match');
-assert.strictEqual(reimported.songs.length, DEFAULT_STAGE_HISTORY[0].songs.length, 'Reimported song count must match');
+assert.strictEqual(reimported.eventTitle, jeonnam.eventTitle, 'Reimported eventTitle must match');
+assert.strictEqual(reimported.songs.length, jeonnam.songs.length, 'Reimported song count must match');
 
-const encodedParam = encodeStageSessionShareParam(DEFAULT_STAGE_HISTORY[0]);
+const encodedParam = encodeStageSessionShareParam(jeonnam);
 assert(encodedParam && typeof encodedParam === 'string' && !encodedParam.includes('='), 'encodeStageSessionShareParam must return URL-safe Base64 string');
 const decodedSession = decodeStageSessionShareParam(encodedParam);
-assert(decodedSession && decodedSession.eventTitle === DEFAULT_STAGE_HISTORY[0].eventTitle, 'decodeStageSessionShareParam must restore eventTitle');
-assert.strictEqual(decodedSession.songs.length, DEFAULT_STAGE_HISTORY[0].songs.length, 'decodeStageSessionShareParam must restore all songs');
-const shareHref = buildStageShareUrl(DEFAULT_STAGE_HISTORY[0], 'https://gmlduqzhd123-lab.github.io/Acaraca/index.html');
+assert(decodedSession && decodedSession.eventTitle === jeonnam.eventTitle, 'decodeStageSessionShareParam must restore eventTitle');
+assert.strictEqual(decodedSession.songs.length, jeonnam.songs.length, 'decodeStageSessionShareParam must restore all songs');
+const shareHref = buildStageShareUrl(jeonnam, 'https://gmlduqzhd123-lab.github.io/Acaraca/index.html');
 assert(shareHref.includes('tab=stage') && shareHref.includes('view=live') && shareHref.includes('cuesheet='), 'buildStageShareUrl must include tab=stage, view=live, and cuesheet param');
 assert.strictEqual(typeof openStageShareModal, 'function', 'openStageShareModal must be exported');
 assert.strictEqual(typeof printStageCueSheet, 'function', 'printStageCueSheet must be exported');
@@ -284,15 +309,15 @@ assert.strictEqual(parseDurationSeconds('3:45'), 225, 'parseDurationSeconds("3:4
 assert.strictEqual(parseDurationSeconds('1:02:05'), 3725, 'parseDurationSeconds("1:02:05") must return 3725');
 assert.strictEqual(parseDurationSeconds(''), 0, 'parseDurationSeconds("") must return 0');
 
-const estJeonnam = estimateSetlistDurationSeconds(DEFAULT_STAGE_HISTORY[0], songsData.songs);
+const estJeonnam = estimateSetlistDurationSeconds(jeonnam, songsData.songs);
 assert(estJeonnam.musicSeconds > 600, 'Estimated music seconds for 6-song setlist must exceed 10 minutes');
 assert(estJeonnam.totalSeconds === estJeonnam.musicSeconds + estJeonnam.mcSeconds, 'Total seconds must equal music + MC transition seconds');
 assert(estJeonnam.formatted.startsWith('약 ') && estJeonnam.formatted.endsWith('분'), 'Formatted runtime must be in Korean minutes');
 
 // Verify per-item transpose (-6 ~ +6) round-trip in JSON export/import and ?cuesheet= share param
 const transposedSession = {
-  ...JSON.parse(JSON.stringify(DEFAULT_STAGE_HISTORY[0])),
-  songs: DEFAULT_STAGE_HISTORY[0].songs.map((s, idx) => ({
+  ...JSON.parse(JSON.stringify(jeonnam)),
+  songs: jeonnam.songs.map((s, idx) => ({
     ...s,
     ...(idx === 0 ? { transpose: -2 } : idx === 1 ? { transpose: 3 } : {})
   }))
